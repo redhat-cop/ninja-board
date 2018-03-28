@@ -124,7 +124,7 @@ public class TrelloSync extends ScriptBase{
         cardCount.put(userKey, cardCount.get(userKey)+1);
 //        pointsStats.put(userKey, pointsStats.get(userKey)+calculatePoints(cardName));
         
-        Integer points=calculatePoints2(card);
+        Integer points=calculatePoints(card);
         if (points>0){
           log.debug("["+userKey+"] Awarded "+points+" points");
           pointsStats.put(userKey, pointsStats.get(userKey)+points);
@@ -139,7 +139,7 @@ public class TrelloSync extends ScriptBase{
     try{
 //      Class scriptClass = new GroovyScriptEngine(".").loadScriptByName("calculatePoints.groovy") ;
       
-      Class scriptClass = new GroovyClassLoader().parseClass(new File("src/main/resources/calculatePoints.groovy"));
+      Class scriptClass = new GroovyClassLoader().parseClass( new File("src/main/resources/calculatePoints.groovy"));
       Object scriptInstance = scriptClass.newInstance() ;
       return (Integer)scriptClass.getDeclaredMethod("calculate", new Class[]{Json.class}).invoke( scriptInstance, new Json[]{card});
     }catch(Exception e){
@@ -148,7 +148,8 @@ public class TrelloSync extends ScriptBase{
     return 0;
   }
   
-  private Integer calculatePoints(String cardName){
+  private Integer calculatePoints(Json card){
+    String cardName=card.at("name").asString();
     Matcher m=Pattern.compile("\\(([0-9]+)\\)").matcher(cardName);
     if (m.find()){
       return Integer.parseInt(m.group(1));

@@ -5,10 +5,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -90,6 +94,13 @@ public class Config {
           
           // copy the default scripts over to where they can be executed
           IOUtils.copy(Config.class.getClassLoader().getResourceAsStream("scripts/github-stats.py"), new FileOutputStream("github-stats.py"));
+          
+          Set<PosixFilePermission> perms = new HashSet<PosixFilePermission>();
+          perms.add(PosixFilePermission.OWNER_READ);
+          perms.add(PosixFilePermission.OWNER_WRITE);
+          perms.add(PosixFilePermission.OWNER_EXECUTE);
+          Files.setPosixFilePermissions(new File("github-stats.py").toPath(), perms);
+          
         }
 //          instance=new Config();
 //        }else{
