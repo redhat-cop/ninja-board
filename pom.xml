@@ -39,7 +39,7 @@
 		  <artifactId>mjson</artifactId>
 		  <version>1.4.0</version>
 		</dependency>
-	
+	<!-- 
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
@@ -50,12 +50,14 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>3.8</version>
 		</dependency>
+	 -->
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
 			<artifactId>json-simple</artifactId>
 			<version>1.1</version>
 		</dependency>
 		<!-- totp dependency -->
+<!-- 
 	<dependency>
     <groupId>org.jboss.aerogear</groupId>
     <artifactId>aerogear-otp-java</artifactId>
@@ -73,18 +75,17 @@
     <artifactId>unboundid-ldapsdk</artifactId>
     <version>3.0.0</version>
 </dependency>
-<!-- 
 	   <dependency>
         <groupId>org.apache.poi</groupId>
         <artifactId>poi</artifactId>
         <version>3.8</version>
     </dependency>
- -->
 		<dependency>
 		    <groupId>com.google.oauth-client</groupId>
 		    <artifactId>google-oauth-client</artifactId>
 		    <version>1.20.0</version>
 		</dependency>
+ -->
 		<dependency>
 			<groupId>com.google.gdata</groupId>
 			<artifactId>core</artifactId>
@@ -125,11 +126,13 @@
             <artifactId>resteasy-jaxrs</artifactId>
             <version>2.2.1.GA</version>
         </dependency>
+        <!-- 
         <dependency>
             <groupId>org.jfree</groupId>
             <artifactId>jfreechart</artifactId>
             <version>1.0.19</version>
         </dependency>
+         -->
 		
 				<dependency>
 					<groupId>org.apache.camel</groupId>
