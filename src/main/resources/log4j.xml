@@ -8,13 +8,10 @@
 		</layout>
 	</appender>
 
-	<logger name="com.redhat.sso.ninja.Heartbeat">
+	<logger name="com.redhat.sso.ninja">
 	  <level value="debug"/> 
 	</logger>
-	<logger name="com.redhat.sso.ninja.TrelloSync">
-	  <level value="debug"/> 
-	</logger>
-
+	
 	<root>
 		<level value="INFO" />
 		<appender-ref ref="console" />
