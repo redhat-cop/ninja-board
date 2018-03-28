@@ -3,7 +3,6 @@ package com.redhat.sso.ninja;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,14 +10,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
+import org.apache.log4j.Logger;
 
 import com.redhat.sso.ninja.utils.IOUtils2;
 import com.redhat.sso.ninja.utils.Json;
 
 public class Config {
+  private static final Logger log=Logger.getLogger(Config.class);
   public static final File STORAGE=new File("config.json");
   private static Config instance;
   private List<Map<String,Object>> scripts=null;
@@ -84,6 +82,7 @@ public class Config {
   public static Config get(){
     if (instance==null){
       try{
+        log.debug("Looking for config in: "+STORAGE.getAbsolutePath());
         if (!Config.STORAGE.exists()){
           instance=new Config();
         }else{
