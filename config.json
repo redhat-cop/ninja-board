@@ -1,0 +1,21 @@
+{
+  "scripts" : [ {
+    "options" : {
+      "organizationName" : "redhatcop"
+    },
+    "name" : "trello",
+    "source" : "com.redhat.sso.ninja.TrelloSync",
+    "type" : "class"
+  }, {
+    "name" : "github",
+    "source" : "/home/mallen/Work/poc/sso-tools/cop-ninja/github-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
+    "type" : "perl"
+  } ],
+  "options" : {
+    "heartbeat.intervalInSeconds" : "60000"
+  },
+  "values" : {
+    "lastRun" : 1521581162064,
+    "lastRun2" : "2018-03-28T12:00:00"
+  }
+}
