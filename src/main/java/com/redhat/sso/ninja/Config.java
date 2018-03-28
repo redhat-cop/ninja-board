@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 import com.redhat.sso.ninja.utils.IOUtils2;
@@ -84,11 +85,17 @@ public class Config {
       try{
         log.debug("Looking for config in: "+STORAGE.getAbsolutePath());
         if (!Config.STORAGE.exists()){
-          instance=new Config();
-        }else{
+          // copy the default config over
+          IOUtils.copy(Config.class.getClassLoader().getResourceAsStream(STORAGE.getName()), new FileOutputStream(STORAGE));
+          
+          // copy the default scripts over to where they can be executed
+          IOUtils.copy(Config.class.getClassLoader().getResourceAsStream("scripts/github-stats.py"), new FileOutputStream("github-stats.py"));
+        }
+//          instance=new Config();
+//        }else{
           String toLoad=IOUtils2.toStringAndClose(new FileInputStream(Config.STORAGE));
           instance=Json.newObjectMapper(true).readValue(new ByteArrayInputStream(toLoad.getBytes()), Config.class);
-        }
+//        }
 //        UserController uc=new UserController();
 //        GoogleAddressResolution gar=new CachedGoogleAddressResolution(false);
 //        boolean changed=false;
