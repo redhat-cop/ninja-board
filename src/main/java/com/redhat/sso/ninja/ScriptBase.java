@@ -1,0 +1,17 @@
+package com.redhat.sso.ninja;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+public abstract class ScriptBase{
+  public abstract void execute(Map<String,String> options, Integer daysFromLastRun, PointsAdder adder);
+  
+  public Map<String, String> getUsersBy(String key){
+    Map<String, String> result=new HashMap<String, String>();
+    for(Entry<String, Map<String, String>> e:Database2.get().getUsers().entrySet()){
+      result.put(e.getValue().get("trelloId"), e.getKey());
+    }
+    return result;
+  }
+}
