@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -21,6 +22,7 @@ import com.redhat.sso.ninja.utils.IOUtils2;
 import com.redhat.sso.ninja.utils.Json;
 
 public class Database2{
+  private static final Logger log=Logger.getLogger(Database2.class);
   private static final String storage="database2.json";
   
   
@@ -53,6 +55,10 @@ public class Database2{
   
   
   public Database2 increment(String poolId, String userId, Integer increment){
+    if (null==poolId || null==userId){
+      log.error("Unable to add due to null key [poolId="+poolId+", userId="+userId+"]");
+      return this;
+    }
     if (users.containsKey(userId)){ // means the user is registered
       if (null==scorecards.get(userId)) scorecards.put(userId, new HashMap<String, Integer>());
       if (null==scorecards.get(userId).get(poolId)) scorecards.get(userId).put(poolId, 0);
