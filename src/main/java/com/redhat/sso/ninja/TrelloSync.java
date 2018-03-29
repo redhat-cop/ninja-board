@@ -76,11 +76,13 @@ public class TrelloSync extends ScriptBase{
     for(Entry<String, Integer> e:pointsStats.entrySet()){
       String trelloUserId=e.getKey();
       String userId=trelloIdToUser.get(trelloUserId);
-      Integer increment=e.getValue();
-      log.debug("Before calling adder.addPoints('"+userId+"','"+options.get("name")+"','"+increment+"')");
-      adder.addPoints(userId, options.get("name"), increment);
-//      System.out.println("["+e.getKey()+"] = "+e.getValue());
-      
+      log.debug("trelloId is "+trelloUserId+", dereferenced to "+userId);
+      if (userId!=null){ // a null userid means they're most likely not registered
+        Integer increment=e.getValue();
+        log.debug("Before calling adder.addPoints('"+userId+"','"+options.get("name")+"','"+increment+"')");
+        adder.addPoints(userId, options.get("name"), increment);
+  //      System.out.println("["+e.getKey()+"] = "+e.getValue());
+      }
     }
   }
   
