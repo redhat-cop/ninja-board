@@ -83,7 +83,7 @@ public class Heartbeat {
   
   public static void start(long intervalInMs) {
     t = new Timer("cop-ninja-heartbeat", false);
-    t.scheduleAtFixedRate(new HeartbeatRunnable(), 0l, intervalInMs);
+    t.scheduleAtFixedRate(new HeartbeatRunnable(), 30000l, intervalInMs);
   }
 
   public static void stop() {}
@@ -137,10 +137,10 @@ public class Heartbeat {
             obj.execute((String)script.get("name"), (Map<String,String>)script.get("options"), daysFromLastRun, new PointsAdder(){
               public void addPoints(String user, String pool, Integer increment){
                 if (user!=null && pool!=null){
-                  log.debug("addPoints:: Incrementing Points:: ["+pool+"/"+user+"] = "+increment);
                   try{
                     String userId=poolToUserIdMapper.get(user);
                     if (null!=userId){
+                      log.debug("addPoints:: Incrementing Points:: ["+pool+"/"+userId+"] = "+increment);
                       db.increment(pool, userId, increment);
                     }//else //its most likely an unregistered user
                       
