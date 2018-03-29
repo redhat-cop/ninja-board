@@ -213,10 +213,12 @@ public class Heartbeat {
             e.printStackTrace();
           }
         }
-          
+        
       }
+      log.debug("Saving database...");
       db.save();
       
+      log.debug("Updating the \"lastRun\" date");
       config.getValues().put("lastRun2", sdf.format(runToDate));
       config.save();
     }      
