@@ -70,16 +70,21 @@ public class ManagementController {
     return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Config.get())).build();
   }
   
+  
+  public static void main(String[] asd){
+    System.out.println(new ManagementController().register(null,null,null,"[{\"displayName\": \"Mat Allen\",\"username\": \"mallen\",\"trelloId\":\"mallen2\",\"githubId\":\"matallen\"}]"));
+  }
   @POST
   @Path("/users/register")
   public Response register(
       @Context HttpServletRequest request 
       ,@Context HttpServletResponse response
       ,@Context ServletContext servletContext
+      ,String raw
       ){
     try{
       log.debug("/register called");
-      String raw=IOUtils.toString(request.getInputStream());
+//      String raw=IOUtils.toString(request.getInputStream());
       mjson.Json x=mjson.Json.read(raw);
       
       Database2 db=Database2.get();
@@ -91,17 +96,17 @@ public class ManagementController {
         }
         
         Map<String, String> userInfo=new HashMap<String, String>();
-        for(Entry<String, Object> e:x.asMap().entrySet()){
+        for(Entry<String, Object> e:user.asMap().entrySet()){
           userInfo.put(e.getKey(), (String)e.getValue());
         }
         
-        if (!db.getUsers().containsKey(username)){
+//        if (!db.getUsers().containsKey(username)){
           db.getUsers().put(username, userInfo);
           log.debug("Registered user: "+Json.newObjectMapper(true).writeValueAsString(userInfo));
-        }else{
-          log.warn("Ignoring user ["+username+"] - it's already registered");
-//          return Response.status(500).entity("{\"status\":\"ERROR\",\"message\":\"Username in use already\"}").build();        
-        }
+//        }else{
+//          log.warn("Ignoring user ["+username+"] - it's already registered");
+////          return Response.status(500).entity("{\"status\":\"ERROR\",\"message\":\"Username in use already\"}").build();        
+//        }
       }
       
       db.save();
@@ -136,10 +141,10 @@ public class ManagementController {
     return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Database2.get())).build();
   }
   
-  public static void main(String[] asd) throws JsonGenerationException, JsonMappingException, IOException{
-    System.out.println(new ManagementController().getLeaderboard2(3).getEntity());
-//    System.out.println(new ManagementController().getList().getEntity());
-  }
+//  public static void main(String[] asd) throws JsonGenerationException, JsonMappingException, IOException{
+//    System.out.println(new ManagementController().getLeaderboard2(3).getEntity());
+////    System.out.println(new ManagementController().getList().getEntity());
+//  }
 
   @GET
   @Path("/scorecards")
