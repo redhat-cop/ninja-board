@@ -137,7 +137,7 @@ public class Heartbeat {
             obj.execute((Map<String,String>)script.get("options"), daysFromLastRun, new PointsAdder(){
               public void addPoints(String user, String pool, Integer increment){
                 if (user!=null && pool!=null){
-                  log.debug("Incrementing Points:: ["+pool+"/"+user+"] = "+increment);
+                  log.debug("addPoints:: Incrementing Points:: ["+pool+"/"+user+"] = "+increment);
                   try{
                     String userId=poolToUserIdMapper.get(user);
                     db.increment(pool, userId, increment);
