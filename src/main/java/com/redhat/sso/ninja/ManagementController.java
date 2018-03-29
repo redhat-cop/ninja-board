@@ -24,6 +24,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 
@@ -33,6 +34,7 @@ import com.redhat.sso.ninja.utils.Json;
 
 @Path("/")
 public class ManagementController {
+  private static final Logger log=Logger.getLogger(ManagementController.class);
   /**
    * 
    * config/load
@@ -76,28 +78,32 @@ public class ManagementController {
       ,@Context ServletContext servletContext
       ){
     try{
-      System.out.println("/register called");
+      log.debug("/register called");
       String raw=IOUtils.toString(request.getInputStream());
       mjson.Json x=mjson.Json.read(raw);
-      String username=x.at("username").asString();
       
       Database2 db=Database2.get();
-      
-      if (db.getUsers().containsKey(username)){
-        db.getUsers().remove(username); // remove so we can overwrite the user details
+      for (mjson.Json user:x.asJsonList()){
+        String username=user.at("username").asString();
+        
+        if (db.getUsers().containsKey(username)){
+          db.getUsers().remove(username); // remove so we can overwrite the user details
+        }
+        
+        Map<String, String> userInfo=new HashMap<String, String>();
+        for(Entry<String, Object> e:x.asMap().entrySet()){
+          userInfo.put(e.getKey(), (String)e.getValue());
+        }
+        
+        if (!db.getUsers().containsKey(username)){
+          db.getUsers().put(username, userInfo);
+          log.debug("Registered user: "+Json.newObjectMapper(true).writeValueAsString(userInfo));
+        }else{
+          log.warn("Ignoring user ["+username+"] - it's already registered");
+//          return Response.status(500).entity("{\"status\":\"ERROR\",\"message\":\"Username in use already\"}").build();        
+        }
       }
       
-      Map<String, String> user=new HashMap<String, String>();
-      for(Entry<String, Object> e:x.asMap().entrySet()){
-        user.put(e.getKey(), (String)e.getValue());
-      }
-      
-      System.out.println("Registered user: "+Json.newObjectMapper(true).writeValueAsString(user));
-      if (!db.getUsers().containsKey(username)){
-        db.getUsers().put(username, user);
-      }else{
-        return Response.status(500).entity("{\"status\":\"ERROR\",\"message\":\"Username in use already\"}").build();        
-      }
       db.save();
     }catch(IOException e){
       e.printStackTrace();
