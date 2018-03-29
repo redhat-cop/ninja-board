@@ -140,7 +140,10 @@ public class Heartbeat {
                   log.debug("addPoints:: Incrementing Points:: ["+pool+"/"+user+"] = "+increment);
                   try{
                     String userId=poolToUserIdMapper.get(user);
-                    db.increment(pool, userId, increment);
+                    if (null!=userId){
+                      db.increment(pool, userId, increment);
+                    }//else //its most likely an unregistered user
+                      
                   }catch(Exception e){
                     e.printStackTrace();
                   }
