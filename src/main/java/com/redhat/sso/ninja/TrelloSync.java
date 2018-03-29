@@ -72,11 +72,12 @@ public class TrelloSync extends ScriptBase{
     
     Map<String, String> trelloIdToUser=getUsersBy("trelloId");
     
-    log.debug("Found points statistics for "+cardCount.size()+" individual people");
+    log.debug("Found points statistics for "+pointsStats.size()+" individual people");
     for(Entry<String, Integer> e:pointsStats.entrySet()){
       String trelloUserId=e.getKey();
       String userId=trelloIdToUser.get(trelloUserId);
       Integer increment=e.getValue();
+      log.debug("Before calling adder.addPoints('"+userId+"','"+options.get("name")+"','"+increment+"')");
       adder.addPoints(userId, options.get("name"), increment);
 //      System.out.println("["+e.getKey()+"] = "+e.getValue());
       
