@@ -79,7 +79,7 @@ public class TrelloSync extends ScriptBase{
 //      log.debug("trelloId is "+trelloUserId+", dereferenced to "+userId);
 //      if (userId!=null){ // a null userid means they're most likely not registered
         Integer increment=e.getValue();
-        log.debug("Before calling adder.addPoints('"+trelloUserId+"','"+name+"','"+increment+"')");
+//        log.debug("Before calling adder.addPoints('"+trelloUserId+"','"+name+"','"+increment+"')");
         adder.addPoints(trelloUserId, name, increment);
   //      System.out.println("["+e.getKey()+"] = "+e.getValue());
 //      }
