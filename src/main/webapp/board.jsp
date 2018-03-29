@@ -84,7 +84,7 @@ $(document).ready(function() {
     
     $('#example').DataTable( {
         "ajax": {
-            "url": '${pageContext.request.contextPath}/api/points/list',
+            "url": '${pageContext.request.contextPath}/api/scorecards',
             "dataSrc": ""
         },
         

@@ -136,12 +136,14 @@ public class Heartbeat {
             ScriptBase obj=(ScriptBase)Class.forName((String)script.get("source")).newInstance();
             obj.execute((Map<String,String>)script.get("options"), daysFromLastRun, new PointsAdder(){
               public void addPoints(String user, String pool, Integer increment){
-                log.debug("Incrementing Points:: ["+pool+"/"+user+"] = "+increment);
-                try{
-                  String userId=poolToUserIdMapper.get(user);
-                  db.increment(pool, userId, increment);
-                }catch(Exception e){
-                  e.printStackTrace();
+                if (user!=null && pool!=null){
+                  log.debug("Incrementing Points:: ["+pool+"/"+user+"] = "+increment);
+                  try{
+                    String userId=poolToUserIdMapper.get(user);
+                    db.increment(pool, userId, increment);
+                  }catch(Exception e){
+                    e.printStackTrace();
+                  }
                 }
               }
             });

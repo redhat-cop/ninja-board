@@ -31,11 +31,45 @@ import com.redhat.sso.ninja.chart.Chart2Json;
 import com.redhat.sso.ninja.chart.DataSet2;
 import com.redhat.sso.ninja.utils.Json;
 
-@Path("/points")
+@Path("/")
 public class ManagementController {
+  /**
+   * 
+   * config/load
+   * users/register
+   * users/get?id=?
+   * users/list
+   * users/delete?id=?
+   * leaderboard/{max}
+   * scorecards/list
+   * @throws IOException 
+   * @throws JsonMappingException 
+   * @throws JsonGenerationException 
+   * 
+   */
+  
+  @GET
+  @Path("/config/get")
+  public Response configGet(@Context HttpServletRequest request,@Context HttpServletResponse response,@Context ServletContext servletContext) throws JsonGenerationException, JsonMappingException, IOException{
+    return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Config.get())).build();
+  }
   
   @POST
-  @Path("/register")
+  @Path("/config/save")
+  public Response configSave(@Context HttpServletRequest request,@Context HttpServletResponse response,@Context ServletContext servletContext) throws JsonGenerationException, JsonMappingException, IOException{
+    System.out.println("Saving config");
+    Config newConfig=Json.newObjectMapper(true).readValue(request.getInputStream(), Config.class);
+    
+    System.out.println("New Config = "+Json.newObjectMapper(true).writeValueAsString(newConfig));
+//    System.out.println("heartbeat.intervalInSeconds="+newConfig.getOptions().get("heartbeat.intervalInSeconds"));
+//    System.out.println("Saving...");
+    newConfig.save();
+    System.out.println("Saved");
+    return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Config.get())).build();
+  }
+  
+  @POST
+  @Path("/users/register")
   public Response register(
       @Context HttpServletRequest request 
       ,@Context HttpServletResponse response
@@ -53,17 +87,12 @@ public class ManagementController {
         db.getUsers().remove(username); // remove so we can overwrite the user details
       }
       
-//      String email=x.at("email").asString();
-//      String github=x.at("githubId").asString();
-//      String trello=x.at("trelloId").asString();
-      
       Map<String, String> user=new HashMap<String, String>();
       for(Entry<String, Object> e:x.asMap().entrySet()){
         user.put(e.getKey(), (String)e.getValue());
       }
       
       System.out.println("Registered user: "+Json.newObjectMapper(true).writeValueAsString(user));
-//      User user=new User(username, email, github, trello);
       if (!db.getUsers().containsKey(username)){
         db.getUsers().put(username, user);
       }else{
@@ -78,7 +107,7 @@ public class ManagementController {
   }
   
   @GET
-  @Path("/{user}/{pool}/{increment}")
+  @Path("/points/{user}/{pool}/{increment}")
   public Response incrementPool(
       @Context HttpServletRequest request 
       ,@Context HttpServletResponse response
@@ -107,7 +136,7 @@ public class ManagementController {
   }
 
   @GET
-  @Path("/list")
+  @Path("/scorecards")
   public Response getList() throws JsonGenerationException, JsonMappingException, IOException{
     Database2 db=Database2.get();
     List<Map<String, Object>> result=new ArrayList<Map<String,Object>>();
@@ -142,7 +171,7 @@ public class ManagementController {
   }
   
   @GET
-  @Path("/leaderboard2/{max}")
+  @Path("/leaderboard/{max}")
   public Response getLeaderboard2(@PathParam("max") Integer max) throws JsonGenerationException, JsonMappingException, IOException{
     Database2 db=Database2.get();
     Map<String, Map<String, Integer>> leaderboard=db.getLeaderboard();
@@ -188,60 +217,60 @@ public class ManagementController {
     return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(c)).build();
   }
   
-  @GET
-  @Path("/leaderboard")
-  public Response getLeaderboard() throws JsonGenerationException, JsonMappingException, IOException{
-    Map<String, Map<String, Integer>> pools=Database2.get().getLeaderboard();
-    Map<String, Integer> totals=new HashMap<String, Integer>();
-    for(Map<String, Integer> pool:pools.values()){
-      for(Entry<String, Integer> e:pool.entrySet()){
-        if (!totals.containsKey(e.getKey())) totals.put(e.getKey(), 0);
-        totals.put(e.getKey(), totals.get(e.getKey())+e.getValue());
-      }
-    }
-    
-    //reorder
-    List<Entry<String, Integer>> list=new LinkedList<Map.Entry<String, Integer>>(totals.entrySet());
-    Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
-      public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
-          return (o2.getValue()).compareTo(o1.getValue());
-      }
-    });
-    HashMap<String, Integer> sorted=new LinkedHashMap<String, Integer>();
-    for (Entry<String, Integer> e:list) {
-      sorted.put(e.getKey(), e.getValue());
-    }
-    
-    
-    Chart2Json c=new Chart2Json();
-    c.setDatasets(new ArrayList<DataSet2>());
-    for(Entry<String, Integer> e:sorted.entrySet()){
-      c.getLabels().add(e.getKey());
-      
-      if (c.getDatasets().size()<=0) c.getDatasets().add(new DataSet2());
-      
-      c.getDatasets().get(0).getData().add(e.getValue());
-      c.getDatasets().get(0).setBorderWidth(1);
-      c.getDatasets().get(0).getBackgroundColor().add("rgba(163,0,0,0.8)");
-      c.getDatasets().get(0).getBorderColor().add("rgba(130,0,0,0.8)");
-    }
-    
-    
-/*
-    {
-      labels : ["January","February","March","April","May","June","July","Aug"],
-      datasets : [{
-              fillColor : "#48A497",
-              strokeColor : "#48A4D1",
-              data : [456,479,324,569,702,600,200]
-          },{
-              fillColor : "rgba(73,188,170,0.4)",
-              strokeColor : "rgba(72,174,209,0.4)",
-              data : [364,504,605,400,345,320]
-    }]}
-*/
-    
-    return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(c)).build();
-  }
+//  @GET
+//  @Path("/leaderboard")
+//  public Response getLeaderboard() throws JsonGenerationException, JsonMappingException, IOException{
+//    Map<String, Map<String, Integer>> pools=Database2.get().getLeaderboard();
+//    Map<String, Integer> totals=new HashMap<String, Integer>();
+//    for(Map<String, Integer> pool:pools.values()){
+//      for(Entry<String, Integer> e:pool.entrySet()){
+//        if (!totals.containsKey(e.getKey())) totals.put(e.getKey(), 0);
+//        totals.put(e.getKey(), totals.get(e.getKey())+e.getValue());
+//      }
+//    }
+//    
+//    //reorder
+//    List<Entry<String, Integer>> list=new LinkedList<Map.Entry<String, Integer>>(totals.entrySet());
+//    Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
+//      public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+//          return (o2.getValue()).compareTo(o1.getValue());
+//      }
+//    });
+//    HashMap<String, Integer> sorted=new LinkedHashMap<String, Integer>();
+//    for (Entry<String, Integer> e:list) {
+//      sorted.put(e.getKey(), e.getValue());
+//    }
+//    
+//    
+//    Chart2Json c=new Chart2Json();
+//    c.setDatasets(new ArrayList<DataSet2>());
+//    for(Entry<String, Integer> e:sorted.entrySet()){
+//      c.getLabels().add(e.getKey());
+//      
+//      if (c.getDatasets().size()<=0) c.getDatasets().add(new DataSet2());
+//      
+//      c.getDatasets().get(0).getData().add(e.getValue());
+//      c.getDatasets().get(0).setBorderWidth(1);
+//      c.getDatasets().get(0).getBackgroundColor().add("rgba(163,0,0,0.8)");
+//      c.getDatasets().get(0).getBorderColor().add("rgba(130,0,0,0.8)");
+//    }
+//    
+//    
+///*
+//    {
+//      labels : ["January","February","March","April","May","June","July","Aug"],
+//      datasets : [{
+//              fillColor : "#48A497",
+//              strokeColor : "#48A4D1",
+//              data : [456,479,324,569,702,600,200]
+//          },{
+//              fillColor : "rgba(73,188,170,0.4)",
+//              strokeColor : "rgba(72,174,209,0.4)",
+//              data : [364,504,605,400,345,320]
+//    }]}
+//*/
+//    
+//    return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(c)).build();
+//  }
   
 }

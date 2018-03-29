@@ -238,7 +238,7 @@ function buildChart(uri, chartElementName, type){
 }
 
 var graphs={
-  "leaderboard":         "/api/points/leaderboard2/10",
+  "leaderboard":         "/api/leaderboard/10",
 };
 
 function refreshGraph0(graphName, type){

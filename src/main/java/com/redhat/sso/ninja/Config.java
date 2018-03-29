@@ -16,6 +16,8 @@ import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
 
 import com.redhat.sso.ninja.utils.IOUtils2;
 import com.redhat.sso.ninja.utils.Json;
@@ -29,6 +31,26 @@ public class Config {
   private Map<String,Object> values=null;
   
   
+  public Config(){}
+  public Config(String json){
+    System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX="+json);
+    try{
+      Config x=Json.newObjectMapper(true).readValue(json, Config.class);
+      this.options=x.options;
+      this.scripts=x.scripts;
+      this.values=x.values;
+      instance=this;
+    }catch (JsonParseException e){
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }catch (JsonMappingException e){
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }catch (IOException e){
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
   
   // Config options to be able to configure
   // - cycle/zero points every X weeks (or would you want a rolling total?)
