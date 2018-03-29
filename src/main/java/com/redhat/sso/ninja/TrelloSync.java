@@ -50,7 +50,7 @@ public class TrelloSync extends ScriptBase{
   
   public static void main(String[] asd){
     Config c=new Config();
-    new TrelloSync().execute(c.new MapBuilder<String,String>().put("organizationName", "redhatcop").build(), 30, new PointsAdder(){
+    new TrelloSync().execute("test", c.new MapBuilder<String,String>().put("organizationName", "redhatcop").build(), 30, new PointsAdder(){
       public void addPoints(String username, String pool, Integer increment){
         System.out.println("AddPoints called ["+pool+"/"+username+"] Incrementing "+increment+" points");
       }
@@ -58,7 +58,7 @@ public class TrelloSync extends ScriptBase{
   }
   
   @Override
-  public void execute(Map<String,String> options, Integer daysFromLastRun, PointsAdder adder){
+  public void execute(String name, Map<String,String> options, Integer daysFromLastRun, PointsAdder adder){
 //    TrelloSync ts=new TrelloSync();
     parse(options.get("organizationName"), daysFromLastRun, null);
     
@@ -79,8 +79,8 @@ public class TrelloSync extends ScriptBase{
       log.debug("trelloId is "+trelloUserId+", dereferenced to "+userId);
       if (userId!=null){ // a null userid means they're most likely not registered
         Integer increment=e.getValue();
-        log.debug("Before calling adder.addPoints('"+userId+"','"+options.get("name")+"','"+increment+"')");
-        adder.addPoints(userId, options.get("name"), increment);
+        log.debug("Before calling adder.addPoints('"+userId+"','"+name+"','"+increment+"')");
+        adder.addPoints(userId, name, increment);
   //      System.out.println("["+e.getKey()+"] = "+e.getValue());
       }
     }
