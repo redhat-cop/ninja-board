@@ -5,14 +5,20 @@
       "username" : "rspazzoli",
       "trelloId" : "test"
     },
-    "pabrahamsson" : {
+    "mallen" : {
+      "displayName" : "Mat Allen",
+      "githubId" : "matallen",
+      "username" : "mallen",
+      "trelloId" : "mallen2"
+    },
+    "pabraham" : {
+      "displayName" : "Petter Abrahamsson",
       "githubId" : "pabrahamsson",
-      "username" : "pabrahamsson",
+      "username" : "pabraham",
       "trelloId" : "pabrahamsson"
     },
     "obedin" : {
-      "displayName" : "Oeystein Bedin",
-      "githubId" : "oybed",
+      "githubId" : "obedin",
       "username" : "obedin",
       "trelloId" : "obedin"
     }
@@ -20,15 +26,17 @@
   "created" : "2018-03-27T12:52:36",
   "scoreCards" : {
     "obedin" : {
-      "github.ReviewedPullRequests" : 2
+      "github.ReviewedPullRequests" : 2,
+      "trello" : 12
     },
     "rspazzoli" : {
       "github.PullRequests" : 8,
       "github.ReviewedPullRequests" : 4
     },
-    "pabrahamsson" : {
+    "pabraham" : {
       "github.PullRequests" : 3,
-      "github.ClosedIssues" : 3
+      "github.ClosedIssues" : 3,
+      "trello" : 2
     }
   }
 }
