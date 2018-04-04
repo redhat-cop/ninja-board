@@ -70,7 +70,7 @@ public class TrelloSync extends ScriptBase{
 //    System.out.println("");
 //    System.out.println("POINTS:");
     
-    Map<String, String> trelloIdToUser=getUsersBy("trelloId");
+//    Map<String, String> trelloIdToUser=getUsersBy("trelloId");
     
     log.debug("Found points statistics for "+pointsStats.size()+" individual people");
     for(Entry<String, Integer> e:pointsStats.entrySet()){

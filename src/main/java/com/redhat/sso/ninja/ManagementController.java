@@ -2,6 +2,7 @@ package com.redhat.sso.ninja;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 
+import com.redhat.sso.ninja.Config.MapBuilder;
 import com.redhat.sso.ninja.chart.Chart2Json;
 import com.redhat.sso.ninja.chart.DataSet2;
 import com.redhat.sso.ninja.utils.Json;
@@ -50,6 +52,13 @@ public class ManagementController {
    * 
    */
   
+  
+  public static void main(String[] asd) throws JsonGenerationException, JsonMappingException, IOException{
+//    System.out.println(new ManagementController().register(null,null,null,"[{\"displayName\": \"Mat Allen\",\"username\": \"mallen\",\"trelloId\":\"mallen2\",\"githubId\":\"matallen\"}]"));
+    System.out.println(new ManagementController().getScorecards().getEntity());
+  }
+  
+  
   @GET
   @Path("/config/get")
   public Response configGet(@Context HttpServletRequest request,@Context HttpServletResponse response,@Context ServletContext servletContext) throws JsonGenerationException, JsonMappingException, IOException{
@@ -71,9 +80,6 @@ public class ManagementController {
   }
   
   
-  public static void main(String[] asd){
-    System.out.println(new ManagementController().register(null,null,null,"[{\"displayName\": \"Mat Allen\",\"username\": \"mallen\",\"trelloId\":\"mallen2\",\"githubId\":\"matallen\"}]"));
-  }
   @POST
   @Path("/users/register")
   public Response register(
@@ -148,9 +154,9 @@ public class ManagementController {
 
   @GET
   @Path("/scorecards")
-  public Response getList() throws JsonGenerationException, JsonMappingException, IOException{
+  public Response getScorecards() throws JsonGenerationException, JsonMappingException, IOException{
     Database2 db=Database2.get();
-    List<Map<String, Object>> result=new ArrayList<Map<String,Object>>();
+    List<Map<String, Object>> data=new ArrayList<Map<String,Object>>();
     
     Set<String> fields=new HashSet<String>();
     
@@ -166,11 +172,13 @@ public class ManagementController {
         fields.add(s.getKey().replaceAll("\\.", ""));
       }
       row.put("total", total);
-      result.add(row);
+      data.add(row);
     }
     
+    
+    
     // fill in the missing points fields with zero's
-    for(Map<String, Object> e:result){
+    for(Map<String, Object> e:data){
       for (String field:fields){
         if (!e.containsKey(field)){
           e.put(field, 0);
@@ -178,7 +186,23 @@ public class ManagementController {
       }
     }
     
-    return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(result)).build();
+    Map<String,Object> wrapper=new HashMap<String, Object>();
+    List<Map<String,String>> columns=new ArrayList<Map<String, String>>();
+//    columns.add(Config.get().new MapBuilder<String,String>().put("title","ID").put("data", "id").build());
+    columns.add(Config.get().new MapBuilder<String,String>().put("title","Name").put("data", "name").build());
+    for(String field:fields){
+      columns.add(Config.get().new MapBuilder<String,String>().put("title",field).put("data", field).build());  
+    }
+    columns.add(Config.get().new MapBuilder<String,String>().put("title","Total").put("data", "total").build());
+    columns.add(Config.get().new MapBuilder<String,String>().put("title","").put("data", "id").build());
+//    columns.add(Config.get().new MapBuilder<String,String>().put("title","Trello").put("data", "trello").build());
+//    columns.add(Config.get().new MapBuilder<String,String>().put("title","ghPull").put("data", "githubPullRequests").build());
+//    columns.add(Config.get().new MapBuilder<String,String>().put("title","ghClosed").put("data", "githubClosedIssues").build());
+//    columns.add(Config.get().new MapBuilder<String,String>().put("title","ghReviewedPull").put("data", "githubReviewedPullRequests").build());
+    wrapper.put("columns", columns);
+    wrapper.put("data", data);
+    
+    return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(wrapper)).build();
   }
   
   @GET

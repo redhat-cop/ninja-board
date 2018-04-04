@@ -85,7 +85,16 @@ $(document).ready(function() {
     $('#example').DataTable( {
         "ajax": {
             "url": '${pageContext.request.contextPath}/api/scorecards',
-            "dataSrc": ""
+            "success": function(json){
+	            	var tableHeaders;
+	            	$.each(json.columns, function(i, val){
+	              	tableHeaders += "<th>" + val + "</th>";
+	              });
+	              $("#tableDiv").empty();
+                $("#tableDiv").append('<table id="example" class="display" cellspacing="0" width="100%"><thead><tr>' + tableHeaders + '</tr></thead></table>');
+                $('#example').dataTable(json);
+            },
+            "dataType": "json"
         },
         
 //        "scrollY":        "540px",
@@ -94,24 +103,26 @@ $(document).ready(function() {
         
         "lengthMenu": [[10, 25, 50, 100, 200, -1], [10, 25, 50, 100, 200, "All"]], // page entry options
         "pageLength" : 10, // default page entries
-        "columns": [
-            { "data": "id" },
-            { "data": "name" },
-            { "data": "githubPullRequests" },
-            { "data": "githubReviewedPullRequests" },
-            { "data": "githubClosedIssues" },
-            { "data": "total"},
-            { "data": "id" }
-        ],
-        "columnDefs": [
-            { "targets": 0, "orderData": [1,2,3] }
-           ,{ "targets": 1, "orderData": [1,2,3] }
-           ,{ "targets": 2, "orderData": [1,2,3] }
-           ,{ "targets": 3, "orderData": [1,2,3] }
-           ,{ "targets": 6, "render": function (data,type,row){
-							return "<div class='btn btn-image' title='Edit' onclick='edit2(\""+row["id"]+"\");' data-toggle='modal' data-target='#exampleModal' style='background-image: url(images/edit-icon-grey-30-active.png)'></div>";
-						}}
-        ]
+//        "columns": [
+//            { "data": "id" },
+//            { "data": "name" },
+//            { "data": "trello" },
+//            { "data": "githubPullRequests" },
+//            { "data": "githubReviewedPullRequests" },
+//            { "data": "githubClosedIssues" },
+//            { "data": "total"},
+//            { "data": "id" }
+//        ]
+        
+//        ,"columnDefs": [
+//            { "targets": 0, "orderData": [1,2,3] }
+//           ,{ "targets": 1, "orderData": [1,2,3] }
+//           ,{ "targets": 2, "orderData": [1,2,3] }
+//           ,{ "targets": 3, "orderData": [1,2,3] }
+//           ,{ "targets": 7, "render": function (data,type,row){
+//							return "<div class='btn btn-image' title='Edit' onclick='edit2(\""+row["id"]+"\");' data-toggle='modal' data-target='#exampleModal' style='background-image: url(images/edit-icon-grey-30-active.png)'></div>";
+//						}}
+//        ]
     } );
 } );
 
@@ -197,19 +208,22 @@ jQuery.fn.dataTableExt.oApi.fnReloadAjax = function ( oSettings, sNewSource, fnC
 		        <button style="position:relative;height:30px;width:75px;left:0px;top:0px;"   class="btn btn-primary" name="New"    onclick="reset();" type="button" data-toggle="modal" data-target="#exampleModal" data-whatever="@new" disabled>New</button>
 		        <button style="position:relative;height:30px;width:75px;left:0px;top:0px;"   class="btn btn-primary" name="Export" onclick="window.location.href='<%=request.getContextPath()%>/api/analytics/export/xls';" disabled>Export</button>
 		    </div>
-		    <table id="example" class="display" cellspacing="0" width="100%">
-		        <thead>
-		            <tr>
-		                <th align="left">User ID</th>
-		                <th align="left">Name</th>
-		                <th align="left">Github Pull Request Points</th>
-		                <th align="left">Github Reviewed Pull Request Points</th>
-		                <th align="left">Github Closed Issue Points</th>
-		                <th align="left">Total Points</th>
-		                <th align="left"></th>
-		            </tr>
-		        </thead>
-		    </table>
+		    <div id="tableDiv">
+			    <table id="example" class="display" cellspacing="0" width="100%">
+			        <thead>
+			            <tr>
+			                <th align="left">User ID</th>
+			                <th align="left">Name</th>
+			                <th align="left">Trello Points</th>
+			                <th align="left">Github Pull Request Points</th>
+			                <th align="left">Github Reviewed Pull Request Points</th>
+			                <th align="left">Github Closed Issue Points</th>
+			                <th align="left">Total Points</th>
+			                <th align="left"></th>
+			            </tr>
+			        </thead>
+			    </table>
+			  </div>
     </div>
 
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
@@ -228,6 +242,10 @@ jQuery.fn.dataTableExt.oApi.fnReloadAjax = function ( oSettings, sNewSource, fnC
           <div class="form-group">
             <label for="name" class="control-label">Display Name:</label>
             <input id="name" name="name" type="text" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="githubPullRequests" class="control-label">Trello Points:</label>
+            <input id="trello" name="trello" type="text" class="form-control">
           </div>
           <div class="form-group">
             <label for="githubPullRequests" class="control-label">Github Pull Request Points:</label>
