@@ -177,27 +177,6 @@ public class Heartbeat2 {
             String name=(String)script.get("name");
             File scriptFolder=new File(scripts, name);
             
-//            // download, extract or generally prepare the script if it's not already there
-//            if (!scriptFolder.exists()){
-//              scriptFolder.mkdirs();
-//              
-//              if (command.startsWith("http")){ // download it first
-//                URL url=new URL(command);
-//                System.out.println("path = "+url.getPath());
-//                URL url2=new URL(command.contains(" ")?command.substring(0, command.indexOf(" ")):command); // strip script execution params to allow it to be downloaded
-//                File dest=new File(scriptFolder, new File(url2.getPath()).getName()); // extract just the name, not the path
-//                System.out.println("download url = "+url2);
-//                System.out.println("file destination = "+dest.getAbsolutePath());
-//                if (dest.exists()) dest.delete();
-//                FileOutputStream os=new FileOutputStream(dest);
-//                IOUtils.copy(url2.openStream(), os);
-//                os.close();
-//                dest.setExecutable(true);
-//                command=dest.getAbsolutePath() + (url.getPath().contains(" ")?url.getPath().substring(url.getPath().indexOf(" ")):"");
-//                System.out.println("command is now: "+command);
-//              }// else assume it exists and the "command" is correct
-//            }
-            
             if (command.startsWith("http")){
               URL url=new URL(command);
               System.out.println("path = "+url.getPath());

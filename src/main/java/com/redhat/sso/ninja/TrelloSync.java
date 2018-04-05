@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.jayway.restassured.specification.RequestSpecification;
@@ -45,7 +46,7 @@ public class TrelloSync extends ScriptBase{
   
   static String orgId="redhatcop";
   static String key="39cca1583d34154be24aa99ee024106d";
-  static String token="85e332445c4d221e09ecd0d1309a795c4f6aa0b99249852d896d3cee1f235610";
+  static String token;
 //  static String POOL_NAME="Trello";
   
   public static void main(String[] asd){
@@ -59,6 +60,13 @@ public class TrelloSync extends ScriptBase{
   
   @Override
   public void execute(String name, Map<String,String> options, Integer daysFromLastRun, PointsAdder adder){
+    
+    if (StringUtils.isEmpty(System.getenv("TRELLO_TOKEN"))){
+      log.error("No \"TRELLO_TOKEN\" Environment property set");
+      return;
+    }
+    token=System.getenv("TRELLO_TOKEN");
+    
 //    TrelloSync ts=new TrelloSync();
     parse(options.get("organizationName"), daysFromLastRun, null);
     
