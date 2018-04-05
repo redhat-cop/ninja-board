@@ -26,6 +26,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
+import com.redhat.sso.ninja.utils.FilePermissions;
+
 public class Heartbeat2 {
   private static final Logger log = Logger.getLogger(Heartbeat2.class);
   private static Timer t;
@@ -215,9 +217,7 @@ public class Heartbeat2 {
                   os.close();
                 }
                 
-                Set<PosixFilePermission> perms = new HashSet<PosixFilePermission>();
-                perms.add(PosixFilePermission.OWNER_EXECUTE);
-                Files.setPosixFilePermissions(dest.toPath(), perms);
+                FilePermissions.set(dest, PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE, PosixFilePermission.OWNER_EXECUTE);
                 
 //                dest.setExecutable(true);
               }
