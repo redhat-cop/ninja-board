@@ -10,7 +10,7 @@ public abstract class ScriptBase{
   public Map<String, String> getUsersBy(String key){
     Map<String, String> result=new HashMap<String, String>();
     for(Entry<String, Map<String, String>> e:Database2.get().getUsers().entrySet()){
-      result.put(e.getValue().get("trelloId"), e.getKey());
+      result.put(e.getValue().get(key), e.getKey());
     }
     return result;
   }

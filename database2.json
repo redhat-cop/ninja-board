@@ -26,17 +26,14 @@
   "created" : "2018-03-27T12:52:36",
   "scoreCards" : {
     "obedin" : {
-      "github.ReviewedPullRequests" : 2,
-      "trello" : 12
+      "Trello" : 6
     },
     "rspazzoli" : {
-      "github.PullRequests" : 8,
-      "github.ReviewedPullRequests" : 4
+      "Github.Pull Requests" : 4
     },
     "pabraham" : {
-      "github.PullRequests" : 3,
-      "github.ClosedIssues" : 3,
-      "trello" : 2
+      "Github.Reviewed Pull Requests" : 4,
+      "Trello" : 1
     }
   }
 }

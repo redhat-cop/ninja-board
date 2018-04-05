@@ -23,8 +23,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
-public class Heartbeat {
-  private static final Logger log = Logger.getLogger(Heartbeat.class);
+public class Heartbeat2 {
+  private static final Logger log = Logger.getLogger(Heartbeat2.class);
   private static Timer t;
 
   public static void main(String[] asd){
@@ -38,13 +38,13 @@ public class Heartbeat {
       lastRunC.set(Calendar.SECOND, 1);
       
       System.out.println("LAST RUN: "+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(lastRunC.getTime()));
-      System.out.println(Heartbeat.convertLastRun("perl ${user.home}/Work/poc/sso-tools/cop-ninja/github-stats.py -s ${LAST_RUN:yyyy-MM-dd}", lastRunC.getTime()));
-      System.out.println(Heartbeat.convertLastRun("sh ${user.home}/Work/poc/sso-tools/cop-ninja/trello.sh -s ${DAYS_FROM_LAST_RUN}", lastRunC.getTime()));
+      System.out.println(Heartbeat2.convertLastRun("perl ${user.home}/Work/poc/sso-tools/cop-ninja/github-stats.py -s ${LAST_RUN:yyyy-MM-dd}", lastRunC.getTime()));
+      System.out.println(Heartbeat2.convertLastRun("sh ${user.home}/Work/poc/sso-tools/cop-ninja/trello.sh -s ${DAYS_FROM_LAST_RUN}", lastRunC.getTime()));
       
       lastRunC.set(Calendar.DAY_OF_MONTH, 21);
       System.out.println("TODAY?: "+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(lastRunC.getTime()));
       
-      
+      Heartbeat2.runOnce();
 //        Heartbeat.start(60000l);
 //        Thread.sleep(300000l);
     }catch(Exception e){
@@ -132,8 +132,12 @@ public class Heartbeat {
       
       final Database2 db=Database2.get();
       
+      File scripts=new File("scripts");
+      if (!scripts.exists()) scripts.mkdirs();
+      
+      
       for(Map<String,Object> script:config.getScripts()){
-        final Map<String, String> poolToUserIdMapper=getUsersByPool(db, ((String)script.get("name")).split("\\.")[0]+"Id");
+        final Map<String, String> poolToUserIdMapper=getUsersByPool(db, ((String)script.get("name")).split("\\.")[0].toLowerCase()+"Id");
         if (Arrays.asList(new String[]{"java","class","javaclass"}).contains(((String)script.get("type")).toLowerCase())){
           log.debug("Executing script: "+script.get("source"));
           try{
@@ -165,24 +169,56 @@ public class Heartbeat {
           try{
             
             String command=(String)script.get("source");
+            String name=(String)script.get("name");
+            File scriptFolder=new File(scripts, name);
             
-            URL url=new URL(command);
+//            // download, extract or generally prepare the script if it's not already there
+//            if (!scriptFolder.exists()){
+//              scriptFolder.mkdirs();
+//              
+//              if (command.startsWith("http")){ // download it first
+//                URL url=new URL(command);
+//                System.out.println("path = "+url.getPath());
+//                URL url2=new URL(command.contains(" ")?command.substring(0, command.indexOf(" ")):command); // strip script execution params to allow it to be downloaded
+//                File dest=new File(scriptFolder, new File(url2.getPath()).getName()); // extract just the name, not the path
+//                System.out.println("download url = "+url2);
+//                System.out.println("file destination = "+dest.getAbsolutePath());
+//                if (dest.exists()) dest.delete();
+//                FileOutputStream os=new FileOutputStream(dest);
+//                IOUtils.copy(url2.openStream(), os);
+//                os.close();
+//                dest.setExecutable(true);
+//                command=dest.getAbsolutePath() + (url.getPath().contains(" ")?url.getPath().substring(url.getPath().indexOf(" ")):"");
+//                System.out.println("command is now: "+command);
+//              }// else assume it exists and the "command" is correct
+//            }
             
-            System.out.println("path = "+url.getPath());
-            
-            if (command.startsWith("http")){ // download it first
+            if (command.startsWith("http")){
+              URL url=new URL(command);
+              System.out.println("path = "+url.getPath());
               URL url2=new URL(command.contains(" ")?command.substring(0, command.indexOf(" ")):command); // strip script execution params to allow it to be downloaded
-              File dest=new File(new File(url2.getPath()).getName()); // extract just the name, not the path
-              System.out.println("download url = "+url2);
-              System.out.println("file destination = "+dest.getAbsolutePath());
-              if (dest.exists()) dest.delete();
-              FileOutputStream os=new FileOutputStream(dest);
-              IOUtils.copy(url2.openStream(), os);
-              os.close();
-              dest.setExecutable(true);
+              File dest=new File(scriptFolder, new File(url2.getPath()).getName()); // extract just the name, not the path
+              
+              if (!scriptFolder.exists()){ // then its not been downloaded yet, so go get it
+                scriptFolder.mkdirs();
+                
+                System.out.println("download url = "+url2);
+                System.out.println("file destination = "+dest.getAbsolutePath());
+                if (dest.exists()) dest.delete();
+                FileOutputStream os=new FileOutputStream(dest);
+                try{
+                  IOUtils.copy(url2.openStream(), os);
+                }finally{
+                  os.close();
+                }
+                dest.setExecutable(true);
+              }
               command=dest.getAbsolutePath() + (url.getPath().contains(" ")?url.getPath().substring(url.getPath().indexOf(" ")):"");
               System.out.println("command is now: "+command);
             }
+            
+            // the script folder exists, so just execute it
+            
             
 //            ${LAST_RUN:yyyy-MM-dd}
 //            System.setProperty("server", "http://localhost:8082/community-ninja-board");
@@ -200,8 +236,10 @@ public class Heartbeat {
             }else{
               BufferedReader stdInput=new BufferedReader(new InputStreamReader(script_exec.getInputStream()));
               
+              StringBuffer scriptLog=new StringBuffer();
               String s;
               while ((s=stdInput.readLine()) != null){
+                scriptLog.append(s.trim()).append("\n");
                 System.out.println(s.trim());
                 if (s.contains("/")){ // ignore the line if it doesn't contain a slash
                   String[] split=s.split("/");
@@ -223,13 +261,14 @@ public class Heartbeat {
                   
                   if (null!=userId){
 //                    System.out.println(poolUserId+" mapped to "+userId);
+                    db.increment(pool, userId, inc).save();
                   }else{
                     log.debug(poolUserId+" did NOT map to any registered user");
                   }
                   
-                  db.increment(pool, userId, inc).save();
                 }
               }
+              IOUtils.write(scriptLog.toString(), new FileOutputStream(new File(scriptFolder, "last.log")));
             }
             
           }catch (IOException e){
