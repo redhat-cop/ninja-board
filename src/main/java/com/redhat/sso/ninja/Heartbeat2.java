@@ -5,16 +5,19 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URI;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.attribute.PosixFilePermission;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
@@ -211,7 +214,12 @@ public class Heartbeat2 {
                 }finally{
                   os.close();
                 }
-                dest.setExecutable(true);
+                
+                Set<PosixFilePermission> perms = new HashSet<PosixFilePermission>();
+                perms.add(PosixFilePermission.OWNER_EXECUTE);
+                Files.setPosixFilePermissions(dest.toPath(), perms);
+                
+//                dest.setExecutable(true);
               }
               command=dest.getAbsolutePath() + (url.getPath().contains(" ")?url.getPath().substring(url.getPath().indexOf(" ")):"");
               System.out.println("command is now: "+command);
