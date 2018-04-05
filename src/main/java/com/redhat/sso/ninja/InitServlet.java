@@ -24,7 +24,7 @@ public class InitServlet extends HttpServlet {
     System.out.println("  Interval: "+interval +" (seconds)");
     
     if (!heartbeatDisabled)
-      Heartbeat.start(interval);
+      Heartbeat2.start(interval);
     
     
 //    CamelContext ctx=new DefaultCamelContext();
@@ -44,7 +44,7 @@ public class InitServlet extends HttpServlet {
   public void destroy() {
     super.destroy();
 //    Summarizer.stop();
-    Heartbeat.stop();
+    Heartbeat2.stop();
   }
 
 }

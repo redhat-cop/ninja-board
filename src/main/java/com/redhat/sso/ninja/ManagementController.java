@@ -1,8 +1,10 @@
 package com.redhat.sso.ninja;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -29,7 +31,6 @@ import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 
-import com.redhat.sso.ninja.Config.MapBuilder;
 import com.redhat.sso.ninja.chart.Chart2Json;
 import com.redhat.sso.ninja.chart.DataSet2;
 import com.redhat.sso.ninja.utils.Json;
@@ -142,7 +143,7 @@ public class ManagementController {
   }
   
   @GET
-  @Path("/get")
+  @Path("/database/get")
   public Response getDatabase() throws JsonGenerationException, JsonMappingException, IOException{
     return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Database2.get())).build();
   }
@@ -167,15 +168,13 @@ public class ManagementController {
       row.put("name", userInfo.containsKey("displayName")?userInfo.get("displayName"):e.getKey());
       int total=0;
       for(Entry<String, Integer> s:e.getValue().entrySet()){
-        row.put(s.getKey().replaceAll("\\.", ""), s.getValue());
+        row.put(s.getKey().replaceAll("\\.", " "), s.getValue());
         total+=s.getValue();
-        fields.add(s.getKey().replaceAll("\\.", ""));
+        fields.add(s.getKey().replaceAll("\\.", " "));
       }
       row.put("total", total);
       data.add(row);
     }
-    
-    
     
     // fill in the missing points fields with zero's
     for(Map<String, Object> e:data){
@@ -190,15 +189,9 @@ public class ManagementController {
     List<Map<String,String>> columns=new ArrayList<Map<String, String>>();
 //    columns.add(Config.get().new MapBuilder<String,String>().put("title","ID").put("data", "id").build());
     columns.add(Config.get().new MapBuilder<String,String>().put("title","Name").put("data", "name").build());
-    for(String field:fields){
+    for(String field:fields)
       columns.add(Config.get().new MapBuilder<String,String>().put("title",field).put("data", field).build());  
-    }
     columns.add(Config.get().new MapBuilder<String,String>().put("title","Total").put("data", "total").build());
-    columns.add(Config.get().new MapBuilder<String,String>().put("title","").put("data", "id").build());
-//    columns.add(Config.get().new MapBuilder<String,String>().put("title","Trello").put("data", "trello").build());
-//    columns.add(Config.get().new MapBuilder<String,String>().put("title","ghPull").put("data", "githubPullRequests").build());
-//    columns.add(Config.get().new MapBuilder<String,String>().put("title","ghClosed").put("data", "githubClosedIssues").build());
-//    columns.add(Config.get().new MapBuilder<String,String>().put("title","ghReviewedPull").put("data", "githubReviewedPullRequests").build());
     wrapper.put("columns", columns);
     wrapper.put("data", data);
     
@@ -252,60 +245,21 @@ public class ManagementController {
     return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(c)).build();
   }
   
-//  @GET
-//  @Path("/leaderboard")
-//  public Response getLeaderboard() throws JsonGenerationException, JsonMappingException, IOException{
-//    Map<String, Map<String, Integer>> pools=Database2.get().getLeaderboard();
-//    Map<String, Integer> totals=new HashMap<String, Integer>();
-//    for(Map<String, Integer> pool:pools.values()){
-//      for(Entry<String, Integer> e:pool.entrySet()){
-//        if (!totals.containsKey(e.getKey())) totals.put(e.getKey(), 0);
-//        totals.put(e.getKey(), totals.get(e.getKey())+e.getValue());
-//      }
-//    }
-//    
-//    //reorder
-//    List<Entry<String, Integer>> list=new LinkedList<Map.Entry<String, Integer>>(totals.entrySet());
-//    Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
-//      public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
-//          return (o2.getValue()).compareTo(o1.getValue());
-//      }
-//    });
-//    HashMap<String, Integer> sorted=new LinkedHashMap<String, Integer>();
-//    for (Entry<String, Integer> e:list) {
-//      sorted.put(e.getKey(), e.getValue());
-//    }
-//    
-//    
-//    Chart2Json c=new Chart2Json();
-//    c.setDatasets(new ArrayList<DataSet2>());
-//    for(Entry<String, Integer> e:sorted.entrySet()){
-//      c.getLabels().add(e.getKey());
-//      
-//      if (c.getDatasets().size()<=0) c.getDatasets().add(new DataSet2());
-//      
-//      c.getDatasets().get(0).getData().add(e.getValue());
-//      c.getDatasets().get(0).setBorderWidth(1);
-//      c.getDatasets().get(0).getBackgroundColor().add("rgba(163,0,0,0.8)");
-//      c.getDatasets().get(0).getBorderColor().add("rgba(130,0,0,0.8)");
-//    }
-//    
-//    
-///*
-//    {
-//      labels : ["January","February","March","April","May","June","July","Aug"],
-//      datasets : [{
-//              fillColor : "#48A497",
-//              strokeColor : "#48A4D1",
-//              data : [456,479,324,569,702,600,200]
-//          },{
-//              fillColor : "rgba(73,188,170,0.4)",
-//              strokeColor : "rgba(72,174,209,0.4)",
-//              data : [364,504,605,400,345,320]
-//    }]}
-//*/
-//    
-//    return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(c)).build();
-//  }
+  @GET
+  @Path("/script/{name}")
+  public Response getScript(@PathParam("name") String scriptName) throws JsonGenerationException, JsonMappingException, IOException{
+    String path="scripts/"+scriptName;
+    InputStream is=this.getClass().getClassLoader().getResourceAsStream(path);
+    
+    StringBuilder sb = new StringBuilder();
+    String inputLine;
+    BufferedReader br=new BufferedReader(new InputStreamReader(is));
+    while ((inputLine = br.readLine()) != null){
+      sb.append(inputLine);
+      sb.append('\n');
+    }
+    
+    return Response.status(200).header("Content-Type", "text/application").entity(sb.toString()).build();
+  }
   
 }

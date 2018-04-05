@@ -248,20 +248,20 @@ for key, value in general_prs.iteritems():
         for label_key, label_value in value.iteritems():
 #            print "  {0} - {1}".format(label_key, len(label_value))
 #            for issue_value in label_value:
-                print "PullRequests/{0}/{1}".format(label_key, len(label_value))
+                print "Pull Requests/{0}/{1}".format(label_key, len(label_value))
 #                print "    {0} - {1}".format(encode_text(issue_value['repository_url'].split('/')[-1]), encode_text(issue_value['title']))
 
 print "\n== Reviewed PR's ==\n"
 for key, value in reviewed_prs.iteritems():
 #    print "{0} - {1}".format(key, len(value))
-    print "ReviewedPullRequests/{0}/{1}".format(key, len(value))
+    print "Reviewed Pull Requests/{0}/{1}".format(key, len(value))
 #    for issue_key, issue_value in value.iteritems():
 #        print "   {0} - {1}".format(encode_text(issue_value['repository_url'].split('/')[-1]), encode_text(issue_value['title']))
 
 print "\n== Closed Issues ==\n"
 
 for key, value in closed_issues.iteritems():
-    print "ClosedIssues/{0}/{1}".format(value[0]['assignee']['login'], len(value))
+    print "Closed Issues/{0}/{1}".format(value[0]['assignee']['login'], len(value))
 #    print "{0} - {1}".format(value[0]['assignee']['login'], len(value))
 #    for issue_value in value:
 #        print "   {0} - {1}".format(encode_text(issue_value['repository_url'].split('/')[-1]), encode_text(issue_value['title']))
