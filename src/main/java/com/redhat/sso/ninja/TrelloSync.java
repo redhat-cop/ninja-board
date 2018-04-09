@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.jayway.restassured.specification.RequestSpecification;
+import com.redhat.sso.ninja.utils.MapBuilder;
 
 import groovy.lang.GroovyClassLoader;
 import mjson.Json;
@@ -50,8 +51,7 @@ public class TrelloSync extends ScriptBase{
 //  static String POOL_NAME="Trello";
   
   public static void main(String[] asd){
-    Config c=new Config();
-    new TrelloSync().execute("test", c.new MapBuilder<String,String>().put("organizationName", "redhatcop").build(), 30, new PointsAdder(){
+    new TrelloSync().execute("test", new MapBuilder<String,String>().put("organizationName", "redhatcop").build(), 30, new PointsAdder(){
       public void addPoints(String username, String pool, Integer increment){
         System.out.println("AddPoints called ["+pool+"/"+username+"] Incrementing "+increment+" points");
       }

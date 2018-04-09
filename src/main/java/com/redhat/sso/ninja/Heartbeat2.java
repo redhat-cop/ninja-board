@@ -27,6 +27,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 import com.redhat.sso.ninja.utils.FilePermissions;
+import com.redhat.sso.ninja.utils.Tuple;
 
 public class Heartbeat2 {
   private static final Logger log = Logger.getLogger(Heartbeat2.class);
@@ -93,7 +94,7 @@ public class Heartbeat2 {
   
   public static void start(long intervalInMs) {
     t = new Timer("cop-ninja-heartbeat", false);
-    t.scheduleAtFixedRate(new HeartbeatRunnable(), 3000l, intervalInMs);
+    t.scheduleAtFixedRate(new HeartbeatRunnable(), 20000l, intervalInMs);
   }
 
   public static void stop() {}
@@ -103,7 +104,7 @@ public class Heartbeat2 {
     static SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     
     public Map<String, String> getUsersByPool(Database2 db, String key){
-      System.out.println("getting pool by id: "+key);
+//      System.out.println("getting pool by id: "+key);
       Map<String, String> result=new HashMap<String, String>();
       for(Entry<String, Map<String, String>> e:db.getUsers().entrySet()){
         result.put(e.getValue().get(key), e.getKey());
@@ -231,27 +232,41 @@ public class Heartbeat2 {
                 if (s.contains("/")){ // ignore the line if it doesn't contain a slash
                   String[] split=s.split("/");
                   String pool=(String)script.get("name");
+                  String actionId;
                   String poolUserId;
                   Integer inc;
-                  if (split.length>=2){
+                  if (split.length==4){   //pool.sub
                     pool=pool+"."+split[0];
-                    poolUserId=split[1];
-                    inc=Integer.valueOf(split[2]);
-                  }else{
-                    poolUserId=split[0];
-                    inc=Integer.valueOf(split[1]);
-                  }
-                  
+                    actionId=split[1];
+                    poolUserId=split[2];
+                    inc=Integer.valueOf(split[3]);
+//                  }else{
+//                    poolUserId=split[0];
+//                    inc=Integer.valueOf(split[1]);
 //                  System.out.println("looking up user ["+poolUserId+"]");
-                  
-                  String userId=poolToUserIdMapper.get(poolUserId);
-                  
-                  if (null!=userId){
-//                    System.out.println(poolUserId+" mapped to "+userId);
-                    db.increment(pool, userId, inc).save();
+                    
+                    
+                    if (!db.getPointsDuplicateChecker().contains(actionId+"."+poolUserId)){
+                      db.getPointsDuplicateChecker().add(actionId+"."+poolUserId);
+                      
+                      String userId=poolToUserIdMapper.get(poolUserId);
+                      
+                      if (null!=userId){
+  //                    System.out.println(poolUserId+" mapped to "+userId);
+                        log.debug("Incrementing registered user "+poolUserId+" by "+inc);
+                        db.increment(pool, userId, inc).save();
+                      }else{
+  //                    log.debug(poolUserId+" did NOT map to any registered user");
+                      }
+                    }else{
+                      // it's a duplicate incremenent for that actionId & user, so ignore it
+                      System.out.println(actionId+"."+poolUserId+" is a duplicate");
+                    }
+                    
                   }else{
-                    log.debug(poolUserId+" did NOT map to any registered user");
+                    // dont increment because we dont know the structure of the script data
                   }
+                  
                   
                 }
               }
@@ -268,6 +283,30 @@ public class Heartbeat2 {
         }
         
       }
+      
+      // do any users need leveling up?
+      Map<String, Map<String, String>> users=db.getUsers();
+      for(Entry<String, Map<String, Integer>> e:db.getScoreCards().entrySet()){
+        String userId=e.getKey();
+        int total=0;
+        for(Entry<String, Integer> s:e.getValue().entrySet()){
+          total+=s.getValue();
+        }
+        Map<String, String> userInfo=users.get(userId);
+        
+        Tuple<Integer, String> currentLevel=new ManagementController().getLevelsUtil().getLevel(userInfo.get("level"));
+        Tuple<Integer, String> nextLevel=new ManagementController().getLevelsUtil().getNextLevel(userInfo.get("level"));
+        if (total>=nextLevel.getLeft() && !currentLevel.getRight().equals(nextLevel.getRight())){
+          // congrats! the user has been promoted!
+          log.info("User "+userId+" has been promoted to level "+nextLevel.getRight()+" with a points score of "+total);
+          userInfo.put("level", nextLevel.getRight());
+          userInfo.put("levelChanged", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));// nextLevel.getRight());
+          
+        }
+        
+      }
+      
+      
       log.debug("Saving database...");
       db.save();
       
