@@ -6,17 +6,20 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.type.TypeReference;
 
 import com.redhat.sso.ninja.utils.IOUtils2;
 import com.redhat.sso.ninja.utils.Json;
@@ -63,6 +66,14 @@ public class Database2{
       if (null==scorecards.get(userId)) scorecards.put(userId, new HashMap<String, Integer>());
       if (null==scorecards.get(userId).get(poolId)) scorecards.get(userId).put(poolId, 0);
       scorecards.get(userId).put(poolId, scorecards.get(userId).get(poolId)+increment);
+      
+//      // does the user need leveling up?
+//      Map<String, String> userInfo=getUsers().get(userId);
+//      String currentLevelName=userInfo.get("level");
+//      
+//      Tuple<Integer, String> level=new ManagementController().getLevel(currentLevelName);
+//      if ()
+      
     }else{
       System.out.println("Unregistered user detected ["+userId+"]");
     }
@@ -87,6 +98,13 @@ public class Database2{
   public Map<String, Map<String, Integer>> getScoreCards(){
     if (null==scorecards) scorecards=new HashMap<String, Map<String,Integer>>();
     return scorecards;
+  }
+  
+  
+  private Set<String> pointsDuplicateChecker=new HashSet<String>();
+  public Set<String> getPointsDuplicateChecker(){
+    if (null==pointsDuplicateChecker) pointsDuplicateChecker=new HashSet<String>();
+    return pointsDuplicateChecker;
   }
   
   @JsonIgnore
