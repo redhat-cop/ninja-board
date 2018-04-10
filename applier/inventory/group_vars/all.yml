@@ -1,0 +1,26 @@
+---
+  openshift_cluster_content:
+  - object: projectrequest
+    content:
+    - name: community-ninja-board-project
+      template: "https://raw.githubusercontent.com/redhat-cop/cluster-lifecycle/master/files/projectrequest/template.yml"
+      template_action: create
+      params: "{{ inventory_dir }}/../params/community-ninja-board-project"
+      tags:
+        - projects
+  - object: deployments
+    content:
+    - name: "deploy-community-ninja-board"
+      template: "{{ inventory_dir }}/../templates/community-ninja-board-deployment.yml"
+      params: "{{ inventory_dir }}/../params/community-ninja-board-deployment"
+      namespace: community-ninja-board
+      tags:
+        - apps
+  - object: builds
+    content:
+    - name: "build-community-ninja-board"
+      template: "{{ inventory_dir }}/../templates/community-ninja-board-build.yml"
+      params: "{{ inventory_dir }}/../params/community-ninja-board-build"
+      namespace: community-ninja-board
+      tags:
+        - apps

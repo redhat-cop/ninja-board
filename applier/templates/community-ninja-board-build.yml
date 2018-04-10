@@ -1,0 +1,117 @@
+apiVersion: v1
+kind: Template
+labels:
+  template: community-ninja-board-build
+metadata:
+  annotations:
+    description: Build the Community Ninja Board Application
+    iconClass: icon-java
+    tags: java
+  name: community-ninja-board-build
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      application: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      application: ${APPLICATION_NAME}
+    name: ${BASE_IMAGE_NAME}
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    labels:
+      application: ${APPLICATION_NAME}
+    name: ${BASE_IMAGE_NAME}
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: ${BASE_IMAGE_NAME}:latest
+    source:
+      dockerfile: |-
+        FROM openshift3/jboss-webserver31-tomcat7-openshift:latest
+        USER 0
+        RUN yum clean all && \
+          INSTALL_PKGS="python-requests" && \
+          yum install -y --setopt=tsflags=nodocs $INSTALL_PKGS && \
+          rpm -V $INSTALL_PKGS && \
+          yum clean all
+        USER 185
+      type: Dockerfile
+    strategy:
+      dockerStrategy:
+        from:
+          kind: ImageStreamTag
+          name: ${UPSTREAM_IMAGESTREAMTAG}
+          namespace: ${UPSTREAM_IMAGESTREAM_NAMESPACE}
+      type: Source
+    triggers:
+    - imageChange: {}
+      type: ImageChange
+    - type: ConfigChange
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    labels:
+      application: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: ${APPLICATION_NAME}:latest
+    source:
+      contextDir: ${CONTEXT_DIR}
+      git:
+        ref: ${SOURCE_REPOSITORY_REF}
+        uri: ${SOURCE_REPOSITORY_URL}
+      type: Git
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: ${BASE_IMAGE_NAME}:latest
+          namespace: ${BASE_IMAGESTREAM_NAMESPACE}
+      type: Source
+    triggers:
+    - imageChange: {}
+      type: ImageChange
+    - type: ConfigChange
+parameters:
+- description: The name for the application.
+  displayName: Application name
+  name: APPLICATION_NAME
+  required: true
+  value: community-ninja-board
+- description: The name for the base image.
+  displayName: Base image name name
+  name: BASE_IMAGE_NAME
+  required: true
+  value: community-ninja-board-base
+- description: Git source URI for application
+  name: SOURCE_REPOSITORY_URL
+  required: true
+  value: https://github.com/matallen/community-ninja-board
+- description: Git branch/tag reference
+  name: SOURCE_REPOSITORY_REF
+  required: false
+  value: master
+- description: Path within Git project to build; empty for root project directory.
+  name: CONTEXT_DIR
+  required: false
+- description: Upstream ImageStream Tag
+  name: UPSTREAM_IMAGESTREAMTAG
+  required: true
+  value: jboss-webserver31-tomcat7-openshift:1.1
+- description: Base ImageStream Namespace
+  name: BASE_IMAGESTREAM_NAMESPACE
+  required: false
+- description: Upstream ImageStream Namespace
+  name: UPSTREAM_IMAGESTREAM_NAMESPACE
+  value: openshift
+  required: false
