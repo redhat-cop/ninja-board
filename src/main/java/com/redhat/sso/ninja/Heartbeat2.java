@@ -180,15 +180,14 @@ public class Heartbeat2 {
             
             if (command.startsWith("http")){
               URL url=new URL(command);
-              System.out.println("path = "+url.getPath());
+//              System.out.println("path = "+url.getPath());
               URL url2=new URL(command.contains(" ")?command.substring(0, command.indexOf(" ")):command); // strip script execution params to allow it to be downloaded
               File dest=new File(scriptFolder, new File(url2.getPath()).getName()); // extract just the name, not the path
               
-              if (!scriptFolder.exists()){ // then its not been downloaded yet, so go get it
-                scriptFolder.mkdirs();
+              if (!dest.exists()){ // then its not been downloaded yet, so go get it
+                scriptFolder.mkdirs(); // ensure the parent folders exist if they dont already
                 
-                System.out.println("download url = "+url2);
-                System.out.println("file destination = "+dest.getAbsolutePath());
+                log.debug("Downloading from ["+url2+"] to ["+dest.getAbsolutePath()+"]");
                 if (dest.exists()) dest.delete();
                 FileOutputStream os=new FileOutputStream(dest);
                 try{
@@ -197,12 +196,19 @@ public class Heartbeat2 {
                   os.close();
                 }
                 
-                FilePermissions.set(dest, PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE, PosixFilePermission.OWNER_EXECUTE);
+                FilePermissions.set(dest, 
+                    PosixFilePermission.OWNER_READ, 
+                    PosixFilePermission.OWNER_WRITE, 
+                    PosixFilePermission.OWNER_EXECUTE,
+                    PosixFilePermission.GROUP_READ, 
+                    PosixFilePermission.GROUP_WRITE, 
+                    PosixFilePermission.GROUP_EXECUTE
+                    );
                 
 //                dest.setExecutable(true);
               }
               command=dest.getAbsolutePath() + (url.getPath().contains(" ")?url.getPath().substring(url.getPath().indexOf(" ")):"");
-              System.out.println("command is now: "+command);
+//              log.debug("command is now: "+command);
             }
             
             // the script folder exists, so just execute it
