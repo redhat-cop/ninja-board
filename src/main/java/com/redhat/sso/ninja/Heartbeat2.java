@@ -27,6 +27,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 import com.redhat.sso.ninja.utils.FilePermissions;
+import com.redhat.sso.ninja.utils.Tuple;
 
 public class Heartbeat2 {
   private static final Logger log = Logger.getLogger(Heartbeat2.class);
@@ -93,7 +94,7 @@ public class Heartbeat2 {
   
   public static void start(long intervalInMs) {
     t = new Timer("cop-ninja-heartbeat", false);
-    t.scheduleAtFixedRate(new HeartbeatRunnable(), 3000l, intervalInMs);
+    t.scheduleAtFixedRate(new HeartbeatRunnable(), 20000l, intervalInMs);
   }
 
   public static void stop() {}
@@ -103,7 +104,7 @@ public class Heartbeat2 {
     static SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     
     public Map<String, String> getUsersByPool(Database2 db, String key){
-      System.out.println("getting pool by id: "+key);
+//      System.out.println("getting pool by id: "+key);
       Map<String, String> result=new HashMap<String, String>();
       for(Entry<String, Map<String, String>> e:db.getUsers().entrySet()){
         result.put(e.getValue().get(key), e.getKey());
@@ -179,15 +180,14 @@ public class Heartbeat2 {
             
             if (command.startsWith("http")){
               URL url=new URL(command);
-              System.out.println("path = "+url.getPath());
+//              System.out.println("path = "+url.getPath());
               URL url2=new URL(command.contains(" ")?command.substring(0, command.indexOf(" ")):command); // strip script execution params to allow it to be downloaded
               File dest=new File(scriptFolder, new File(url2.getPath()).getName()); // extract just the name, not the path
               
-              if (!scriptFolder.exists()){ // then its not been downloaded yet, so go get it
-                scriptFolder.mkdirs();
+              if (!dest.exists()){ // then its not been downloaded yet, so go get it
+                scriptFolder.mkdirs(); // ensure the parent folders exist if they dont already
                 
-                System.out.println("download url = "+url2);
-                System.out.println("file destination = "+dest.getAbsolutePath());
+                log.debug("Downloading from ["+url2+"] to ["+dest.getAbsolutePath()+"]");
                 if (dest.exists()) dest.delete();
                 FileOutputStream os=new FileOutputStream(dest);
                 try{
@@ -196,12 +196,19 @@ public class Heartbeat2 {
                   os.close();
                 }
                 
-                FilePermissions.set(dest, PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE, PosixFilePermission.OWNER_EXECUTE);
+                FilePermissions.set(dest, 
+                    PosixFilePermission.OWNER_READ, 
+                    PosixFilePermission.OWNER_WRITE, 
+                    PosixFilePermission.OWNER_EXECUTE,
+                    PosixFilePermission.GROUP_READ, 
+                    PosixFilePermission.GROUP_WRITE, 
+                    PosixFilePermission.GROUP_EXECUTE
+                    );
                 
 //                dest.setExecutable(true);
               }
               command=dest.getAbsolutePath() + (url.getPath().contains(" ")?url.getPath().substring(url.getPath().indexOf(" ")):"");
-              System.out.println("command is now: "+command);
+//              log.debug("command is now: "+command);
             }
             
             // the script folder exists, so just execute it
@@ -231,27 +238,41 @@ public class Heartbeat2 {
                 if (s.contains("/")){ // ignore the line if it doesn't contain a slash
                   String[] split=s.split("/");
                   String pool=(String)script.get("name");
+                  String actionId;
                   String poolUserId;
                   Integer inc;
-                  if (split.length>=2){
+                  if (split.length==4){   //pool.sub
                     pool=pool+"."+split[0];
-                    poolUserId=split[1];
-                    inc=Integer.valueOf(split[2]);
-                  }else{
-                    poolUserId=split[0];
-                    inc=Integer.valueOf(split[1]);
-                  }
-                  
+                    actionId=split[1];
+                    poolUserId=split[2];
+                    inc=Integer.valueOf(split[3]);
+//                  }else{
+//                    poolUserId=split[0];
+//                    inc=Integer.valueOf(split[1]);
 //                  System.out.println("looking up user ["+poolUserId+"]");
-                  
-                  String userId=poolToUserIdMapper.get(poolUserId);
-                  
-                  if (null!=userId){
-//                    System.out.println(poolUserId+" mapped to "+userId);
-                    db.increment(pool, userId, inc).save();
+                    
+                    
+                    if (!db.getPointsDuplicateChecker().contains(actionId+"."+poolUserId)){
+                      db.getPointsDuplicateChecker().add(actionId+"."+poolUserId);
+                      
+                      String userId=poolToUserIdMapper.get(poolUserId);
+                      
+                      if (null!=userId){
+  //                    System.out.println(poolUserId+" mapped to "+userId);
+                        log.debug("Incrementing registered user "+poolUserId+" by "+inc);
+                        db.increment(pool, userId, inc).save();
+                      }else{
+  //                    log.debug(poolUserId+" did NOT map to any registered user");
+                      }
+                    }else{
+                      // it's a duplicate incremenent for that actionId & user, so ignore it
+                      System.out.println(actionId+"."+poolUserId+" is a duplicate");
+                    }
+                    
                   }else{
-                    log.debug(poolUserId+" did NOT map to any registered user");
+                    // dont increment because we dont know the structure of the script data
                   }
+                  
                   
                 }
               }
@@ -268,6 +289,30 @@ public class Heartbeat2 {
         }
         
       }
+      
+      // do any users need leveling up?
+      Map<String, Map<String, String>> users=db.getUsers();
+      for(Entry<String, Map<String, Integer>> e:db.getScoreCards().entrySet()){
+        String userId=e.getKey();
+        int total=0;
+        for(Entry<String, Integer> s:e.getValue().entrySet()){
+          total+=s.getValue();
+        }
+        Map<String, String> userInfo=users.get(userId);
+        
+        Tuple<Integer, String> currentLevel=new ManagementController().getLevelsUtil().getLevel(userInfo.get("level"));
+        Tuple<Integer, String> nextLevel=new ManagementController().getLevelsUtil().getNextLevel(userInfo.get("level"));
+        if (total>=nextLevel.getLeft() && !currentLevel.getRight().equals(nextLevel.getRight())){
+          // congrats! the user has been promoted!
+          log.info("User "+userId+" has been promoted to level "+nextLevel.getRight()+" with a points score of "+total);
+          userInfo.put("level", nextLevel.getRight());
+          userInfo.put("levelChanged", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));// nextLevel.getRight());
+          
+        }
+        
+      }
+      
+      
       log.debug("Saving database...");
       db.save();
       

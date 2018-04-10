@@ -7,15 +7,29 @@ java.util.Calendar
 
 <script>
 
+var idFieldName="userId";
+
 function edit2(id){
   document.getElementById("edit-ok").innerHTML="Update";
   var xhr = new XMLHttpRequest();
   var ctx = "${pageContext.request.contextPath}";
-  xhr.open("GET", ctx+"/api/scorecard/get/"+id, true);
+  xhr.open("GET", ctx+"/api/scorecard/"+id, true);
   xhr.send();
   xhr.onloadend = function () {
     var json=JSON.parse(xhr.responseText);
     var form=document.getElementById("myform");
+    
+    $("#editFieldsDiv").empty();
+    for (var propertyName in json) {
+    	if (json.hasOwnProperty(propertyName)) {
+    	  if (propertyName === idFieldName || propertyName === "displayName") continue;
+	    	var fieldName=propertyName;
+	    	var fieldValue=json[propertyName];
+	    	var displayName=propertyName;
+	      $("#editFieldsDiv").append('<div class="form-group"><label for="'+fieldName+'" class="control-label">'+displayName+':</label><input id="'+fieldName+'" name="'+fieldName+'" type="text" value="'+fieldValue+'" class="form-control"></div>');
+      }    
+    }
+    
     for (var i = 0, ii = form.length; i < ii; ++i) {
       if (typeof json[form[i].name] == "undefined"){
         form[i].value="";
@@ -25,14 +39,8 @@ function edit2(id){
     }
   }
 }
-function copyToClipboard(text) {
-  window.prompt("Copy to clipboard: Ctrl+C, Enter", text);
-}
 function deleteItem(id){
   post("/analytics/delete/"+id);
-}
-function zeroItem(id){
-  post("/analytics/resetCounter/"+id);
 }
 function reset(){
     document.getElementById("edit-ok").innerHTML="Create";
@@ -42,7 +50,7 @@ function reset(){
       var input = form[i];
       input.value="";
     }
-    document.getElementById("id").value="NEW";
+    document.getElementById(idFieldName).value="NEW";
 }
 
 function update(){
@@ -51,16 +59,14 @@ function update(){
   var form=document.getElementById("myform");
   for (var i = 0, ii = form.length; i < ii; ++i) {
     var input = form[i];
-    if (input.name=="id")op=input.value;
+    if (input.name==idFieldName) op=input.value;
     
-    if (input.name=="tags"){
-      data[input.name] = input.value.split(",");
-    }else if (input.name) {
+    if (input.name) {
       data[input.name] = input.value;
     }
   }
   if (op=="") alert("ERROR: OP is empty!");
-  post("/analytics/update/"+op, data);
+  post("/scorecard/"+op, data);
   reset();
 }
 
@@ -199,7 +205,20 @@ jQuery.fn.dataTableExt.oApi.fnReloadAjax = function ( oSettings, sNewSource, fnC
 
 
 </script>
-
+	
+	<style>
+		.link{
+			cursor: pointer;
+			font-weight: bold;
+			color: grey;
+		}
+		
+		.link:hover{
+		  font-weight: bold;
+		  color: #333333;
+		}
+	</style>
+	
     <%@include file="nav.jsp"%>
     
 
@@ -214,10 +233,7 @@ jQuery.fn.dataTableExt.oApi.fnReloadAjax = function ( oSettings, sNewSource, fnC
 			            <tr>
 			                <th align="left">User ID</th>
 			                <th align="left">Name</th>
-			                <th align="left">Trello Points</th>
-			                <th align="left">Github Pull Request Points</th>
-			                <th align="left">Github Reviewed Pull Request Points</th>
-			                <th align="left">Github Closed Issue Points</th>
+			                <th align="left">A dynamic bunch of points fields go here</th>
 			                <th align="left">Total Points</th>
 			                <th align="left"></th>
 			            </tr>
@@ -236,12 +252,21 @@ jQuery.fn.dataTableExt.oApi.fnReloadAjax = function ( oSettings, sNewSource, fnC
       <div class="modal-body">
         <form id="myform">
           <div id="form-id" class="form-group">
-            <label for="id" class="control-label">User ID:</label>
-            <input id="id" disabled name="id" type="text" class="form-control"/>
+            <label for="userId" class="control-label">User ID:</label>
+            <input id="userId" disabled name="userId" type="text" class="form-control"/>
           </div>
           <div class="form-group">
-            <label for="name" class="control-label">Display Name:</label>
-            <input id="name" name="name" type="text" class="form-control">
+            <label for="displayName" class="control-label">Display Name:</label>
+            <input id="displayName" name="displayName" type="text" class="form-control">
+          </div>
+          
+          <div id="editFieldsDiv">
+          </div>
+          
+          <!--
+          <div class="form-group">
+            <label for="githubPullRequests" class="control-label">Need to generate the points fields:</label>
+            <input id="trello" name="trello" type="text" class="form-control">
           </div>
           <div class="form-group">
             <label for="githubPullRequests" class="control-label">Trello Points:</label>
@@ -259,6 +284,7 @@ jQuery.fn.dataTableExt.oApi.fnReloadAjax = function ( oSettings, sNewSource, fnC
             <label for="githubClosedIssues" class="control-label">Github Closed Issue Points:</label>
             <input id="githubClosedIssues" name="githubClosedIssues" type="text" class="form-control">
           </div>
+          -->
         </form>
       </div>
       <div class="modal-footer">
