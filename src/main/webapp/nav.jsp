@@ -11,9 +11,8 @@
           <span class="caret"></span>
         </a>
         <ul aria-labelledby="drop2" class="dropdown-menu">
-          <li><a href="board.jsp">List</a></li>
+          <li><a href="board.jsp">Scorecards</a></li>
           <li><a href="index.jsp">Leaderboard</a></li>
-          <li><a href="scripts.jsp">Scripts</a></li>
           <li><a href="config.jsp">Config</a></li>
         </ul>
       </li>

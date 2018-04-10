@@ -21,6 +21,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 
 import com.redhat.sso.ninja.utils.IOUtils2;
 import com.redhat.sso.ninja.utils.Json;
+import com.redhat.sso.ninja.utils.MapBuilder;
 
 public class Config {
   private static final Logger log=Logger.getLogger(Config.class);
@@ -66,27 +67,27 @@ public class Config {
   public List<Map<String,Object>> getScripts() {if (scripts==null) scripts=new ArrayList<Map<String, Object>>(); return scripts;}
   public Map<String,Object> getValues() {if (values==null) values=new HashMap<String, Object>(); return values;}
   
-  class MapBuilder<K,V>{
-    Map<K, V> values=new HashMap<K, V>();
-    public MapBuilder<K,V> put(K key, V value){
-      values.put(key, value); return this;
-    }
-    public Map<K, V> build(){
-      return values;
-    }
-  }
+//  class MapBuilder<K,V>{
+//    Map<K, V> values=new HashMap<K, V>();
+//    public MapBuilder<K,V> put(K key, V value){
+//      values.put(key, value); return this;
+//    }
+//    public Map<K, V> build(){
+//      return values;
+//    }
+//  }
   
   public static void main(String[] asd){
     Config c=Config.get();
 //    c.getOptions().put("sources", "com.redhat.sso.ninja.TrelloSync");
     
-    c.getScripts().add(c.new MapBuilder<String, Object>()
+    c.getScripts().add(new MapBuilder<String, Object>()
         .put("source", "com.redhat.sso.ninja.TrelloSync")
         .put("type", "class")
-        .put("options", c.new MapBuilder<String, String>().put("organizationName","redhatcop").build())
+        .put("options", new MapBuilder<String, String>().put("organizationName","redhatcop").build())
         .build());
-    c.getScripts().add(c.new MapBuilder<String, Object>().put("source", "/home/mallen/poc/script1.perl").put("type", "perl").build());
-    c.getScripts().add(c.new MapBuilder<String, Object>().put("source", "/home/mallen/poc/script2.sh").put("type", "bash").build());
+    c.getScripts().add(new MapBuilder<String, Object>().put("source", "/home/mallen/poc/script1.perl").put("type", "perl").build());
+    c.getScripts().add(new MapBuilder<String, Object>().put("source", "/home/mallen/poc/script2.sh").put("type", "bash").build());
 //    c.getScripts().put("scripts", scripts);
     
     
