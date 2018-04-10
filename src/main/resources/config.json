@@ -12,9 +12,10 @@
     "type" : "perl"
   } ],
   "options" : {
-    "heartbeat.intervalInSeconds" : "60000"
+    "heartbeat.intervalInSeconds" : "60000",
+    "thresholds" : "5:BLUE,20:GREY,40:RED,75:BLACK"
   },
   "values" : {
-    "lastRun2" : "2018-01-01T00:00:00"
+    "lastRun2" : "2018-03-09T12:00:00"
   }
 }
