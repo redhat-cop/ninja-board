@@ -31,15 +31,77 @@
       "levelChanged" : "2018-04-09",
       "username" : "djurgens",
       "trelloId" : "danjurgensmeyer"
+    },
+    "mentenza" : {
+      "level" : "BLUE",
+      "githubId" : "makentenza",
+      "levelChanged" : "2018-04-10",
+      "email" : "mentenza@redhat.com",
+      "trelloId" : "makentenza",
+      "username" : "mentenza"
+    },
+    "jlee" : {
+      "level" : "BLUE",
+      "githubId" : "ljhiyh@gmail.com",
+      "levelChanged" : "2018-04-10",
+      "email" : "jlee@redhat.com",
+      "trelloId" : "jleeredhatcom",
+      "username" : "jlee"
+    },
+    "jburck" : {
+      "level" : "BLUE",
+      "githubId" : "JaredBurck",
+      "levelChanged" : "2018-04-10",
+      "email" : "jburck@redhat.com",
+      "trelloId" : "jaredburck",
+      "username" : "jburck"
+    },
+    "cbeeland" : {
+      "level" : "BLUE",
+      "githubId" : "beelandc@gmail.com",
+      "levelChanged" : "2018-04-10",
+      "email" : "cbeeland@redhat.com",
+      "trelloId" : "cecilbeeland",
+      "username" : "cbeeland"
+    },
+    "ldonley" : {
+      "level" : "BLUE",
+      "githubId" : "logandonley",
+      "levelChanged" : "2018-04-10",
+      "email" : "ldonley@redhat.com",
+      "trelloId" : "logandonley1",
+      "username" : "ldonley"
+    },
+    "kmoos" : {
+      "level" : "BLUE",
+      "githubId" : "themoosman",
+      "levelChanged" : "2018-04-10",
+      "email" : "kmoos@redhat.com",
+      "trelloId" : "karlmoos",
+      "username" : "kmoos"
+    },
+    "lsantill" : {
+      "level" : "BLUE",
+      "githubId" : "lpsantil@gmail.com",
+      "levelChanged" : "2018-04-10",
+      "email" : "lsantill@redhat.com",
+      "trelloId" : "lsantillan",
+      "username" : "lsantill"
     }
   },
   "created" : "2018-04-06T15:05:52",
-  "pointsDuplicateChecker" : [ "296838379.etsauer", "250510512.oybed", "307338872.logandonley", "281413520.JaredBurck", "300755153.oybed", "257170849.oybed", "311017699.pabrahamsson", "311287206.sabre1041", "260041435.oybed", "294518909.oybed", "286452870.oybed", "297172678.oybed", "250374255.sabre1041", "255431740.etsauer", "301053551.pabrahamsson", "303968534.etsauer", "292604459.oybed", "231442136.etsauer", "297272296.oybed", "296553730.etsauer", "303619042.oybed", "304189607.raffaelespazzoli", "307892248.oybed", "220432016.oybed", "299614714.sabre1041", "309869955.sabre1041", "296308987.etsauer", "297642746.logandonley", "292159621.makentenza", "299614714.etsauer", "286859519.JaredBurck", "286959964.JaredBurck", "261884692.oybed", "294829729.oybed", "294518909.day4skiing", "301053418.etsauer", "304853556.sabre1041", "275589597.oybed", "298333247.etsauer", "279116830.etsauer", "293314749.themoosman", "309813445.etsauer", "312472635.oybed", "296915359.logandonley", "299089743.brandisher", "285606043.sabre1041", "311017699.etsauer", "304853556.sherl0cks", "303647866.etsauer", "286497788.sabre1041", "303968534.sabre1041", "309959783.raffaelespazzoli", "289352198.beelandc", "292522928.oybed", "289320286.etsauer", "305778816.oybed", "287912313.sabre1041", "311287206.oybed", "275124927.etsauer", "287912313.etsauer", "303619042.etsauer", "1191285.sabre1041", "291001695.etsauer", "307445413.etsauer", "304189607.etsauer", "307347957.oybed", "289352198.etsauer", "296838379.pabrahamsson", "286780714.etsauer", "288249355.JaredBurck", "303888770.etsauer", "263648673.oybed", "291374831.sherl0cks", "312224357.oybed", "247536685.etsauer", "298014298.oybed", "238195762.oybed", "294144636.oybed", "279116830.JaredBurck", "291780136.oybed", "280064868.cassiussa", "294829729.etsauer", "292548988.oybed", "279446407.etsauer", "289506693.pabrahamsson", "286973482.trevorquinn", "309968910.logandonley", "298038785.oybed", "280729703.etsauer", "289769819.oybed", "300311039.etsauer", "286780714.afcollins", "303271840.day4skiing", "303271840.oybed", "285606043.etsauer", "299594608.etsauer", "297439229.etsauer", "298013739.oybed", "285769759.etsauer", "295335838.etsauer", "288922387.IronicBadger", "301053418.sabre1041", "281599959.pabrahamsson", "288734398.etsauer", "307435253.etsauer", "289320286.malacourse", "238195762.etsauer", "305778816.makentenza", "246903159.oybed", "298458478.etsauer", "242213295.etsauer", "241395834.oybed", "289506693.sabre1041", "296818975.logandonley", "211863726.sabre1041", "295335838.sabre1041", "286453524.oybed", "303709901.etsauer", "294994087.themoosman", "287931168.etsauer", "255440202.etsauer", "251300767.oybed", "292164462.makentenza", "298350446.oybed", "286497788.oybed", "245890345.oybed", "207677497.oybed", "298812689.etsauer", "288969930.mwitzenm", "292072939.oybed", "294616703.JaredBurck", "297172678.etsauer", "286973482.etsauer", "302459273.sabre1041", "312472635.charlbrink", "307108695.etsauer", "287522774.etsauer", "287931168.rdebeasi", "303347817.sherl0cks", "294167678.pabrahamsson", "291780136.sabre1041", "299089743.beelandc", "300840422.oybed", "309968910.oybed", "207970103.oybed", "286452870.buuhsmead", "261379204.oybed", "296542748.logandonley", "305797220.day4skiing", "250510512.logandonley", "288341009.etsauer", "294897642.etsauer", "300392003.etsauer", "309813445.oybed", "295587507.oybed", "294167678.sabre1041", "294616703.sabre1041", "309589169.bbeaudoin", "288969930.JaredBurck", "245890345.bogdando", "262815547.oybed", "291374831.etsauer", "291036891.etsauer", "299941188.etsauer", "255490203.oybed", "288734398.pabrahamsson", "295587507.day4skiing", "4500758.etsauer", "275589597.etsauer", "298396865.sabre1041", "234071121.oybed", "288969930.sabre1041", "292554817.oybed", "262815547.etsauer", "280064868.etsauer", "298145984.etsauer", "278749108.sabre1041", "262874015.etsauer", "297208860.oybed", "279446407.dstockdreher", "301541965.day4skiing", "255490203.etsauer", "297983666.oybed", "299203530.themoosman", "294922032.etsauer", "306197846.sabre1041", "309869955.oybed", "307432388.oybed", "303544293.oybed", "296553730.oybed", "312224357.sabre1041", "304853556.springdo", "294495296.pabrahamsson", "220082645.oybed", "283636966.mwitzenm", "307108695.pabrahamsson", "255401203.etsauer", "307432388.logandonley", "233631898.oybed", "294835723.etsauer", "238241409.day4skiing", "300257073.etsauer", "263014140.oybed", "233631898.etsauer", "312040292.JaredBurck", "296308987.franklouwers", "300755153.day4skiing", "286973482.sabre1041", "279116830.dstockdreher", "290162237.sabre1041", "286787671.etsauer", "309813445.sabre1041", "286498813.day4skiing", "298812689.Ushnash", "207970103.etsauer", "304542135.JaredBurck", "291758291.sabre1041", "307435253.oybed", "307347957.logandonley", "309873015.etsauer", "286545639.oybed", "261884692.sherl0cks", "298145984.pabrahamsson", "300257073.sabre1041", "292502606.oybed", "238242192.bogdando", "309959783.oybed", "300856841.etsauer", "299203530.etsauer", "286959964.etsauer", "289651112.etsauer", "312040292.oybed", "297439229.oybed", "307427910.logandonley", "309524054.bbeaudoin", "286498813.oybed", "306951125.oybed", "291002536.oybed", "286452870.pabrahamsson", "211486275.oybed", "303347817.oybed", "290162237.pabrahamsson", "286780714.mwitzenm", "291758291.oybed", "307427910.oybed", "291002536.etsauer", "304537500.etsauer", "5749047.pabrahamsson", "289387711.sabre1041", "292677750.oybed", "250374255.oybed", "274161136.stratus-ss", "294994087.etsauer", "288341009.sabre1041", "311017699.oybed", "303709901.oybed", "296859341.oybed", "309589169.etsauer", "300392003.oybed", "231442136.oybed", "260041435.etsauer", "293990701.clarkhale", "207677497.etsauer", "250714566.logandonley", "304542135.mwitzenm", "286780714.sabre1041", "306160357.oybed", "293180121.sabre1041", "255431740.oybed", "300817171.sabre1041", "302459273.etsauer", "220082645.sabre1041", "309873015.oybed", "247536685.day4skiing", "298403291.makentenza", "255401203.oybed", "250374255.logandonley", "219752273.etsauer", "298020714.oybed", "280729703.sabre1041", "300840422.day4skiing", "238241409.oybed", "299089743.etsauer", "288922387.etsauer", "292072939.makentenza", "6122439.springdo", "274161136.sabre1041", "281599959.etsauer", "245890345.day4skiing", "255450147.etsauer", "280064868.duritong", "297195120.logandonley", "294897642.sabre1041", "296873379.logandonley", "257170849.etsauer", "307445413.oybed", "303647866.oybed", "293180121.etsauer", "301170509.etsauer", "292615746.oybed", "294867078.bagnaram", "293712202.oybed", "234071121.etsauer", "289651112.sabre1041", "298333247.mwitzenm", "275124927.oybed", "286453524.day4skiing", "294922032.sabre1041", "220432016.sabre1041", "298013243.oybed", "294867078.etsauer", "298811485.sabre1041", "294144636.makentenza", "219752273.oybed", "297208860.etsauer", "305797220.oybed", "281413520.etsauer", "278749108.etsauer", "288249355.etsauer", "300817171.etsauer", "250714566.oybed", "289387711.etsauer", "309524054.etsauer", "304189607.oybed", "303888770.oybed", "288969930.huddlesj", "291406397.sabre1041", "288969930.etsauer", "301764515.pabrahamsson", "298811485.etsauer", "296543092.sabre1041", "303888992.etsauer", "293990701.etsauer", "303888992.oybed", "294495296.sherl0cks", "301170509.sabre1041", "298458478.oybed", "299941188.pabrahamsson", "286452870.etsauer", "304853556.etsauer", "294495296.etsauer", "296543092.etsauer", "280064868.themoosman", "285769759.Jooho", "238242192.etsauer", "291001695.oybed", "286787671.sabre1041", "287522774.Jooho", "295335838.pabrahamsson", "307010564.etsauer", "283636966.sabre1041", "261379204.etsauer", "275124927.makentenza", "292164462.oybed", "299594608.pabrahamsson", "291036891.oybed", "242213295.oybed", "286498813.etsauer", "300856841.pabrahamsson", "306197846.bparry02", "263648673.etsauer", "292604459.etsauer", "293314749.sabre1041", "279446407.JaredBurck", "296873379.oybed", "262874015.oybed", "247536685.oybed", "304853556.pabrahamsson", "255440202.oybed", "2375181.Jooho", "263014140.etsauer", "286511103.oybed", "251300767.logandonley", "301053551.etsauer", "306160357.day4skiing", "307338872.oybed", "247536685.bogdando", "211863726.oybed", "289769819.logandonley", "238242192.oybed", "298396865.etsauer", "294835723.sabre1041", "307010564.oybed", "7549785.oybed", "288969930.beelandc", "297304556.oybed", "255450147.oybed", "286859519.etsauer" ],
+  "pointsDuplicateChecker" : [ "296838379.etsauer", "250510512.oybed", "307338872.logandonley", "281413520.JaredBurck", "276410312.makentenza", "300755153.oybed", "257170849.oybed", "311017699.pabrahamsson", "311287206.sabre1041", "260041435.oybed", "294518909.oybed", "286452870.oybed", "297172678.oybed", "250374255.sabre1041", "255431740.etsauer", "301053551.pabrahamsson", "303968534.etsauer", "292604459.oybed", "231442136.etsauer", "297272296.oybed", "296553730.etsauer", "303619042.oybed", "304189607.raffaelespazzoli", "307892248.oybed", "220432016.oybed", "299614714.sabre1041", "309869955.sabre1041", "296308987.etsauer", "297642746.logandonley", "292159621.makentenza", "299614714.etsauer", "286859519.JaredBurck", "286959964.JaredBurck", "261884692.oybed", "294829729.oybed", "294518909.day4skiing", "301053418.etsauer", "304853556.sabre1041", "292514473.oybed", "275589597.oybed", "298333247.etsauer", "279116830.etsauer", "293314749.themoosman", "309813445.etsauer", "312472635.oybed", "296915359.logandonley", "299089743.brandisher", "285606043.sabre1041", "311017699.etsauer", "304853556.sherl0cks", "303647866.etsauer", "286497788.sabre1041", "313076439.sabre1041", "303968534.sabre1041", "309959783.raffaelespazzoli", "289352198.beelandc", "292522928.oybed", "289320286.etsauer", "305778816.oybed", "287912313.sabre1041", "311287206.oybed", "275124927.etsauer", "287912313.etsauer", "303619042.etsauer", "1191285.sabre1041", "291001695.etsauer", "307445413.etsauer", "304189607.etsauer", "307347957.oybed", "289352198.etsauer", "296838379.pabrahamsson", "286780714.etsauer", "288249355.JaredBurck", "303888770.etsauer", "263648673.oybed", "312775318.oybed", "291374831.sherl0cks", "312224357.oybed", "247536685.etsauer", "298014298.oybed", "238195762.oybed", "294144636.oybed", "276410312.oybed", "279116830.JaredBurck", "291780136.oybed", "280064868.cassiussa", "294829729.etsauer", "292548988.oybed", "279446407.etsauer", "289506693.pabrahamsson", "286973482.trevorquinn", "309968910.logandonley", "298038785.oybed", "280729703.etsauer", "289769819.oybed", "300311039.etsauer", "286780714.afcollins", "303271840.day4skiing", "303271840.oybed", "285606043.etsauer", "299594608.etsauer", "297439229.etsauer", "298013739.oybed", "285769759.etsauer", "295335838.etsauer", "288922387.IronicBadger", "301053418.sabre1041", "281599959.pabrahamsson", "288734398.etsauer", "307435253.etsauer", "312775318.raffaelespazzoli", "289320286.malacourse", "238195762.etsauer", "305778816.makentenza", "246903159.oybed", "298458478.etsauer", "242213295.etsauer", "241395834.oybed", "289506693.sabre1041", "296818975.logandonley", "211863726.sabre1041", "295335838.sabre1041", "286453524.oybed", "303709901.etsauer", "276410312.etsauer", "294994087.themoosman", "287931168.etsauer", "255440202.etsauer", "251300767.oybed", "312767173.oybed", "292164462.makentenza", "298350446.oybed", "286497788.oybed", "245890345.oybed", "207677497.oybed", "298812689.etsauer", "288969930.mwitzenm", "281599056.etsauer", "292072939.oybed", "294616703.JaredBurck", "297172678.etsauer", "286973482.etsauer", "302459273.sabre1041", "312472635.charlbrink", "307108695.etsauer", "287522774.etsauer", "287931168.rdebeasi", "303347817.sherl0cks", "294167678.pabrahamsson", "291780136.sabre1041", "299089743.beelandc", "300840422.oybed", "309968910.oybed", "207970103.oybed", "286452870.buuhsmead", "261379204.oybed", "296542748.logandonley", "305797220.day4skiing", "250510512.logandonley", "288341009.etsauer", "294897642.etsauer", "300392003.etsauer", "309813445.oybed", "295587507.oybed", "294167678.sabre1041", "294616703.sabre1041", "309589169.bbeaudoin", "288969930.JaredBurck", "245890345.bogdando", "262815547.oybed", "291374831.etsauer", "291036891.etsauer", "299941188.etsauer", "255490203.oybed", "288734398.pabrahamsson", "295587507.day4skiing", "4500758.etsauer", "275589597.etsauer", "298396865.sabre1041", "292514473.makentenza", "234071121.oybed", "288969930.sabre1041", "292554817.oybed", "262815547.etsauer", "280064868.etsauer", "298145984.etsauer", "278749108.sabre1041", "262874015.etsauer", "297208860.oybed", "279446407.dstockdreher", "301541965.day4skiing", "255490203.etsauer", "297983666.oybed", "312775318.etsauer", "299203530.themoosman", "294922032.etsauer", "306197846.sabre1041", "309869955.oybed", "307432388.oybed", "303544293.oybed", "296553730.oybed", "312224357.sabre1041", "304853556.springdo", "294495296.pabrahamsson", "220082645.oybed", "283636966.mwitzenm", "307108695.pabrahamsson", "255401203.etsauer", "307432388.logandonley", "233631898.oybed", "294835723.etsauer", "238241409.day4skiing", "300257073.etsauer", "263014140.oybed", "233631898.etsauer", "312040292.JaredBurck", "296308987.franklouwers", "300755153.day4skiing", "286973482.sabre1041", "279116830.dstockdreher", "290162237.sabre1041", "286787671.etsauer", "309813445.sabre1041", "286498813.day4skiing", "298812689.Ushnash", "207970103.etsauer", "304542135.JaredBurck", "291758291.sabre1041", "307435253.oybed", "307347957.logandonley", "309873015.etsauer", "286545639.oybed", "261884692.sherl0cks", "298145984.pabrahamsson", "300257073.sabre1041", "292502606.oybed", "238242192.bogdando", "309959783.oybed", "300856841.etsauer", "299203530.etsauer", "286959964.etsauer", "289651112.etsauer", "312040292.oybed", "297439229.oybed", "307427910.logandonley", "309524054.bbeaudoin", "286498813.oybed", "306951125.oybed", "291002536.oybed", "286452870.pabrahamsson", "211486275.oybed", "303347817.oybed", "290162237.pabrahamsson", "286780714.mwitzenm", "291758291.oybed", "307427910.oybed", "291002536.etsauer", "304537500.etsauer", "5749047.pabrahamsson", "289387711.sabre1041", "292677750.oybed", "250374255.oybed", "274161136.stratus-ss", "294994087.etsauer", "288341009.sabre1041", "311017699.oybed", "303709901.oybed", "296859341.oybed", "309589169.etsauer", "300392003.oybed", "231442136.oybed", "260041435.etsauer", "293990701.clarkhale", "207677497.etsauer", "250714566.logandonley", "304542135.mwitzenm", "286780714.sabre1041", "306160357.oybed", "293180121.sabre1041", "255431740.oybed", "300817171.sabre1041", "302459273.etsauer", "220082645.sabre1041", "309873015.oybed", "247536685.day4skiing", "298403291.makentenza", "255401203.oybed", "250374255.logandonley", "219752273.etsauer", "298020714.oybed", "280729703.sabre1041", "300840422.day4skiing", "238241409.oybed", "299089743.etsauer", "288922387.etsauer", "292072939.makentenza", "6122439.springdo", "274161136.sabre1041", "281599959.etsauer", "245890345.day4skiing", "255450147.etsauer", "280064868.duritong", "297195120.logandonley", "294897642.sabre1041", "296873379.logandonley", "257170849.etsauer", "307445413.oybed", "303647866.oybed", "293180121.etsauer", "301170509.etsauer", "292615746.oybed", "294867078.bagnaram", "293712202.oybed", "234071121.etsauer", "289651112.sabre1041", "298333247.mwitzenm", "275124927.oybed", "286453524.day4skiing", "294922032.sabre1041", "220432016.sabre1041", "298013243.oybed", "294867078.etsauer", "298811485.sabre1041", "294144636.makentenza", "219752273.oybed", "297208860.etsauer", "305797220.oybed", "281413520.etsauer", "278749108.etsauer", "288249355.etsauer", "300817171.etsauer", "250714566.oybed", "289387711.etsauer", "309524054.etsauer", "304189607.oybed", "303888770.oybed", "281599056.beelandc", "288969930.huddlesj", "291406397.sabre1041", "288969930.etsauer", "301764515.pabrahamsson", "298811485.etsauer", "296543092.sabre1041", "303888992.etsauer", "293990701.etsauer", "303888992.oybed", "294495296.sherl0cks", "301170509.sabre1041", "298458478.oybed", "299941188.pabrahamsson", "286452870.etsauer", "304853556.etsauer", "294495296.etsauer", "296543092.etsauer", "280064868.themoosman", "285769759.Jooho", "238242192.etsauer", "291001695.oybed", "286787671.sabre1041", "287522774.Jooho", "295335838.pabrahamsson", "307010564.etsauer", "283636966.sabre1041", "261379204.etsauer", "275124927.makentenza", "292164462.oybed", "299594608.pabrahamsson", "291036891.oybed", "242213295.oybed", "286498813.etsauer", "300856841.pabrahamsson", "306197846.bparry02", "263648673.etsauer", "292604459.etsauer", "293314749.sabre1041", "279446407.JaredBurck", "296873379.oybed", "276410312.sabre1041", "262874015.oybed", "247536685.oybed", "304853556.pabrahamsson", "255440202.oybed", "2375181.Jooho", "263014140.etsauer", "312767173.sherl0cks", "286511103.oybed", "251300767.logandonley", "301053551.etsauer", "306160357.day4skiing", "307338872.oybed", "247536685.bogdando", "211863726.oybed", "289769819.logandonley", "238242192.oybed", "298396865.etsauer", "294835723.sabre1041", "307010564.oybed", "313076439.sherl0cks", "7549785.oybed", "288969930.beelandc", "297304556.oybed", "255450147.oybed", "286859519.etsauer" ],
   "scoreCards" : {
+    "jburck" : {
+      "Trello" : 6
+    },
     "djurgens" : {
       "Github.Pull Requests" : 6,
       "Trello" : 12,
       "Github.Reviewed Pull Requests" : 7
+    },
+    "mentenza" : {
+      "Github.Pull Requests" : 2
     },
     "mallen" : {
       "Github.Pull Requests" : 0,
@@ -48,15 +110,15 @@
       "Github.Reviewed Pull Requests" : 0
     },
     "obedin" : {
-      "Github.Pull Requests" : 89,
+      "Github.Pull Requests" : 90,
       "Github.Closed Issues" : 5,
-      "Trello" : 6,
-      "Github.Reviewed Pull Requests" : 24
+      "Trello" : 9,
+      "Github.Reviewed Pull Requests" : 27
     },
     "pabraham" : {
       "Github.Pull Requests" : 12,
       "Github.Closed Issues" : 5,
-      "Trello" : 1,
+      "Trello" : 2,
       "Github.Reviewed Pull Requests" : 6
     }
   }
