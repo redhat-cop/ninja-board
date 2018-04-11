@@ -15,6 +15,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -35,7 +36,6 @@ public class Heartbeat2 {
 
   public static void main(String[] asd){
     try{
-      
       Calendar lastRunC=Calendar.getInstance();
       lastRunC.setTime(new Date());
       lastRunC.set(Calendar.DAY_OF_MONTH, 1);
@@ -116,6 +116,42 @@ public class Heartbeat2 {
     public void run() {
       log.info("Heartbeat fired");
       
+      final Database2 db=Database2.get();
+      
+      try{
+        GoogleDrive2 drive=new GoogleDrive2();
+        File file=drive.downloadFile("1E91hT_ZpySyvhnANxqZ7hcBSM2EEd9TqfQF-cavB8hQ");
+        List<Map<String, String>> rows=drive.parseExcelDocument(file);
+        for(Map<String,String> r:rows){
+          Map<String, String> userInfo=new HashMap<String, String>();
+          for(Entry<String, String> c:r.entrySet()){
+            if (c.getKey().toLowerCase().contains("timestamp")){
+            }else if (c.getKey().toLowerCase().contains("email")){
+//              System.out.println("xxx = "+c.getValue());
+              if (c.getValue().contains("@"))
+                userInfo.put("username", c.getValue().substring(0, c.getValue().indexOf("@")));
+              userInfo.put("email", c.getValue());
+            }else if (c.getKey().toLowerCase().contains("trello id")){
+              userInfo.put("trelloId", c.getValue());
+            }else if (c.getKey().toLowerCase().contains("github id")){
+              userInfo.put("githubId", c.getValue());
+            }
+            
+          }
+          
+          if (null!=userInfo.get("username") && !db.getUsers().containsKey(userInfo.get("username"))){
+            userInfo.put("level", new ManagementController().getLevelsUtil().getBaseLevel().getRight());
+            userInfo.put("levelChanged", new SimpleDateFormat("yyyy-MM-dd").format(new Date())); // date of registration
+            System.out.println("Adding Newly Registered User: "+userInfo.get("username") +" ["+userInfo+"]");
+            db.getUsers().put(userInfo.get("username"), userInfo);
+          }
+          
+        }
+      }catch(Exception e){
+        e.printStackTrace();
+      }
+      db.save();
+      
       Config config=Config.get();
       Integer daysFromLastRun=30; //default to 30 days
       
@@ -136,7 +172,7 @@ public class Heartbeat2 {
         daysFromLastRun=(int)((runToDate.getTime() - lastRun2.getTime()) / (1000 * 60 * 60 * 24));
       }
       
-      final Database2 db=Database2.get();
+      
       
       File scripts=new File("scripts");
       if (!scripts.exists()) scripts.mkdirs();
