@@ -8,7 +8,7 @@
     "type" : "class"
   }, {
     "name" : "Github",
-    "source" : "http://localhost:8082/community-ninja-board/api/script/github-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
+    "source" : "${localServer}/community-ninja-board/api/script/github-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
     "type" : "perl"
   } ],
   "options" : {
