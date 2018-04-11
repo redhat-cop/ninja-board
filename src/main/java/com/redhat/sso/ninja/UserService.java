@@ -17,14 +17,14 @@ import javax.naming.ldap.LdapContext;
 public class UserService {
 
   
-  public List<User> search(String field, String value) {
+  public List<User> search(String field, String value) throws NamingException {
     Hashtable<String,String> env=new Hashtable<String,String>(3);
     
     env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
     env.put(Context.PROVIDER_URL, Config.get().getOptions().get("users.ldap.provider"));
     env.put(Context.SECURITY_AUTHENTICATION, "none");
 
-    try {
+//    try {
       LdapContext ctx=new InitialLdapContext(env, null);
       ctx.setRequestControls(null);
 //      String baseDN="ou=users,dc=redhat,dc=com";
@@ -64,10 +64,10 @@ public class UserService {
       }
       return result2;
       
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return new ArrayList<UserService.User>();
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//    }
+//    return new ArrayList<UserService.User>();
   }
 
   private String safeToString(Attribute a) throws NamingException{

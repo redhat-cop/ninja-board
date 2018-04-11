@@ -13,7 +13,10 @@
   } ],
   "options" : {
     "heartbeat.intervalInSeconds" : "60000",
-    "thresholds" : "5:BLUE,20:GREY,40:RED,75:BLACK"
+    "thresholds" : "5:BLUE,20:GREY,40:RED,75:BLACK",
+    "users.ldap.provider" : "ldap://ldap.corp.redhat.com:389",
+    "users.ldap.baseDN" : "ou=users,dc=redhat,dc=com",
+    "users.ldap.searchDN" : "(&(objectclass=Person)(%s=%s))"
   },
   "values" : {
     "lastRun2" : "2018-03-09T12:00:00"
