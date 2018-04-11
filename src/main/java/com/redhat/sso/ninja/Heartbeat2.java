@@ -6,10 +6,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermission;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -27,6 +29,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
+import com.redhat.sso.ninja.UserService.User;
+import com.redhat.sso.ninja.utils.DownloadFile;
 import com.redhat.sso.ninja.utils.FilePermissions;
 import com.redhat.sso.ninja.utils.Tuple;
 
@@ -112,12 +116,9 @@ public class Heartbeat2 {
       return result;
     }
 
-    @Override
-    public void run() {
-      log.info("Heartbeat fired");
-      
-      final Database2 db=Database2.get();
-      
+    public void addNewlyRegisteredUsers(Map<String, Map<String, String>> dbUsers){
+      UserService userService=new UserService();
+      boolean userServiceDown=false;
       try{
         GoogleDrive2 drive=new GoogleDrive2();
         File file=drive.downloadFile("1E91hT_ZpySyvhnANxqZ7hcBSM2EEd9TqfQF-cavB8hQ");
@@ -131,30 +132,50 @@ public class Heartbeat2 {
               if (c.getValue().contains("@"))
                 userInfo.put("username", c.getValue().substring(0, c.getValue().indexOf("@")));
               userInfo.put("email", c.getValue());
-            }else if (c.getKey().toLowerCase().contains("trello id")){
+            }else if (c.getKey().toLowerCase().contains("trello id")){ // the 'contains' is the text in the google sheet title
               userInfo.put("trelloId", c.getValue());
-            }else if (c.getKey().toLowerCase().contains("github id")){
+            }else if (c.getKey().toLowerCase().contains("github id")){ // the 'contains' is the text in the google sheet title
               userInfo.put("githubId", c.getValue());
             }
-            
           }
           
-          if (null!=userInfo.get("username") && !db.getUsers().containsKey(userInfo.get("username"))){
+          // attempt to set the display name if we can get access to RH ldap
+          try{
+            if (!userServiceDown){
+              List<User> users=userService.search("uid", userInfo.get("username"));
+              if (users.size()>0)
+                userInfo.put("displayName", users.get(0).getName());
+            }
+          }catch(Exception e){
+            userServiceDown=true;
+          }
+            
+          if (null!=userInfo.get("username") && !dbUsers.containsKey(userInfo.get("username"))){
             userInfo.put("level", new ManagementController().getLevelsUtil().getBaseLevel().getRight());
             userInfo.put("levelChanged", new SimpleDateFormat("yyyy-MM-dd").format(new Date())); // date of registration
             System.out.println("Adding Newly Registered User: "+userInfo.get("username") +" ["+userInfo+"]");
-            db.getUsers().put(userInfo.get("username"), userInfo);
+            dbUsers.put(userInfo.get("username"), userInfo);
           }
           
         }
       }catch(Exception e){
         e.printStackTrace();
       }
+    }
+    
+    @Override
+    public void run() {
+      log.info("Heartbeat fired");
+      
+      final Config config=Config.get();
+      final Database2 db=Database2.get();
+      
+      addNewlyRegisteredUsers(db.getUsers());
       db.save();
       
-      Config config=Config.get();
-      Integer daysFromLastRun=30; //default to 30 days
       
+      
+      Integer daysFromLastRun=30; //default to 30 days
       Date now=new Date();
       Calendar c=Calendar.getInstance();
       c.setTime(now);
@@ -176,7 +197,6 @@ public class Heartbeat2 {
       
       File scripts=new File("scripts");
       if (!scripts.exists()) scripts.mkdirs();
-      
       
       for(Map<String,Object> script:config.getScripts()){
         final Map<String, String> poolToUserIdMapper=getUsersByPool(db, ((String)script.get("name")).split("\\.")[0].toLowerCase()+"Id");
@@ -213,39 +233,54 @@ public class Heartbeat2 {
             String command=(String)script.get("source");
             String name=(String)script.get("name");
             File scriptFolder=new File(scripts, name);
+            scriptFolder.mkdirs(); // ensure the parent folders exist if they dont already
             
-            if (command.startsWith("http")){
-              URL url=new URL(command);
-//              System.out.println("path = "+url.getPath());
-              URL url2=new URL(command.contains(" ")?command.substring(0, command.indexOf(" ")):command); // strip script execution params to allow it to be downloaded
-              File dest=new File(scriptFolder, new File(url2.getPath()).getName()); // extract just the name, not the path
-              
-              if (!dest.exists()){ // then its not been downloaded yet, so go get it
-                scriptFolder.mkdirs(); // ensure the parent folders exist if they dont already
-                
-                log.debug("Downloading from ["+url2+"] to ["+dest.getAbsolutePath()+"]");
-                if (dest.exists()) dest.delete();
-                FileOutputStream os=new FileOutputStream(dest);
-                try{
-                  IOUtils.copy(url2.openStream(), os);
-                }finally{
-                  os.close();
-                }
-                
-                FilePermissions.set(dest, 
-                    PosixFilePermission.OWNER_READ, 
-                    PosixFilePermission.OWNER_WRITE, 
-                    PosixFilePermission.OWNER_EXECUTE,
-                    PosixFilePermission.GROUP_READ, 
-                    PosixFilePermission.GROUP_WRITE, 
-                    PosixFilePermission.GROUP_EXECUTE
-                    );
-                
-//                dest.setExecutable(true);
-              }
-              command=dest.getAbsolutePath() + (url.getPath().contains(" ")?url.getPath().substring(url.getPath().indexOf(" ")):"");
-//              log.debug("command is now: "+command);
-            }
+//            URL remoteLocationWithoutParams=new URL(command.contains(" ")?command.substring(0, command.indexOf(" ")):command); // strip script execution params to allow it to be downloaded
+//            File localDestination=new File(scriptFolder);//, new File(remoteLocationWithoutParams.getPath()).getName());
+            
+            command=new DownloadFile().get(command, scriptFolder, 
+                PosixFilePermission.OWNER_READ, 
+                PosixFilePermission.OWNER_WRITE, 
+                PosixFilePermission.OWNER_EXECUTE,
+                PosixFilePermission.GROUP_READ, 
+                PosixFilePermission.GROUP_WRITE, 
+                PosixFilePermission.GROUP_EXECUTE);
+//            if (command.startsWith("http")){
+//              URL url=new URL(command);
+////              System.out.println("path = "+url.getPath());
+//              URL url2=new URL(command.contains(" ")?command.substring(0, command.indexOf(" ")):command); // strip script execution params to allow it to be downloaded
+//              File dest=new File(scriptFolder, new File(url2.getPath()).getName()); // extract just the name, not the path
+//              
+//              if (!dest.exists()){ // then its not been downloaded yet, so go get it
+//                
+//                
+//                log.debug("Downloading from ["+url2+"] to ["+dest.getAbsolutePath()+"]");
+//                if (dest.exists()) dest.delete();
+//                FileOutputStream os=new FileOutputStream(dest);
+//                try{
+//                  IOUtils.copy(url2.openStream(), os);
+//                }finally{
+//                  os.close();
+//                }
+//                
+//                FilePermissions.set(dest, 
+//                    PosixFilePermission.OWNER_READ, 
+//                    PosixFilePermission.OWNER_WRITE, 
+//                    PosixFilePermission.OWNER_EXECUTE,
+//                    PosixFilePermission.GROUP_READ, 
+//                    PosixFilePermission.GROUP_WRITE, 
+//                    PosixFilePermission.GROUP_EXECUTE
+//                    );
+//                
+//                Files.getPosixFilePermissions(dest.toPath(), LinkOption. options);// setPosixFilePermissions(file.toPath(), perms2);
+//                
+////                dest.setExecutable(true);
+//              }else{
+//                log.debug("file exists, not downloading: "+dest.getAbsolutePath());
+//              }
+//              command=dest.getAbsolutePath() + (url.getPath().contains(" ")?url.getPath().substring(url.getPath().indexOf(" ")):"");
+////              log.debug("command is now: "+command);
+//            }
             
             // the script folder exists, so just execute it
             

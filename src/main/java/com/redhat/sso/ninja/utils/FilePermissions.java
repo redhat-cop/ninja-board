@@ -14,6 +14,5 @@ public class FilePermissions{
     for(PosixFilePermission p:perms)
       perms2.add(p);
     Files.setPosixFilePermissions(file.toPath(), perms2);
-
   }
 }
