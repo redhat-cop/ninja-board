@@ -142,14 +142,19 @@ public class Heartbeat2 {
           // attempt to set the display name if we can get access to RH ldap
           try{
             if (!userServiceDown){
+              log.debug("UserService(LDAP) is UP, populating the 'displayName'");
               List<User> users=userService.search("uid", userInfo.get("username"));
               if (users.size()>0)
                 userInfo.put("displayName", users.get(0).getName());
+            }else{
+              log.debug("UserService(LDAP) is DOWN, skipping populating the 'displayName'");
             }
           }catch(Exception e){
+            log.debug("Exception cause flag to say userService is DOWN:");
+            e.printStackTrace();
             userServiceDown=true;
           }
-            
+          
           if (null!=userInfo.get("username") && !dbUsers.containsKey(userInfo.get("username"))){
             userInfo.put("level", new ManagementController().getLevelsUtil().getBaseLevel().getRight());
             userInfo.put("levelChanged", new SimpleDateFormat("yyyy-MM-dd").format(new Date())); // date of registration
