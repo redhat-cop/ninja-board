@@ -20,6 +20,10 @@ public class DownloadFile{
     System.out.println(new DownloadFile().get(remoteLocation, localDestination, permissions));
   }
   
+  public String get(String remoteLocation, String localDestination, PosixFilePermission... permissions) throws IOException{
+    return get(remoteLocation, new File(localDestination), permissions);
+  }
+  
   public String get(String remoteLocation, File localDestination, PosixFilePermission... permissions) throws IOException{
     
       log.debug("Provided remote location is: "+remoteLocation);
