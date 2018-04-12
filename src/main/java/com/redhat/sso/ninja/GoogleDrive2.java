@@ -26,6 +26,13 @@ public class GoogleDrive2 {
   private String googleSheetPullCommand;
   private String googleSheetWorkingFolder;
   
+  public static String getDefaultExecutable(){
+    return String.format(DEFAULT_EXECUTABLE, System.getProperty("user.name"));
+  }
+  public static String getDefaultWorkingFolder(){
+    return String.format(DEFAULT_WORKING_FOLDER, System.getProperty("user.name"));
+  }
+  
   public GoogleDrive2(){
     this.googleSheetPullCommand=DEFAULT_PULL_COMMAND;
     this.googleSheetWorkingFolder=DEFAULT_WORKING_FOLDER;
