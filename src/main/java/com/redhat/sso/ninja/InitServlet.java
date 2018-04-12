@@ -36,9 +36,12 @@ public class InitServlet extends HttpServlet {
       // attempt to download it
       try{
         String url="https://github.com/odeke-em/drive/releases/download/v0.3.9/drive_linux";
+        
         System.out.println("Downloading gdrive from: "+url);
         new DownloadFile().get(url, new File(GoogleDrive2.getDefaultExecutable()).getParentFile(), PosixFilePermission.OTHERS_EXECUTE);
+        
         File credsFile=new File(new File(GoogleDrive2.getDefaultWorkingFolder(), ".gd"), "credentials.json");
+        credsFile.getParentFile().mkdirs();
         System.out.println("Deploying credentials.json in: "+credsFile);
         IOUtils.copy(getClass().getResourceAsStream("/gd_credentials.json"), new FileOutputStream(credsFile));
       }catch(Exception e){

@@ -19,7 +19,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class GoogleDrive2 {
   
-  public static final String DEFAULT_EXECUTABLE="/home/%s/drive";
+  public static final String DEFAULT_EXECUTABLE="/home/%s/drive_linux";
   public static final String DEFAULT_PULL_COMMAND=DEFAULT_EXECUTABLE+" pull -export xls -quiet=true --id %s";
   public static final String DEFAULT_WORKING_FOLDER="/home/%s/google_drive";
   
