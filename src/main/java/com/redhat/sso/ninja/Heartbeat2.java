@@ -147,7 +147,7 @@ public class Heartbeat2 {
               if (users.size()>0)
                 userInfo.put("displayName", users.get(0).getName());
             }else{
-              log.debug("UserService(LDAP) is DOWN, skipping populating the 'displayName'");
+//              log.debug("UserService(LDAP) is DOWN, skipping populating the 'displayName'");
             }
           }catch(Exception e){
             log.debug("Exception cause flag to say userService is DOWN:");
