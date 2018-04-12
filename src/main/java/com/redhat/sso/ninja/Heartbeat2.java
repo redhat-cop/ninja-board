@@ -116,7 +116,7 @@ public class Heartbeat2 {
       return result;
     }
 
-    public void addNewlyRegisteredUsers(Map<String, Map<String, String>> dbUsers){
+    public boolean addNewlyRegisteredUsers(Map<String, Map<String, String>> dbUsers){
       UserService userService=new UserService();
       boolean userServiceDown=false;
       try{
@@ -165,7 +165,9 @@ public class Heartbeat2 {
         }
       }catch(Exception e){
         e.printStackTrace();
+        return false;
       }
+      return true;
     }
     
     @Override
@@ -175,7 +177,9 @@ public class Heartbeat2 {
       final Config config=Config.get();
       final Database2 db=Database2.get();
       
-      addNewlyRegisteredUsers(db.getUsers());
+      boolean successfullyAccessed=addNewlyRegisteredUsers(db.getUsers());
+      if (successfullyAccessed) return;
+      
       db.save();
       
       
@@ -250,45 +254,6 @@ public class Heartbeat2 {
                 PosixFilePermission.GROUP_READ, 
                 PosixFilePermission.GROUP_WRITE, 
                 PosixFilePermission.GROUP_EXECUTE);
-//            if (command.startsWith("http")){
-//              URL url=new URL(command);
-////              System.out.println("path = "+url.getPath());
-//              URL url2=new URL(command.contains(" ")?command.substring(0, command.indexOf(" ")):command); // strip script execution params to allow it to be downloaded
-//              File dest=new File(scriptFolder, new File(url2.getPath()).getName()); // extract just the name, not the path
-//              
-//              if (!dest.exists()){ // then its not been downloaded yet, so go get it
-//                
-//                
-//                log.debug("Downloading from ["+url2+"] to ["+dest.getAbsolutePath()+"]");
-//                if (dest.exists()) dest.delete();
-//                FileOutputStream os=new FileOutputStream(dest);
-//                try{
-//                  IOUtils.copy(url2.openStream(), os);
-//                }finally{
-//                  os.close();
-//                }
-//                
-//                FilePermissions.set(dest, 
-//                    PosixFilePermission.OWNER_READ, 
-//                    PosixFilePermission.OWNER_WRITE, 
-//                    PosixFilePermission.OWNER_EXECUTE,
-//                    PosixFilePermission.GROUP_READ, 
-//                    PosixFilePermission.GROUP_WRITE, 
-//                    PosixFilePermission.GROUP_EXECUTE
-//                    );
-//                
-//                Files.getPosixFilePermissions(dest.toPath(), LinkOption. options);// setPosixFilePermissions(file.toPath(), perms2);
-//                
-////                dest.setExecutable(true);
-//              }else{
-//                log.debug("file exists, not downloading: "+dest.getAbsolutePath());
-//              }
-//              command=dest.getAbsolutePath() + (url.getPath().contains(" ")?url.getPath().substring(url.getPath().indexOf(" ")):"");
-////              log.debug("command is now: "+command);
-//            }
-            
-            // the script folder exists, so just execute it
-            
             
 //            ${LAST_RUN:yyyy-MM-dd}
 //            System.setProperty("server", "http://localhost:8082/community-ninja-board");
@@ -322,11 +287,6 @@ public class Heartbeat2 {
                     actionId=split[1];
                     poolUserId=split[2];
                     inc=Integer.valueOf(split[3]);
-//                  }else{
-//                    poolUserId=split[0];
-//                    inc=Integer.valueOf(split[1]);
-//                  System.out.println("looking up user ["+poolUserId+"]");
-                    
                     
                     if (!db.getPointsDuplicateChecker().contains(actionId+"."+poolUserId)){
                       db.getPointsDuplicateChecker().add(actionId+"."+poolUserId);
