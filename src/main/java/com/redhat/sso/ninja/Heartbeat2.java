@@ -139,23 +139,26 @@ public class Heartbeat2 {
             }
           }
           
-          // attempt to set the display name if we can get access to RH ldap
-          try{
-            if (!userServiceDown){
-              log.debug("UserService(LDAP) is UP, populating the 'displayName'");
-              List<User> users=userService.search("uid", userInfo.get("username"));
-              if (users.size()>0)
-                userInfo.put("displayName", users.get(0).getName());
-            }else{
-//              log.debug("UserService(LDAP) is DOWN, skipping populating the 'displayName'");
-            }
-          }catch(Exception e){
-            log.debug("Exception cause flag to say userService is DOWN:");
-            e.printStackTrace();
-            userServiceDown=true;
-          }
+          System.out.println("DBUsers.containsKey('"+userInfo.get("username")+"') = "+dbUsers.containsKey(userInfo.get("username")));
           
           if (null!=userInfo.get("username") && !dbUsers.containsKey(userInfo.get("username"))){
+            
+            // attempt to set the display name if we can get access to RH ldap
+            try{
+              if (!userServiceDown){
+                log.debug("UserService(LDAP) is UP, populating the 'displayName'");
+                List<User> users=userService.search("uid", userInfo.get("username"));
+                if (users.size()>0)
+                  userInfo.put("displayName", users.get(0).getName());
+              }else{
+//                log.debug("UserService(LDAP) is DOWN, skipping populating the 'displayName'");
+              }
+            }catch(Exception e){
+              log.debug("Exception cause flag to say userService is DOWN:");
+              e.printStackTrace();
+              userServiceDown=true;
+            }
+
             userInfo.put("level", new ManagementController().getLevelsUtil().getBaseLevel().getRight());
             userInfo.put("levelChanged", new SimpleDateFormat("yyyy-MM-dd").format(new Date())); // date of registration
             System.out.println("Adding Newly Registered User: "+userInfo.get("username") +" ["+userInfo+"]");
@@ -177,8 +180,8 @@ public class Heartbeat2 {
       final Config config=Config.get();
       final Database2 db=Database2.get();
       
-      boolean successfullyAccessed=addNewlyRegisteredUsers(db.getUsers());
-      if (successfullyAccessed) return;
+      boolean successfullyAccessedRegistrationSheet=addNewlyRegisteredUsers(db.getUsers());
+      if (!successfullyAccessedRegistrationSheet) return;
       
       db.save();
       
