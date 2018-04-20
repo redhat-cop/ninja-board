@@ -45,9 +45,9 @@ String graphHeight="100%";
     <!-- ChartJS v2 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.1/Chart.min.js"></script>
     https://github.com/chartjs/Chart.js/releases
-    <script src="https://github.com/chartjs/Chart.js/releases/download/v2.6.0/Chart.min.js"></script>
-    -->
     <script src="http://www.chartjs.org/dist/2.7.2/Chart.bundle.js"></script>
+    -->
+    <script src="https://github.com/chartjs/Chart.js/releases/download/v2.6.0/Chart.min.js"></script>
     
     
     
