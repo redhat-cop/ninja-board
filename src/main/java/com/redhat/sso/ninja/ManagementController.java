@@ -251,7 +251,12 @@ public class ManagementController {
     data.putAll(scorecard);
 //    String name=userInfo.containsKey("displayName")?userInfo.get("displayName"):user;
     
-    return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(data)).build();
+    return Response.status(200)
+        .header("Access-Control-Allow-Origin",  "*")
+        .header("Content-Type","application/json")
+        .header("Cache-Control", "no-store, must-revalidate, no-cache, max-age=0")
+        .header("Pragma", "no-cache")
+        .entity(Json.newObjectMapper(true).writeValueAsString(data)).build();
   }
 
   
@@ -411,10 +416,10 @@ public class ManagementController {
       
       // TODO: set this to the color of the belt
       Map<String,Pair<String,String>> colors=new MapBuilder<String,Pair<String,String>>()
-          .put("BLUE",  new Pair<String, String>("rgba(0,0,163,0.6)",     "rgba(0,0,163,0.8)"))
-          .put("GREY",  new Pair<String, String>("rgba(130,130,130,0.6)", "rgba(130,130,130,0.8)"))
-          .put("RED",   new Pair<String, String>("rgba(163,0,0,0.6)",     "rgba(163,0,0,0.8)"))
-          .put("BLACK", new Pair<String, String>("rgba(20,20,20,0.6)",    "rgba(20,20,20,0.8)"))
+          .put("BLUE",  new Pair<String, String>("rgba(0,0,163,0.7)",     "rgba(0,0,163,0.8)"))
+          .put("GREY",  new Pair<String, String>("rgba(130,130,130,0.7)", "rgba(130,130,130,0.8)"))
+          .put("RED",   new Pair<String, String>("rgba(163,0,0,0.7)",     "rgba(163,0,0,0.8)"))
+          .put("BLACK", new Pair<String, String>("rgba(20,20,20,0.7)",    "rgba(20,20,20,0.8)"))
           .build();
       c.getDatasets().get(0).getBackgroundColor().add(colors.get(userInfo.get("level").toUpperCase()).getFirst());
       c.getDatasets().get(0).getBorderColor().add(colors.get(userInfo.get("level").toUpperCase()).getSecond());
