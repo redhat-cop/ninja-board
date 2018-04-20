@@ -426,7 +426,12 @@ public class ManagementController {
       count=count+1;
       if (count>=max) break;
     }
-    return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(c)).build();
+    return Response.status(200)
+        .header("Access-Control-Allow-Origin",  "*")
+        .header("Content-Type","application/json")
+        .header("Cache-Control", "no-store, must-revalidate, no-cache, max-age=0")
+        .header("Pragma", "no-cache")
+        .entity(Json.newObjectMapper(true).writeValueAsString(c)).build();
   }
   
   @GET

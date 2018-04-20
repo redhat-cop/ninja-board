@@ -139,7 +139,7 @@ public class Heartbeat2 {
             }
           }
           
-          System.out.println("DBUsers.containsKey('"+userInfo.get("username")+"') = "+dbUsers.containsKey(userInfo.get("username")));
+//          System.out.println("DBUsers.containsKey('"+userInfo.get("username")+"') = "+dbUsers.containsKey(userInfo.get("username")));
           
           if (null!=userInfo.get("username") && !dbUsers.containsKey(userInfo.get("username"))){
             
@@ -163,6 +163,8 @@ public class Heartbeat2 {
             userInfo.put("levelChanged", new SimpleDateFormat("yyyy-MM-dd").format(new Date())); // date of registration
             System.out.println("Adding Newly Registered User: "+userInfo.get("username") +" ["+userInfo+"]");
             dbUsers.put(userInfo.get("username"), userInfo);
+          }else if (dbUsers.containsKey(userInfo.get("username"))){
+            log.debug("User already registered: "+userInfo.get("username"));
           }
           
         }
