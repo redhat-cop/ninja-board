@@ -35,6 +35,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
+import com.google.gdata.util.common.base.Pair;
 import com.redhat.sso.ninja.chart.Chart2Json;
 import com.redhat.sso.ninja.chart.DataSet2;
 import com.redhat.sso.ninja.utils.Json;
@@ -409,19 +410,14 @@ public class ManagementController {
       c.getDatasets().get(0).setBorderWidth(1);
       
       // TODO: set this to the color of the belt
-      if ("blue".equalsIgnoreCase(userInfo.get("level"))){
-        c.getDatasets().get(0).getBackgroundColor().add("rgba(0,0,163,0.8)");
-      }else if ("grey".equalsIgnoreCase(userInfo.get("level"))){
-        c.getDatasets().get(0).getBackgroundColor().add("rgba(130,130,130,0.8)");
-      }else if ("red".equalsIgnoreCase(userInfo.get("level"))){
-        c.getDatasets().get(0).getBackgroundColor().add("rgba(163,0,0,0.8)");
-      }else if ("black".equalsIgnoreCase(userInfo.get("level"))){
-        c.getDatasets().get(0).getBackgroundColor().add("rgba(0,0,0,0.8)");
-      }
-      
-      
-      
-      c.getDatasets().get(0).getBorderColor().add("rgba(130,0,0,0.8)");
+      Map<String,Pair<String,String>> colors=new MapBuilder<String,Pair<String,String>>()
+          .put("BLUE",  new Pair<String, String>("rgba(0,0,163,0.6)",     "rgba(0,0,163,0.8)"))
+          .put("GREY",  new Pair<String, String>("rgba(130,130,130,0.6)", "rgba(130,130,130,0.8)"))
+          .put("RED",   new Pair<String, String>("rgba(163,0,0,0.6)",     "rgba(163,0,0,0.8)"))
+          .put("BLACK", new Pair<String, String>("rgba(20,20,20,0.6)",    "rgba(20,20,20,0.8)"))
+          .build();
+      c.getDatasets().get(0).getBackgroundColor().add(colors.get(userInfo.get("level").toUpperCase()).getFirst());
+      c.getDatasets().get(0).getBorderColor().add(colors.get(userInfo.get("level").toUpperCase()).getSecond());
       
       count=count+1;
       if (count>=max) break;
