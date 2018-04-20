@@ -242,13 +242,19 @@ public class ManagementController {
   public Response getScorecard(@PathParam("user") String user) throws JsonGenerationException, JsonMappingException, IOException{
     Database2 db=Database2.get();
     
+    log.debug("Request made for user ["+user+"]");
+    
     Map<String, Integer> scorecard=db.getScoreCards().get(user);
     Map<String, String> userInfo=db.getUsers().get(user);
     
+    log.debug(user+" user data for scorecards "+(scorecard!=null?"found":"NOT FOUND!"));
+    log.debug(user+" user data for userInfo "+(userInfo!=null?"found":"NOT FOUND!"));
+    
     Map<String, Object> data=new HashMap<String, Object>();
     data.put("userId", user);
-    data.put("displayName", userInfo.get("displayName"));
+//    data.put("displayName", userInfo.get("displayName"));
     data.putAll(scorecard);
+    data.putAll(userInfo);
 //    String name=userInfo.containsKey("displayName")?userInfo.get("displayName"):user;
     
     return Response.status(200)
