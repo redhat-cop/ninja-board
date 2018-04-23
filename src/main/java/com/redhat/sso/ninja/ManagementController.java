@@ -30,6 +30,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -71,8 +72,8 @@ public class ManagementController {
   @GET
   @Path("/loglevel/{level}")
   public Response setLogLevel(@Context HttpServletRequest request,@Context HttpServletResponse response,@Context ServletContext servletContext, @PathParam("level") String level) throws JsonGenerationException, JsonMappingException, IOException{
-    log.setLevel(org.apache.log4j.Level.toLevel(level));
-    return Response.status(200).entity("{\"status\":\"DONE\"}").build();
+    LogManager.getRootLogger().setLevel(org.apache.log4j.Level.toLevel(level));
+    return Response.status(200).entity("{\"status\":\"DONE\", \"Message\":\"Changed Log level to: "+LogManager.getRootLogger().getLevel().toString()+"\"}").build();
   }
   
   
@@ -187,19 +188,21 @@ public class ManagementController {
     log.debug(user+" user data for scorecards "+(scorecard!=null?"found":"NOT FOUND!"));
     log.debug(user+" user data for userInfo "+(userInfo!=null?"found":"NOT FOUND!"));
     
-    Map<String, Object> data=new HashMap<String, Object>();
-    data.put("userId", user);
-//    data.put("displayName", userInfo.get("displayName"));
-    data.putAll(scorecard);
-    data.putAll(userInfo);
-//    String name=userInfo.containsKey("displayName")?userInfo.get("displayName"):user;
+    String payload="{\"status\":\"ERROR\",\"message\":\"Unable to find user\"}";
+    if (scorecard!=null && userInfo!=null){
+      Map<String, Object> data=new HashMap<String, Object>();
+      data.put("userId", user);
+      data.putAll(scorecard);
+      data.putAll(userInfo);
+      payload=Json.newObjectMapper(true).writeValueAsString(data);
+    }
     
-    return Response.status(200)
+    return Response.status(payload.contains("ERROR")?500:200)
         .header("Access-Control-Allow-Origin",  "*")
         .header("Content-Type","application/json")
         .header("Cache-Control", "no-store, must-revalidate, no-cache, max-age=0")
         .header("Pragma", "no-cache")
-        .entity(Json.newObjectMapper(true).writeValueAsString(data)).build();
+        .entity(payload).build();
   }
 
   
