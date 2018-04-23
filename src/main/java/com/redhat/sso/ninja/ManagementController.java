@@ -188,7 +188,7 @@ public class ManagementController {
     log.debug(user+" user data for scorecards "+(scorecard!=null?"found":"NOT FOUND!"));
     log.debug(user+" user data for userInfo "+(userInfo!=null?"found":"NOT FOUND!"));
     
-    String payload="{\"status\":\"ERROR\",\"message\":\"Unable to find user\"}";
+    String payload="{\"status\":\"ERROR\",\"message\":\"Unable to find user: "+user+"\", \"displayName\":\"You ("+user+") are not registered\"}";
     if (scorecard!=null && userInfo!=null){
       Map<String, Object> data=new HashMap<String, Object>();
       data.put("userId", user);
