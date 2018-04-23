@@ -161,7 +161,7 @@ public class Heartbeat2 {
 
             userInfo.put("level", new ManagementController().getLevelsUtil().getBaseLevel().getRight());
             userInfo.put("levelChanged", new SimpleDateFormat("yyyy-MM-dd").format(new Date())); // date of registration
-            System.out.println("Adding Newly Registered User: "+userInfo.get("username") +" ["+userInfo+"]");
+            log.info("Adding Newly Registered User: "+userInfo.get("username") +" ["+userInfo+"]");
             dbUsers.put(userInfo.get("username"), userInfo);
           }else if (dbUsers.containsKey(userInfo.get("username"))){
             log.debug("User already registered: "+userInfo.get("username"));
@@ -215,7 +215,7 @@ public class Heartbeat2 {
       for(Map<String,Object> script:config.getScripts()){
         final Map<String, String> poolToUserIdMapper=getUsersByPool(db, ((String)script.get("name")).split("\\.")[0].toLowerCase()+"Id");
         if (Arrays.asList(new String[]{"java","class","javaclass"}).contains(((String)script.get("type")).toLowerCase())){
-          log.debug("Executing script: "+script.get("source"));
+          log.info("Executing script: "+script.get("source"));
           try{
             
             ScriptBase obj=(ScriptBase)Class.forName((String)script.get("source")).newInstance();
@@ -267,7 +267,7 @@ public class Heartbeat2 {
               command=convertLastRun(command, lastRun2);
             }
             
-            log.debug("Executing script: "+command);
+            log.info("Executing script: "+command);
             
             Process script_exec=Runtime.getRuntime().exec(command);
             script_exec.waitFor();
@@ -280,7 +280,7 @@ public class Heartbeat2 {
               String s;
               while ((s=stdInput.readLine()) != null){
                 scriptLog.append(s.trim()).append("\n");
-                System.out.println(s.trim());
+                log.debug(s.trim());
                 if (s.contains("/")){ // ignore the line if it doesn't contain a slash
                   String[] split=s.split("/");
                   String pool=(String)script.get("name");
@@ -307,7 +307,7 @@ public class Heartbeat2 {
                       }
                     }else{
                       // it's a duplicate incremenent for that actionId & user, so ignore it
-                      System.out.println(actionId+"."+poolUserId+" is a duplicate");
+                      log.debug(actionId+"."+poolUserId+" is a duplicate");
                     }
                     
                   }else{
@@ -354,7 +354,7 @@ public class Heartbeat2 {
       }
       
       
-      log.debug("Saving database...");
+      log.info("Saving database...");
       db.save();
       
       log.debug("Updating the \"lastRun\" date");

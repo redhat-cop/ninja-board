@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Level;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -66,6 +67,15 @@ public class ManagementController {
 //    System.out.println(new ManagementController().toNextLevel("BLUE", 7).toString());
   }
   
+
+  @GET
+  @Path("/loglevel/{level}")
+  public Response setLogLevel(@Context HttpServletRequest request,@Context HttpServletResponse response,@Context ServletContext servletContext, @PathParam("level") String level) throws JsonGenerationException, JsonMappingException, IOException{
+    log.setLevel(org.apache.log4j.Level.toLevel(level));
+    return Response.status(200).entity("{\"status\":\"DONE\"}").build();
+  }
+  
+  
   @GET
   @Path("/config/get")
   public Response configGet(@Context HttpServletRequest request,@Context HttpServletResponse response,@Context ServletContext servletContext) throws JsonGenerationException, JsonMappingException, IOException{
@@ -85,75 +95,6 @@ public class ManagementController {
     System.out.println("Saved");
     return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Config.get())).build();
   }
-  
-//  private Tuple<Integer,String> getBaseLevel(){
-//    String[] thresholds=Config.get().getOptions().get("thresholds").split(",");
-//    String[] result=thresholds[0].split(":");
-//    return new Tuple<Integer, String>(Integer.parseInt(result[0]), result[1]);
-//  }
-  
-//  private Map<String, Integer>  getLevels1(){
-//    Map<String, Integer> levels=new TreeMap<String, Integer>();
-//    for(String levelValueAndText:Config.get().getOptions().get("thresholds").split(",")){
-//      String[] level=levelValueAndText.split(":");
-//      levels.put(level[1], Integer.valueOf(level[0]));
-//    }
-//    Map<String, Integer>  result=new TreeMap<String, Integer> ();
-//    for(Entry<String, Integer> e:MapUtilities.sortByValue(levels))
-//      result.put(e.getKey(), e.getValue());
-//    return result;
-//  }
-//  
-//  private Map<Integer, String>  getLevels2(){
-//    Map<Integer, String> levels=new TreeMap<Integer, String>();
-//    for(String levelValueAndText:Config.get().getOptions().get("thresholds").split(",")){
-//      String[] level=levelValueAndText.split(":");
-//      levels.put(Integer.valueOf(level[0]), level[1]);
-//    }
-//    Map<Integer, String>  result=new TreeMap<Integer, String> ();
-//    for(Entry<Integer, String> e:MapUtilities.sortByKey(levels))
-//      result.put(e.getKey(), e.getValue());
-//    return result;
-//  }
-  
-//  public Tuple<Integer,String> getLevel(String name){
-//    for(Tuple<Integer, String> level:getLevels()){
-//      if (name.equals(level.getRight())) return level;
-//    }
-//    return null;
-//  }
-//  public Tuple<Integer,String> getNextLevel(String name){
-//    boolean next=false;
-//    for(Tuple<Integer, String> level:getLevels()){
-//      if (next) return level;
-//      if (name.equals(level.getRight())){
-//        next=true;
-//      }
-//    }
-//    return the top level;
-//  }
-//  public List<Tuple<Integer,String>> getLevels(){
-//    List<Tuple<Integer,String>> levels=new LinkedList<Tuple<Integer,String>>();
-//    for(String levelValueAndText:Config.get().getOptions().get("thresholds").split(",")){
-//      String[] level=levelValueAndText.split(":");
-//      levels.add(new Tuple<Integer,String>(Integer.valueOf(level[0]), level[1]));
-//    }
-//    return levels;
-//  }
-//  private Tuple<Integer,String> toNextLevel(String currentLevel, Integer currentTotal){
-//    List<Tuple<Integer,String>> levels=getLevels();
-//    Tuple<Integer,String> currentLevel2=null;
-//    Tuple<Integer,String> nextLevel=null;
-//    for(Tuple<Integer,String> level:levels){
-//      if (null!=currentLevel2){ //ie we found their current level
-//        nextLevel=level;
-//        break;
-//      }
-//      if (currentLevel.equals(level.getRight()))
-//        currentLevel2=level;
-//    }
-//    return new Tuple<Integer,String>(nextLevel.getLeft()-currentTotal, nextLevel.getRight());
-//  }
   
   
   static LevelsUtil levelsUtil=null;
@@ -232,10 +173,6 @@ public class ManagementController {
     return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Database2.get())).build();
   }
   
-//  public static void main(String[] asd) throws JsonGenerationException, JsonMappingException, IOException{
-//    System.out.println(new ManagementController().getLeaderboard2(3).getEntity());
-////    System.out.println(new ManagementController().getList().getEntity());
-//  }
   
   @GET
   @Path("/scorecard/{user}")
