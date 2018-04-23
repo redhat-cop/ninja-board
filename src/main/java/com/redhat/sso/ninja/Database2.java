@@ -65,6 +65,7 @@ public class Database2{
     if (users.containsKey(userId)){ // means the user is registered
       if (null==scorecards.get(userId)) scorecards.put(userId, new HashMap<String, Integer>());
       if (null==scorecards.get(userId).get(poolId)) scorecards.get(userId).put(poolId, 0);
+      log.info("Incrementing points: user="+userId+", poolId="+poolId+", increment/points="+increment);
       scorecards.get(userId).put(poolId, scorecards.get(userId).get(poolId)+increment);
       
 //      // does the user need leveling up?
@@ -75,7 +76,7 @@ public class Database2{
 //      if ()
       
     }else{
-      System.out.println("Unregistered user detected ["+userId+"]");
+      log.debug("Unregistered user detected ["+userId+"]");
     }
     
 //    if (!pools.containsKey(poolId)) pools.put(poolId, new HashMap<String, Integer>());
