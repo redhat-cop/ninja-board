@@ -8,10 +8,11 @@
 		</layout>
 	</appender>
 
+<!-- 
 	<logger name="com.redhat.sso.ninja">
 	  <level value="debug"/> 
 	</logger>
-	
+-->
 	<root>
 		<level value="INFO" />
 		<appender-ref ref="console" />
