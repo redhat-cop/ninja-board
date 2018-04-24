@@ -204,6 +204,46 @@ public class ManagementController {
         .header("Pragma", "no-cache")
         .entity(payload).build();
   }
+  
+  @GET
+  @Path("/scorecard/summary/{user}")
+  public Response getScorecardSummary(@PathParam("user") String user) throws JsonGenerationException, JsonMappingException, IOException{
+    Database2 db=Database2.get();
+    
+    log.debug("Request made for user ["+user+"]");
+    
+    Map<String, Integer> scorecard=db.getScoreCards().get(user);
+    Map<String, String> userInfo=db.getUsers().get(user);
+    
+    log.debug(user+" user data for scorecards "+(scorecard!=null?"found":"NOT FOUND!"));
+    log.debug(user+" user data for userInfo "+(userInfo!=null?"found":"NOT FOUND!"));
+    
+    String payload="{\"status\":\"ERROR\",\"message\":\"Unable to find user: "+user+"\", \"displayName\":\"You ("+user+") are not registered\"}";
+    if (scorecard!=null && userInfo!=null){
+      Map<String, Object> data=new HashMap<String, Object>();
+      data.put("userId", user);
+      
+      Map<String, Integer> consolidatedTotals=new HashMap<String, Integer>();
+      Integer total=0;
+      for(Entry<String, Integer> e:scorecard.entrySet()){
+        String consolidatedKey=e.getKey().substring(0, e.getKey().contains(".")?e.getKey().indexOf("."):e.getKey().length());
+        if (!consolidatedTotals.containsKey(consolidatedKey)) consolidatedTotals.put(consolidatedKey, 0);
+        consolidatedTotals.put(consolidatedKey, consolidatedTotals.get(consolidatedKey)+e.getValue());
+        total+=e.getValue();
+      }
+      data.put("total", total);
+      data.putAll(consolidatedTotals);
+      data.putAll(userInfo);
+      payload=Json.newObjectMapper(true).writeValueAsString(data);
+    }
+    
+    return Response.status(payload.contains("ERROR")?500:200)
+        .header("Access-Control-Allow-Origin",  "*")
+        .header("Content-Type","application/json")
+        .header("Cache-Control", "no-store, must-revalidate, no-cache, max-age=0")
+        .header("Pragma", "no-cache")
+        .entity(payload).build();
+  }
 
   
   @POST
