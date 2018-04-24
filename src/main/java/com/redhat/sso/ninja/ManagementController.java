@@ -121,33 +121,28 @@ public class ManagementController {
       for (mjson.Json user:x.asJsonList()){
         String username=user.at("username").asString();
         
-        if (db.getUsers().containsKey(username)){
+        if (db.getUsers().containsKey(username))
           db.getUsers().remove(username); // remove so we can overwrite the user details
-        }
         
         Map<String, String> userInfo=new HashMap<String, String>();
-        for(Entry<String, Object> e:user.asMap().entrySet()){
+        for(Entry<String, Object> e:user.asMap().entrySet())
           userInfo.put(e.getKey(), (String)e.getValue());
-        }
         
         userInfo.put("level", getLevelsUtil().getBaseLevel().getRight());
         userInfo.put("levelChanged", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));// nextLevel.getRight());
         
-//        if (!db.getUsers().containsKey(username)){
-          db.getUsers().put(username, userInfo);
-          log.debug("Registered user: "+Json.newObjectMapper(true).writeValueAsString(userInfo));
-//        }else{
-//          log.warn("Ignoring user ["+username+"] - it's already registered");
-////          return Response.status(500).entity("{\"status\":\"ERROR\",\"message\":\"Username in use already\"}").build();        
-//        }
+        db.getUsers().put(username, userInfo);
+        log.debug("Registered user: "+Json.newObjectMapper(true).writeValueAsString(userInfo));
+        db.getScoreCards().put(username, new HashMap<String, Integer>());
       }
       
       db.save();
+      return Response.status(200).entity("{\"status\":\"DONE\"}").build();
     }catch(IOException e){
       e.printStackTrace();
+      return Response.status(500).entity("{\"status\":\"ERROR\",\"message\":\""+e.getMessage()+"\"}").build();  
     }
     
-    return Response.status(200).entity("{\"status\":\"DONE\"}").build();
   }
   
   @GET
@@ -161,11 +156,13 @@ public class ManagementController {
       ,@PathParam("increment") String increment
       ){
     try{
-      Database2.get().increment(pool, user, Integer.valueOf(increment)).save();
+      Database2 db=Database2.get();
+      db.increment(pool, user, Integer.valueOf(increment)).save();
+      db.save();
+      return Response.status(200).entity("{\"status\":\"DONE\"}").build();
     }catch(Exception e){
       return Response.status(500).entity("{\"status\":\"ERROR\",\"message\":\""+e.getMessage()+"\"}").build();  
     }
-    return Response.status(200).entity("{\"status\":\"DONE\"}").build();
   }
   
   @GET
