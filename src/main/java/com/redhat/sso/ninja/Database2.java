@@ -165,7 +165,8 @@ public class Database2{
   public static Database2 get(){
     if (!new File(storage).exists())
       new Database2().save();
-    return Database2.load();
+    instance=Database2.load();
+    return instance;
   }
   
   public static void main(String[] asd){
