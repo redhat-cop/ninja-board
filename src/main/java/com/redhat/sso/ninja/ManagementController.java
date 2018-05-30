@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -32,6 +33,20 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.apache.xmlbeans.impl.jam.JAnnotationValue;
+import org.apache.xmlbeans.impl.jam.JClass;
+import org.apache.xmlbeans.impl.jam.JComment;
+import org.apache.xmlbeans.impl.jam.JElement;
+import org.apache.xmlbeans.impl.jam.JParameter;
+import org.apache.xmlbeans.impl.jam.JSourcePosition;
+import org.apache.xmlbeans.impl.jam.JamClassLoader;
+import org.apache.xmlbeans.impl.jam.mutable.MAnnotation;
+import org.apache.xmlbeans.impl.jam.mutable.MComment;
+import org.apache.xmlbeans.impl.jam.mutable.MConstructor;
+import org.apache.xmlbeans.impl.jam.mutable.MParameter;
+import org.apache.xmlbeans.impl.jam.mutable.MSourcePosition;
+import org.apache.xmlbeans.impl.jam.visitor.JVisitor;
+import org.apache.xmlbeans.impl.jam.visitor.MVisitor;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -63,8 +78,9 @@ public class ManagementController {
   
   public static void main(String[] asd) throws JsonGenerationException, JsonMappingException, IOException{
 //    System.out.println(new ManagementController().register(null,null,null,"[{\"displayName\": \"Mat Allen\",\"username\": \"mallen\",\"trelloId\":\"mallen2\",\"githubId\":\"matallen\"}]"));
-    System.out.println(new ManagementController().getScorecards().getEntity());
+//    System.out.println(new ManagementController().getScorecards().getEntity());
     
+    System.out.println(new ManagementController().getScorecardSummary("pfann").getEntity());
 //    System.out.println(new ManagementController().toNextLevel("BLUE", 7).toString());
   }
   
@@ -202,6 +218,68 @@ public class ManagementController {
         .entity(payload).build();
   }
   
+//  @GET
+//  @Path("/scorecard/pie/{user}")
+//  public Response getUserPointDistribution(@PathParam("user") String user) throws JsonGenerationException, JsonMappingException, IOException{
+//  }
+  @GET
+  @Path("/scorecard/nextlevel/{user}")
+  public Response getUserNextLevel(@PathParam("user") String user) throws JsonGenerationException, JsonMappingException, IOException{
+    
+//    Database2 db=Database2.getCached();
+//    Map<String, String> userInfo=db.getUsers().get(user);
+//    String currentLevel=userInfo.get("level");
+//    String nextLevel=getUserNextLevel(user);
+    
+    int currentTotal=getTotalPoints(user);
+    int outOf=getPointsToNextLevel(user);
+    
+    Chart2Json chart=new Chart2Json();
+    chart.getLabels().add("Points Earned");
+    chart.getLabels().add("Points To Next Level");
+    chart.getDatasets().add(new DataSet2());
+    chart.getDatasets().get(0).getData().add(currentTotal);
+    chart.getDatasets().get(0).getData().add(outOf);
+    chart.getDatasets().get(0).setBorderWidth(1);
+    chart.getDatasets().get(0).setBackgroundColor(Arrays.asList(new String[]{"rgba(0,0,163,0.5)","rgba(235,235,235,0.5)"}));
+    chart.getDatasets().get(0).setBorderColor(Arrays.asList(new String[]{"rgba(0,0,163,0.8)","rgba(235,235,235,0.8)"}));
+    
+    return Response.status(200)
+        .header("Access-Control-Allow-Origin",  "*")
+        .header("Content-Type","application/json")
+        .header("Cache-Control", "no-store, must-revalidate, no-cache, max-age=0")
+        .header("Pragma", "no-cache")
+        .entity(Json.newObjectMapper(true).writeValueAsString(chart)).build();
+  }
+  
+  @GET
+  @Path("/scorecard/breakdown/{user}")
+  public Response getUserBreakdown(@PathParam("user") String user) throws JsonGenerationException, JsonMappingException, IOException{
+    Database2 db=Database2.getCached();
+    Map<String, Integer> scorecard=db.getScoreCards().get(user);
+    
+    String[] colors=new String[]{"rgba(204,0,0,%s)", "rgba(0,65,83,%s)", "rgba(146,212,0,%s)", "rgba(59,0,131,%s)", "rgba(0,122,135,%s)"};
+    
+    Chart2Json chart=new Chart2Json();
+    chart.getDatasets().add(new DataSet2());
+    int total=0;
+    for(Entry<String, Integer> s:scorecard.entrySet()){
+      chart.getLabels().add(s.getKey());
+      chart.getDatasets().get(0).getData().add(s.getValue());
+      chart.getDatasets().get(0).getBackgroundColor().add(String.format(colors[total],"0.5"));
+      chart.getDatasets().get(0).getBorderColor().add(String.format(colors[total],"0.8"));
+      total+=1;
+    }
+    
+    return Response.status(200)
+        .header("Access-Control-Allow-Origin",  "*")
+        .header("Content-Type","application/json")
+        .header("Cache-Control", "no-store, must-revalidate, no-cache, max-age=0")
+        .header("Pragma", "no-cache")
+        .entity(Json.newObjectMapper(true).writeValueAsString(chart)).build();
+  }
+  
+  
   @GET
   @Path("/scorecard/summary/{user}")
   public Response getScorecardSummary(@PathParam("user") String user) throws JsonGenerationException, JsonMappingException, IOException{
@@ -216,23 +294,44 @@ public class ManagementController {
     log.debug(user+" user data for userInfo "+(userInfo!=null?"found":"NOT FOUND!"));
     
     String payload="{\"status\":\"ERROR\",\"message\":\"Unable to find user: "+user+"\", \"displayName\":\"You ("+user+") are not registered\"}";
-    if (scorecard!=null && userInfo!=null){
+    
+    if (userInfo!=null){
       Map<String, Object> data=new HashMap<String, Object>();
       data.put("userId", user);
       
       Map<String, Integer> consolidatedTotals=new HashMap<String, Integer>();
       Integer total=0;
-      for(Entry<String, Integer> e:scorecard.entrySet()){
-        String consolidatedKey=e.getKey().substring(0, e.getKey().contains(".")?e.getKey().indexOf("."):e.getKey().length());
-        if (!consolidatedTotals.containsKey(consolidatedKey)) consolidatedTotals.put(consolidatedKey, 0);
-        consolidatedTotals.put(consolidatedKey, consolidatedTotals.get(consolidatedKey)+e.getValue());
-        total+=e.getValue();
+      if (scorecard!=null){
+        for(Entry<String, Integer> e:scorecard.entrySet()){
+          String consolidatedKey=e.getKey().substring(0, e.getKey().contains(".")?e.getKey().indexOf("."):e.getKey().length());
+          if (!consolidatedTotals.containsKey(consolidatedKey)) consolidatedTotals.put(consolidatedKey, 0);
+          consolidatedTotals.put(consolidatedKey, consolidatedTotals.get(consolidatedKey)+e.getValue());
+          total+=e.getValue();
+        }
       }
       data.put("total", total);
       data.putAll(consolidatedTotals);
       data.putAll(userInfo);
       payload=Json.newObjectMapper(true).writeValueAsString(data);
     }
+    
+//    if (scorecard!=null && userInfo!=null){
+//      Map<String, Object> data=new HashMap<String, Object>();
+//      data.put("userId", user);
+//      
+//      Map<String, Integer> consolidatedTotals=new HashMap<String, Integer>();
+//      Integer total=0;
+//      for(Entry<String, Integer> e:scorecard.entrySet()){
+//        String consolidatedKey=e.getKey().substring(0, e.getKey().contains(".")?e.getKey().indexOf("."):e.getKey().length());
+//        if (!consolidatedTotals.containsKey(consolidatedKey)) consolidatedTotals.put(consolidatedKey, 0);
+//        consolidatedTotals.put(consolidatedKey, consolidatedTotals.get(consolidatedKey)+e.getValue());
+//        total+=e.getValue();
+//      }
+//      data.put("total", total);
+//      data.putAll(consolidatedTotals);
+//      data.putAll(userInfo);
+//      payload=Json.newObjectMapper(true).writeValueAsString(data);
+//    }
     
     return Response.status(payload.contains("ERROR")?500:200)
         .header("Access-Control-Allow-Origin",  "*")
@@ -273,13 +372,35 @@ public class ManagementController {
     
     for(String k:map.keySet()){
       if (!k.equals("userId")){
-        if (k.equals("displayName")){
-          log.debug("Setting 'userInfo.displayName' to "+(String)map.get(k));
-          userInfo.put("displayName", (String)map.get(k));
-        }else{
+        
+        if (userInfo.containsKey(k)) {
+          log.debug("Setting 'userInfo."+k+"' to "+(String)map.get(k));
+          userInfo.put(k, (String)map.get(k));
+        }else if (scorecard.containsKey(k)) {
           log.debug("Setting 'scorecard."+k+"' to "+(String)map.get(k));
           scorecard.put(k, Integer.parseInt((String)map.get(k)));
+        }else{
+          // ALERT! unknown field
+          log.error("UNKNOWN FIELD: "+k+" = "+map.get(k));
         }
+
+        
+//        if (k.equals("displayName")){
+//          log.debug("Setting 'userInfo.displayName' to "+(String)map.get(k));
+//          userInfo.put("displayName", (String)map.get(k));
+//        }else if (k.equals("level")){
+//          log.debug("Setting 'userInfo.level' to "+(String)map.get(k));
+//          userInfo.put("level", (String)map.get(k));
+//        }else{
+//          log.debug("Setting 'scorecard."+k+"' to "+(String)map.get(k));
+////          log.debug("field '"+k+"/"+map.get(k)+"' is of type: "+(map.get(k).getClass().getName()));
+//          
+////          if (map.get(k) instanceof String){
+////            
+////          }else if (map.get(k) instanceof Integer){
+//            scorecard.put(k, Integer.parseInt((String)map.get(k)));
+////          }
+//        }
       }
     }
     
@@ -291,6 +412,25 @@ public class ManagementController {
     return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString("OK")).build();
   }
   
+  
+  private int getTotalPoints(String username){
+    Database2 db=Database2.getCached();
+    Map<String, Integer> scorecard=db.getScoreCards().get(username);
+    int total=0;
+    for(Entry<String, Integer> s:scorecard.entrySet()){
+      total+=s.getValue();
+    }
+    return total;
+  }
+  
+  private int getPointsToNextLevel(String username){
+    Database2 db=Database2.getCached();
+    int total=getTotalPoints(username);
+    Map<String, String> userInfo=db.getUsers().get(username);
+    Integer pointsToNextLevel=getLevelsUtil().getNextLevel(userInfo.get("level")).getLeft()-total;
+    if (pointsToNextLevel<0) pointsToNextLevel=0;
+    return pointsToNextLevel;
+  }
   
   @GET
   @Path("/scorecards")

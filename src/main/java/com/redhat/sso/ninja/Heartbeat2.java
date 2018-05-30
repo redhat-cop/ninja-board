@@ -128,7 +128,6 @@ public class Heartbeat2 {
           for(Entry<String, String> c:r.entrySet()){
             if (c.getKey().toLowerCase().contains("timestamp")){
             }else if (c.getKey().toLowerCase().contains("email")){
-//              System.out.println("xxx = "+c.getValue());
               if (c.getValue().contains("@"))
                 userInfo.put("username", c.getValue().substring(0, c.getValue().indexOf("@")));
               userInfo.put("email", c.getValue());
