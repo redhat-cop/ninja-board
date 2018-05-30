@@ -255,7 +255,7 @@ public class ManagementController {
   @GET
   @Path("/scorecard/breakdown/{user}")
   public Response getUserBreakdown(@PathParam("user") String user) throws JsonGenerationException, JsonMappingException, IOException{
-    Database2 db=Database2.getCached();
+    Database2 db=Database2.get();
     Map<String, Integer> scorecard=db.getScoreCards().get(user);
     
     String[] colors=new String[]{"rgba(204,0,0,%s)", "rgba(0,65,83,%s)", "rgba(146,212,0,%s)", "rgba(59,0,131,%s)", "rgba(0,122,135,%s)"};
