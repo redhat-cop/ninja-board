@@ -155,6 +155,13 @@ public class Database2{
     return null;
   }
   
+  private static Database2 instance=null;
+  public static Database2 getCached(){
+    if (null==instance){
+      instance=Database2.get();
+    }
+    return instance;
+  }
   public static Database2 get(){
     if (!new File(storage).exists())
       new Database2().save();
