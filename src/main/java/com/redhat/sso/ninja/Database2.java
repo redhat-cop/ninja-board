@@ -35,6 +35,7 @@ public class Database2{
   
   private Map<String, Map<String, Integer>> scorecards;
   private Map<String, Map<String, String>> users;
+  private List<Map<String, String>> events;
   
   
   
@@ -43,6 +44,7 @@ public class Database2{
 //  private Map<String, User> users;
   private String created;
   static SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+  static SimpleDateFormat sdf2=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
   
   public Database2(){
     created=sdf.format(new Date());
@@ -67,6 +69,9 @@ public class Database2{
       if (null==scorecards.get(userId).get(poolId)) scorecards.get(userId).put(poolId, 0);
       log.info("Incrementing points: user="+userId+", poolId="+poolId+", increment/points="+increment);
       scorecards.get(userId).put(poolId, scorecards.get(userId).get(poolId)+increment);
+      
+      addEvent("Points Increment", userId, "Points Pool: "+poolId);
+//      getEvents().add("Points Increment: "+poolId+" : "+userId);
       
 //      // does the user need leveling up?
 //      Map<String, String> userInfo=getUsers().get(userId);
@@ -100,7 +105,22 @@ public class Database2{
     if (null==scorecards) scorecards=new HashMap<String, Map<String,Integer>>();
     return scorecards;
   }
+  public List<Map<String, String>> getEvents(){
+    if (null==events) events=new ArrayList<Map<String,String>>();
+    return events;
+  }
   
+  public void addEvent(String type, String user, String text){
+    Map<String,String> event=new HashMap<String, String>();
+    event.put("timestamp", sdf2.format(new Date()));
+    event.put("user", user);
+    event.put("text", text);
+    getEvents().add(event);
+  }
+//  public List<String> getEvents(){
+//    if (null==events) events=new ArrayList<String>();
+//    return events;
+//  }
   
   private Set<String> pointsDuplicateChecker=new HashSet<String>();
   public Set<String> getPointsDuplicateChecker(){

@@ -148,8 +148,11 @@ public class ManagementController {
         userInfo.put("levelChanged", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));// nextLevel.getRight());
         
         db.getUsers().put(username, userInfo);
-        log.debug("Registered user: "+Json.newObjectMapper(true).writeValueAsString(userInfo));
+        log.debug("New User Registered: "+Json.newObjectMapper(true).writeValueAsString(userInfo));
         db.getScoreCards().put(username, new HashMap<String, Integer>());
+        
+        db.addEvent("New User Registered (via API)", username, "");
+//        db.getEvents().add("New User Registered (via API): "+username);
       }
       
       db.save();
@@ -226,23 +229,24 @@ public class ManagementController {
   @Path("/scorecard/nextlevel/{user}")
   public Response getUserNextLevel(@PathParam("user") String user) throws JsonGenerationException, JsonMappingException, IOException{
     
-//    Database2 db=Database2.getCached();
-//    Map<String, String> userInfo=db.getUsers().get(user);
-//    String currentLevel=userInfo.get("level");
-//    String nextLevel=getUserNextLevel(user);
-    
-    int currentTotal=getTotalPoints(user);
-    int outOf=getPointsToNextLevel(user);
+    Database2 db=Database2.getCached();
+    boolean userExists=db.getScoreCards().containsKey(user);
     
     Chart2Json chart=new Chart2Json();
     chart.getLabels().add("Points Earned");
     chart.getLabels().add("Points To Next Level");
     chart.getDatasets().add(new DataSet2());
-    chart.getDatasets().get(0).getData().add(currentTotal);
-    chart.getDatasets().get(0).getData().add(outOf);
     chart.getDatasets().get(0).setBorderWidth(1);
-    chart.getDatasets().get(0).setBackgroundColor(Arrays.asList(new String[]{"rgba(0,0,163,0.5)","rgba(235,235,235,0.5)"}));
-    chart.getDatasets().get(0).setBorderColor(Arrays.asList(new String[]{"rgba(0,0,163,0.8)","rgba(235,235,235,0.8)"}));
+    
+    if (userExists){
+      int currentTotal=getTotalPoints(user);
+      int outOf=getPointsToNextLevel(user);
+      chart.getDatasets().get(0).getData().add(currentTotal);
+      chart.getDatasets().get(0).getData().add(outOf);
+    }else{
+      chart.getDatasets().get(0).getData().add(0);
+      chart.getDatasets().get(0).getData().add(Integer.parseInt(Config.get().getOptions().get("thresholds").split(":")[0])); // blue level threshold
+    }
     
     return Response.status(200)
         .header("Access-Control-Allow-Origin",  "*")
@@ -258,19 +262,18 @@ public class ManagementController {
     Database2 db=Database2.get();
     Map<String, Integer> scorecard=db.getScoreCards().get(user);
     
-    String[] colors=new String[]{"rgba(204,0,0,%s)", "rgba(0,65,83,%s)", "rgba(146,212,0,%s)", "rgba(59,0,131,%s)", "rgba(0,122,135,%s)"};
-    
     Chart2Json chart=new Chart2Json();
     chart.getDatasets().add(new DataSet2());
-    int total=0;
-    for(Entry<String, Integer> s:scorecard.entrySet()){
-      chart.getLabels().add(s.getKey());
-      chart.getDatasets().get(0).getData().add(s.getValue());
-      chart.getDatasets().get(0).getBackgroundColor().add(String.format(colors[total],"0.5"));
-      chart.getDatasets().get(0).getBorderColor().add(String.format(colors[total],"0.8"));
-      total+=1;
+    chart.getDatasets().get(0).setBorderWidth(1);
+    if (null!=scorecard){
+      for(Entry<String, Integer> s:scorecard.entrySet()){
+        chart.getLabels().add(s.getKey());
+        chart.getDatasets().get(0).getData().add(s.getValue());
+      }
+    }else{
+      chart.getLabels().add("No Points");
+      chart.getDatasets().get(0).getData().add(0);
     }
-    
     return Response.status(200)
         .header("Access-Control-Allow-Origin",  "*")
         .header("Content-Type","application/json")
@@ -293,7 +296,7 @@ public class ManagementController {
     log.debug(user+" user data for scorecards "+(scorecard!=null?"found":"NOT FOUND!"));
     log.debug(user+" user data for userInfo "+(userInfo!=null?"found":"NOT FOUND!"));
     
-    String payload="{\"status\":\"ERROR\",\"message\":\"Unable to find user: "+user+"\", \"displayName\":\"You ("+user+") are not registered\"}";
+    String payload="{\"status\":\"ERROR\",\"message\":\"Unable to find user: "+user+"\", \"displayName\":\""+user+" not registered\"}";
     
     if (userInfo!=null){
       Map<String, Object> data=new HashMap<String, Object>();
@@ -431,6 +434,20 @@ public class ManagementController {
     if (pointsToNextLevel<0) pointsToNextLevel=0;
     return pointsToNextLevel;
   }
+  
+  @GET
+  @Path("/events")
+  public Response getEvents() throws JsonGenerationException, JsonMappingException, IOException{
+    Database2 db=Database2.get();
+//    List<Map<String,String>> result=new ArrayList<Map<String,String>>();
+//    for(String e:db.getEvents()){
+//      Map<String,String> event=new HashMap<String, String>();
+//      event.put("event", e);
+//      result.add(event);
+//    }
+    return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(db.getEvents())).build();
+  }
+  
   
   @GET
   @Path("/scorecards")
