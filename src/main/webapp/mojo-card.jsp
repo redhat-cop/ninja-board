@@ -1,24 +1,23 @@
-<html>
-	<head>
+	
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 		<!--
 		<script src="https://github.com/chartjs/Chart.js/releases/download/v2.6.0/Chart.min.js"></script>
 		-->
 		
-		<script src="http://www.chartjs.org/dist/2.7.2/Chart.bundle.js"></script>
+		<script src="https://www.chartjs.org/dist/2.7.2/Chart.bundle.js"></script>
 		
 		<style>
 			body{
 				font-family: Arial;
 			}
 		</style>
-	</head>
-	<body>
+	
+	
 
 		<script>
 			//var ctx = "https://community-ninja-board-community-ninja-board.apps.d2.casl.rht-labs.com/community-ninja-board";
-			//var ctx = "http://localhost:8082/community-ninja-board";
-			var ctx = "${pageContext.request.contextPath}";
+			var ctx = "http://localhost:8082/community-ninja-board";
+			//var ctx = "${pageContext.request.contextPath}";
 		</script>
 		
 		
@@ -55,12 +54,12 @@
 			top: 45px;
 			*/
 		}
-		//.cardName{
-		//	vertical-align: top;
-		//  font-weight: bold;
-		//	font-size: 28pt;
-		//	color: #444;
-		//}
+		.cardName{
+			vertical-align: top;
+			font-weight: bold;
+			font-size: 28pt;
+			color: #444;
+		}
 		.cardScore{
 			vertical-align: top;
 			text-align: center;
@@ -114,49 +113,61 @@
 						</tr>
 						<tr>
 							<td class="cardRow"><img class="icon" src="https://d2k1ftgv7pobq7.cloudfront.net/meta/u/res/images/brand-assets/Logos/0099ec3754bf473d2bbf317204ab6fea/trello-logo-blue.png"></td>
-							<td><span id="_githubId"></span></td>
+							<td><span id="_trelloId"></span></td>
 						</tr>
 						<tr>
 							<td class="cardRow"><img class="icon" src="https://assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png"></td>
-							<td><span id="_trelloId"></span></td>
+							<td><span id="_githubId"></span></td>
+						</tr>
+						
+						<tr>
+							<td colspan="6" style="height: 30px;"><!-- SPACER ONLY --></td>
+						</tr>
+						
+						<tr>
+							<td colspan="6">
+								
+								<table border=0>
+									<tr>
+										<td style="width:50%;">
+											<!-- #################### -->
+											<!-- BOTTOM LEFT DOUGHNUT -->
+											<!-- #################### -->
+											<script>
+												function leaderboardRefresh(){ return refreshGraph0('points', 'Doughnut'); }
+											</script>
+											<div id="leaderboard_container" class="graph" >
+												<canvas id="points"></canvas>
+												<center><span class="graph-label">Next Level</span></center>
+											</div>
+										</td>
+										
+										<td>
+											<!-- ##################### -->
+											<!-- BOTTOM RIGHT DOUGHNUT -->
+											<!-- ##################### -->
+											<script>
+												function breakdownRefresh(){ return refreshGraph0('breakdown', 'Doughnut'); }
+											</script>
+											<div id="breakdown_container" class="graph" >
+												<canvas id="breakdown"></canvas>
+												<center><span class="graph-label">Points Breakdown</span></center>
+									    </div>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
 						</tr>
 					</table>
-				</td>
-			</tr>
-			
-			<tr>
-				<td style="width:50%;">
-					<!-- #################### -->
-					<!-- BOTTOM LEFT DOUGHNUT -->
-					<!-- #################### -->
-					<script>
-						function leaderboardRefresh(){ return refreshGraph0('points', 'Doughnut'); }
-					</script>
-					<div id="leaderboard_container" class="graph" >
-						<canvas id="points"></canvas>
-						<center><span class="graph-label">Next Level</span></center>
-					</div>
-				</td>
-				
-				<td>
-					<!-- ##################### -->
-					<!-- BOTTOM RIGHT DOUGHNUT -->
-					<!-- ##################### -->
-					<script>
-						function breakdownRefresh(){ return refreshGraph0('breakdown', 'Doughnut'); }
-					</script>
-					<div id="breakdown_container" class="graph" >
-						<canvas id="breakdown"></canvas>
-						<center><span class="graph-label">Points Breakdown</span></center>
-			    </div>
 				</td>
 			</tr>
 		</table>
 		
 		
 		
-	</body>
-</html>
+	
+
 
 
 <script>
@@ -166,7 +177,7 @@ function getUsername(){
 		var username=window.parent._jive_current_user.username;
 		var displayName=window.parent._jive_current_user.displayName;
 	}
-  if(username==undefined) username="mallen";
+  if(username==undefined) username="unknown";
 	return username;
 }
 
@@ -227,7 +238,7 @@ xhr.onloadend = function () {
 				//Get options from the center object in options
         var centerConfig = chart.config.options.elements.center;
       	var fontStyle = centerConfig.fontStyle || 'Arial';
-				var txt = centerConfig.text;
+      	var txt = centerConfig.text;
         var color = centerConfig.color || '#000';
         var sidePadding = centerConfig.sidePadding || 20;
         var sidePaddingCalculated = (sidePadding/100) * (chart.innerRadius * 2)
@@ -269,6 +280,8 @@ function resetCanvas(chartElementName){
   ctx.canvas.height = $('#'+chartElementName+'_container').height()+100;
 }
 
+var colors=["rgba(204,0,0,1)","rgba(0,65,83,1)","rgba(146,212,0,1)","rgba(59,0,131,1)","rgba(240,171,0,1)","rgba(0,122,135,1)"];
+
 function buildChart(uri, chartElementName, type){
   var xhr = new XMLHttpRequest();
   xhr.open("GET", ctx+uri, true);
@@ -277,6 +290,14 @@ function buildChart(uri, chartElementName, type){
     var data=JSON.parse(xhr.responseText);
     var ctx = document.getElementById(chartElementName).getContext("2d");
     
+  	var backgroundColor=[];
+  	var borderColor=[];
+  	for (i=0;i<data.datasets[0].data.length;i++){
+  		backgroundColor[i]=colors[i];
+  		borderColor[i]=colors[i];
+  	}
+  	data.datasets[0].backgroundColor=backgroundColor;// push({"backgroundColor2":backgroundColor});
+  	data.datasets[0].borderColor=borderColor;
     
     if ("points"==chartElementName){
 	    var total=data.datasets[0].data[0]+data.datasets[0].data[1];

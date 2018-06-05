@@ -116,7 +116,8 @@ public class Heartbeat2 {
       return result;
     }
 
-    public boolean addNewlyRegisteredUsers(Map<String, Map<String, String>> dbUsers){
+    public boolean addNewlyRegisteredUsers(Database2 db){
+      Map<String, Map<String, String>> dbUsers=db.getUsers();
       UserService userService=new UserService();
       boolean userServiceDown=false;
       try{
@@ -162,6 +163,10 @@ public class Heartbeat2 {
             userInfo.put("levelChanged", new SimpleDateFormat("yyyy-MM-dd").format(new Date())); // date of registration
             log.info("Adding Newly Registered User: "+userInfo.get("username") +" ["+userInfo+"]");
             dbUsers.put(userInfo.get("username"), userInfo);
+            
+            db.addEvent("New User Registered", userInfo.get("username"), "");
+//            db.getEvents().add("New User Registered: "+userInfo.get("username"));
+            
           }else if (dbUsers.containsKey(userInfo.get("username"))){
             log.debug("User already registered: "+userInfo.get("username"));
           }
@@ -181,7 +186,7 @@ public class Heartbeat2 {
       final Config config=Config.get();
       final Database2 db=Database2.get();
       
-      boolean successfullyAccessedRegistrationSheet=addNewlyRegisteredUsers(db.getUsers());
+      boolean successfullyAccessedRegistrationSheet=addNewlyRegisteredUsers(db);
       if (!successfullyAccessedRegistrationSheet) return;
       
       db.save();
@@ -267,6 +272,7 @@ public class Heartbeat2 {
             }
             
             log.info("Executing script: "+command);
+            db.addEvent("Executing Script", "N/A", "command");
             
             Process script_exec=Runtime.getRuntime().exec(command);
             script_exec.waitFor();
@@ -347,6 +353,9 @@ public class Heartbeat2 {
           log.info("User "+userId+" has been promoted to level "+nextLevel.getRight()+" with a points score of "+total);
           userInfo.put("level", nextLevel.getRight());
           userInfo.put("levelChanged", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));// nextLevel.getRight());
+          
+          db.addEvent("User Promotion", userInfo.get("username"), "Promoted to "+nextLevel.getRight()+" level");
+//          db.getEvents().add("User Promotion: ["+userInfo.get("username") +"] was promoted to level ["+nextLevel.getRight()+"]");
           
         }
         
