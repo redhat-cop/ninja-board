@@ -19,7 +19,10 @@ function loadDataTable(){
         "lengthMenu": [[10, 25, 50, 100, 200, -1], [10, 25, 50, 100, 200, "All"]], // page entry options
         "pageLength" : 5, // default page entries
         "columns": [
-            { "data": "event" }
+            { "data": "timestamp" },
+            { "data": "type" },
+            { "data": "text" },
+            { "data": "user" }
         ]
     } );
     
@@ -113,7 +116,10 @@ jQuery.fn.dataTableExt.oApi.fnReloadAjax = function ( oSettings, sNewSource, fnC
 			    <table id="example" class="display" cellspacing="0" width="100%">
 			        <thead>
 			            <tr>
-			                <th align="left">Event</th>
+			                <th align="left">Timestamp</th>
+			                <th align="left">Type</th>
+			                <th align="left"></th>
+			                <th align="left">User</th>
 			            </tr>
 			        </thead>
 			    </table>

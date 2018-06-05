@@ -14,7 +14,8 @@
           <li><a href="scorecards.jsp">Scorecards</a></li>
           <li><a href="leaderboard.jsp">Leaderboard</a></li>
           <li><a href="events.jsp">Events</a></li>
-          <li><a href="config.jsp">Config</a></li>
+          <li><a href="config.jsp">Config (Here be dragons!)</a></li>
+          <li><a href="database.jsp">Database (Here be dragons!)</a></li>
         </ul>
       </li>
     </ul>
