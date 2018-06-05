@@ -144,6 +144,7 @@ public class Heartbeat2 {
           if (null!=userInfo.get("username") && !dbUsers.containsKey(userInfo.get("username"))){
             
             // attempt to set the display name if we can get access to RH ldap
+            userServiceDown=true; //temporarily set whilst we have no access to LDAP
             try{
               if (!userServiceDown){
                 log.debug("UserService(LDAP) is UP, populating the 'displayName'");
@@ -161,7 +162,7 @@ public class Heartbeat2 {
 
             userInfo.put("level", new ManagementController().getLevelsUtil().getBaseLevel().getRight());
             userInfo.put("levelChanged", new SimpleDateFormat("yyyy-MM-dd").format(new Date())); // date of registration
-            log.info("Adding Newly Registered User: "+userInfo.get("username") +" ["+userInfo+"]");
+            log.info("New User Registered: "+userInfo.get("username") +" ["+userInfo+"]");
             dbUsers.put(userInfo.get("username"), userInfo);
             
             db.addEvent("New User Registered", userInfo.get("username"), "");
