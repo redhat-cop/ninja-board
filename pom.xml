@@ -52,7 +52,7 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
-				<localServer>http://community-ninja-board-community-ninja-board.apps.d2.casl.rht-labs.com</localServer>
+				<localServer>http://community-ninja-board-community-ninja-board.apps.d1.casl.rht-labs.com</localServer>
 			</properties>
 			<build>
 		    <resources>

@@ -272,13 +272,14 @@ public class Heartbeat2 {
             }
             
             log.info("Executing script: "+command);
-            db.addEvent("Executing Script", "", command);
             
             Process script_exec=Runtime.getRuntime().exec(command);
             script_exec.waitFor();
             if(script_exec.exitValue() != 0){
+              db.addEvent("Script Execution FAILED", "", command);
               log.error("Error while executing script");
             }else{
+              db.addEvent("Script Execution", "", command);
               BufferedReader stdInput=new BufferedReader(new InputStreamReader(script_exec.getInputStream()));
               
               StringBuffer scriptLog=new StringBuffer();

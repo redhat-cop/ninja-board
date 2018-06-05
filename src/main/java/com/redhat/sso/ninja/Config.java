@@ -115,15 +115,6 @@ public class Config {
           // copy the default config over
           IOUtils.copy(Config.class.getClassLoader().getResourceAsStream(STORAGE.getName()), new FileOutputStream(STORAGE));
           
-          // copy the default scripts over to where they can be executed
-          IOUtils.copy(Config.class.getClassLoader().getResourceAsStream("scripts/github-stats.py"), new FileOutputStream("github-stats.py"));
-          
-          Set<PosixFilePermission> perms = new HashSet<PosixFilePermission>();
-          perms.add(PosixFilePermission.OWNER_READ);
-          perms.add(PosixFilePermission.OWNER_WRITE);
-          perms.add(PosixFilePermission.OWNER_EXECUTE);
-          Files.setPosixFilePermissions(new File("github-stats.py").toPath(), perms);
-          
         }
 //          instance=new Config();
 //        }else{
