@@ -1,4 +1,6 @@
 
+oc new-project community-ninja-board
+
 # CREATE DEPLOYMENT APP
 oc process --param-file=applier/params/community-ninja-board-deployment -f applier/templates/community-ninja-board-deployment.yml | oc apply -f-
 #deploymentconfig "community-ninja-board" created

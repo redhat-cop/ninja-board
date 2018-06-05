@@ -3,7 +3,7 @@
     "name" : "Trello",
     "source" : "http://localhost:8082/community-ninja-board/api/script/trello-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
     "type" : "perl"
-  }, {, {
+  }, {
     "name" : "Github",
     "source" : "http://localhost:8082/community-ninja-board/api/script/github-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
     "type" : "perl"
