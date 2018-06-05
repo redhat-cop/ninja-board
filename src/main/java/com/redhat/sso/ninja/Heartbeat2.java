@@ -338,29 +338,33 @@ public class Heartbeat2 {
         
       }
       
-      // do any users need leveling up?
+      // do any users need levelling up?
+      int count=1;
       Map<String, Map<String, String>> users=db.getUsers();
-      for(Entry<String, Map<String, Integer>> e:db.getScoreCards().entrySet()){
-        String userId=e.getKey();
-        int total=0;
-        for(Entry<String, Integer> s:e.getValue().entrySet()){
-          total+=s.getValue();
-        }
-        Map<String, String> userInfo=users.get(userId);
-        
-        Tuple<Integer, String> currentLevel=new ManagementController().getLevelsUtil().getLevel(userInfo.get("level"));
-        Tuple<Integer, String> nextLevel=new ManagementController().getLevelsUtil().getNextLevel(userInfo.get("level"));
-        if (total>=nextLevel.getLeft() && !currentLevel.getRight().equals(nextLevel.getRight())){
-          // congrats! the user has been promoted!
-          log.info("User "+userId+" has been promoted to level "+nextLevel.getRight()+" with a points score of "+total);
-          userInfo.put("level", nextLevel.getRight());
-          userInfo.put("levelChanged", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));// nextLevel.getRight());
+      while (count>0){ // keep checking, some people may need multiple promotions in one go!
+        count=0;
+        for(Entry<String, Map<String, Integer>> e:db.getScoreCards().entrySet()){
+          String userId=e.getKey();
+          int total=0;
+          for(Entry<String, Integer> s:e.getValue().entrySet()){
+            total+=s.getValue();
+          }
+          Map<String, String> userInfo=users.get(userId);
           
-          db.addEvent("User Promotion", userInfo.get("username"), "Promoted to "+nextLevel.getRight()+" level");
-//          db.getEvents().add("User Promotion: ["+userInfo.get("username") +"] was promoted to level ["+nextLevel.getRight()+"]");
+          Tuple<Integer, String> currentLevel=new ManagementController().getLevelsUtil().getLevel(userInfo.get("level"));
+          Tuple<Integer, String> nextLevel=new ManagementController().getLevelsUtil().getNextLevel(userInfo.get("level"));
+          if (total>=nextLevel.getLeft() && !currentLevel.getRight().equals(nextLevel.getRight())){
+            // congrats! the user has been promoted!
+            log.info("User "+userId+" has been promoted to level "+nextLevel.getRight()+" with a points score of "+total);
+            userInfo.put("level", nextLevel.getRight());
+            userInfo.put("levelChanged", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));// nextLevel.getRight());
+            
+            db.addEvent("User Promotion", userInfo.get("username"), "Promoted to "+nextLevel.getRight()+" level");
+  //          db.getEvents().add("User Promotion: ["+userInfo.get("username") +"] was promoted to level ["+nextLevel.getRight()+"]");
+            count+=1;
+          }
           
         }
-        
       }
       
       
