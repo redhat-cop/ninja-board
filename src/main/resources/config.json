@@ -1,14 +1,11 @@
 {
   "scripts" : [ {
-    "options" : {
-      "organizationName" : "redhatcop"
-    },
     "name" : "Trello",
-    "source" : "com.redhat.sso.ninja.TrelloSync",
-    "type" : "class"
-  }, {
+    "source" : "http://localhost:8082/community-ninja-board/api/script/trello-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
+    "type" : "perl"
+  }, {, {
     "name" : "Github",
-    "source" : "${localServer}/community-ninja-board/api/script/github-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
+    "source" : "http://localhost:8082/community-ninja-board/api/script/github-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
     "type" : "perl"
   } ],
   "options" : {
@@ -19,6 +16,6 @@
     "users.ldap.searchDN" : "(&(objectclass=Person)(%s=%s))"
   },
   "values" : {
-    "lastRun2" : "2018-01-01T00:00:00"
+    "lastRun2" : "2018-04-04T12:00:00"
   }
 }
