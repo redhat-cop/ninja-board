@@ -36,8 +36,8 @@ objects:
             value: ${JWS_ADMIN_PASSWORD}
           - name: GITHUB_API_TOKEN
             value: ${GITHUB_API_TOKEN}
-          - name: TRELLO_TOKEN
-            value: ${TRELLO_TOKEN}
+          - name: TRELLO_API_TOKEN
+            value: ${TRELLO_API_TOKEN}
           image: ${APPLICATION_NAME}
           imagePullPolicy: Always
           name: ${APPLICATION_NAME}
@@ -116,6 +116,9 @@ parameters:
 - description: Token for the GitHub API.
   name: GITHUB_API_TOKEN
   required: true
+- description: Key for the Trello API.
+  name: TRELLO_API_KEY
+  required: true
 - description: Token for the Trello API.
-  name: TRELLO_TOKEN
+  name: TRELLO_API_TOKEN
   required: true
