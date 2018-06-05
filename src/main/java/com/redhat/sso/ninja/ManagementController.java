@@ -1,6 +1,8 @@
 package com.redhat.sso.ninja;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -55,6 +57,7 @@ import org.codehaus.jackson.type.TypeReference;
 import com.google.gdata.util.common.base.Pair;
 import com.redhat.sso.ninja.chart.Chart2Json;
 import com.redhat.sso.ninja.chart.DataSet2;
+import com.redhat.sso.ninja.utils.IOUtils2;
 import com.redhat.sso.ninja.utils.Json;
 import com.redhat.sso.ninja.utils.MapBuilder;
 
@@ -189,6 +192,20 @@ public class ManagementController {
   public Response getDatabase() throws JsonGenerationException, JsonMappingException, IOException{
     return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Database2.get())).build();
   }
+  @POST
+  @Path("/database/save")
+  public Response databaseSave(@Context HttpServletRequest request,@Context HttpServletResponse response,@Context ServletContext servletContext) throws JsonGenerationException, JsonMappingException, IOException{
+    System.out.println("Saving database");
+    Database2 db=Json.newObjectMapper(true).readValue(IOUtils2.toStringAndClose(request.getInputStream()), new TypeReference<Database2>() {});
+    
+    System.out.println("New DB = "+Json.newObjectMapper(true).writeValueAsString(db));
+//    System.out.println("heartbeat.intervalInSeconds="+newConfig.getOptions().get("heartbeat.intervalInSeconds"));
+//    System.out.println("Saving...");
+    db.save();
+    System.out.println("Saved");
+    return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Database2.get())).build();
+  }
+
   
   
   @GET

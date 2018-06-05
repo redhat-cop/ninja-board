@@ -11,7 +11,7 @@ DEFAULT_START_DATE_MONTH = '03'
 DEFAULT_START_DATE_DAY = '01'
 CARD_TITLE_POINTS_REGEX_PATTERN = re.compile(r"\(([0-9]+)\)")
 
-# Search for cards that are done and have been modified in the past 30 days
+# Search for cards that are done and have been modified in the past ? days
 TRELLO_SEARCH_QUERY = 'list:Done edited:{0} {1}'
 
 def valid_date(s):
@@ -136,8 +136,8 @@ for card in resp_cards['cards']:
             member_items['points'] += calculate_points(card['name'])
 
             members_items[member_id] = member_items
-#print "bucket/key/user/increment"
-            print "Trello/TR{0}/{1}/{2}".format(card_id, get_member(session, member_id)['username'], 1)
+#print "sub-pool/key/user/increment"
+            print "Cards Closed/TR{0}/{1}/{2}".format(card_id, get_member(session, member_id)['username'], 1)
 
 #print "=== Statistics for Trello Team '{0}' ====\n".format(encode_text(org_response['displayName']) if 'displayName' in org_response else encode_text(org_response['name']))
 for key, value in members_items.iteritems():

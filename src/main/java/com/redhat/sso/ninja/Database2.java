@@ -27,7 +27,7 @@ import com.redhat.sso.ninja.utils.Json;
 public class Database2{
   private static final Logger log=Logger.getLogger(Database2.class);
   private static final String storage="database2.json";
-  
+  private static final Integer MAX_EVENT_ENTRIES=100;
   
   // User -> Pool (sub pool separated with a dot) + Score
 //  private Map<User, Map<String, Integer>> users;
@@ -52,13 +52,6 @@ public class Database2{
   public String getCreated(){ return created; }
   
   
-//  public void setUsers(Map<String,User> value){ this.users=value; }
-//  public Map<String,User> getUsers(){
-//    if (null==users) users=new HashMap<String, User>();
-//      return this.users;
-//  }
-  
-  
   public Database2 increment(String poolId, String userId, Integer increment){
     if (null==poolId || null==userId){
       log.error("Unable to add due to null key [poolId="+poolId+", userId="+userId+"]");
@@ -70,7 +63,7 @@ public class Database2{
       log.info("Incrementing points: user="+userId+", poolId="+poolId+", increment/points="+increment);
       scorecards.get(userId).put(poolId, scorecards.get(userId).get(poolId)+increment);
       
-      addEvent("Points Increment", userId, "Points Pool: "+poolId);
+      addEvent("Points Increment", userId, increment+" points added to "+poolId+ " pool");
 //      getEvents().add("Points Increment: "+poolId+" : "+userId);
       
 //      // does the user need leveling up?
@@ -113,9 +106,15 @@ public class Database2{
   public void addEvent(String type, String user, String text){
     Map<String,String> event=new HashMap<String, String>();
     event.put("timestamp", sdf2.format(new Date()));
+    event.put("type", type);
     event.put("user", user);
     event.put("text", text);
     getEvents().add(event);
+    
+    // limit the events to 100 entries
+    while (getEvents().size()>MAX_EVENT_ENTRIES){
+      getEvents().remove(0);
+    }
   }
 //  public List<String> getEvents(){
 //    if (null==events) events=new ArrayList<String>();

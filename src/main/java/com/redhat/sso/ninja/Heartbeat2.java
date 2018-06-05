@@ -272,7 +272,7 @@ public class Heartbeat2 {
             }
             
             log.info("Executing script: "+command);
-            db.addEvent("Executing Script", "N/A", "command");
+            db.addEvent("Executing Script", "", command);
             
             Process script_exec=Runtime.getRuntime().exec(command);
             script_exec.waitFor();
