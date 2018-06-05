@@ -1,21 +1,24 @@
 {
-  "scripts" : [ {
-    "name" : "Trello",
-    "source" : "http://localhost:8082/community-ninja-board/api/script/trello-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
-    "type" : "perl"
-  }, {
-    "name" : "Github",
-    "source" : "http://localhost:8082/community-ninja-board/api/script/github-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
-    "type" : "perl"
-  } ],
-  "options" : {
-    "heartbeat.intervalInSeconds" : "60000",
-    "thresholds" : "5:BLUE,20:GREY,40:RED,75:BLACK",
-    "users.ldap.provider" : "ldap://ldap.corp.redhat.com:389",
-    "users.ldap.baseDN" : "ou=users,dc=redhat,dc=com",
-    "users.ldap.searchDN" : "(&(objectclass=Person)(%s=%s))"
-  },
-  "values" : {
-    "lastRun2" : "2018-04-04T12:00:00"
-  }
+	"scripts": [
+		{
+			"name": "Trello",
+			"source": "https://raw.githubusercontent.com/matallen/community-ninja-board/master/src/main/resources/scripts/trello-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
+			"type": "perl"
+		},
+		{
+			"name": "Github",
+			"source": "https://raw.githubusercontent.com/matallen/community-ninja-board/master/src/main/resources/scripts/github-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
+			"type": "perl"
+		}
+	],
+	"options": {
+		"heartbeat.intervalInSeconds": "60000",
+		"thresholds": "5:BLUE,20:GREY,40:RED,75:BLACK",
+		"users.ldap.provider": "ldap://ldap.corp.redhat.com:389",
+		"users.ldap.baseDN": "ou=users,dc=redhat,dc=com",
+		"users.ldap.searchDN": "(&(objectclass=Person)(%s=%s))"
+	},
+	"values": {
+		"lastRun2": "2018-01-01T00:00:00"
+	}
 }
