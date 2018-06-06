@@ -112,6 +112,19 @@ public class ManagementController {
 //    System.out.println("heartbeat.intervalInSeconds="+newConfig.getOptions().get("heartbeat.intervalInSeconds"));
 //    System.out.println("Saving...");
     newConfig.save();
+    
+    // re-start the heartbeat with a new interval
+    String heartbeatInterval=newConfig.getOptions().get("heartbeat.intervalInSeconds");
+    if (null!=heartbeatInterval && heartbeatInterval.matches("\\d+")){
+      Heartbeat2.stop();
+      Heartbeat2.start(Long.parseLong(heartbeatInterval));
+    }
+    
+    String maxEvents=newConfig.getOptions().get("events.max");
+    if (null!=maxEvents && maxEvents.matches("\\d+")){
+      Database2.MAX_EVENT_ENTRIES=Integer.parseInt(maxEvents);
+    }
+    
     System.out.println("Saved");
     return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Config.get())).build();
   }
@@ -400,8 +413,10 @@ public class ManagementController {
           log.debug("Setting 'scorecard."+k+"' to "+(String)map.get(k));
           scorecard.put(k, Integer.parseInt((String)map.get(k)));
         }else{
-          // ALERT! unknown field
-          log.error("UNKNOWN FIELD: "+k+" = "+map.get(k));
+          log.debug("Setting 'userInfo."+k+"' to "+(String)map.get(k));
+          userInfo.put(k, (String)map.get(k));
+          //// ALERT! unknown field
+          //log.error("UNKNOWN FIELD: "+k+" = "+map.get(k));
         }
 
         
