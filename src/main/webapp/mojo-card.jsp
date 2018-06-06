@@ -15,8 +15,8 @@
 	
 
 		<script>
-			//var ctx = "https://community-ninja-board-community-ninja-board.apps.d2.casl.rht-labs.com/community-ninja-board";
-			var ctx = "http://localhost:8082/community-ninja-board";
+			var ctx = "https://community-ninja-board-community-ninja-board.apps.d1.casl.rht-labs.com/community-ninja-board";
+			//var ctx = "http://localhost:8082/community-ninja-board";
 			//var ctx = "${pageContext.request.contextPath}";
 		</script>
 		
@@ -99,7 +99,7 @@
 							<td class="cardScore"><img class="icon2" id="_level"></img></td>
 							<td class="cardScore"><span id="_Trello">0</span></td>
 							<td class="cardScore"><span id="_Github">0</span></td>
-							<td class="cardScore">0</td>
+							<td class="cardScore"><!-- chat counter --></td>
 						</tr>
 						<tr>
 							<td class="cardRow">
@@ -109,7 +109,7 @@
 							<td class="cardScoreText" rowspan="3"></td>
 							<td class="cardScoreText" rowspan="3">trello</td>
 							<td class="cardScoreText" rowspan="3">github</td>
-							<td class="cardScoreText" rowspan="3">chat</td>
+							<td class="cardScoreText" rowspan="3"><!--chat--></td>
 						</tr>
 						<tr>
 							<td class="cardRow"><img class="icon" src="https://d2k1ftgv7pobq7.cloudfront.net/meta/u/res/images/brand-assets/Logos/0099ec3754bf473d2bbf317204ab6fea/trello-logo-blue.png"></td>
@@ -177,7 +177,7 @@ function getUsername(){
 		var username=window.parent._jive_current_user.username;
 		var displayName=window.parent._jive_current_user.displayName;
 	}
-  if(username==undefined) username="unknown";
+  if(username==undefined) username="mallen";
 	return username;
 }
 
@@ -321,7 +321,8 @@ function buildChart(uri, chartElementName, type){
 							}
 						},
 						legend:{
-							display:false
+							display: true,
+							position: "left"
 						}
 					}
 			});

@@ -98,7 +98,7 @@ public class Heartbeat2 {
   
   public static void start(long intervalInMs) {
     t = new Timer("cop-ninja-heartbeat", false);
-    t.scheduleAtFixedRate(new HeartbeatRunnable(), 20000l, intervalInMs);
+    t.scheduleAtFixedRate(new HeartbeatRunnable(), 30000l, intervalInMs);
   }
 
   public static void stop() {}
