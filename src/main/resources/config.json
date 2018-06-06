@@ -13,7 +13,7 @@
 	],
 	"options": {
 		"heartbeat.intervalInSeconds": "60000",
-		"events.max": "400",
+		"events.max": "1000",
 		"thresholds": "0:ZERO,5:BLUE,20:GREY,40:RED,75:BLACK",
 		"users.ldap.provider": "ldap://ldap.corp.redhat.com:389",
 		"users.ldap.baseDN": "ou=users,dc=redhat,dc=com",
