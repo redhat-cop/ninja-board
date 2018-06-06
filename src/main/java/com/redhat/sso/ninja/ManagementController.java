@@ -263,8 +263,8 @@ public class ManagementController {
     boolean userExists=db.getScoreCards().containsKey(user);
     
     Chart2Json chart=new Chart2Json();
-    chart.getLabels().add("Points Earned");
-    chart.getLabels().add("Points To Next Level");
+    chart.getLabels().add("Earned");
+    chart.getLabels().add("To Next Level");
     chart.getDatasets().add(new DataSet2());
     chart.getDatasets().get(0).setBorderWidth(1);
     
