@@ -97,12 +97,31 @@ function loadDataTable(){
             "success": function(json){
             		//console.log("json="+JSON.stringify(json));
 	            	var tableHeaders;
+	            	var tableColumns=[];
 	            	$.each(json.columns, function(i, val){
-	              	tableHeaders += "<th>" + val + "</th>";
+	              	tableHeaders += "<th>" + val.title + "</th>";
+	              	if (val.data=="level"){
+	              		tableColumns.push({data: val.data, render: function(data,type,row){return "<span style='width:25px;height:25px;background-color:"+row['level'].toLowerCase()+"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;"+row['level'].toLowerCase();}});
+	              	}else{
+	              		tableColumns.push({data: val.data});
+	              	}
 	              });
 	              $("#tableDiv").empty();
                 $("#tableDiv").append('<table id="example" class="display" cellspacing="0" width="100%"><thead><tr>' + tableHeaders + '</tr></thead></table>');
-                $('#example').DataTable(json);
+                //$('#example').DataTable(json);
+                
+                //alert(JSON.stringify(tableColumns));
+                
+                $('#example').DataTable({
+                		"data": json.data,
+                		"columns": tableColumns,
+						        "scrollCollapse": true,
+						        "paging":         true,
+						        "lengthMenu": [[10, 25, 50, 100, 200, -1], [10, 25, 50, 100, 200, "All"]], // page entry options
+						        "pageLength" : 25, // default page entries
+						        "searching" : true,
+              	});
+                
             },
             "dataType": "json"
         },
@@ -110,6 +129,11 @@ function loadDataTable(){
         "paging":         false,
         "lengthMenu": [[10, 25, 50, 100, 200, -1], [10, 25, 50, 100, 200, "All"]], // page entry options
         "pageLength" : 25, // default page entries
+        "columnDefs": [
+        	{"targets": 1, "render": function (data,type,row){
+        		return "XXXXXXXX";
+        	}}
+        ]
     } );
 }
 

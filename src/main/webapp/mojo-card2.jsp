@@ -43,13 +43,15 @@
 		//}
 		.card2{
 			border:1px solid #BBB;
-			width: 800px;;
-			border-radius: 5px;
+			width: 100%;
+			border-radius: 12px;
 			padding: 10px;
-			background: #EEE;
+			background: rgb(0,65,83);
+			//background: rgb(163,219,232);
+			
 			font-family: Arial;
 			font-size: 14pt;
-			color: #444;
+			color: #eee;
 			/*
 			position: relative;
 			top: 45px;
@@ -59,18 +61,18 @@
 			vertical-align: top;
 			font-weight: bold;
 			font-size: 28pt;
-			color: #444;
+			color: #eee;
 		}
 		.cardScore{
 			vertical-align: top;
 			text-align: center;
 			font-weight: bold;
 			font-size: 34pt;
-			color: #444;
+			color: #eee;
 		}
-		//.cardRow{
-		//	width:20%;
-		//}
+		.cardRow{
+			width:100px;
+		}
 		.cardScoreText{
 			vertical-align: top;
 			text-align: center;
@@ -79,25 +81,28 @@
 		.icon{
 			height: 25px;
 		}
-		.icon2{
+		.ninjaIcon{
 			clip: rect(0px,50px,25px,0px);
-			height: 60px;
+			height: 80px;
 		}
 		.graph-label{
-			font-size: 18pt;
+			font-size: 22pt;
 			font-family: Arial;
-			color: #888888;
+			color: #eee;
+			font-weight: bold;
+			position:relative;
+			top:20px;
 		}
 		</style>
 
 		
-		<table border=0>
+		<table border=0 style="width:1000px;">
 			<tr>
 				<td colspan="2">
 					<table class="card2" border=0>
 						<tr>
 							<td class="cardName" colspan="2"><span id="_displayName"></span></td>
-							<td class="cardScore"><img class="icon2" id="_level"></img></td>
+							<td class="cardScore" rowspan="4"><img class="ninjaIcon" id="_level"></img></td>
 							<td class="cardScore"><span id="_Trello">0</span></td>
 							<td class="cardScore"><span id="_Github">0</span></td>
 							<td class="cardScore"><!-- chat counter --></td>
@@ -107,7 +112,6 @@
 								<img class="icon" src="https://www.redhat.com/profiles/rh/themes/redhatdotcom/img/logo.png">
 							</td>
 							<td><span id="_userId"></span></td>
-							<td class="cardScoreText" rowspan="3"></td>
 							<td class="cardScoreText" rowspan="3">trello</td>
 							<td class="cardScoreText" rowspan="3">github</td>
 							<td class="cardScoreText" rowspan="3"><!--chat--></td>
@@ -117,18 +121,22 @@
 							<td><span id="_trelloId"></span></td>
 						</tr>
 						<tr>
+							<!--
 							<td class="cardRow"><img class="icon" src="https://assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png"></td>
+							<td class="cardRow"><img style="height: 32px;" src="https://www.virtualstacks.com/wp-content/uploads/2018/02/GitHub-Logo-Web-Development-Community.png"></td>
+							-->
+							<td class="cardRow"><img  style="height:20px;" src="https://assets-cdn.github.com/images/modules/logos_page/GitHub-Logo.png"></td>
 							<td><span id="_githubId"></span></td>
 						</tr>
 						
 						<tr>
-							<td colspan="6" style="height: 30px;"><!-- SPACER ONLY --></td>
+							<td colspan="6" style="height: 20px;"><!-- SPACER ONLY --></td>
 						</tr>
 						
 						<tr>
 							<td colspan="6">
 								
-								<table border=0 style="width:100%">
+								<table border=0 style="width:100%;height:400px">
 									<tr>
 										<td style="width:50%;">
 											<!-- #################### -->
@@ -148,7 +156,7 @@
 											<!-- BOTTOM RIGHT DOUGHNUT -->
 											<!-- ##################### -->
 											<script>
-												function breakdownRefresh(){ return refreshGraph0('breakdown', 'Doughnut', colors2); }
+												function breakdownRefresh(){ return refreshGraph0('breakdown', 'Doughnut', colorsReverse); }
 											</script>
 											<div id="breakdown_container" class="graph" >
 												<canvas id="breakdown"></canvas>
@@ -178,7 +186,7 @@ function getUsername(){
 		var username=window.parent._jive_current_user.username;
 		var displayName=window.parent._jive_current_user.displayName;
 	}
-  if(username==undefined) username="mallen";
+  if(username==undefined) username="unknown";
 	return username;
 }
 
@@ -284,8 +292,22 @@ function resetCanvas(chartElementName){
   ctx.canvas.height = $('#'+chartElementName+'_container').height()+100;
 }
 
-var colors=["rgba(204,0,0,X)","rgba(0,65,83,X)","rgba(146,212,0,X)","rgba(163,219,232,X)","rgba(59,0,131,X)","rgba(240,171,0,X)","rgba(0,122,135,X)"];
-var colors2=["rgba(0,122,135,X)","rgba(240,171,0,X)","rgba(59,0,131,X)","rgba(163,219,232,X)","rgba(146,212,0,X)","rgba(0,65,83,X)","rgba(204,0,0,X)"];
+//var colors=["rgba(204,0,0,X)","rgba(0,65,83,X)","rgba(146,212,0,X)","rgba(163,219,232,X)","rgba(59,0,131,X)","rgba(240,171,0,X)","rgba(0,122,135,X)"];
+//var colors2=["rgba(0,122,135,X)","rgba(240,171,0,X)","rgba(59,0,131,X)","rgba(163,219,232,X)","rgba(146,212,0,X)","rgba(0,65,83,X)","rgba(204,0,0,X)"];
+
+var purple="rgba(59,0,131,X)";
+var lightOrgange="rgba(240,171,0,X)";
+var darkOrgange="rgba(236,122,8,X)";
+var lightGreen="rgba(146,212,0,X)";
+var darkGreen="rgba(63,156,53,X)";
+var lightBlue="rgba(0,185,228,X)";
+var vividBlue="rgba(0,136,206,X)";
+var paleBlue="rgba(163,219,232,X)";
+var tealBlue="rgba(0,122,135,X)";
+
+var colors=[tealBlue,paleBlue,darkOrgange,darkGreen,lightBlue,lightOrgange,lightGreen,vividBlue]
+var colorsReverse=colors.slice().reverse();
+//var bcolors=["rgba(0,65,83,X)","rgba(0,136,206,X)","rgba(63,156,53,X)","rgba(236,122,8,X)","rgba(,X)","rgba(,X)"]
 
 
 function buildChart(uri, chartElementName, type, clrs){
@@ -299,8 +321,8 @@ function buildChart(uri, chartElementName, type, clrs){
   	var backgroundColor=[];
   	var borderColor=[];
   	for (i=0;i<data.datasets[0].data.length;i++){
-  		backgroundColor[i]=clrs[i].replace("X","0.8"); // replace is the opacity
-  		borderColor[i]=clrs[i].replace("X","1"); // replace is the opacity
+  		backgroundColor[i]=clrs[i].replace("X","1"); // replace is the opacity
+  		borderColor[i]=clrs[i].replace("X","0.8"); // replace is the opacity
   	}
   	data.datasets[0].backgroundColor=backgroundColor;// push({"backgroundColor2":backgroundColor});
   	data.datasets[0].borderColor=borderColor;
@@ -321,14 +343,18 @@ function buildChart(uri, chartElementName, type, clrs){
 						elements: {
 							center: {
 								text: percentage,
-			          color: '#FF6384', // Default is #000000
+			          color: '#eee', // Default is #000000
 			          fontStyle: 'Arial', // Default is Arial
 			          sidePadding: 20 // Default is 20 (as a percentage)
 							}
 						},
 						legend:{
 							display: true,
-							position: "bottom"
+							position: "bottom",
+							labels: {
+								fontColor: "#eee",
+								fontSize: 12
+							}
 						}
 					}
 			});
