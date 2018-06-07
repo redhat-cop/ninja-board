@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -83,7 +84,8 @@ public class ManagementController {
 //    System.out.println(new ManagementController().register(null,null,null,"[{\"displayName\": \"Mat Allen\",\"username\": \"mallen\",\"trelloId\":\"mallen2\",\"githubId\":\"matallen\"}]"));
 //    System.out.println(new ManagementController().getScorecards().getEntity());
     
-    System.out.println(new ManagementController().getScorecardSummary("pfann").getEntity());
+    System.out.println(TimeUnit.HOURS.toMillis(1));
+//    System.out.println(new ManagementController().getScorecardSummary("pfann").getEntity());
 //    System.out.println(new ManagementController().toNextLevel("BLUE", 7).toString());
   }
   
