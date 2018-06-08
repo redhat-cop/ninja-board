@@ -14,6 +14,8 @@ CARD_TITLE_POINTS_REGEX_PATTERN = re.compile(r"\(([0-9]+)\)")
 # Search for cards that are done and have been modified in the past ? days
 TRELLO_SEARCH_QUERY = 'list:Done edited:{0} {1}'
 
+memberCache={}
+
 def valid_date(s):
     try:
         return datetime.strptime(s, "%Y-%m-%d")
@@ -49,10 +51,17 @@ def search_cards(session, org_id, days, author):
     return card_request.json()
 
 def get_member(session, member_id):
-    member_request = session.get("https://api.trello.com/1/members/{0}".format(member_id))
-    member_request.raise_for_status()
-
-    return member_request.json()
+		
+		if member_id not in memberCache:
+		    member_request = session.get("https://api.trello.com/1/members/{0}".format(member_id))
+		    member_request.raise_for_status()
+		    memberCache[member_id]=member_request.json()
+		
+		return memberCache.get(member_id)
+		
+#    member_request = session.get("https://api.trello.com/1/members/{0}".format(member_id))
+#    member_request.raise_for_status()
+#    return member_request.json()
 
 def plural_items(text, obj):
     if obj is not None and (isinstance(obj, collections.Iterable) and len(obj) == 1) or obj == 1:
@@ -140,13 +149,13 @@ for card in resp_cards['cards']:
             print "Cards Closed/TR{0}/{1}/{2}".format(card_id, get_member(session, member_id)['username'], 1)
 
 #print "=== Statistics for Trello Team '{0}' ====\n".format(encode_text(org_response['displayName']) if 'displayName' in org_response else encode_text(org_response['name']))
-for key, value in members_items.iteritems():
-        member = get_member(session, key)
-        value_points = value['points']
-        value_cards = value['cards']
-
-        if username is not None and member['username'] != username:
-            continue
+#for key, value in members_items.iteritems():
+#        member = get_member(session, key)
+#        value_points = value['points']
+#        value_cards = value['cards']
+#
+#        if username is not None and member['username'] != username:
+#            continue
 
 #        print "{0} has {1} {2} - {3} {4}".format(encode_text(member['username']), len(value_cards), plural_items("cards", value_cards), value_points, plural_items("points", value_points))
 #        for card in value['cards']:
