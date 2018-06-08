@@ -369,7 +369,7 @@ public class Heartbeat2 {
         }
         
         log.info("Script ("+(String)script.get("name")+") execution took "+(System.currentTimeMillis()-start)+"ms");
-        //db.save(); //save after each script execution
+        db.save(); //save after each script execution
         
       } // end of scripts loop
       

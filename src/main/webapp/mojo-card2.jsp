@@ -16,8 +16,8 @@
 	
 
 		<script>
-			//var ctx = "https://community-ninja-board-community-ninja-board.apps.d1.casl.rht-labs.com/community-ninja-board";
-			var ctx = "http://localhost:8082/community-ninja-board";
+			var ctx = "https://community-ninja-board-community-ninja-board.apps.d1.casl.rht-labs.com/community-ninja-board";
+			//var ctx = "http://localhost:8082/community-ninja-board";
 			//var ctx = "${pageContext.request.contextPath}";
 		</script>
 		
