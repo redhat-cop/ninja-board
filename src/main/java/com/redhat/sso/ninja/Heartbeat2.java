@@ -201,8 +201,7 @@ public class Heartbeat2 {
       boolean successfullyAccessedRegistrationSheet=addNewlyRegisteredUsers(db);
       if (!successfullyAccessedRegistrationSheet) return;
       
-      db.save();
-      
+      db.save(); // after the new user registration calls have been made
       
       
       Integer daysFromLastRun=30; //default to 30 days
@@ -210,19 +209,12 @@ public class Heartbeat2 {
       Date lastRun2=null;
       
       if (((String)config.getValues().get("lastRun2")).startsWith("-")){
-        
         String lastRun=(String)config.getValues().get("lastRun2");
-//        lastRun=lastRun.replace("-", "");
-        
         Matcher m=Pattern.compile("(\\+|\\-)(\\d+)(\\w+)").matcher(lastRun);
         if (m.find()){
-//          String backOrForward=m.group(1);
           Long numberOfDays=Long.parseLong(m.group(2));
 //          TimeUnit unit=TimeUnit.valueOf(units.toUpperCase());
           ChronoUnit unit=ChronoUnit.valueOf(m.group(3).toUpperCase());
-          
-//          Date startDate=new Date(System.currentTimeMillis() - (numberOfDays * unit.toMillis(1)));
-          
           lastRun2=java.sql.Date.valueOf(LocalDate.now().minus(numberOfDays, unit));
         }
         
@@ -238,14 +230,14 @@ public class Heartbeat2 {
       }
       
       
-      
       File scripts=new File("scripts");
       if (!scripts.exists()) scripts.mkdirs();
       
       for(Map<String,Object> script:config.getScripts()){
         final Map<String, String> poolToUserIdMapper=getUsersByPool(db, ((String)script.get("name")).split("\\.")[0].toLowerCase()+"Id");
+        long start=System.currentTimeMillis();
         if (Arrays.asList(new String[]{"java","class","javaclass"}).contains(((String)script.get("type")).toLowerCase())){
-          log.info("Executing script: "+script.get("source"));
+//          log.info("Executing script: "+script.get("source"));
           try{
             
             ScriptBase obj=(ScriptBase)Class.forName((String)script.get("source")).newInstance();
@@ -302,7 +294,6 @@ public class Heartbeat2 {
             Process script_exec=Runtime.getRuntime().exec(command);
             script_exec.waitFor();
             if(script_exec.exitValue() != 0){
-              db.addEvent("Script Execution FAILED", "", command);
               
               BufferedReader stdInput=new BufferedReader(new InputStreamReader(script_exec.getInputStream()));
               StringBuffer sb=new StringBuffer();
@@ -315,10 +306,11 @@ public class Heartbeat2 {
               while ((s=stdErr.readLine()) != null) sb.append(s).append("\n");
               log.error("Error while executing script (stderr): "+sb.toString());
               
+              db.addEvent("Script Execution FAILED", "", command+"\nERROR (stderr):\n"+sb.toString());
               
             }else{
 //              db.addEvent("Script Execution", name+"/last.log", command);
-              db.addEvent("Script Execution", "", command);
+              db.addEvent("Script Execution Started", "", command);
               BufferedReader stdInput=new BufferedReader(new InputStreamReader(script_exec.getInputStream()));
               
               StringBuffer scriptLog=new StringBuffer();
@@ -346,7 +338,7 @@ public class Heartbeat2 {
                       if (null!=userId){
   //                    System.out.println(poolUserId+" mapped to "+userId);
                         log.debug("Incrementing registered user "+poolUserId+" by "+inc);
-                        db.increment(pool, userId, inc).save();
+                        db.increment(pool, userId, inc);//.save();
                       }else{
   //                    log.debug(poolUserId+" did NOT map to any registered user");
                       }
@@ -363,6 +355,8 @@ public class Heartbeat2 {
                 }
               }
               IOUtils.write(scriptLog.toString(), new FileOutputStream(new File(scriptFolder, "last.log")));
+              
+              db.addEvent("Script Execution Ended", "", command +" (took "+(System.currentTimeMillis()-start)+"ms)");
             }
             
           }catch (IOException e){
@@ -374,7 +368,10 @@ public class Heartbeat2 {
           }
         }
         
-      }
+        log.info("Script ("+(String)script.get("name")+") execution took "+(System.currentTimeMillis()-start)+"ms");
+        //db.save(); //save after each script execution
+        
+      } // end of scripts loop
       
       // do any users need levelling up?
       int count=1;
@@ -406,7 +403,6 @@ public class Heartbeat2 {
       }
       
       
-      log.info("Saving database...");
       db.save();
       
       if (!((String)config.getValues().get("lastRun2")).startsWith("-")){

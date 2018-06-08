@@ -144,7 +144,9 @@ public class Database2{
   
   public synchronized void save(){
     try{
+      long s=System.currentTimeMillis();
       IOUtils2.writeAndClose(Json.newObjectMapper(true).writeValueAsBytes(this), new FileOutputStream(new File(storage)));
+      log.info("Database saved ("+(System.currentTimeMillis()-s)+"ms)");
     }catch (JsonGenerationException e){
       e.printStackTrace();
     }catch (JsonMappingException e){

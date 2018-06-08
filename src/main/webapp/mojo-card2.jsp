@@ -186,7 +186,7 @@ function getUsername(){
 		var username=window.parent._jive_current_user.username;
 		var displayName=window.parent._jive_current_user.displayName;
 	}
-  if(username==undefined) username="unknown";
+  if(username==undefined) username="mallen";
 	return username;
 }
 
@@ -205,16 +205,17 @@ xhr.onloadend = function () {
 	    $("#_"+key).text(value);
     	
     	if (key=="level"){
-    		var base="https://mojo.redhat.com/servlet/JiveServlet/downloadImage/102-1152994-22-12306";
-    		var blue=base+"12/rh-services-communities-practice-icon-f9689kc-201710_blue_belt.png";
-				var grey=base+"13/rh-services-communities-practice-icon-f9689kc-201710_grey_belt.png";
-				var red=base+"14/rh-services-communities-practice-icon-f9689kc-201710_red_belt.png";
-				var black=base+"15/rh-services-communities-practice-icon-f9689kc-201710_black_belt.png";
-				if (value.toLowerCase()=="blue") document.getElementById("_level").src=blue;
-				if (value.toLowerCase()=="grey") document.getElementById("_level").src=grey;
-				if (value.toLowerCase()=="red") document.getElementById("_level").src=red;
-				if (value.toLowerCase()=="black") document.getElementById("_level").src=black;
+    		//var base="https://mojo.redhat.com/servlet/JiveServlet/downloadImage/102-1152994-22-12306";
+    		//var blue=base+"12/rh-services-communities-practice-icon-f9689kc-201710_BLUE_belt.png";
+				//var grey=base+"13/rh-services-communities-practice-icon-f9689kc-201710_GREY_belt.png";
+				//var red=base+"14/rh-services-communities-practice-icon-f9689kc-201710_RED_belt.png";
+				//var black=base+"15/rh-services-communities-practice-icon-f9689kc-201710_BLACK_belt.png";
+				//if (value.toLowerCase()=="blue") document.getElementById("_level").src="images/";
+				//if (value.toLowerCase()=="grey") document.getElementById("_level").src=grey;
+				//if (value.toLowerCase()=="red") document.getElementById("_level").src=red;
+				//if (value.toLowerCase()=="black") document.getElementById("_level").src=black;
 				
+				document.getElementById("_level").src=ctx+"/images/"+value.toLowerCase()+"_belt_icon.png";
     	}else{
     	  //$("#_"+key).text(value);
     		//document.getElementById("_"+key).innerText=value;
