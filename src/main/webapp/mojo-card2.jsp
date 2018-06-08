@@ -16,8 +16,8 @@
 	
 
 		<script>
-			var ctx = "https://community-ninja-board-community-ninja-board.apps.d1.casl.rht-labs.com/community-ninja-board";
-			//var ctx = "http://localhost:8082/community-ninja-board";
+			//var ctx = "https://community-ninja-board-community-ninja-board.apps.d1.casl.rht-labs.com/community-ninja-board";
+			var ctx = "http://localhost:8082/community-ninja-board";
 			//var ctx = "${pageContext.request.contextPath}";
 		</script>
 		
@@ -196,25 +196,20 @@ xhr.open("GET", ctx+"/api/scorecard/summary/"+getUsername(), true);
 xhr.send();
 xhr.onloadend = function () {
 	var json=JSON.parse(xhr.responseText);
+		if (json['displayName']==undefined){
+		  $("#_displayName").text(json['username']);
+		}else{
+			$("#_displayName").text(json['displayName']);
+		}
 	Object.keys(json).forEach(function(key) {
     value = json[key];
-    
+		
     
     if (null!=document.getElementById("_"+key)){
     	console.log("setting [_"+key+"] to ["+value+"]");
 	    $("#_"+key).text(value);
     	
     	if (key=="level"){
-    		//var base="https://mojo.redhat.com/servlet/JiveServlet/downloadImage/102-1152994-22-12306";
-    		//var blue=base+"12/rh-services-communities-practice-icon-f9689kc-201710_BLUE_belt.png";
-				//var grey=base+"13/rh-services-communities-practice-icon-f9689kc-201710_GREY_belt.png";
-				//var red=base+"14/rh-services-communities-practice-icon-f9689kc-201710_RED_belt.png";
-				//var black=base+"15/rh-services-communities-practice-icon-f9689kc-201710_BLACK_belt.png";
-				//if (value.toLowerCase()=="blue") document.getElementById("_level").src="images/";
-				//if (value.toLowerCase()=="grey") document.getElementById("_level").src=grey;
-				//if (value.toLowerCase()=="red") document.getElementById("_level").src=red;
-				//if (value.toLowerCase()=="black") document.getElementById("_level").src=black;
-				
 				document.getElementById("_level").src=ctx+"/images/"+value.toLowerCase()+"_belt_icon.png";
     	}else{
     	  //$("#_"+key).text(value);
