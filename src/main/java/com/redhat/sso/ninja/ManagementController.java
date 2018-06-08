@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -84,7 +86,10 @@ public class ManagementController {
 //    System.out.println(new ManagementController().register(null,null,null,"[{\"displayName\": \"Mat Allen\",\"username\": \"mallen\",\"trelloId\":\"mallen2\",\"githubId\":\"matallen\"}]"));
 //    System.out.println(new ManagementController().getScorecards().getEntity());
     
-    System.out.println(TimeUnit.HOURS.toMillis(1));
+    System.out.println(java.sql.Date.valueOf(LocalDate.now()));
+    System.out.println(java.sql.Date.valueOf(LocalDate.now().minus(365, ChronoUnit.DAYS)));
+    System.out.println((1000 * 60 * 60 * 24));
+    System.out.println(TimeUnit.DAYS.toMillis(1));
 //    System.out.println(new ManagementController().getScorecardSummary("pfann").getEntity());
 //    System.out.println(new ManagementController().toNextLevel("BLUE", 7).toString());
   }
@@ -118,6 +123,7 @@ public class ManagementController {
     // re-start the heartbeat with a new interval
     String heartbeatInterval=newConfig.getOptions().get("heartbeat.intervalInSeconds");
     if (null!=heartbeatInterval && heartbeatInterval.matches("\\d+")){
+      log.info("Re-setting heartbeat with interval: "+heartbeatInterval);
       Heartbeat2.stop();
       Heartbeat2.start(Long.parseLong(heartbeatInterval));
     }
