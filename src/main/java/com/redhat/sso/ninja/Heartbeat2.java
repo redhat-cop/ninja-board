@@ -11,6 +11,11 @@ import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermission;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -20,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -40,19 +46,21 @@ public class Heartbeat2 {
 
   public static void main(String[] asd){
     try{
-      Calendar lastRunC=Calendar.getInstance();
-      lastRunC.setTime(new Date());
-      lastRunC.set(Calendar.DAY_OF_MONTH, 1);
-      lastRunC.set(Calendar.HOUR, 0);
-      lastRunC.set(Calendar.MINUTE, 0);
-      lastRunC.set(Calendar.SECOND, 1);
+//        System.out.println(TimeUnit.DAYS.toMillis(1));
       
-      System.out.println("LAST RUN: "+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(lastRunC.getTime()));
-      System.out.println(Heartbeat2.convertLastRun("perl ${user.home}/Work/poc/sso-tools/cop-ninja/github-stats.py -s ${LAST_RUN:yyyy-MM-dd}", lastRunC.getTime()));
-      System.out.println(Heartbeat2.convertLastRun("sh ${user.home}/Work/poc/sso-tools/cop-ninja/trello.sh -s ${DAYS_FROM_LAST_RUN}", lastRunC.getTime()));
-      
-      lastRunC.set(Calendar.DAY_OF_MONTH, 21);
-      System.out.println("TODAY?: "+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(lastRunC.getTime()));
+//      Calendar lastRunC=Calendar.getInstance();
+//      lastRunC.setTime(new Date());
+//      lastRunC.set(Calendar.DAY_OF_MONTH, 1);
+//      lastRunC.set(Calendar.HOUR, 0);
+//      lastRunC.set(Calendar.MINUTE, 0);
+//      lastRunC.set(Calendar.SECOND, 1);
+//      
+//      System.out.println("LAST RUN: "+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(lastRunC.getTime()));
+//      System.out.println(Heartbeat2.convertLastRun("perl ${user.home}/Work/poc/sso-tools/cop-ninja/github-stats.py -s ${LAST_RUN:yyyy-MM-dd}", lastRunC.getTime()));
+//      System.out.println(Heartbeat2.convertLastRun("sh ${user.home}/Work/poc/sso-tools/cop-ninja/trello.sh -s ${DAYS_FROM_LAST_RUN}", lastRunC.getTime()));
+//      
+//      lastRunC.set(Calendar.DAY_OF_MONTH, 21);
+//      System.out.println("TODAY?: "+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(lastRunC.getTime()));
       
       Heartbeat2.runOnce();
 //        Heartbeat.start(60000l);
@@ -72,12 +80,13 @@ public class Heartbeat2 {
         m.appendReplacement(sb, sdf.format(lastRunDate));
         
       }else if (toReplace.contains("DAYS_FROM_LAST_RUN")){
-        Calendar runTo=Calendar.getInstance();
-        runTo.setTime(new Date());
-        runTo.set(Calendar.HOUR, 0);
-        runTo.set(Calendar.MINUTE, 0);
-        runTo.set(Calendar.SECOND, 0);
-        Integer daysFromLastRun=(int)((runTo.getTime().getTime() - lastRunDate.getTime()) / (1000 * 60 * 60 * 24))+1;
+        Date runTo2=java.sql.Date.valueOf(LocalDate.now());
+//        Calendar runTo=Calendar.getInstance();
+//        runTo.setTime(new Date());
+//        runTo.set(Calendar.HOUR, 0);
+//        runTo.set(Calendar.MINUTE, 0);
+//        runTo.set(Calendar.SECOND, 0);
+        Integer daysFromLastRun=(int)((runTo2.getTime() - lastRunDate.getTime()) / (1000 * 60 * 60 * 24))+1;
         m.appendReplacement(sb, String.valueOf(daysFromLastRun));
       }else{
         // is it a system property?
@@ -101,7 +110,9 @@ public class Heartbeat2 {
     t.scheduleAtFixedRate(new HeartbeatRunnable(), 30000l, intervalInMs);
   }
 
-  public static void stop() {}
+  public static void stop() {
+    t.cancel();
+  }
   
 
   static class HeartbeatRunnable extends TimerTask {
@@ -195,21 +206,35 @@ public class Heartbeat2 {
       
       
       Integer daysFromLastRun=30; //default to 30 days
-      Date now=new Date();
-      Calendar c=Calendar.getInstance();
-      c.setTime(now);
-      c.set(Calendar.HOUR, 0);
-      c.set(Calendar.MINUTE, 0);
-      c.set(Calendar.SECOND, 0);
-      Date runToDate=c.getTime();
+      Date runToDate=java.sql.Date.valueOf(LocalDate.now());
       Date lastRun2=null;
-      try{
-        lastRun2=sdf.parse((String)config.getValues().get("lastRun2"));
-      }catch (ParseException e){
-        e.printStackTrace();
+      
+      if (((String)config.getValues().get("lastRun2")).startsWith("-")){
+        
+        String lastRun=(String)config.getValues().get("lastRun2");
+//        lastRun=lastRun.replace("-", "");
+        
+        Matcher m=Pattern.compile("(\\+|\\-)(\\d+)(\\w+)").matcher(lastRun);
+        if (m.find()){
+//          String backOrForward=m.group(1);
+          Long numberOfDays=Long.parseLong(m.group(2));
+//          TimeUnit unit=TimeUnit.valueOf(units.toUpperCase());
+          ChronoUnit unit=ChronoUnit.valueOf(m.group(3).toUpperCase());
+          
+//          Date startDate=new Date(System.currentTimeMillis() - (numberOfDays * unit.toMillis(1)));
+          
+          lastRun2=java.sql.Date.valueOf(LocalDate.now().minus(numberOfDays, unit));
+        }
+        
+      }else{ //assume its a date
+        try{
+          lastRun2=sdf.parse((String)config.getValues().get("lastRun2"));
+        }catch (ParseException e){
+          e.printStackTrace();
+        }
       }
       if (null!=lastRun2){
-        daysFromLastRun=(int)((runToDate.getTime() - lastRun2.getTime()) / (1000 * 60 * 60 * 24));
+        daysFromLastRun=(int)((runToDate.getTime() - lastRun2.getTime()) / TimeUnit.DAYS.toMillis(1));
       }
       
       
@@ -278,7 +303,19 @@ public class Heartbeat2 {
             script_exec.waitFor();
             if(script_exec.exitValue() != 0){
               db.addEvent("Script Execution FAILED", "", command);
-              log.error("Error while executing script");
+              
+              BufferedReader stdInput=new BufferedReader(new InputStreamReader(script_exec.getInputStream()));
+              StringBuffer sb=new StringBuffer();
+              String s;
+              while ((s=stdInput.readLine()) != null) sb.append(s).append("\n");
+              log.error("Error while executing script (stdout): "+sb.toString());
+              
+              BufferedReader stdErr=new BufferedReader(new InputStreamReader(script_exec.getErrorStream()));
+              sb.setLength(0);
+              while ((s=stdErr.readLine()) != null) sb.append(s).append("\n");
+              log.error("Error while executing script (stderr): "+sb.toString());
+              
+              
             }else{
 //              db.addEvent("Script Execution", name+"/last.log", command);
               db.addEvent("Script Execution", "", command);
@@ -372,8 +409,13 @@ public class Heartbeat2 {
       log.info("Saving database...");
       db.save();
       
-      log.debug("Updating the \"lastRun\" date");
-      config.getValues().put("lastRun2", sdf.format(runToDate));
+      if (!((String)config.getValues().get("lastRun2")).startsWith("-")){
+        log.debug("Updating the \"lastRun\" date");
+        config.getValues().put("lastRun2", sdf.format(runToDate));
+      }else{
+        log.debug("NOT Updating the \"lastRun\" date because it's a rolling date");
+      }
+      
       config.save();
     }      
   }
