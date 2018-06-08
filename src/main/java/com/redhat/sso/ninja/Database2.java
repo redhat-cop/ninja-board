@@ -28,6 +28,7 @@ public class Database2{
   private static final Logger log=Logger.getLogger(Database2.class);
   private static final String storage="database2.json";
   public static Integer MAX_EVENT_ENTRIES=1000;
+  public static boolean systemUpdating=false;
   
   // User -> Pool (sub pool separated with a dot) + Score
 //  private Map<User, Map<String, Integer>> users;
