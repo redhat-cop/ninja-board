@@ -24,7 +24,10 @@ String graphHeight="100%";
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
     
+    <script src="js/jquery-1.11.3.min.js"></script>
+    <!--
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    -->
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
     <!--
@@ -46,9 +49,10 @@ String graphHeight="100%";
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.1/Chart.min.js"></script>
     https://github.com/chartjs/Chart.js/releases
     <script src="http://www.chartjs.org/dist/2.7.2/Chart.bundle.js"></script>
-    -->
+
     <script src="https://github.com/chartjs/Chart.js/releases/download/v2.6.0/Chart.min.js"></script>
-    
+    -->
+    <script src="js/Chart-2.6.0.min.js"></script>
     
     
     
@@ -87,88 +91,22 @@ String graphHeight="100%";
 <script>
 
 
-var barOptions = {
-//  legend : true,
-  annotateDisplay : true,
-  showXLabels: true,
-  showYLabels: true,
-  yAxisMinimumInterval:1,
-  inGraphDataShow : true, 
-//  inGraphDataAlign : "right",
-//  inGraphDataVAlign : "bottom",
-//  inGraphDataFontColor : "white",
-//  inGraphDataTmpl : "" ,
-//  inGraphDataRotate : "-85",
-  barBorderRadius: 5,
-    
-  inGraphDataAlign : "center",
-  inGraphDataVAlign : "bottom",
-  inGraphDataFontColor : "black",
-  inGraphDataTmpl : "" ,
-  inGraphDataRotate : "0",
-        inGraphDataPaddingX: 0,
-        inGraphDataPaddingY: 20,
-        inGraphDataAlign: "center",
-        inGraphDataVAlign: "top",
-        inGraphDataXPosition: 2,
-        inGraphDataYPosition: 1,
-        inGraphDataTmpl : "<\%=rename(v1)\%>" ,
-  inGraphDataFontSize : 14,
-//  inGraphDataTmpl : "<\%=v1\%>  " ,
-  //inGraphDataTmpl : "<\%=v4\%> - <\%=v1\%>" ,
-  graphMin : 0,
-}
-
-var hbarOptions = {
-//  legend : true,
-  annotateDisplay : true,
+//var barOptions = {
+////  legend : true,
+//  annotateDisplay : true,
 //  showXLabels: true,
 //  showYLabels: true,
-  yAxisMinimumInterval:1,
+//  yAxisMinimumInterval:1,
 //  inGraphDataShow : true, 
-  barBorderRadius: 5,
-//  inGraphDataFontColor : "black",
-//  inGraphDataRotate : "0",
-//  inGraphDataPaddingX: 0,
-//  inGraphDataPaddingY: 20,
-//  inGraphDataAlign: "bottom",
-//  inGraphDataVAlign: "bottom",
-  inGraphDataXPosition: 3,
-//  inGraphDataYPosition: 1,
-  inGraphDataTmpl : "<\%=v1\%> (<\%=v3\%>)" , <!-- <\%=rename(v1)\%> -->
-//  inGraphDataFontSize : 14,
-  graphMin : 0,
-}
-
-
-var lineOptions = {
-  yAxisMinimumInterval:1,
-	inGraphDataShow : true,
-	datasetFill : true,
-	scaleLabel: "<\%=value\%>",
-	scaleFontSize : 16,
-	canvasBorders : true,
-	graphTitleFontFamily : "'Arial'",
-	graphTitleFontSize : 24,
-	graphTitleFontStyle : "bold",
-	graphTitleFontColor : "#666",
-//	footNote : "Footnote for the graph",
-//	legend : true,
-//	yAxisLabel : "Y Axis Label",
-//	xAxisLabel : "X Axis Label",
-//	yAxisUnit : "Y Unit",
-	annotateDisplay : true, 
-	dynamicDisplay : true
-}
-
-var lineOptions2 = {
-//  legend : true,
-  annotateDisplay : true,
-//  showXLabels: true,
-//  showYLabels: true,
-  yAxisMinimumInterval:1,
-  inGraphDataShow : true, 
+////  inGraphDataAlign : "right",
+////  inGraphDataVAlign : "bottom",
+////  inGraphDataFontColor : "white",
+////  inGraphDataTmpl : "" ,
+////  inGraphDataRotate : "-85",
 //  barBorderRadius: 5,
+//    
+//  inGraphDataAlign : "center",
+//  inGraphDataVAlign : "bottom",
 //  inGraphDataFontColor : "black",
 //  inGraphDataTmpl : "" ,
 //  inGraphDataRotate : "0",
@@ -178,11 +116,77 @@ var lineOptions2 = {
 //        inGraphDataVAlign: "top",
 //        inGraphDataXPosition: 2,
 //        inGraphDataYPosition: 1,
-        inGraphDataTmpl : "<\%=rename(v1)\%>" ,
+//        inGraphDataTmpl : "<\%=rename(v1)\%>" ,
 //  inGraphDataFontSize : 14,
-  graphMin : 0,
-//    graphMax : 125,
-}
+////  inGraphDataTmpl : "<\%=v1\%>  " ,
+//  //inGraphDataTmpl : "<\%=v4\%> - <\%=v1\%>" ,
+//  graphMin : 0,
+//}
+//
+//var hbarOptions = {
+////  legend : true,
+//  annotateDisplay : true,
+////  showXLabels: true,
+////  showYLabels: true,
+//  yAxisMinimumInterval:1,
+////  inGraphDataShow : true, 
+//  barBorderRadius: 5,
+////  inGraphDataFontColor : "black",
+////  inGraphDataRotate : "0",
+////  inGraphDataPaddingX: 0,
+////  inGraphDataPaddingY: 20,
+////  inGraphDataAlign: "bottom",
+////  inGraphDataVAlign: "bottom",
+//  inGraphDataXPosition: 3,
+////  inGraphDataYPosition: 1,
+//  inGraphDataTmpl : "<\%=v1\%> (<\%=v3\%>)" , <!-- <\%=rename(v1)\%> -->
+////  inGraphDataFontSize : 14,
+//  graphMin : 0,
+//}
+//
+//
+//var lineOptions = {
+//  yAxisMinimumInterval:1,
+//	inGraphDataShow : true,
+//	datasetFill : true,
+//	scaleLabel: "<\%=value\%>",
+//	scaleFontSize : 16,
+//	canvasBorders : true,
+//	graphTitleFontFamily : "'Arial'",
+//	graphTitleFontSize : 24,
+//	graphTitleFontStyle : "bold",
+//	graphTitleFontColor : "#666",
+////	footNote : "Footnote for the graph",
+////	legend : true,
+////	yAxisLabel : "Y Axis Label",
+////	xAxisLabel : "X Axis Label",
+////	yAxisUnit : "Y Unit",
+//	annotateDisplay : true, 
+//	dynamicDisplay : true
+//}
+//
+//var lineOptions2 = {
+////  legend : true,
+//  annotateDisplay : true,
+////  showXLabels: true,
+////  showYLabels: true,
+//  yAxisMinimumInterval:1,
+//  inGraphDataShow : true, 
+////  barBorderRadius: 5,
+////  inGraphDataFontColor : "black",
+////  inGraphDataTmpl : "" ,
+////  inGraphDataRotate : "0",
+////        inGraphDataPaddingX: 0,
+////        inGraphDataPaddingY: 20,
+////        inGraphDataAlign: "center",
+////        inGraphDataVAlign: "top",
+////        inGraphDataXPosition: 2,
+////        inGraphDataYPosition: 1,
+//        inGraphDataTmpl : "<\%=rename(v1)\%>" ,
+////  inGraphDataFontSize : 14,
+//  graphMin : 0,
+////    graphMax : 125,
+//}
 
 function resetCanvas(chartElementName){
   $('#'+chartElementName).remove(); // this is my <canvas> element
@@ -201,19 +205,20 @@ function buildChart(uri, chartElementName, type){
   xhr.onloadend = function () {
     var json=JSON.parse(xhr.responseText);
     var income = document.getElementById(chartElementName).getContext("2d");
-    if (type=="Bar"){
-	    new Chart(income).Bar(json, barOptions);
-	  }else if (type=="BarNoLabels"){
-	    var barOptions2=JSON.parse(JSON.stringify(barOptions));
-	    barOptions2.inGraphDataShow=false;
-	    new Chart(income).Bar(json, barOptions2);
-	  }else if (type=="HorizontalBar"){
-	    var barOptions3=JSON.parse(JSON.stringify(hbarOptions));
-	    barOptions3.inGraphDataShow=true;
-	    barOptions3.inGraphDataAlign="right";
-	    barOptions3.inGraphDataVAlign="top";
-	    barOptions3.inGraphDataPaddingX=10;
-	    barOptions3.inGraphDataAlign="left"
+//    if (type=="Bar"){
+//	    new Chart(income).Bar(json, barOptions);
+//	  }else if (type=="BarNoLabels"){
+//	    var barOptions2=JSON.parse(JSON.stringify(barOptions));
+//	    barOptions2.inGraphDataShow=false;
+//	    new Chart(income).Bar(json, barOptions2);
+//	  }else 
+	  if (type=="HorizontalBar"){
+//	    var barOptions3=JSON.parse(JSON.stringify(hbarOptions));
+//	    barOptions3.inGraphDataShow=true;
+//	    barOptions3.inGraphDataAlign="right";
+//	    barOptions3.inGraphDataVAlign="top";
+//	    barOptions3.inGraphDataPaddingX=10;
+//	    barOptions3.inGraphDataAlign="left"
 	    
 	    resetCanvas(chartElementName);
 	    income = document.getElementById(chartElementName).getContext("2d");
@@ -223,20 +228,20 @@ function buildChart(uri, chartElementName, type){
                 data: json,
                 options: {"scales":{"xAxes":[{"ticks":{"beginAtZero":true}}]},legend: {display:false}}
             });
-	  }else if (type=="BarShortLabels"){
-	    var barOptions3=JSON.parse(JSON.stringify(barOptions));
-	    barOptions3.inGraphDataTmpl="<\%=rename(v1)\%>";
-	    new Chart(income).Bar(json, barOptions3);
-    }else if (type=="Pie"){
-	    new Chart(income).Pie(json, pieOptions);
-    }else if (type=="Line"){
-      resetCanvas(chartElementName);
-      income = document.getElementById(chartElementName).getContext("2d");
-	    new Chart(income, {
-                type: 'line', 
-                data: json,
-                options: {"scales":{"xAxes":[{"ticks":{"beginAtZero":true}}]},legend: {display:true}}
-            });
+//	  }else if (type=="BarShortLabels"){
+//	    var barOptions3=JSON.parse(JSON.stringify(barOptions));
+//	    barOptions3.inGraphDataTmpl="<\%=rename(v1)\%>";
+//	    new Chart(income).Bar(json, barOptions3);
+//    }else if (type=="Pie"){
+//	    new Chart(income).Pie(json, pieOptions);
+//    }else if (type=="Line"){
+//      resetCanvas(chartElementName);
+//      income = document.getElementById(chartElementName).getContext("2d");
+//	    new Chart(income, {
+//                type: 'line', 
+//                data: json,
+//                options: {"scales":{"xAxes":[{"ticks":{"beginAtZero":true}}]},legend: {display:true}}
+//            });
     }
   }
 }
@@ -249,15 +254,15 @@ function refreshGraph0(graphName, type){
   buildChart(graphs[graphName], graphName, type);
 }
 
-function refreshGraph(graphName, months, filter, type){
-  buildChart(graphs[graphName].replace("{months}",months).replace("{geo}","").replace("{filter}",encodeURI(filter)), graphName, type);
-}
-function refreshGraph2(graphName, months, geo, filter, type){
-  buildChart(graphs[graphName].replace("{months}",months).replace("{geo}",geo).replace("{filter}",encodeURI(filter)), graphName, type);
-}
-function refreshGraph3(graphName, months, geo, filter, inclhome, type){
-  buildChart(graphs[graphName].replace("{months}",months).replace("{geo}",geo).replace("{filter}",encodeURI(filter)).replace("{inclhome}",inclhome), graphName, type);
-}
+//function refreshGraph(graphName, months, filter, type){
+//  buildChart(graphs[graphName].replace("{months}",months).replace("{geo}","").replace("{filter}",encodeURI(filter)), graphName, type);
+//}
+//function refreshGraph2(graphName, months, geo, filter, type){
+//  buildChart(graphs[graphName].replace("{months}",months).replace("{geo}",geo).replace("{filter}",encodeURI(filter)), graphName, type);
+//}
+//function refreshGraph3(graphName, months, geo, filter, inclhome, type){
+//  buildChart(graphs[graphName].replace("{months}",months).replace("{geo}",geo).replace("{filter}",encodeURI(filter)).replace("{inclhome}",inclhome), graphName, type);
+//}
 
 function refresh(){
 	leaderboardRefresh();

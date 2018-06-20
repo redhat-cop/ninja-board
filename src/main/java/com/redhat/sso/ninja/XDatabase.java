@@ -18,7 +18,7 @@ import org.codehaus.jackson.type.TypeReference;
 import com.redhat.sso.ninja.utils.IOUtils2;
 import com.redhat.sso.ninja.utils.Json;
 
-public class Database{
+public class XDatabase{
   private static final String storage="database.json";
   // PoolId -> UserId + Score
   private Map<String, Map<String, Integer>> pools;
@@ -36,10 +36,10 @@ public class Database{
     return created;
   }
   
-  public Database(){
+  public XDatabase(){
     created=sdf.format(new Date());
   }
-  public Database increment(String poolId, String userId, Integer increment){
+  public XDatabase increment(String poolId, String userId, Integer increment){
     if (!pools.containsKey(poolId)) pools.put(poolId, new HashMap<String, Integer>());
     Map<String, Integer> pool=pools.get(poolId);
     if (!pool.containsKey(userId)){
@@ -69,11 +69,11 @@ public class Database{
     }
   }
   
-  public static synchronized Database load(){
+  public static synchronized XDatabase load(){
     try{
 //      Database db=new Database();
 //      Database db=Json.newObjectMapper(true).readValue(IOUtils2.toStringAndClose(new FileInputStream(new File(storage))), new TypeReference<HashMap<String,Map<String,Integer>>>(){});
-      Database db=Json.newObjectMapper(true).readValue(IOUtils2.toStringAndClose(new FileInputStream(new File(storage))), Database.class);
+      XDatabase db=Json.newObjectMapper(true).readValue(IOUtils2.toStringAndClose(new FileInputStream(new File(storage))), XDatabase.class);
       return db;
     }catch (JsonParseException e){
       e.printStackTrace();
@@ -87,15 +87,15 @@ public class Database{
     return null;
   }
   
-  public static Database get(){
+  public static XDatabase get(){
     if (!new File(storage).exists())
-      new Database().save();
+      new XDatabase().save();
     
-    return Database.load();
+    return XDatabase.load();
   }
   
   public static void main(String[] asd){
-    Database.get().increment("pool", "test", 1);
+    XDatabase.get().increment("pool", "test", 1);
   }
 
 }

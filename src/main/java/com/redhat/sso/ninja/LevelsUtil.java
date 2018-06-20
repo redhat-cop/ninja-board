@@ -6,6 +6,12 @@ import java.util.List;
 import com.redhat.sso.ninja.utils.Tuple;
 
 public class LevelsUtil{
+  static LevelsUtil instance;
+  public static LevelsUtil get(){
+    if (null==instance) instance=new LevelsUtil(Config.get().getOptions().get("thresholds"));
+    return instance;
+  }
+  
   public static void main(String[] asd){
     LevelsUtil l=new LevelsUtil("0:NONE,5:BLUE,15:RED,25:BROWN");
     System.out.println("base - expect NONE = "+l.base.getRight());
