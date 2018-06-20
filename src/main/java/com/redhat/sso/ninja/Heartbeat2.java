@@ -171,7 +171,7 @@ public class Heartbeat2 {
               userServiceDown=true;
             }
 
-            userInfo.put("level", new ManagementController().getLevelsUtil().getBaseLevel().getRight());
+            userInfo.put("level", LevelsUtil.get().getBaseLevel().getRight());
             userInfo.put("levelChanged", new SimpleDateFormat("yyyy-MM-dd").format(new Date())); // date of registration
             log.info("New User Registered: "+userInfo.get("username") +" ["+userInfo+"]");
             dbUsers.put(userInfo.get("username"), userInfo);
@@ -386,8 +386,8 @@ public class Heartbeat2 {
           }
           Map<String, String> userInfo=users.get(userId);
           
-          Tuple<Integer, String> currentLevel=new ManagementController().getLevelsUtil().getLevel(userInfo.get("level"));
-          Tuple<Integer, String> nextLevel=new ManagementController().getLevelsUtil().getNextLevel(userInfo.get("level"));
+          Tuple<Integer, String> currentLevel=LevelsUtil.get().getLevel(userInfo.get("level"));
+          Tuple<Integer, String> nextLevel=LevelsUtil.get().getNextLevel(userInfo.get("level"));
           if (total>=nextLevel.getLeft() && !currentLevel.getRight().equals(nextLevel.getRight())){
             // congrats! the user has been promoted!
             log.info("User "+userId+" has been promoted to level "+nextLevel.getRight()+" with a points score of "+total);

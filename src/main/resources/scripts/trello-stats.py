@@ -96,6 +96,7 @@ if not trello_api_key or not trello_api_token:
 parser = argparse.ArgumentParser(description='Gather Trello Statistics.')
 parser.add_argument("-s","--start-date", help="The start date to query from", type=valid_date)
 parser.add_argument("-u","--username", help="Username to query")
+parser.add_argument("-r","--human-readable", action="store_true", help="Human readable format")
 args = parser.parse_args()
 
 start_date = args.start_date
@@ -103,6 +104,8 @@ username = args.username
 
 if start_date is None:
     start_date = generate_start_date()
+
+human_readable=(args.human_readable==True)
 
 days = (datetime.now() - start_date).days
 
@@ -145,18 +148,20 @@ for card in resp_cards['cards']:
             member_items['points'] += calculate_points(card['name'])
 
             members_items[member_id] = member_items
-#print "sub-pool/key/user/increment"
-            print "Cards Closed/TR{0}/{1}/{2}".format(card_id, get_member(session, member_id)['username'], 1)
+            if (not human_readable):
+                print "Cards Closed/TR{0}/{1}/{2}".format(card_id, get_member(session, member_id)['username'], 1)
 
-#print "=== Statistics for Trello Team '{0}' ====\n".format(encode_text(org_response['displayName']) if 'displayName' in org_response else encode_text(org_response['name']))
-#for key, value in members_items.iteritems():
-#        member = get_member(session, key)
-#        value_points = value['points']
-#        value_cards = value['cards']
-#
-#        if username is not None and member['username'] != username:
-#            continue
 
-#        print "{0} has {1} {2} - {3} {4}".format(encode_text(member['username']), len(value_cards), plural_items("cards", value_cards), value_points, plural_items("points", value_points))
-#        for card in value['cards']:
-#            print "   - Board: {0} | Card: {1}".format(encode_text(cards[card]['board']['name']), encode_text(cards[card]['name']))
+if (human_readable):
+    print "=== Statistics for Trello Team '{0}' ====\n".format(encode_text(org_response['displayName']) if 'displayName' in org_response else encode_text(org_response['name']))
+    for key, value in members_items.iteritems():
+        member = get_member(session, key)
+        value_points = value['points']
+        value_cards = value['cards']
+
+        if username is not None and member['username'] != username:
+            continue
+
+        print "{0} has {1} {2} - {3} {4}".format(encode_text(member['username']), len(value_cards), plural_items("cards", value_cards), value_points, plural_items("points", value_points))
+        for card in value['cards']:
+            print "   - Board: {0} | Card: {1}".format(encode_text(cards[card]['board']['name']), encode_text(cards[card]['name']))

@@ -97,6 +97,7 @@ public class GoogleDrive2 {
     // use timestamp (column A) as the unique identifier (if in doubt i'll hash it with the requester's username)
     List<Map<String,String>> entries=new ArrayList<Map<String,String>>();
     FileInputStream in=null;
+    if (file==null || !file.exists()) return new ArrayList<Map<String,String>>();
     try{
       in=new FileInputStream(file);
       XSSFWorkbook wb=new XSSFWorkbook(in);

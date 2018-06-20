@@ -1,29 +1,18 @@
 package com.redhat.sso.ninja;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
 import java.util.Set;
-import java.util.logging.Level;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -38,26 +27,11 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.apache.xmlbeans.impl.jam.JAnnotationValue;
-import org.apache.xmlbeans.impl.jam.JClass;
-import org.apache.xmlbeans.impl.jam.JComment;
-import org.apache.xmlbeans.impl.jam.JElement;
-import org.apache.xmlbeans.impl.jam.JParameter;
-import org.apache.xmlbeans.impl.jam.JSourcePosition;
-import org.apache.xmlbeans.impl.jam.JamClassLoader;
-import org.apache.xmlbeans.impl.jam.mutable.MAnnotation;
-import org.apache.xmlbeans.impl.jam.mutable.MComment;
-import org.apache.xmlbeans.impl.jam.mutable.MConstructor;
-import org.apache.xmlbeans.impl.jam.mutable.MParameter;
-import org.apache.xmlbeans.impl.jam.mutable.MSourcePosition;
-import org.apache.xmlbeans.impl.jam.visitor.JVisitor;
-import org.apache.xmlbeans.impl.jam.visitor.MVisitor;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
-import com.google.gdata.util.common.base.Pair;
 import com.redhat.sso.ninja.chart.Chart2Json;
 import com.redhat.sso.ninja.chart.DataSet2;
 import com.redhat.sso.ninja.utils.IOUtils2;
@@ -67,25 +41,10 @@ import com.redhat.sso.ninja.utils.MapBuilder;
 @Path("/")
 public class ManagementController {
   private static final Logger log=Logger.getLogger(ManagementController.class);
-  /**
-   * 
-   * config/load
-   * users/register
-   * users/get?id=?
-   * users/list
-   * users/delete?id=?
-   * leaderboard/{max}
-   * scorecards/list
-   * @throws IOException 
-   * @throws JsonMappingException 
-   * @throws JsonGenerationException 
-   * 
-   */
   
   public static void main(String[] asd) throws JsonGenerationException, JsonMappingException, IOException{
 //    System.out.println(new ManagementController().register(null,null,null,"[{\"displayName\": \"Mat Allen\",\"username\": \"mallen\",\"trelloId\":\"mallen2\",\"githubId\":\"matallen\"}]"));
 //    System.out.println(new ManagementController().getScorecards().getEntity());
-    
     System.out.println(java.sql.Date.valueOf(LocalDate.now()));
     System.out.println(java.sql.Date.valueOf(LocalDate.now().minus(365, ChronoUnit.DAYS)));
     System.out.println((1000 * 60 * 60 * 24));
@@ -94,7 +53,8 @@ public class ManagementController {
 //    System.out.println(new ManagementController().toNextLevel("BLUE", 7).toString());
   }
   
-
+  
+  // This doenst work but would be a nice feature
   @GET
   @Path("/loglevel/{level}")
   public Response setLogLevel(@Context HttpServletRequest request,@Context HttpServletResponse response,@Context ServletContext servletContext, @PathParam("level") String level) throws JsonGenerationException, JsonMappingException, IOException{
@@ -102,25 +62,25 @@ public class ManagementController {
     return Response.status(200).entity("{\"status\":\"DONE\", \"Message\":\"Changed Log level to: "+LogManager.getRootLogger().getLevel().toString()+"\"}").build();
   }
   
-  
+  // returns the config file contents (and yes, I shouldnt put the http method in the url, but that's a fix for later)
   @GET
   @Path("/config/get")
   public Response configGet(@Context HttpServletRequest request,@Context HttpServletResponse response,@Context ServletContext servletContext) throws JsonGenerationException, JsonMappingException, IOException{
     return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Config.get())).build();
   }
   
+  // saves a new complete config
   @POST
   @Path("/config/save")
   public Response configSave(@Context HttpServletRequest request,@Context HttpServletResponse response,@Context ServletContext servletContext) throws JsonGenerationException, JsonMappingException, IOException{
-    System.out.println("Saving config");
+    log.info("Saving config");
     Config newConfig=Json.newObjectMapper(true).readValue(request.getInputStream(), Config.class);
     
-    System.out.println("New Config = "+Json.newObjectMapper(true).writeValueAsString(newConfig));
-//    System.out.println("heartbeat.intervalInSeconds="+newConfig.getOptions().get("heartbeat.intervalInSeconds"));
-//    System.out.println("Saving...");
+    log.debug("New Config = "+Json.newObjectMapper(true).writeValueAsString(newConfig));
     newConfig.save();
     
     // re-start the heartbeat with a new interval
+    //TODO: reset the heartbeat ONLY if the interval changed from what it was before
     String heartbeatInterval=newConfig.getOptions().get("heartbeat.intervalInSeconds");
     if (null!=heartbeatInterval && heartbeatInterval.matches("\\d+")){
       log.info("Re-setting heartbeat with interval: "+heartbeatInterval);
@@ -133,17 +93,12 @@ public class ManagementController {
       Database2.MAX_EVENT_ENTRIES=Integer.parseInt(maxEvents);
     }
     
-    System.out.println("Saved");
+    log.debug("Saved");
     return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Config.get())).build();
   }
   
   
-  static LevelsUtil levelsUtil=null;
-  public LevelsUtil getLevelsUtil(){
-    if (null==levelsUtil) levelsUtil=new LevelsUtil(Config.get().getOptions().get("thresholds"));
-    return levelsUtil;
-  }
-  
+  // manually (via rest) to register new users via a rest/json payload
   @POST
   @Path("/users/register")
   public Response register(
@@ -168,15 +123,14 @@ public class ManagementController {
         for(Entry<String, Object> e:user.asMap().entrySet())
           userInfo.put(e.getKey(), (String)e.getValue());
         
-        userInfo.put("level", getLevelsUtil().getBaseLevel().getRight());
+        userInfo.put("level", LevelsUtil.get().getBaseLevel().getRight());
         userInfo.put("levelChanged", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));// nextLevel.getRight());
         
         db.getUsers().put(username, userInfo);
-        log.debug("New User Registered: "+Json.newObjectMapper(true).writeValueAsString(userInfo));
+        log.debug("New User Registered (via API): "+Json.newObjectMapper(true).writeValueAsString(userInfo));
         db.getScoreCards().put(username, new HashMap<String, Integer>());
         
         db.addEvent("New User Registered (via API)", username, "");
-//        db.getEvents().add("New User Registered (via API): "+username);
       }
       
       db.save();
@@ -188,6 +142,7 @@ public class ManagementController {
     
   }
   
+  // manually (via rest) to increment the points for a specific user and pool id
   @GET
   @Path("/points/{user}/{pool}/{increment}")
   public Response incrementPool(
@@ -208,11 +163,14 @@ public class ManagementController {
     }
   }
   
+  // returns the database content
   @GET
   @Path("/database/get")
   public Response getDatabase() throws JsonGenerationException, JsonMappingException, IOException{
     return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Database2.get())).build();
   }
+  
+  // saves/replaces the database content
   @POST
   @Path("/database/save")
   public Response databaseSave(@Context HttpServletRequest request,@Context HttpServletResponse response,@Context ServletContext servletContext) throws JsonGenerationException, JsonMappingException, IOException{
@@ -220,15 +178,13 @@ public class ManagementController {
     Database2 db=Json.newObjectMapper(true).readValue(IOUtils2.toStringAndClose(request.getInputStream()), new TypeReference<Database2>() {});
     
     System.out.println("New DB = "+Json.newObjectMapper(true).writeValueAsString(db));
-//    System.out.println("heartbeat.intervalInSeconds="+newConfig.getOptions().get("heartbeat.intervalInSeconds"));
-//    System.out.println("Saving...");
     db.save();
     System.out.println("Saved");
     return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Database2.get())).build();
   }
 
   
-  
+  // UI call (edit user) - returns the scorecard and userInfo data for be able to display and edit one specific user
   @GET
   @Path("/scorecard/{user}")
   public Response getScorecard(@PathParam("user") String user) throws JsonGenerationException, JsonMappingException, IOException{
@@ -259,41 +215,8 @@ public class ManagementController {
         .entity(payload).build();
   }
   
-//  @GET
-//  @Path("/scorecard/pie/{user}")
-//  public Response getUserPointDistribution(@PathParam("user") String user) throws JsonGenerationException, JsonMappingException, IOException{
-//  }
-  @GET
-  @Path("/scorecard/nextlevel/{user}")
-  public Response getUserNextLevel(@PathParam("user") String user) throws JsonGenerationException, JsonMappingException, IOException{
-    
-    Database2 db=Database2.getCached();
-    boolean userExists=db.getScoreCards().containsKey(user);
-    
-    Chart2Json chart=new Chart2Json();
-    chart.getLabels().add("Earned");
-    chart.getLabels().add("To Next Level");
-    chart.getDatasets().add(new DataSet2());
-    chart.getDatasets().get(0).setBorderWidth(1);
-    
-    if (userExists){
-      int currentTotal=getTotalPoints(user);
-      int outOf=getPointsToNextLevel(user);
-      chart.getDatasets().get(0).getData().add(currentTotal);
-      chart.getDatasets().get(0).getData().add(outOf);
-    }else{
-      chart.getDatasets().get(0).getData().add(0);
-      chart.getDatasets().get(0).getData().add(Integer.parseInt(Config.get().getOptions().get("thresholds").split(":")[0])); // blue level threshold
-    }
-    
-    return Response.status(200)
-        .header("Access-Control-Allow-Origin",  "*")
-        .header("Content-Type","application/json")
-        .header("Cache-Control", "no-store, must-revalidate, no-cache, max-age=0")
-        .header("Pragma", "no-cache")
-        .entity(Json.newObjectMapper(true).writeValueAsString(chart)).build();
-  }
   
+  // UI call (user dashboard) - returns the payload to render a chart displaying the breakdown of how many points came from which pool (trello, github PR, github reviewed PR's etc..)
   @GET
   @Path("/scorecard/breakdown/{user}")
   public Response getUserBreakdown(@PathParam("user") String user) throws JsonGenerationException, JsonMappingException, IOException{
@@ -320,7 +243,7 @@ public class ManagementController {
         .entity(Json.newObjectMapper(true).writeValueAsString(chart)).build();
   }
   
-  
+  // UI call (user dashboard) - returns user scorecard data to display the user dashboard
   @GET
   @Path("/scorecard/summary/{user}")
   public Response getScorecardSummary(@PathParam("user") String user) throws JsonGenerationException, JsonMappingException, IOException{
@@ -356,24 +279,6 @@ public class ManagementController {
       payload=Json.newObjectMapper(true).writeValueAsString(data);
     }
     
-//    if (scorecard!=null && userInfo!=null){
-//      Map<String, Object> data=new HashMap<String, Object>();
-//      data.put("userId", user);
-//      
-//      Map<String, Integer> consolidatedTotals=new HashMap<String, Integer>();
-//      Integer total=0;
-//      for(Entry<String, Integer> e:scorecard.entrySet()){
-//        String consolidatedKey=e.getKey().substring(0, e.getKey().contains(".")?e.getKey().indexOf("."):e.getKey().length());
-//        if (!consolidatedTotals.containsKey(consolidatedKey)) consolidatedTotals.put(consolidatedKey, 0);
-//        consolidatedTotals.put(consolidatedKey, consolidatedTotals.get(consolidatedKey)+e.getValue());
-//        total+=e.getValue();
-//      }
-//      data.put("total", total);
-//      data.putAll(consolidatedTotals);
-//      data.putAll(userInfo);
-//      payload=Json.newObjectMapper(true).writeValueAsString(data);
-//    }
-    
     return Response.status(payload.contains("ERROR")?500:200)
         .header("Access-Control-Allow-Origin",  "*")
         .header("Content-Type","application/json")
@@ -382,7 +287,7 @@ public class ManagementController {
         .entity(payload).build();
   }
 
-  
+  // UI call (edit/update user) - updates an existing user with new values & points
   @POST
   @Path("/scorecard/{user}")
   public Response saveScorecard(
@@ -392,17 +297,9 @@ public class ManagementController {
       ,@PathParam("user") String user) throws JsonGenerationException, JsonMappingException, IOException{
     
     String payload=IOUtils.toString(request.getInputStream());
-    System.out.println("Saving "+ payload);
-    
-//    mjson.Json x=mjson.Json.read(payload);
-//    String userId=x.at("userId").asString();
-//    String displayName=x.at("displayName").asString();
+    log.debug("Saving "+ payload);
     
     Database2 db=Database2.get();
-    
-//    for (mjson.Json y:x.asJsonList()){
-//      System.out.println(y.asString());
-//    }
     
     ObjectMapper objectMapper = new ObjectMapper();
     Map<String, Object> map = objectMapper.readValue(payload, new TypeReference<HashMap<String,Object>>(){});
@@ -427,64 +324,18 @@ public class ManagementController {
           //log.error("UNKNOWN FIELD: "+k+" = "+map.get(k));
         }
 
-        
-//        if (k.equals("displayName")){
-//          log.debug("Setting 'userInfo.displayName' to "+(String)map.get(k));
-//          userInfo.put("displayName", (String)map.get(k));
-//        }else if (k.equals("level")){
-//          log.debug("Setting 'userInfo.level' to "+(String)map.get(k));
-//          userInfo.put("level", (String)map.get(k));
-//        }else{
-//          log.debug("Setting 'scorecard."+k+"' to "+(String)map.get(k));
-////          log.debug("field '"+k+"/"+map.get(k)+"' is of type: "+(map.get(k).getClass().getName()));
-//          
-////          if (map.get(k) instanceof String){
-////            
-////          }else if (map.get(k) instanceof Integer){
-//            scorecard.put(k, Integer.parseInt((String)map.get(k)));
-////          }
-//        }
       }
     }
     
-    
-//    if (displayName!=null) userInfo.put("displayName", displayName);
-    
     db.save();
-    
     return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString("OK")).build();
   }
   
-  
-  private int getTotalPoints(String username){
-    Database2 db=Database2.getCached();
-    Map<String, Integer> scorecard=db.getScoreCards().get(username);
-    int total=0;
-    for(Entry<String, Integer> s:scorecard.entrySet()){
-      total+=s.getValue();
-    }
-    return total;
-  }
-  
-  private int getPointsToNextLevel(String username){
-    Database2 db=Database2.getCached();
-    int total=getTotalPoints(username);
-    Map<String, String> userInfo=db.getUsers().get(username);
-    Integer pointsToNextLevel=getLevelsUtil().getNextLevel(userInfo.get("level")).getLeft()-total;
-    if (pointsToNextLevel<0) pointsToNextLevel=0;
-    return pointsToNextLevel;
-  }
   
   @GET
   @Path("/events")
   public Response getEvents() throws JsonGenerationException, JsonMappingException, IOException{
     Database2 db=Database2.get();
-//    List<Map<String,String>> result=new ArrayList<Map<String,String>>();
-//    for(String e:db.getEvents()){
-//      Map<String,String> event=new HashMap<String, String>();
-//      event.put("event", e);
-//      result.add(event);
-//    }
     return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(db.getEvents())).build();
   }
   
@@ -516,14 +367,8 @@ public class ManagementController {
       row.put("total", total);
       row.put("level", userInfo.get("level"));
       
-      
-      
-//      Tuple<Integer,String> shouldBeLevel=getLevelsUtil().getLevelGivenPoints(total);
-//      if (!shouldBeLevel.equals(userInfo.get("level")))
-//        row.put("pointsToNextLevel", "PENDING");
-      
       // points to next level
-      Integer pointsToNextLevel=getLevelsUtil().getNextLevel(userInfo.get("level")).getLeft()-total;
+      Integer pointsToNextLevel=LevelsUtil.get().getNextLevel(userInfo.get("level")).getLeft()-total;
       if (pointsToNextLevel<0) pointsToNextLevel=0;
       row.put("pointsToNextLevel", pointsToNextLevel);
       data.add(row);
@@ -555,81 +400,22 @@ public class ManagementController {
     return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(wrapper)).build();
   }
   
-  @GET
-  @Path("/leaderboard/{max}")
-  public Response getLeaderboard2(@PathParam("max") Integer max) throws JsonGenerationException, JsonMappingException, IOException{
-    Database2 db=Database2.get();
-    Map<String, Map<String, Integer>> leaderboard=db.getLeaderboard();
-    Map<String, Integer> totals=new HashMap<String, Integer>();
-    for(Entry<String, Map<String, Integer>> e:leaderboard.entrySet()){
-      Integer t=0;
-      for(Entry<String, Integer> e2:e.getValue().entrySet()){
-        t+=e2.getValue();
-      }
-      e.getValue().put("total", t);
-      totals.put(e.getKey(), t);
-    }
-    
-    //reorder
-    List<Entry<String, Integer>> list=new LinkedList<Map.Entry<String, Integer>>(totals.entrySet());
-    Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
-      public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
-          return (o2.getValue()).compareTo(o1.getValue());
-      }
-    });
-    HashMap<String, Integer> sortedTotals=new LinkedHashMap<String, Integer>();
-    for (Entry<String, Integer> e:list) {
-      sortedTotals.put(e.getKey(), e.getValue());
-    }
-    
-    Chart2Json c=new Chart2Json();
-    c.setDatasets(new ArrayList<DataSet2>());
-    int count=0;
-    for(Entry<String, Integer> e:sortedTotals.entrySet()){
-      Map<String, String> userInfo=db.getUsers().get(e.getKey());
-      
-      c.getLabels().add(null!=userInfo && userInfo.containsKey("displayName")?userInfo.get("displayName"):e.getKey());
-      
-      if (c.getDatasets().size()<=0) c.getDatasets().add(new DataSet2());
-      c.getDatasets().get(0).getData().add(e.getValue());
-      c.getDatasets().get(0).setBorderWidth(1);
-      
-      // TODO: set this to the color of the belt
-      Map<String,Pair<String,String>> colors=new MapBuilder<String,Pair<String,String>>()
-          .put("BLUE",  new Pair<String, String>("rgba(0,0,163,0.7)",     "rgba(0,0,163,0.8)"))
-          .put("GREY",  new Pair<String, String>("rgba(130,130,130,0.7)", "rgba(130,130,130,0.8)"))
-          .put("RED",   new Pair<String, String>("rgba(163,0,0,0.7)",     "rgba(163,0,0,0.8)"))
-          .put("BLACK", new Pair<String, String>("rgba(20,20,20,0.7)",    "rgba(20,20,20,0.8)"))
-          .build();
-      c.getDatasets().get(0).getBackgroundColor().add(colors.get(userInfo.get("level").toUpperCase()).getFirst());
-      c.getDatasets().get(0).getBorderColor().add(colors.get(userInfo.get("level").toUpperCase()).getSecond());
-      
-      count=count+1;
-      if (count>=max) break;
-    }
-    return Response.status(200)
-        .header("Access-Control-Allow-Origin",  "*")
-        .header("Content-Type","application/json")
-        .header("Cache-Control", "no-store, must-revalidate, no-cache, max-age=0")
-        .header("Pragma", "no-cache")
-        .entity(Json.newObjectMapper(true).writeValueAsString(c)).build();
-  }
-  
-  @GET
-  @Path("/script/{name}")
-  public Response getScript(@PathParam("name") String scriptName) throws JsonGenerationException, JsonMappingException, IOException{
-    String path="scripts/"+scriptName;
-    InputStream is=this.getClass().getClassLoader().getResourceAsStream(path);
-    
-    StringBuilder sb = new StringBuilder();
-    String inputLine;
-    BufferedReader br=new BufferedReader(new InputStreamReader(is));
-    while ((inputLine = br.readLine()) != null){
-      sb.append(inputLine);
-      sb.append('\n');
-    }
-    
-    return Response.status(200).header("Content-Type", "text/application").entity(sb.toString()).build();
-  }
+  // defunct now i think
+//  @GET
+//  @Path("/script/{name}")
+//  public Response getScript(@PathParam("name") String scriptName) throws JsonGenerationException, JsonMappingException, IOException{
+//    String path="scripts/"+scriptName;
+//    InputStream is=this.getClass().getClassLoader().getResourceAsStream(path);
+//    
+//    StringBuilder sb = new StringBuilder();
+//    String inputLine;
+//    BufferedReader br=new BufferedReader(new InputStreamReader(is));
+//    while ((inputLine = br.readLine()) != null){
+//      sb.append(inputLine);
+//      sb.append('\n');
+//    }
+//    
+//    return Response.status(200).header("Content-Type", "text/application").entity(sb.toString()).build();
+//  }
   
 }

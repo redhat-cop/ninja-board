@@ -39,7 +39,7 @@
 /*	background-color:#EEEEEE;*/
 .graph_header{
   width: 100%;
-	background-image: url("../images/graph_header.png");
+//	background-image: url("../images/graph_header.png");
 }
 .graph_header_main{
 	height: 60px;

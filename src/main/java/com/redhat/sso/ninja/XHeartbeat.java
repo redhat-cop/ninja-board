@@ -23,8 +23,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
-public class Heartbeat {
-  private static final Logger log = Logger.getLogger(Heartbeat.class);
+public class XHeartbeat {
+  private static final Logger log = Logger.getLogger(XHeartbeat.class);
   private static Timer t;
 
   public static void main(String[] asd){
@@ -38,8 +38,8 @@ public class Heartbeat {
       lastRunC.set(Calendar.SECOND, 1);
       
       System.out.println("LAST RUN: "+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(lastRunC.getTime()));
-      System.out.println(Heartbeat.convertLastRun("perl ${user.home}/Work/poc/sso-tools/cop-ninja/github-stats.py -s ${LAST_RUN:yyyy-MM-dd}", lastRunC.getTime()));
-      System.out.println(Heartbeat.convertLastRun("sh ${user.home}/Work/poc/sso-tools/cop-ninja/trello.sh -s ${DAYS_FROM_LAST_RUN}", lastRunC.getTime()));
+      System.out.println(XHeartbeat.convertLastRun("perl ${user.home}/Work/poc/sso-tools/cop-ninja/github-stats.py -s ${LAST_RUN:yyyy-MM-dd}", lastRunC.getTime()));
+      System.out.println(XHeartbeat.convertLastRun("sh ${user.home}/Work/poc/sso-tools/cop-ninja/trello.sh -s ${DAYS_FROM_LAST_RUN}", lastRunC.getTime()));
       
       lastRunC.set(Calendar.DAY_OF_MONTH, 21);
       System.out.println("TODAY?: "+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(lastRunC.getTime()));

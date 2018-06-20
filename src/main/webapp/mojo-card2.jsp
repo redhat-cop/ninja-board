@@ -1,3 +1,4 @@
+<center>
 <div style="height:500px;">
 	
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -101,6 +102,9 @@
 				<td colspan="2">
 					<table class="card2" border=0>
 						<tr>
+							<td colspan="6"><span class="cardName" id="_error"></span><br/><span id="_error2"></td>
+						</tr>
+						<tr>
 							<td class="cardName" colspan="2"><span id="_displayName"></span></td>
 							<td class="cardScore" rowspan="4"><img class="ninjaIcon" id="_level"></img></td>
 							<td class="cardScore"><span id="_Trello">0</span></td>
@@ -195,31 +199,41 @@ var xhr = new XMLHttpRequest();
 xhr.open("GET", ctx+"/api/scorecard/summary/"+getUsername(), true);
 xhr.send();
 xhr.onloadend = function () {
+  console.log("statusCode="+xhr.status);
+  
 	var json=JSON.parse(xhr.responseText);
+  if (xhr.status==500){
+    // json['displayName'] is not just a username in the event of a 500 error. its a message. need to change this at some point
+  	$("#_error").html(json['displayName']+". Please click <a style='color:white;' target='_new' href='https://mojo.redhat.com/external-link.jspa?url=https%3A%2F%2Fdocs.google.com%2Fforms%2Fd%2Fe%2F1FAIpQLSdWGcCks2zKKnVoZFQz3CieLQDc1lsSex_Knwh_-eyRm0ZQTg%2Fviewform'>here</a> to register");
+  	$("#_error2").html("Please note registration takes approx. 24 hours");
+  }
+  
+  if (xhr.status==200){
 		if (json['displayName']==undefined){
 		  $("#_displayName").text(json['username']);
 		}else{
 			$("#_displayName").text(json['displayName']);
 		}
-	Object.keys(json).forEach(function(key) {
-    value = json[key];
-		
-    
-    if (null!=document.getElementById("_"+key)){
-    	console.log("setting [_"+key+"] to ["+value+"]");
-	    $("#_"+key).text(value);
-    	
-    	if (key=="level"){
-				document.getElementById("_level").src=ctx+"/images/"+value.toLowerCase()+"_belt_icon.png";
-    	}else{
-    	  //$("#_"+key).text(value);
-    		//document.getElementById("_"+key).innerText=value;
-    	}
-    }else{
-    	//console.log("NOT setting [_"+key+"] to ["+value+"]");
-    }
-    //console.log(value);
-	});
+		Object.keys(json).forEach(function(key) {
+	    value = json[key];
+			
+	    
+	    if (null!=document.getElementById("_"+key)){
+	    	console.log("setting [_"+key+"] to ["+value+"]");
+		    $("#_"+key).text(value);
+	    	
+	    	if (key=="level"){
+					document.getElementById("_level").src=ctx+"/images/"+value.toLowerCase()+"_belt_icon.png";
+	    	}else{
+	    	  //$("#_"+key).text(value);
+	    		//document.getElementById("_"+key).innerText=value;
+	    	}
+	    }else{
+	    	//console.log("NOT setting [_"+key+"] to ["+value+"]");
+	    }
+	    //console.log(value);
+		});
+	}
 }
 
 
@@ -326,7 +340,11 @@ function buildChart(uri, chartElementName, type, clrs){
     if ("points"==chartElementName){
 	    var total=data.datasets[0].data[0]+data.datasets[0].data[1];
 	    var current=data.datasets[0].data[0];
-	    var percentage=Math.round((current/total)*100)+"%";
+	    if (0==current && 0==total){
+	      var percentage="0%";
+	    }else{
+	    	var percentage=Math.round((current/total)*100)+"%";
+	    }
     }else{
     	var percentage="";
     }
@@ -373,3 +391,4 @@ function refresh(){
 refresh();
 </script>
 </div>
+</center>
