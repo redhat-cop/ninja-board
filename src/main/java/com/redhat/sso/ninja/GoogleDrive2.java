@@ -3,7 +3,9 @@ package com.redhat.sso.ninja;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +18,8 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import com.redhat.sso.ninja.utils.DownloadFile;
 
 public class GoogleDrive2 {
   
@@ -141,6 +145,28 @@ public class GoogleDrive2 {
         recursivelyDelete(f);
       if (!f.getName().startsWith("."))
         f.delete();
+    }
+  }
+  
+  public static void initialise(){ //ie. download gdrive executable if necessary
+    if (!new File(GoogleDrive2.getDefaultExecutable()).exists()){
+      // attempt to download it
+      try{
+        String url="https://github.com/odeke-em/drive/releases/download/v0.3.9/drive_linux";
+        
+        System.out.println("Downloading gdrive from: "+url);
+        new DownloadFile().get(url, new File(GoogleDrive2.getDefaultExecutable()).getParentFile(), PosixFilePermission.OTHERS_EXECUTE);
+        
+        File credsFile=new File(new File(GoogleDrive2.getDefaultWorkingFolder(), ".gd"), "credentials.json");
+        credsFile.getParentFile().mkdirs();
+        System.out.println("Deploying credentials.json in: "+credsFile);
+        IOUtils.copy(GoogleDrive2.class.getClassLoader().getResourceAsStream("/gd_credentials.json"), new FileOutputStream(credsFile));
+      }catch(Exception e){
+        System.out.println("Failed to initialise gdrive and/or credentials");
+        e.printStackTrace();
+      }
+    }else{
+      System.out.println("gdrive already initialised. Existing binary is here: "+GoogleDrive2.getDefaultExecutable());
     }
   }
   
