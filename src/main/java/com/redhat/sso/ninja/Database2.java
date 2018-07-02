@@ -26,7 +26,8 @@ import com.redhat.sso.ninja.utils.Json;
 
 public class Database2{
   private static final Logger log=Logger.getLogger(Database2.class);
-  private static final String storage="database2.json";
+  public static final String STORAGE="database2.json";
+  public static final File STORAGE_AS_FILE=new File(STORAGE);
   public static Integer MAX_EVENT_ENTRIES=1000;
   public static boolean systemUpdating=false;
   
@@ -146,7 +147,7 @@ public class Database2{
   public synchronized void save(){
     try{
       long s=System.currentTimeMillis();
-      IOUtils2.writeAndClose(Json.newObjectMapper(true).writeValueAsBytes(this), new FileOutputStream(new File(storage)));
+      IOUtils2.writeAndClose(Json.newObjectMapper(true).writeValueAsBytes(this), new FileOutputStream(new File(STORAGE)));
       log.info("Database saved ("+(System.currentTimeMillis()-s)+"ms)");
     }catch (JsonGenerationException e){
       e.printStackTrace();
@@ -163,7 +164,7 @@ public class Database2{
     try{
 //      Database db=new Database();
 //      Database db=Json.newObjectMapper(true).readValue(IOUtils2.toStringAndClose(new FileInputStream(new File(storage))), new TypeReference<HashMap<String,Map<String,Integer>>>(){});
-      Database2 db=Json.newObjectMapper(true).readValue(IOUtils2.toStringAndClose(new FileInputStream(new File(storage))), Database2.class);
+      Database2 db=Json.newObjectMapper(true).readValue(IOUtils2.toStringAndClose(new FileInputStream(new File(STORAGE))), Database2.class);
       return db;
     }catch (JsonParseException e){
       e.printStackTrace();
@@ -185,7 +186,7 @@ public class Database2{
     return instance;
   }
   public static Database2 get(){
-    if (!new File(storage).exists())
+    if (!new File(STORAGE).exists())
       new Database2().save();
     instance=Database2.load();
     return instance;

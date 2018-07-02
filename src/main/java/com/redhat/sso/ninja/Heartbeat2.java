@@ -310,7 +310,7 @@ public class Heartbeat2 {
               
             }else{
 //              db.addEvent("Script Execution", name+"/last.log", command);
-              db.addEvent("Script Execution Started", "", command);
+              //db.addEvent("Script Execution Started", "", command);
               BufferedReader stdInput=new BufferedReader(new InputStreamReader(script_exec.getInputStream()));
               
               StringBuffer scriptLog=new StringBuffer();
@@ -356,7 +356,7 @@ public class Heartbeat2 {
               }
               IOUtils.write(scriptLog.toString(), new FileOutputStream(new File(scriptFolder, "last.log")));
               
-              db.addEvent("Script Execution Ended", "", command +" (took "+(System.currentTimeMillis()-start)+"ms)");
+              db.addEvent("Script Execution Succeeded", "", command +" (took "+(System.currentTimeMillis()-start)+"ms)");
             }
             
           }catch (IOException e){
