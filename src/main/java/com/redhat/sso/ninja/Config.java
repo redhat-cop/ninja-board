@@ -25,7 +25,7 @@ import com.redhat.sso.ninja.utils.MapBuilder;
 
 public class Config {
   private static final Logger log=Logger.getLogger(Config.class);
-  public static final File STORAGE=new File("config.json");
+  public static final File STORAGE=new File("/var/lib/ninja", "config.json");
   private static Config instance;
   private List<Map<String,Object>> scripts=null;
   private Map<String,String> options=null;
@@ -101,6 +101,7 @@ public class Config {
   
   public void save(){
     try{
+      if (!Config.STORAGE.getParentFile().exists()) Config.STORAGE.getParentFile().mkdirs();
       IOUtils2.writeAndClose(Json.newObjectMapper(true).writeValueAsString(instance).getBytes(), new FileOutputStream(Config.STORAGE));
     }catch (IOException e){
       e.printStackTrace();
@@ -112,6 +113,7 @@ public class Config {
       try{
         log.debug("Looking for config in: "+STORAGE.getAbsolutePath());
         if (!Config.STORAGE.exists()){
+          if (!Config.STORAGE.getParentFile().exists()) Config.STORAGE.getParentFile().mkdirs();
           // copy the default config over
           IOUtils.copy(Config.class.getClassLoader().getResourceAsStream(STORAGE.getName()), new FileOutputStream(STORAGE));
           
