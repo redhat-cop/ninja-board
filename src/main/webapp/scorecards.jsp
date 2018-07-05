@@ -108,9 +108,6 @@ function loadDataTable(){
 	              });
 	              $("#tableDiv").empty();
                 $("#tableDiv").append('<table id="example" class="display" cellspacing="0" width="100%"><thead><tr>' + tableHeaders + '</tr></thead></table>');
-                //$('#example').DataTable(json);
-                
-                //alert(JSON.stringify(tableColumns));
                 
                 $('#example').DataTable({
                 		"data": json.data,
@@ -120,6 +117,7 @@ function loadDataTable(){
 						        "lengthMenu": [[10, 25, 50, 100, 200, -1], [10, 25, 50, 100, 200, "All"]], // page entry options
 						        "pageLength" : 25, // default page entries
 						        "searching" : true,
+						        "order" : [[5,"desc"]],
               	});
                 
             },
