@@ -30,7 +30,7 @@ public class Backup {
   
   public static void start(long intervalInMs, String... paths) {
     t = new Timer(Backup.class.getSimpleName()+"-timer", false);
-    t.scheduleAtFixedRate(new BackupRunnable(paths), 30000l, intervalInMs);
+    t.scheduleAtFixedRate(new BackupRunnable(paths), 180000l, intervalInMs);
   }
 
   public static void stop() {
