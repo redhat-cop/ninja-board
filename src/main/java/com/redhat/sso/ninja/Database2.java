@@ -147,6 +147,8 @@ public class Database2{
   public synchronized void save(){
     try{
       long s=System.currentTimeMillis();
+      if (!new File(STORAGE).getParentFile().exists())
+        new File(STORAGE).getParentFile().mkdirs();
       IOUtils2.writeAndClose(Json.newObjectMapper(true).writeValueAsBytes(this), new FileOutputStream(new File(STORAGE)));
       log.info("Database saved ("+(System.currentTimeMillis()-s)+"ms)");
     }catch (JsonGenerationException e){

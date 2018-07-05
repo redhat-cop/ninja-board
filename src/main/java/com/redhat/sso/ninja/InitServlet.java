@@ -21,7 +21,6 @@ public class InitServlet extends HttpServlet {
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
     
-    Backup.start(TimeUnit.DAYS.toMillis(1), Database2.STORAGE_AS_FILE.getAbsolutePath());
     
     GoogleDrive2.initialise();
     
@@ -34,10 +33,12 @@ public class InitServlet extends HttpServlet {
     System.out.println("  Disabled: "+heartbeatDisabled);
     System.out.println("  Interval: "+interval +" (seconds)");
     
+    Database2.get();
     
     if (!heartbeatDisabled)
       Heartbeat2.start(interval);
     
+    Backup.start(TimeUnit.DAYS.toMillis(1), Database2.STORAGE_AS_FILE.getAbsolutePath());
   }
 
   @Override
