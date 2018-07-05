@@ -176,8 +176,10 @@ public class Heartbeat2 {
             log.info("New User Registered: "+userInfo.get("username") +" ["+userInfo+"]");
             dbUsers.put(userInfo.get("username"), userInfo);
             
+            // add the user a zero scorecard
+            db.getScoreCards().put(userInfo.get("username"), new HashMap<String, Integer>());
+            
             db.addEvent("New User Registered", userInfo.get("username"), "");
-//            db.getEvents().add("New User Registered: "+userInfo.get("username"));
             
           }else if (dbUsers.containsKey(userInfo.get("username"))){
             log.debug("User already registered: "+userInfo.get("username"));
