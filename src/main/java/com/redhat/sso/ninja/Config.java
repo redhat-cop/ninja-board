@@ -25,7 +25,7 @@ import com.redhat.sso.ninja.utils.MapBuilder;
 
 public class Config {
   private static final Logger log=Logger.getLogger(Config.class);
-  public static final File STORAGE=new File("/var/lib/ninja", "config.json");
+  public static final File STORAGE=new File("temp/ninja", "config.json");
   private static Config instance;
   private List<Map<String,Object>> scripts=null;
   private Map<String,String> options=null;
