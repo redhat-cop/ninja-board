@@ -17,6 +17,10 @@ import com.redhat.sso.ninja.utils.DownloadFile;
 
 public class InitServlet extends HttpServlet {
 	
+  public static void main(String[] asd) throws ServletException{
+    new InitServlet().init(null);
+  }
+  
   @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
@@ -24,7 +28,7 @@ public class InitServlet extends HttpServlet {
     
     GoogleDrive2.initialise();
     
-    String intervalString=(String)Config.get().getOptions().get("heartbeat.interval");
+    String intervalString=(String)Config.get().getOptions().get("heartbeat.intervalInSeconds");
     if (null==intervalString) intervalString="60000";
     int interval=Integer.parseInt(intervalString);
     boolean heartbeatDisabled="true".equalsIgnoreCase((String)Config.get().getOptions().get("heartbeat.disabled"));
