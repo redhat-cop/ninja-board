@@ -59,6 +59,7 @@ function update(){
   if (op=="") alert("ERROR: OP is empty!");
   post("/analytics/update/"+op, data);
   reset();
+  
 }
 
 function post(uri, data){
@@ -72,6 +73,7 @@ function post(uri, data){
     xhr.send();
   }
   xhr.onloadend = function () {
+  	showSuccess();
   	load();
     //$('#example').dataTable().fnReloadAjax();
   };
@@ -100,6 +102,16 @@ function save(){
 }
 
 
+$(document).ready (function(){
+  $("#success-alert").hide();
+});
+
+function showSuccess(){
+  $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
+		$("#success-alert").slideUp(500);
+	}); 
+};
+
 </script>
 	
 	<style>
@@ -111,9 +123,14 @@ function save(){
 		
   <%@include file="nav.jsp"%>
   
+	<div class="alert alert-success" id="success-alert">
+	    <button type="button" class="close" data-dismiss="alert">x</button>
+	    <strong>Success!</strong> config saved.
+	</div>
+	
   <div id="solutions">
   	<textarea id="config" name="config"></textarea>
-  	<button name="save" onclick="save();">Save</button>
+  	<button id="save" name="save" onclick="save();">Save</button>
   </div>
 
 </div>

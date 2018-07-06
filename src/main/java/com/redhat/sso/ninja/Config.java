@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
@@ -25,7 +26,7 @@ import com.redhat.sso.ninja.utils.MapBuilder;
 
 public class Config {
   private static final Logger log=Logger.getLogger(Config.class);
-  public static final File STORAGE=new File("temp/ninja", "config.json");
+  public static final File STORAGE=new File("target/ninja-persistence", "config.json");
   private static Config instance;
   private List<Map<String,Object>> scripts=null;
   private Map<String,String> options=null;
