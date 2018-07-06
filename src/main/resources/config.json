@@ -12,6 +12,7 @@
 		}
 	],
 	"options": {
+		"root": "${configLocation}",
 		"heartbeat.intervalInSeconds": "86400000",
 		"events.max": "1000000",
 		"thresholds": "0:ZERO,5:BLUE,20:GREY,40:RED,75:BLACK",

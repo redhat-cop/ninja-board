@@ -25,6 +25,7 @@ function post(uri, data){
     xhr.send();
   }
   xhr.onloadend = function () {
+  	showSuccess();
   	load();
   };
 }
@@ -44,6 +45,15 @@ function load(){
   }
 }
 
+$(document).ready (function(){
+  $("#success-alert").hide();
+});
+
+function showSuccess(){
+  $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
+		$("#success-alert").slideUp(500);
+	}); 
+};
 </script>
 	
 	<style>
@@ -55,6 +65,11 @@ function load(){
 		
   <%@include file="nav.jsp"%>
   
+	<div class="alert alert-success" id="success-alert">
+    <button type="button" class="close" data-dismiss="alert">x</button>
+    <strong>Success!</strong> database saved.
+	</div>
+	
   <div id="solutions">
   	<textarea id="database" name="database"></textarea>
   	<button name="save" onclick="save();">Save</button>
