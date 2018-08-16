@@ -13,7 +13,7 @@ DEFAULT_START_DATE_DAY = '01'
 UNLABELED = 'unlabeled'
 
 def handle_pagination_items(session, url):
-    
+#    print "pagination called: {}".format(url)
     pagination_request = session.get(url)
     pagination_request.raise_for_status()
 
@@ -66,7 +66,7 @@ def get_reviews(session, url):
 
 def get_org_search_issues(session, start_date):
 
-    query = "https://api.github.com/search/issues?q=user:{}+updated:>={}+archived:false+state:closed".format(GITHUB_ORG, start_date.date().isoformat())
+    query = "https://api.github.com/search/issues?q=user:{}+updated:>={}+archived:false+state:closed&per_page=50".format(GITHUB_ORG, start_date.date().isoformat())
     return handle_pagination_items(session, query)
 
 def process_labels(labels):
