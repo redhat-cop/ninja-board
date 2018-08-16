@@ -109,6 +109,9 @@ function loadDataTable(){
 	              $("#tableDiv").empty();
                 $("#tableDiv").append('<table id="example" class="display" cellspacing="0" width="100%"><thead><tr>' + tableHeaders + '</tr></thead></table>');
                 
+                //console.log("tableColumns="+JSON.stringify(tableColumns));
+                //console.log("json.data="+JSON.stringify(json.data));
+                
                 $('#example').DataTable({
                 		"data": json.data,
                 		"columns": tableColumns,
@@ -117,7 +120,7 @@ function loadDataTable(){
 						        "lengthMenu": [[10, 25, 50, 100, 200, -1], [10, 25, 50, 100, 200, "All"]], // page entry options
 						        "pageLength" : 25, // default page entries
 						        "searching" : true,
-						        "order" : [[5,"desc"]],
+						        "order" : [[2,"desc"]],
               	});
                 
             },
@@ -127,11 +130,11 @@ function loadDataTable(){
         "paging":         false,
         "lengthMenu": [[10, 25, 50, 100, 200, -1], [10, 25, 50, 100, 200, "All"]], // page entry options
         "pageLength" : 25, // default page entries
-        "columnDefs": [
-        	{"targets": 1, "render": function (data,type,row){
-        		return "XXXXXXXX";
-        	}}
-        ]
+        //"columnDefs": [
+        //	{"targets": 1, "render": function (data,type,row){
+        //		return "XXXXXXXX";
+        //	}}
+        //]
     } );
 }
 
@@ -286,8 +289,8 @@ jQuery.fn.dataTableExt.oApi.fnReloadAjax = function ( oSettings, sNewSource, fnC
 			            <tr>
 			                <th align="left">User ID</th>
 			                <th align="left">Name</th>
-			                <th align="left">A dynamic bunch of points fields go here</th>
 			                <th align="left">Total Points</th>
+			                <th align="left">A dynamic bunch of points fields go here</th>
 			                <th align="left"></th>
 			            </tr>
 			        </thead>
