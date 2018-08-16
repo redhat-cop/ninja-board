@@ -120,7 +120,7 @@ function loadDataTable(){
 						        "lengthMenu": [[10, 25, 50, 100, 200, -1], [10, 25, 50, 100, 200, "All"]], // page entry options
 						        "pageLength" : 25, // default page entries
 						        "searching" : true,
-						        "order" : [[2,"desc"]],
+						        "order" : [[1,"desc"]],
               	});
                 
             },
