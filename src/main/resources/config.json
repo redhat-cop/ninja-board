@@ -2,12 +2,12 @@
 	"scripts": [
 		{
 			"name": "Trello",
-			"source": "https://raw.githubusercontent.com/matallen/community-ninja-board/master/src/main/resources/scripts/trello-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
+			"source": "https://raw.githubusercontent.com/redhat-cop/community-ninja-board/v1.0/src/main/resources/scripts/trello-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
 			"type": "perl"
 		},
 		{
 			"name": "Github",
-			"source": "https://raw.githubusercontent.com/matallen/community-ninja-board/master/src/main/resources/scripts/github-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
+			"source": "https://raw.githubusercontent.com/redhat-cop/community-ninja-board/v1.0/src/main/resources/scripts/github-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
 			"type": "perl"
 		}
 	],
