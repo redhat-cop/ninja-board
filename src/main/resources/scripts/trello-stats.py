@@ -72,7 +72,6 @@ def plural_items(text, obj):
 def calculate_points(text):
 
     matches = re.findall(CARD_TITLE_POINTS_REGEX_PATTERN, text)
-
     if(len(matches) == 0):
         return 1
     else:
@@ -149,7 +148,7 @@ for card in resp_cards['cards']:
 
             members_items[member_id] = member_items
             if (not human_readable):
-                print "Cards Closed/TR{0}/{1}/{2}".format(card_id, get_member(session, member_id)['username'], 1)
+                print "Cards Closed/TR{0}/{1}/{2}".format(card_id, get_member(session, member_id)['username'], member_items['points'])
 
 
 if (human_readable):

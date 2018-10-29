@@ -35,9 +35,11 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
-import com.redhat.sso.ninja.UserService.User;
+import com.redhat.sso.ninja.user.UserService;
+import com.redhat.sso.ninja.user.UserService.User;
 import com.redhat.sso.ninja.utils.DownloadFile;
 import com.redhat.sso.ninja.utils.FilePermissions;
+import com.redhat.sso.ninja.utils.LevelsUtil;
 import com.redhat.sso.ninja.utils.Tuple;
 
 public class Heartbeat2 {
@@ -244,13 +246,13 @@ public class Heartbeat2 {
             
             ScriptBase obj=(ScriptBase)Class.forName((String)script.get("source")).newInstance();
             obj.execute((String)script.get("name"), (Map<String,String>)script.get("options"), daysFromLastRun, new PointsAdder(){
-              public void addPoints(String user, String pool, Integer increment){
+              public void addPoints(String user, String pool, Integer increment, String sourceEntityId){
                 if (user!=null && pool!=null){
                   try{
                     String userId=poolToUserIdMapper.get(user);
                     if (null!=userId){
                       log.debug("addPoints:: Incrementing Points:: ["+pool+"/"+userId+"] = "+increment);
-                      db.increment(pool, userId, increment);
+                      db.increment(pool, userId, increment, sourceEntityId);
                     }//else //its most likely an unregistered user
                       
                   }catch(Exception e){
@@ -340,12 +342,12 @@ public class Heartbeat2 {
                       if (null!=userId){
   //                    System.out.println(poolUserId+" mapped to "+userId);
                         log.debug("Incrementing registered user "+poolUserId+" by "+inc);
-                        db.increment(pool, userId, inc);//.save();
+                        db.increment(pool, userId, inc, actionId);//.save();
                       }else{
   //                    log.debug(poolUserId+" did NOT map to any registered user");
                       }
                     }else{
-                      // it's a duplicate incremenent for that actionId & user, so ignore it
+                      // it's a duplicate increment for that actionId & user, so ignore it
                       log.debug(actionId+"."+poolUserId+" is a duplicate");
                     }
                     

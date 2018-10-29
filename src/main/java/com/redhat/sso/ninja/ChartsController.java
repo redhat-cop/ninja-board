@@ -23,6 +23,7 @@ import com.google.gdata.util.common.base.Pair;
 import com.redhat.sso.ninja.chart.Chart2Json;
 import com.redhat.sso.ninja.chart.DataSet2;
 import com.redhat.sso.ninja.utils.Json;
+import com.redhat.sso.ninja.utils.LevelsUtil;
 import com.redhat.sso.ninja.utils.MapBuilder;
 
 @Path("/")

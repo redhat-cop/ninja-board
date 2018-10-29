@@ -1,4 +1,4 @@
-package com.redhat.sso.ninja;
+package com.redhat.sso.ninja.user;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -13,6 +13,8 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
+
+import com.redhat.sso.ninja.Config;
 
 public class UserService {
 

@@ -54,7 +54,7 @@ public class Database2{
   public String getCreated(){ return created; }
   
   
-  public Database2 increment(String poolId, String userId, Integer increment){
+  public Database2 increment(String poolId, String userId, Integer increment, String sourceEntityId){
     if (null==poolId || null==userId){
       log.error("Unable to add due to null key [poolId="+poolId+", userId="+userId+"]");
       return this;
@@ -65,7 +65,7 @@ public class Database2{
       log.info("Incrementing points: user="+userId+", poolId="+poolId+", increment/points="+increment);
       scorecards.get(userId).put(poolId, scorecards.get(userId).get(poolId)+increment);
       
-      addEvent("Points Increment", userId, increment+" points added to "+poolId+ " pool");
+      addEvent("Points Increment", userId, increment+" points added to "+poolId+ " pool (source entity: "+sourceEntityId+"");
 //      getEvents().add("Points Increment: "+poolId+" : "+userId);
       
 //      // does the user need leveling up?
@@ -195,7 +195,7 @@ public class Database2{
   }
   
   public static void main(String[] asd){
-    Database2.get().increment("pool", "test", 1);
+    Database2.get().increment("pool", "test", 1, null);
   }
 
 }
