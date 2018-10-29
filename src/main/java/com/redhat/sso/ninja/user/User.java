@@ -1,4 +1,4 @@
-package com.redhat.sso.ninja;
+package com.redhat.sso.ninja.user;
 
 import java.util.Map;
 

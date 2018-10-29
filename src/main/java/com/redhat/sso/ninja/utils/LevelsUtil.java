@@ -1,9 +1,9 @@
-package com.redhat.sso.ninja;
+package com.redhat.sso.ninja.utils;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import com.redhat.sso.ninja.utils.Tuple;
+import com.redhat.sso.ninja.Config;
 
 public class LevelsUtil{
   static LevelsUtil instance;
@@ -48,22 +48,11 @@ public class LevelsUtil{
     return null;
   }
   
-//  // logic: first one you hit where the points are less than required for the level
-//  public Tuple<Integer,String> getNextLevel(Integer points){
-//    for(Tuple<Integer, String> l:levels)
-//      if (points<l.getLeft()) return l;
-//    return top;
-//  }
-  
   public Tuple<Integer,String> getNextLevel(String currentLevelName){
     for(int i=0;i<levels.size();i++){
       if (levels.get(i).getRight().equals(currentLevelName)) return levels.get((i+1)==levels.size()?i:i+1);
     }
     return null; // should never happen
-    
-//    for(Tuple<Integer, String> l:levels){
-//      if (l.getRight().equals(currentLevelName))
-//    }
   }
   
   //logic: last one you hit where the points are greater than required for the level

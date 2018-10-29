@@ -36,6 +36,7 @@ import com.redhat.sso.ninja.chart.Chart2Json;
 import com.redhat.sso.ninja.chart.DataSet2;
 import com.redhat.sso.ninja.utils.IOUtils2;
 import com.redhat.sso.ninja.utils.Json;
+import com.redhat.sso.ninja.utils.LevelsUtil;
 import com.redhat.sso.ninja.utils.MapBuilder;
 
 @Path("/")
@@ -155,7 +156,7 @@ public class ManagementController {
       ){
     try{
       Database2 db=Database2.get();
-      db.increment(pool, user, Integer.valueOf(increment)).save();
+      db.increment(pool, user, Integer.valueOf(increment), "not supplied").save();
       db.save();
       return Response.status(200).entity("{\"status\":\"DONE\"}").build();
     }catch(Exception e){

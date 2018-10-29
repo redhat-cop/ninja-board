@@ -19,6 +19,13 @@ import com.redhat.sso.ninja.utils.MapBuilder;
 import groovy.lang.GroovyClassLoader;
 import mjson.Json;
 
+
+/**
+ * 
+ * THIS IS NOT USED, IT'S AN EXAMPLE OF HOW JAVA IMPLEMENTATION INTEGRATIONS COULD BE DONE
+ *
+ */
+
 public class TrelloSync extends ScriptBase{
   private static final Logger log=Logger.getLogger(TrelloSync.class);
   
@@ -52,7 +59,7 @@ public class TrelloSync extends ScriptBase{
   
   public static void main(String[] asd){
     new TrelloSync().execute("test", new MapBuilder<String,String>().put("organizationName", "redhatcop").build(), 30, new PointsAdder(){
-      public void addPoints(String username, String pool, Integer increment){
+      public void addPoints(String username, String pool, Integer increment, String sourceEntityId){
         System.out.println("AddPoints called ["+pool+"/"+username+"] Incrementing "+increment+" points");
       }
     });
@@ -88,7 +95,7 @@ public class TrelloSync extends ScriptBase{
 //      if (userId!=null){ // a null userid means they're most likely not registered
         Integer increment=e.getValue();
 //        log.debug("Before calling adder.addPoints('"+trelloUserId+"','"+name+"','"+increment+"')");
-        adder.addPoints(trelloUserId, name, increment);
+        adder.addPoints(trelloUserId, name, increment, "not used");
   //      System.out.println("["+e.getKey()+"] = "+e.getValue());
 //      }
     }
