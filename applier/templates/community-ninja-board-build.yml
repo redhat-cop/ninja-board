@@ -96,7 +96,7 @@ parameters:
 - description: Git source URI for application
   name: SOURCE_REPOSITORY_URL
   required: true
-  value: https://github.com/matallen/community-ninja-board
+  value: https://github.com/redhat-cop/community-ninja-board
 - description: Git branch/tag reference
   name: SOURCE_REPOSITORY_REF
   required: false
