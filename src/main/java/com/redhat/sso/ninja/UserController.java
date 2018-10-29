@@ -1,4 +1,4 @@
-package com.redhat.sso.ninja.user;
+package com.redhat.sso.ninja;
 
 import java.io.IOException;
 import java.util.List;
@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 
+import com.redhat.sso.ninja.user.UserService;
 import com.redhat.sso.ninja.user.UserService.User;
 import com.redhat.sso.ninja.utils.Json;
 
