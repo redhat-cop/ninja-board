@@ -14,6 +14,8 @@
           <li><a href="scorecards.jsp">Scorecards</a></li>
           <li><a href="leaderboard.jsp">Leaderboard</a></li>
           <li><a href="events.jsp">Events</a></li>
+          <li><a href="https://docs.google.com/a/redhat.com/forms/d/e/1FAIpQLSdWGcCks2zKKnVoZFQz3CieLQDc1lsSex_Knwh_-eyRm0ZQTg/viewform">Registration Form</a></li>
+          <li><a href="https://docs.google.com/spreadsheets/d/1E91hT_ZpySyvhnANxqZ7hcBSM2EEd9TqfQF-cavB8hQ">Responses Spreadsheet</a></li>
           <li><a href="config.jsp">Config (Here be dragons!)</a></li>
           <li><a href="database.jsp">Database (Here be dragons!)</a></li>
         </ul>

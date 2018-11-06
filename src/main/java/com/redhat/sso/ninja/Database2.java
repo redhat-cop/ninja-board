@@ -65,7 +65,7 @@ public class Database2{
       log.info("Incrementing points: user="+userId+", poolId="+poolId+", increment/points="+increment);
       scorecards.get(userId).put(poolId, scorecards.get(userId).get(poolId)+increment);
       
-      addEvent("Points Increment", userId, increment+" points added to "+poolId+ " pool (source entity: "+sourceEntityId+"");
+      addEvent("Points Increment", userId, increment+" point"+(increment<=1?"":"s")+" added to "+poolId+ " (correlation ID: "+sourceEntityId+")");
 //      getEvents().add("Points Increment: "+poolId+" : "+userId);
       
 //      // does the user need leveling up?
