@@ -27,7 +27,7 @@ def generate_start_date():
     today_date = datetime.now()
     target_start_date = datetime.strptime("{0}-{1}-{02}".format(today_date.year, DEFAULT_START_DATE_MONTH, DEFAULT_START_DATE_DAY), "%Y-%m-%d")
 
-    if target_start_date.month < DEFAULT_START_DATE_MONTH:
+    if target_start_date.month < int(DEFAULT_START_DATE_MONTH):
         target_start_date = target_start_date - relativedelta(years=1)
 
     return target_start_date
@@ -45,7 +45,7 @@ def search_cards(session, org_id, days, author):
 
     query = TRELLO_SEARCH_QUERY.format(days, author)
 
-    card_request = session.get("https://api.trello.com/1/search", params={'query': query, 'idOrganizations': org_id, 'card_fields': 'name,idMembers,idLabels', 'board_fields': 'name,idOrganization', 'card_board': 'true', 'cards_limit': 1000})
+    card_request = session.get("https://api.trello.com/1/search", params={'query': query, 'idOrganizations': org_id, 'card_fields': 'name,idMembers,idLabels,shortLink', 'board_fields': 'name,idOrganization', 'card_board': 'true', 'cards_limit': 1000})
     card_request.raise_for_status()
 
     return card_request.json()
@@ -59,9 +59,6 @@ def get_member(session, member_id):
 		
 		return memberCache.get(member_id)
 		
-#    member_request = session.get("https://api.trello.com/1/members/{0}".format(member_id))
-#    member_request.raise_for_status()
-#    return member_request.json()
 
 def plural_items(text, obj):
     if obj is not None and (isinstance(obj, collections.Iterable) and len(obj) == 1) or obj == 1:
@@ -82,6 +79,12 @@ def encode_text(text):
         return text.encode("utf-8")
 
     return text
+
+def preload_member_cache(session, org_id):
+    members = session.get("https://api.trello.com/1/organizations/{0}/members".format(org_id))
+    members.raise_for_status()
+    for member in members.json():
+        memberCache[member['id']]=member
 
 
 trello_api_key = os.environ.get(TRELLO_API_KEY_NAME)
@@ -122,6 +125,8 @@ resp_cards = search_cards(session, org_id, days, username)
 cards = {}
 members_items = {}
 
+preload_member_cache(session, org_id)
+
 for card in resp_cards['cards']:
     
     if not card['board']['idOrganization'] or card['board']['idOrganization'] != org_id:
@@ -148,7 +153,7 @@ for card in resp_cards['cards']:
 
             members_items[member_id] = member_items
             if (not human_readable):
-                print "Cards Closed/TR{0}/{1}/{2}".format(card_id, get_member(session, member_id)['username'], member_items['points'])
+                print "Cards Closed/TR{0}/{1}/{2} [linkId={3}]".format(card_id, get_member(session, member_id)['username'], member_items['points'], card['shortLink'])
 
 
 if (human_readable):

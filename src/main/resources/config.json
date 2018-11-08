@@ -2,12 +2,15 @@
 	"scripts": [
 		{
 			"name": "Trello",
-			"source": "https://raw.githubusercontent.com/redhat-cop/community-ninja-board/v1.0/src/main/resources/scripts/trello-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
+			"_source": "https://raw.githubusercontent.com/matallen/ninja-board/master/src/main/resources/scripts/trello-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
+			"source": "https://raw.githubusercontent.com/redhat-cop/ninja-board/v1.0/src/main/resources/scripts/trello-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
+			"__source": "file:///home/mallen/Work/ninja-board/src/main/resources/scripts/trello-test.sh -s ${LAST_RUN:yyyy-MM-dd}",
 			"type": "perl"
 		},
 		{
 			"name": "Github",
-			"source": "https://raw.githubusercontent.com/redhat-cop/community-ninja-board/v1.0/src/main/resources/scripts/github-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
+			"source": "https://raw.githubusercontent.com/redhat-cop/ninja-board/v1.0/src/main/resources/scripts/github-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
+			"_source": "file:///home/mallen/Work/ninja-board/src/main/resources/scripts/github-test.sh -s ${LAST_RUN:yyyy-MM-dd}",
 			"type": "perl"
 		}
 	],
@@ -21,6 +24,6 @@
 		"users.ldap.searchDN": "(&(objectclass=Person)(%s=%s))"
 	},
 	"values": {
-		"lastRun2": "2017-06-01T00:00:00"
+		"lastRun2": "2018-10-7T00:00:00"
 	}
 }
