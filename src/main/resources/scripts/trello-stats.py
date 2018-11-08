@@ -27,7 +27,7 @@ def generate_start_date():
     today_date = datetime.now()
     target_start_date = datetime.strptime("{0}-{1}-{02}".format(today_date.year, DEFAULT_START_DATE_MONTH, DEFAULT_START_DATE_DAY), "%Y-%m-%d")
 
-    if target_start_date.month < DEFAULT_START_DATE_MONTH:
+    if target_start_date.month < int(DEFAULT_START_DATE_MONTH):
         target_start_date = target_start_date - relativedelta(years=1)
 
     return target_start_date
@@ -56,13 +56,9 @@ def get_member(session, member_id):
 		    member_request = session.get("https://api.trello.com/1/members/{0}".format(member_id))
 		    member_request.raise_for_status()
 		    memberCache[member_id]=member_request.json()
-#		    print "member NOT found {0} in cache - {1}".format(member_id, memberCache[member_id]['username'])
 		
 		return memberCache.get(member_id)
 		
-#    member_request = session.get("https://api.trello.com/1/members/{0}".format(member_id))
-#    member_request.raise_for_status()
-#    return member_request.json()
 
 def plural_items(text, obj):
     if obj is not None and (isinstance(obj, collections.Iterable) and len(obj) == 1) or obj == 1:
@@ -87,9 +83,7 @@ def encode_text(text):
 def preload_member_cache(session, org_id):
     members = session.get("https://api.trello.com/1/organizations/{0}/members".format(org_id))
     members.raise_for_status()
-#    print "preload cache - member.count=",len(members.json())
     for member in members.json():
-#        print "adding user to cache: memberCache('{0}')={1}".format(member['id'], member)
         memberCache[member['id']]=member
 
 

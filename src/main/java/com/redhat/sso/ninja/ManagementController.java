@@ -156,7 +156,7 @@ public class ManagementController {
       ){
     try{
       Database2 db=Database2.get();
-      db.increment(pool, user, Integer.valueOf(increment), "not supplied").save();
+      db.increment(pool, user, Integer.valueOf(increment), null).save();
       db.save();
       return Response.status(200).entity("{\"status\":\"DONE\"}").build();
     }catch(Exception e){
@@ -401,22 +401,5 @@ public class ManagementController {
     return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(wrapper)).build();
   }
   
-  // defunct now i think
-//  @GET
-//  @Path("/script/{name}")
-//  public Response getScript(@PathParam("name") String scriptName) throws JsonGenerationException, JsonMappingException, IOException{
-//    String path="scripts/"+scriptName;
-//    InputStream is=this.getClass().getClassLoader().getResourceAsStream(path);
-//    
-//    StringBuilder sb = new StringBuilder();
-//    String inputLine;
-//    BufferedReader br=new BufferedReader(new InputStreamReader(is));
-//    while ((inputLine = br.readLine()) != null){
-//      sb.append(inputLine);
-//      sb.append('\n');
-//    }
-//    
-//    return Response.status(200).header("Content-Type", "text/application").entity(sb.toString()).build();
-//  }
   
 }

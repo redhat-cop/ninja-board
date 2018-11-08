@@ -1,6 +1,42 @@
-.navbar{width:100%;min-height:25px !important;background-color:#444;border:0px solid #e7e7e7;}
+.navbar{width:100%;min-height:25px !important;background-color:#1f1f1f;border:0px solid #e7e7e7;}
 .navbar-left{position:relative;float:left;}
 .navbar-right{left:-20px;position:relative;float:right;}
+
+.navbar-nav{
+	position:relative;
+	top:0px;
+}
+.navbar-brand3{
+  position: relative;
+  top:6px;
+}
+.navbar-brand2 {
+  height: 50px;
+  padding: 15px 15px;
+  font-size: 18px;
+  line-height: 20px;
+}
+.navbar-brand2:hover,
+.navbar-brand2:focus {
+  text-decoration: none;
+}
+.menu-title{
+	font-size: 18px;
+	font-family: Overpass;
+	padding-top: 21px !important;
+	padding-left: 5px !important;
+	padding-right: 5px !important;
+	/*
+	padding-bottom: 0px !important;
+	line-height: 35px !important;
+	
+	position: relative;
+	top: 8px;
+	*/
+}
+.nav>li>a{
+	padding-left: 0px;
+}
 
 .navbar-header a:link      {color:#FFE;}
 .navbar-header a:visited   {color:#FFE;}

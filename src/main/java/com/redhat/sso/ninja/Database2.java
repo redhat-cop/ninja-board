@@ -21,6 +21,8 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.JsonMappingException;
 
+import com.redhat.sso.ninja.utils.Http;
+import com.redhat.sso.ninja.utils.Http.Response;
 import com.redhat.sso.ninja.utils.IOUtils2;
 import com.redhat.sso.ninja.utils.Json;
 
@@ -32,19 +34,13 @@ public class Database2{
   public static boolean systemUpdating=false;
   
   // User -> Pool (sub pool separated with a dot) + Score
-//  private Map<User, Map<String, Integer>> users;
-  
-  
   private Map<String, Map<String, Integer>> scorecards;
   private Map<String, Map<String, String>> users;
   private List<Map<String, String>> events;
   
-  
-  
   // PoolId -> UserId + Score
-//  private Map<String, Map<String, Integer>> pools;
-//  private Map<String, User> users;
   private String created;
+  private String version;
   static SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
   static SimpleDateFormat sdf2=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
   
@@ -52,9 +48,13 @@ public class Database2{
     created=sdf.format(new Date());
   }
   public String getCreated(){ return created; }
+  public String getVersion(){ return version; }
+  public void setVersion(String version){
+  	this.version=version;
+  }
   
   
-  public Database2 increment(String poolId, String userId, Integer increment, String sourceEntityId){
+  public Database2 increment(String poolId, String userId, Integer increment, Map<String, String> params){
     if (null==poolId || null==userId){
       log.error("Unable to add due to null key [poolId="+poolId+", userId="+userId+"]");
       return this;
@@ -65,33 +65,20 @@ public class Database2{
       log.info("Incrementing points: user="+userId+", poolId="+poolId+", increment/points="+increment);
       scorecards.get(userId).put(poolId, scorecards.get(userId).get(poolId)+increment);
       
-      addEvent("Points Increment", userId, increment+" point"+(increment<=1?"":"s")+" added to "+poolId+ " (correlation ID: "+sourceEntityId+")");
-//      getEvents().add("Points Increment: "+poolId+" : "+userId);
+    	if (params!=null && params.get("id").startsWith("TR")){ // its a trello point
+    		addEvent("Points Increment", userId, increment+" point"+(increment<=1?"":"s")+" added to "+poolId+ " ([Trello card: "+params.get("linkId")+"|"+params.get("linkId")+"])");
+    	}else{ // it's a point from any other source
+    		addEvent("Points Increment", userId, increment+" point"+(increment<=1?"":"s")+" added to "+poolId);
+    	}
       
-//      // does the user need leveling up?
-//      Map<String, String> userInfo=getUsers().get(userId);
-//      String currentLevelName=userInfo.get("level");
-//      
-//      Tuple<Integer, String> level=new ManagementController().getLevel(currentLevelName);
-//      if ()
       
     }else{
       log.debug("Unregistered user detected ["+userId+"]");
     }
     
-//    if (!pools.containsKey(poolId)) pools.put(poolId, new HashMap<String, Integer>());
-//    Map<String, Integer> pool=pools.get(poolId);
-//    if (!pool.containsKey(userId)){
-//      pool.put(userId, increment);
-//    }else{
-//      pool.put(userId, pool.get(userId)+increment);
-//    }
     return this;
   }
-//  public Map<String, Map<String, Integer>> getPools(){
-//    if (null==pools) pools=new HashMap<String, Map<String,Integer>>();
-//    return pools;
-//  }
+  
   public Map<String, Map<String, String>> getUsers(){
     if(null==users) users=new HashMap<String, Map<String, String>>();
     return users;

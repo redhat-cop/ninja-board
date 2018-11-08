@@ -40,11 +40,13 @@ import com.redhat.sso.ninja.user.UserService.User;
 import com.redhat.sso.ninja.utils.DownloadFile;
 import com.redhat.sso.ninja.utils.FilePermissions;
 import com.redhat.sso.ninja.utils.LevelsUtil;
+import com.redhat.sso.ninja.utils.ParamParser;
 import com.redhat.sso.ninja.utils.Tuple;
 
 public class Heartbeat2 {
   private static final Logger log = Logger.getLogger(Heartbeat2.class);
   private static Timer t;
+  private static final long delay=30000l;//=System.getProperty("user.home").indexOf("mallen")>=0?1000l:30000l;
 
   public static void main(String[] asd){
     try{
@@ -109,7 +111,7 @@ public class Heartbeat2 {
   
   public static void start(long intervalInMs) {
     t = new Timer("cop-ninja-heartbeat", false);
-    t.scheduleAtFixedRate(new HeartbeatRunnable(), 30000l, intervalInMs);
+    t.scheduleAtFixedRate(new HeartbeatRunnable(), delay, intervalInMs);
   }
 
   public static void stop() {
@@ -146,9 +148,15 @@ public class Heartbeat2 {
                 userInfo.put("username", c.getValue().substring(0, c.getValue().indexOf("@")));
               userInfo.put("email", c.getValue());
             }else if (c.getKey().toLowerCase().contains("trello id")){ // the 'contains' is the text in the google sheet title
-              userInfo.put("trelloId", c.getValue());
+            	String trelloId=c.getValue().replaceAll("@redhat.com", "").replaceAll("@", "").trim();
+            	if (!"".equalsIgnoreCase(trelloId) && !"na".equalsIgnoreCase(trelloId) && !"n/a".equalsIgnoreCase(trelloId)){
+            		userInfo.put("trelloId", trelloId);
+            	}
             }else if (c.getKey().toLowerCase().contains("github id")){ // the 'contains' is the text in the google sheet title
-              userInfo.put("githubId", c.getValue());
+            	String githubId=c.getValue().replaceAll("@redhat.com", "").replaceAll("@", "").trim();
+            	if (!"".equalsIgnoreCase(githubId) && !"na".equalsIgnoreCase(githubId) && !"n/a".equalsIgnoreCase(githubId)){
+            		userInfo.put("githubId", githubId);
+            	}
             }
           }
           
@@ -207,6 +215,7 @@ public class Heartbeat2 {
       
       db.save(); // after the new user registration calls have been made
       
+      boolean scriptFailure=false;
       
       Integer daysFromLastRun=30; //default to 30 days
       Date runToDate=java.sql.Date.valueOf(LocalDate.now());
@@ -246,13 +255,13 @@ public class Heartbeat2 {
             
             ScriptBase obj=(ScriptBase)Class.forName((String)script.get("source")).newInstance();
             obj.execute((String)script.get("name"), (Map<String,String>)script.get("options"), daysFromLastRun, new PointsAdder(){
-              public void addPoints(String user, String pool, Integer increment, String sourceEntityId){
+              public void addPoints(String user, String pool, Integer increment, Map<String, String> params){
                 if (user!=null && pool!=null){
                   try{
                     String userId=poolToUserIdMapper.get(user);
                     if (null!=userId){
                       log.debug("addPoints:: Incrementing Points:: ["+pool+"/"+userId+"] = "+increment);
-                      db.increment(pool, userId, increment, sourceEntityId);
+                      db.increment(pool, userId, increment, params);
                     }//else //its most likely an unregistered user
                       
                   }catch(Exception e){
@@ -277,7 +286,7 @@ public class Heartbeat2 {
             
 //            URL remoteLocationWithoutParams=new URL(command.contains(" ")?command.substring(0, command.indexOf(" ")):command); // strip script execution params to allow it to be downloaded
 //            File localDestination=new File(scriptFolder);//, new File(remoteLocationWithoutParams.getPath()).getName());
-            
+            String originalCommand=command.toString();
             command=new DownloadFile().get(command, scriptFolder, 
                 PosixFilePermission.OWNER_READ, 
                 PosixFilePermission.OWNER_WRITE, 
@@ -293,7 +302,8 @@ public class Heartbeat2 {
               command=convertLastRun(command, lastRun2);
             }
             
-            log.info("Executing script: "+command);
+            log.info("Script downloaded: "+originalCommand);
+            log.info("Script executing: "+command);
             
             Process script_exec=Runtime.getRuntime().exec(command);
             script_exec.waitFor();
@@ -312,6 +322,8 @@ public class Heartbeat2 {
               
               db.addEvent("Script Execution FAILED", "", command+"\nERROR (stderr):\n"+sb.toString());
               
+              scriptFailure=true;
+              
             }else{
 //              db.addEvent("Script Execution", name+"/last.log", command);
               //db.addEvent("Script Execution Started", "", command);
@@ -322,6 +334,7 @@ public class Heartbeat2 {
               while ((s=stdInput.readLine()) != null){
                 scriptLog.append(s.trim()).append("\n");
                 log.debug(s.trim());
+//                System.out.println(s.trim());
                 if (s.contains("/")){ // ignore the line if it doesn't contain a slash
                   String[] split=s.split("/");
                   String pool=(String)script.get("name");
@@ -332,7 +345,21 @@ public class Heartbeat2 {
                     pool=pool+"."+split[0];
                     actionId=split[1];
                     poolUserId=split[2];
-                    inc=Integer.valueOf(split[3]);
+                    
+                    Map<String, String> params=new HashMap<String, String>();
+                    params.put("id", actionId);
+                    // "\\d \\[.*\\]"
+                    
+                    if (split[3].matches(".* \\[.*\\]")){ // check for the presence of params
+                    	String[] splitAgain=split[3].split(" ");
+                    	params.putAll(new ParamParser().splitParams(splitAgain[1].replaceAll("\\[", "").replaceAll("\\]", "").trim()));
+                    	inc=Integer.valueOf(splitAgain[0]);
+                    }else if (split[3].matches("\\d")){
+                    	inc=Integer.valueOf(split[3]); // if there are no params present
+                    }else{
+                    	inc=1;
+                    	log.error("Defaulting to 1 point - Unable to parse points value: "+split[3]);
+                    }
                     
                     if (!db.getPointsDuplicateChecker().contains(actionId+"."+poolUserId)){
                       db.getPointsDuplicateChecker().add(actionId+"."+poolUserId);
@@ -342,7 +369,7 @@ public class Heartbeat2 {
                       if (null!=userId){
   //                    System.out.println(poolUserId+" mapped to "+userId);
                         log.debug("Incrementing registered user "+poolUserId+" by "+inc);
-                        db.increment(pool, userId, inc, actionId);//.save();
+                        db.increment(pool, userId, inc, params);//.save();
                       }else{
   //                    log.debug(poolUserId+" did NOT map to any registered user");
                       }
@@ -410,8 +437,13 @@ public class Heartbeat2 {
       db.save();
       
       if (!((String)config.getValues().get("lastRun2")).startsWith("-")){
-        log.debug("Updating the \"lastRun\" date");
-        config.getValues().put("lastRun2", sdf.format(runToDate));
+      	
+      	if (scriptFailure==false){
+      		log.debug("Updating the \"lastRun\" date");
+      		config.getValues().put("lastRun2", sdf.format(runToDate));
+      	}else{
+      		log.info("NOT Updating the \"lastRun\" date due to a script failure. It will re-run the same period next time and dupe prevention will keep the data correct");
+      	}
       }else{
         log.debug("NOT Updating the \"lastRun\" date because it's a rolling date");
       }

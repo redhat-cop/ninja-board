@@ -59,7 +59,7 @@ public class TrelloSync extends ScriptBase{
   
   public static void main(String[] asd){
     new TrelloSync().execute("test", new MapBuilder<String,String>().put("organizationName", "redhatcop").build(), 30, new PointsAdder(){
-      public void addPoints(String username, String pool, Integer increment, String sourceEntityId){
+      public void addPoints(String username, String pool, Integer increment, Map<String, String> params){
         System.out.println("AddPoints called ["+pool+"/"+username+"] Incrementing "+increment+" points");
       }
     });
@@ -95,7 +95,7 @@ public class TrelloSync extends ScriptBase{
 //      if (userId!=null){ // a null userid means they're most likely not registered
         Integer increment=e.getValue();
 //        log.debug("Before calling adder.addPoints('"+trelloUserId+"','"+name+"','"+increment+"')");
-        adder.addPoints(trelloUserId, name, increment, "not used");
+        adder.addPoints(trelloUserId, name, increment, null);
   //      System.out.println("["+e.getKey()+"] = "+e.getValue());
 //      }
     }
