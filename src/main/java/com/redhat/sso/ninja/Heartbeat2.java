@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
@@ -50,6 +52,17 @@ public class Heartbeat2 {
 
   public static void main(String[] asd){
     try{
+    	
+//    	Database2 db=Database2.get();
+//    	Map<String, Object> script=new HashMap<String, Object>();
+//    	script.put("name", "TestScript");
+//    	File scriptFolder=new File("target/test");
+//    	Map<String, String> poolToUserIdMapper=new HashMap<String, String>();
+//    	
+//    	InputStream is=Heartbeat2.class.getClassLoader().getResourceAsStream("scripts/trello-test.txt");
+//    	
+//    	new HeartbeatRunnable().allocatePoints(db, is, script, scriptFolder, poolToUserIdMapper);
+    	
 //        System.out.println(TimeUnit.DAYS.toMillis(1));
       
 //      Calendar lastRunC=Calendar.getInstance();
@@ -249,6 +262,8 @@ public class Heartbeat2 {
       for(Map<String,Object> script:config.getScripts()){
         final Map<String, String> poolToUserIdMapper=getUsersByPool(db, ((String)script.get("name")).split("\\.")[0].toLowerCase()+"Id");
         long start=System.currentTimeMillis();
+        
+        
         if (Arrays.asList(new String[]{"java","class","javaclass"}).contains(((String)script.get("type")).toLowerCase())){
 //          log.info("Executing script: "+script.get("source"));
           try{
@@ -325,69 +340,9 @@ public class Heartbeat2 {
               scriptFailure=true;
               
             }else{
-//              db.addEvent("Script Execution", name+"/last.log", command);
-              //db.addEvent("Script Execution Started", "", command);
-              BufferedReader stdInput=new BufferedReader(new InputStreamReader(script_exec.getInputStream()));
-              
-              StringBuffer scriptLog=new StringBuffer();
-              String s;
-              while ((s=stdInput.readLine()) != null){
-                scriptLog.append(s.trim()).append("\n");
-                log.debug(s.trim());
-//                System.out.println(s.trim());
-                if (s.contains("/")){ // ignore the line if it doesn't contain a slash
-                  String[] split=s.split("/");
-                  String pool=(String)script.get("name");
-                  String actionId;
-                  String poolUserId;
-                  Integer inc;
-                  if (split.length==4){   //pool.sub
-                    pool=pool+"."+split[0];
-                    actionId=split[1];
-                    poolUserId=split[2];
-                    
-                    Map<String, String> params=new HashMap<String, String>();
-                    params.put("id", actionId);
-                    // "\\d \\[.*\\]"
-                    
-                    if (split[3].matches(".* \\[.*\\]")){ // check for the presence of params
-                    	String[] splitAgain=split[3].split(" ");
-                    	params.putAll(new ParamParser().splitParams(splitAgain[1].replaceAll("\\[", "").replaceAll("\\]", "").trim()));
-                    	inc=Integer.valueOf(splitAgain[0]);
-                    }else if (split[3].matches("\\d")){
-                    	inc=Integer.valueOf(split[3]); // if there are no params present
-                    }else{
-                    	inc=1;
-                    	log.error("Defaulting to 1 point - Unable to parse points value: "+split[3]);
-                    }
-                    
-                    if (!db.getPointsDuplicateChecker().contains(actionId+"."+poolUserId)){
-                      db.getPointsDuplicateChecker().add(actionId+"."+poolUserId);
-                      
-                      String userId=poolToUserIdMapper.get(poolUserId);
-                      
-                      if (null!=userId){
-  //                    System.out.println(poolUserId+" mapped to "+userId);
-                        log.debug("Incrementing registered user "+poolUserId+" by "+inc);
-                        db.increment(pool, userId, inc, params);//.save();
-                      }else{
-  //                    log.debug(poolUserId+" did NOT map to any registered user");
-                      }
-                    }else{
-                      // it's a duplicate increment for that actionId & user, so ignore it
-                      log.debug(actionId+"."+poolUserId+" is a duplicate");
-                    }
-                    
-                  }else{
-                    // dont increment because we dont know the structure of the script data
-                  }
-                  
-                  
-                }
-              }
-              IOUtils.write(scriptLog.toString(), new FileOutputStream(new File(scriptFolder, "last.log")));
-              
-              db.addEvent("Script Execution Succeeded", "", command +" (took "+(System.currentTimeMillis()-start)+"ms)");
+            	allocatePoints(db, script_exec.getInputStream(), script, scriptFolder, poolToUserIdMapper);
+            	db.addEvent("Script Execution Succeeded", "", command +" (took "+(System.currentTimeMillis()-start)+"ms)");
+            	
             }
             
           }catch (IOException e){
@@ -449,7 +404,80 @@ public class Heartbeat2 {
       }
       
       config.save();
-    }      
+    }     
+    
+    
+    public void allocatePoints(Database2 db, InputStream is, Map<String,Object> script, File scriptFolder, Map<String, String> poolToUserIdMapper) throws NumberFormatException, UnsupportedEncodingException, IOException{
+    	BufferedReader stdInput=new BufferedReader(new InputStreamReader(is));
+    	Pattern paramsPattern=Pattern.compile(".*(\\[.*\\]).*");
+    			
+    	StringBuffer scriptLog=new StringBuffer();
+    	String s;
+    	while ((s=stdInput.readLine()) != null){
+    		s=s.trim();
+    		scriptLog.append(s).append("\n");
+    		log.debug(s);
+    		
+    		Map<String, String> params=new HashMap<String, String>();
+    		// check for params here, extract them if present for use later on
+    		if (s.matches(".* \\[.*\\]")){
+    			Matcher m=paramsPattern.matcher(s);
+    			if (m.find()){
+    				String paramsExtract=m.group(1);
+    				params.putAll(new ParamParser().splitParams(paramsExtract.replaceAll("\\[", "").replaceAll("\\]", "").trim()));
+    				s=s.replaceAll("\\[.*\\]", "").trim();
+    			}
+    		}
+    		
+    		if (s.contains("/")){ // ignore the line if it doesn't contain a slash
+    			String[] split=s.split("/");
+    			String pool=(String)script.get("name");
+    			String actionId;
+    			String poolUserId;
+    			Integer inc;
+    			
+    			if (split.length==4){   //pool.sub
+    				pool=pool+"."+split[0];
+    				actionId=split[1];
+    				poolUserId=split[2];
+  					inc=Integer.valueOf(split[3]);
+  					
+  					params.put("id", actionId);
+    				
+    				if (!db.getPointsDuplicateChecker().contains(actionId+"."+poolUserId)){
+    					db.getPointsDuplicateChecker().add(actionId+"."+poolUserId);
+    					
+    					String userId=poolToUserIdMapper.get(poolUserId);
+    					
+    					if (null!=userId){
+    						//                    System.out.println(poolUserId+" mapped to "+userId);
+    						log.debug("Incrementing registered user "+poolUserId+" by "+inc);
+    						db.increment(pool, userId, inc, params);//.save();
+    					}else{
+    						//                    log.debug(poolUserId+" did NOT map to any registered user");
+    					}
+    				}else{
+    					// it's a duplicate increment for that actionId & user, so ignore it
+    					log.debug(actionId+"."+poolUserId+" is a duplicate");
+    				}
+    				
+    			}else{
+    				// dont increment because we dont know the structure of the script data
+    			}
+    			
+    			
+    		}
+    	}
+    	
+    	scriptFolder.mkdirs();
+    	IOUtils.write(scriptLog.toString(), new FileOutputStream(new File(scriptFolder, "last.log")));
+    	
+    	
+    }
+    
   }
+  
+  
+  
 
 }
