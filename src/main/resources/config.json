@@ -3,13 +3,13 @@
 		{
 			"name": "Trello",
 			"_source": "https://raw.githubusercontent.com/matallen/ninja-board/master/src/main/resources/scripts/trello-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
-			"source": "https://raw.githubusercontent.com/redhat-cop/ninja-board/v1.0/src/main/resources/scripts/trello-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
+			"source": "https://raw.githubusercontent.com/redhat-cop/ninja-board/v1.1/src/main/resources/scripts/trello-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
 			"__source": "file:///home/mallen/Work/ninja-board/src/main/resources/scripts/trello-test.sh -s ${LAST_RUN:yyyy-MM-dd}",
 			"type": "perl"
 		},
 		{
 			"name": "Github",
-			"source": "https://raw.githubusercontent.com/redhat-cop/ninja-board/v1.0/src/main/resources/scripts/github-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
+			"source": "https://raw.githubusercontent.com/redhat-cop/ninja-board/v1.1/src/main/resources/scripts/github-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
 			"_source": "file:///home/mallen/Work/ninja-board/src/main/resources/scripts/github-test.sh -s ${LAST_RUN:yyyy-MM-dd}",
 			"type": "perl"
 		}
