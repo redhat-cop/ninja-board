@@ -38,6 +38,8 @@ objects:
             value: ${GITHUB_API_TOKEN}
           - name: TRELLO_API_TOKEN
             value: ${TRELLO_API_TOKEN}
+          - name: TRELLO_API_KEY
+            value: ${TRELLO_API_KEY}
           image: ${APPLICATION_NAME}
           imagePullPolicy: Always
           name: ${APPLICATION_NAME}
@@ -75,6 +77,7 @@ objects:
       application: ${APPLICATION_NAME}
     name: ${APPLICATION_NAME}
   spec:
+    path: "/community-ninja-board" 
     host: ${HOSTNAME_HTTP}
     to:
       name: ${APPLICATION_NAME}
