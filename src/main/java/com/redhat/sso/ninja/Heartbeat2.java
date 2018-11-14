@@ -217,6 +217,32 @@ public class Heartbeat2 {
       return true;
     }
     
+    private boolean updateUsersDetailsUsingLDAPInfo(Database2 db){
+    	UserService userService=new UserService();
+    	for(Entry<String, Map<String, String>> e:db.getUsers().entrySet()){
+    		
+    		String username=e.getKey();
+    		
+    		if (!e.getValue().containsKey("displayName")){
+    			
+    			try{
+    				List<User> users=userService.search("uid", username);
+    				if (users.size()>0){
+    					log.info("Updating displayName from '"+username+"' to '"+users.get(0).getName());
+    					e.getValue().put("displayName", users.get(0).getName());
+    				}
+    				
+    			}catch(Exception ex){
+            log.error("Exception caused aborting to update any user info - is ldap accessible?:", ex);
+            break;
+//            ex.printStackTrace();
+    			}
+    		}
+    	}
+    	return true;
+    	
+    }
+    
     @Override
     public void run() {
       log.info("Heartbeat fired");
@@ -226,6 +252,7 @@ public class Heartbeat2 {
       
       boolean successfullyAccessedRegistrationSheet=addNewlyRegisteredUsers(db);
       if (!successfullyAccessedRegistrationSheet) return;
+      updateUsersDetailsUsingLDAPInfo(db);
       
       //db.save(); // after the new user registration calls have been made
       
