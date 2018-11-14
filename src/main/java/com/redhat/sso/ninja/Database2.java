@@ -62,10 +62,10 @@ public class Database2{
     if (users.containsKey(userId)){ // means the user is registered
       if (null==scorecards.get(userId)) scorecards.put(userId, new HashMap<String, Integer>());
       if (null==scorecards.get(userId).get(poolId)) scorecards.get(userId).put(poolId, 0);
-      log.info("Incrementing points: user="+userId+", poolId="+poolId+", increment/points="+increment);
+      log.info("Incrementing points: user="+userId+", poolId="+poolId+", increment/points="+increment+" + params="+params);
       scorecards.get(userId).put(poolId, scorecards.get(userId).get(poolId)+increment);
       
-    	if (params!=null && params.get("id").startsWith("TR")){ // its a trello point
+    	if (params!=null && params.get("id")!=null && params.get("id").startsWith("TR")){ // its a trello point
     		addEvent("Points Increment", userId, increment+" point"+(increment<=1?"":"s")+" added to "+poolId+ " ([Trello card: "+params.get("linkId")+"|"+params.get("linkId")+"])");
     	}else{ // it's a point from any other source
     		addEvent("Points Increment", userId, increment+" point"+(increment<=1?"":"s")+" added to "+poolId);
