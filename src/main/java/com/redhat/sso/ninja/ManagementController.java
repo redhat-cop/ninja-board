@@ -178,9 +178,9 @@ public class ManagementController {
     System.out.println("Saving database");
     Database2 db=Json.newObjectMapper(true).readValue(IOUtils2.toStringAndClose(request.getInputStream()), new TypeReference<Database2>() {});
     
-    System.out.println("New DB = "+Json.newObjectMapper(true).writeValueAsString(db));
+    //System.out.println("New DB = "+Json.newObjectMapper(true).writeValueAsString(db));
     db.save();
-    System.out.println("Saved");
+    System.out.println("New Database Saved");
     return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Database2.get())).build();
   }
 
