@@ -65,7 +65,7 @@ public class Database2{
       log.info("Incrementing points: user="+userId+", poolId="+poolId+", increment/points="+increment+" + params="+params);
       scorecards.get(userId).put(poolId, scorecards.get(userId).get(poolId)+increment);
       
-    	if (params!=null && params.get("id")!=null && params.get("id").startsWith("TR")){ // its a trello point
+    	if (params!=null && params.get("id")!=null && params.get("id").startsWith("TR") && null!=params.get("linkId")){ // its a trello point
     		addEvent("Points Increment", userId, increment+" point"+(increment<=1?"":"s")+" added to "+poolId+ " ([Trello card: "+params.get("linkId")+"|"+params.get("linkId")+"])");
     	}else{ // it's a point from any other source
     		addEvent("Points Increment", userId, increment+" point"+(increment<=1?"":"s")+" added to "+poolId);

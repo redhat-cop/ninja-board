@@ -39,9 +39,10 @@ function loadDataTable(){
             		var cardId=split[1];
             		var link="<a href='https://trello.com/c/"+cardId+"'>"+title+"</a>";
             		
-            		var find=escapeRegExp(("["+before[1]+"]").replace(/\[/g,'\\[').replace(/\]/g,'\\]').replace(/\|/g,'\\|'));
+            		var find1=escapeRegExp(("["+before[1]+"]").replace(/\[/g,'\\[').replace(/\]/g,'\\]').replace(/\|/g,'\\|'));
+            		var find2=("["+before[1]+"]").replace(/\[/g,'\\[').replace(/\]/g,'\\]').replace(/\|/g,'\\|');
             		
-            		var after=row['text'].replace(new RegExp(find, 'g'), link);
+            		var after=row['text'].replace(new RegExp(find2, 'g'), link);
             		
             		result=after;
             	}
