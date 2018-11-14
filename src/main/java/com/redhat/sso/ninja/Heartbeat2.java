@@ -178,7 +178,8 @@ public class Heartbeat2 {
           if (null!=userInfo.get("username") && !dbUsers.containsKey(userInfo.get("username"))){
             
             // attempt to set the display name if we can get access to RH ldap
-            userServiceDown=true; //temporarily set whilst we have no access to LDAP
+          	String ldapEnabled=Config.get().getOptions().get("ldap.enabled");
+            userServiceDown=ldapEnabled!=null && "true".equalsIgnoreCase(ldapEnabled); //temporarily set whilst we have no access to LDAP
             try{
               if (!userServiceDown){
                 log.debug("UserService(LDAP) is UP, populating the 'displayName'");
@@ -226,7 +227,7 @@ public class Heartbeat2 {
       boolean successfullyAccessedRegistrationSheet=addNewlyRegisteredUsers(db);
       if (!successfullyAccessedRegistrationSheet) return;
       
-      db.save(); // after the new user registration calls have been made
+      //db.save(); // after the new user registration calls have been made
       
       boolean scriptFailure=false;
       
@@ -451,14 +452,14 @@ public class Heartbeat2 {
     					
     					if (null!=userId){
     						//                    System.out.println(poolUserId+" mapped to "+userId);
-    						log.debug("Incrementing registered user "+poolUserId+" by "+inc);
+//    						log.info("Incrementing registered user "+poolUserId+" by "+inc);
     						db.increment(pool, userId, inc, params);//.save();
     					}else{
-    						//                    log.debug(poolUserId+" did NOT map to any registered user");
+    						log.info("Unable to find '"+poolUserId+"' "+script.get("name")+" user - not registered?");
     					}
     				}else{
     					// it's a duplicate increment for that actionId & user, so ignore it
-    					log.debug(actionId+"."+poolUserId+" is a duplicate");
+    					log.warn(actionId+"."+poolUserId+" is a duplicate");
     				}
     				
     			}else{
