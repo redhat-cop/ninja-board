@@ -1,6 +1,8 @@
 package com.redhat.sso.ninja;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -32,6 +34,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
+import com.google.common.base.Splitter;
 import com.redhat.sso.ninja.chart.Chart2Json;
 import com.redhat.sso.ninja.chart.DataSet2;
 import com.redhat.sso.ninja.utils.IOUtils2;
@@ -54,7 +57,33 @@ public class ManagementController {
 //    System.out.println(new ManagementController().toNextLevel("BLUE", 7).toString());
   }
   
-  
+	@POST
+	@Path("/login")
+	public Response login(@Context HttpServletRequest request,@Context HttpServletResponse response) throws JsonGenerationException, JsonMappingException, IOException, URISyntaxException{
+		log.info("/login");
+		String uri=IOUtils.toString(request.getInputStream());
+		final Map<String, String> keyValues=Splitter.on('&').trimResults().withKeyValueSeparator("=").split(uri);
+		log.info("Controller::login():: username="+keyValues.get("username") +", password=****");
+		
+		String jwtToken="";
+		if ("admin".equals(keyValues.get("username")) && "admin".equals(keyValues.get("password"))){
+			log.info("Login successful");
+			jwtToken="ok";
+		}else
+			log.info("Login failure");
+		
+		request.getSession().setAttribute("x-access-token", jwtToken);
+		return Response.status(302).location(new URI("../index.jsp")).header("x-access-token", jwtToken).build();
+	}
+	@GET
+	@Path("/logout")
+	public Response logout(@Context HttpServletRequest request,@Context HttpServletResponse response) throws JsonGenerationException, JsonMappingException, IOException, URISyntaxException{
+		log.info("/logout");
+		request.getSession().setAttribute("x-access-token", null);
+		request.getSession().invalidate();
+		return Response.status(302).location(new URI("../index.jsp")).build();
+	}
+	
   // This doenst work but would be a nice feature
   @GET
   @Path("/loglevel/{level}")
