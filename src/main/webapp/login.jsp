@@ -1,8 +1,4 @@
-<%@page import="
-java.util.Date,
-java.util.Calendar
-"%>
-
+<%@page import="com.redhat.sso.roxy.Controller"%>
 	<title>Communities of Practice</title>
 	
 	<link href="css/jquery.dataTables.min.css" rel="stylesheet">

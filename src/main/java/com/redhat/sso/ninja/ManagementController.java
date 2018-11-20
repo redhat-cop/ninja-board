@@ -26,6 +26,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -57,6 +58,10 @@ public class ManagementController {
 //    System.out.println(new ManagementController().toNextLevel("BLUE", 7).toString());
   }
   
+  public static boolean isLoginEnabled(){
+  	return "true".equalsIgnoreCase(Config.get().getOptions().get("login.enabled"));
+  }
+  
 	@POST
 	@Path("/login")
 	public Response login(@Context HttpServletRequest request,@Context HttpServletResponse response) throws JsonGenerationException, JsonMappingException, IOException, URISyntaxException{
@@ -66,11 +71,33 @@ public class ManagementController {
 		log.info("Controller::login():: username="+keyValues.get("username") +", password=****");
 		
 		String jwtToken="";
-		if ("admin".equals(keyValues.get("username")) && "admin".equals(keyValues.get("password"))){
-			log.info("Login successful");
-			jwtToken="ok";
-		}else
+		
+		Map<String, String> userAttemptingLogin=Database2.get().getUsers().get(keyValues.get("username"));
+		if (null!=userAttemptingLogin){
+			String base64EncodedActualPassword=userAttemptingLogin.get("password");
+			String base64EncodedPasswordAttempt=java.util.Base64.getEncoder().encodeToString(keyValues.get("password").getBytes());
+			
+			if (base64EncodedActualPassword.equals(base64EncodedPasswordAttempt)){
+				log.info("Login successful");
+				jwtToken="ok";
+			}else{
+				// incorrect password
+			}
+			
+		}else{
+			// user doesnt exist
+		}
+		
+		if ("".equals(jwtToken)){
 			log.info("Login failure");
+		}
+		
+		
+//		if ("admin".equals(keyValues.get("username")) && "admin".equals(keyValues.get("password"))){
+//			log.info("Login successful");
+//			jwtToken="ok";
+//		}else
+//			log.info("Login failure");
 		
 		request.getSession().setAttribute("x-access-token", jwtToken);
 		return Response.status(302).location(new URI("../index.jsp")).header("x-access-token", jwtToken).build();

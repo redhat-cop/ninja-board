@@ -7,40 +7,34 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.UnknownHostException;
-import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermission;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.ws.rs.core.Response;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 
 import com.redhat.sso.ninja.user.UserService;
 import com.redhat.sso.ninja.user.UserService.User;
 import com.redhat.sso.ninja.utils.DownloadFile;
-import com.redhat.sso.ninja.utils.FilePermissions;
+import com.redhat.sso.ninja.utils.Http;
 import com.redhat.sso.ninja.utils.LevelsUtil;
 import com.redhat.sso.ninja.utils.ParamParser;
 import com.redhat.sso.ninja.utils.Tuple;
@@ -424,6 +418,32 @@ public class Heartbeat2 {
       	if (scriptFailure==false){
       		log.debug("Updating the \"lastRun\" date");
       		config.getValues().put("lastRun2", sdf.format(runToDate));
+      		
+      		// notify the roxy service if configured
+      		// store summary, breakdown & nextLevel for each user ;-)
+      		
+      		if (null!=config.getOptions().get("roxy-proxy")){
+      			String url=config.getOptions().get("roxy-proxy")+"/api/proxy";
+      			log.warn("roxy configured at: "+url);
+      			ChartsController cc=new ChartsController();
+      			ManagementController mc=new ManagementController();
+      			for(String user:db.getUsers().keySet()){
+      				try{
+      					if (200!=Http.post(url+"/nextLevel_"+user, (String)cc.getUserNextLevel(user).getEntity()).responseCode)
+      						log.error("Error pushing 'nextLevel' info for '"+user+"' to roxy");
+      					if (200!=Http.post(url+"/summary_"+user, (String)mc.getScorecardSummary(user).getEntity()).responseCode)
+      						log.error("Error pushing 'summary_' info for '"+user+"' to roxy");
+      					if (200!=Http.post(url+"/breakdown_"+user, (String)mc.getUserBreakdown(user).getEntity()).responseCode)
+      						log.error("Error pushing 'breakdown_' info for '"+user+"' to roxy");
+      				}catch (IOException e){
+      					e.printStackTrace();
+      				}
+      				
+      			}
+      		}else{
+      			log.warn("not pushing to roxy");
+      		}
+      		
       	}else{
       		log.info("NOT Updating the \"lastRun\" date due to a script failure. It will re-run the same period next time and dupe prevention will keep the data correct");
       	}
