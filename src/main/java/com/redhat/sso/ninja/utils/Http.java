@@ -7,7 +7,12 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.apache.log4j.Logger;
+
+import com.redhat.sso.ninja.Heartbeat2;
+
 public class Http{
+	private static final Logger log = Logger.getLogger(Heartbeat2.class);
 	
 	public static class Response{
 		public Response(int responseCode, String response){
@@ -34,6 +39,7 @@ public class Http{
 	
 	public static synchronized Response http(String method, String url, String data){
 		try {
+			log.debug("Calling http '"+method+"' to url '+url+'"+(null!=data?" (with data length of "+data.length()+" characters)":""));
 			URL obj=new URL(url);
 			HttpURLConnection cnn=(HttpURLConnection)obj.openConnection();
 			cnn.setRequestMethod(method.toUpperCase());
