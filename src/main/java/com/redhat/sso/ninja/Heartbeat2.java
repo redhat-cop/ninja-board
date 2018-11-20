@@ -432,9 +432,9 @@ public class Heartbeat2 {
       					if (200!=Http.post(url+"/nextLevel_"+user, (String)cc.getUserNextLevel(user).getEntity()).responseCode)
       						log.error("Error pushing 'nextLevel' info for '"+user+"' to roxy");
       					if (200!=Http.post(url+"/summary_"+user, (String)mc.getScorecardSummary(user).getEntity()).responseCode)
-      						log.error("Error pushing 'summary_' info for '"+user+"' to roxy");
+      						log.error("Error pushing 'summary' info for '"+user+"' to roxy");
       					if (200!=Http.post(url+"/breakdown_"+user, (String)mc.getUserBreakdown(user).getEntity()).responseCode)
-      						log.error("Error pushing 'breakdown_' info for '"+user+"' to roxy");
+      						log.error("Error pushing 'breakdown' info for '"+user+"' to roxy");
       				}catch (IOException e){
       					e.printStackTrace();
       				}
