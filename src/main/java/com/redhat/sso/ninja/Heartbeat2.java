@@ -503,6 +503,7 @@ public class Heartbeat2 {
     						db.increment(pool, userId, inc, params);//.save();
     					}else{
     						log.info("Unable to find '"+poolUserId+"' "+script.get("name")+" user - not registered?");
+    						db.addEvent("Points Increment", poolUserId +"("+script.get("name")+")", "Lost points - "+script.get("name")+" user '"+poolUserId+"' was not found - not registered?");
     					}
     				}else{
     					// it's a duplicate increment for that actionId & user, so ignore it

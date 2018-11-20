@@ -150,6 +150,8 @@ public class ManagementController {
       Database2.MAX_EVENT_ENTRIES=Integer.parseInt(maxEvents);
     }
     
+    Database2.resetInstance();
+    
     log.debug("Saved");
     return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Config.get())).build();
   }

@@ -180,6 +180,9 @@ public class Database2{
     instance=Database2.load();
     return instance;
   }
+  public static void resetInstance(){
+  	instance=null;
+  }
   
   public static void main(String[] asd){
     Database2.get().increment("pool", "test", 1, null);
