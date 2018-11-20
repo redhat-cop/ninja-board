@@ -39,7 +39,7 @@ public class Http{
 	
 	public static synchronized Response http(String method, String url, String data){
 		try {
-			log.debug("Calling http '"+method+"' to url '+url+'"+(null!=data?" (with data length of "+data.length()+" characters)":""));
+			log.debug("Http call '"+method+"' to '+url+'"+(null!=data?" (with data length of "+data.length()+" characters)":""));
 			URL obj=new URL(url);
 			HttpURLConnection cnn=(HttpURLConnection)obj.openConnection();
 			cnn.setRequestMethod(method.toUpperCase());
@@ -52,6 +52,7 @@ public class Http{
 			}
 			
 			Response response=buildResponse(cnn);
+			log.debug("Http call responded with code: "+response.responseCode);
 			cnn.disconnect();
 			return response;
 		}catch(IOException e) {
