@@ -14,7 +14,10 @@
 		}
 	],
 	"options": {
+		"login.enabled": "false",
 		"root": "${configLocation}",
+		"_roxy-proxy": "https://community-ninja-board-ninja-board.int.open.paas.redhat.com/ninja-roxy",
+		"roxy-proxy": "http://localhost:8083/ninja-roxy",
 		"heartbeat.intervalInSeconds": "86400000",
 		"events.max": "1000000",
 		"thresholds": "0:ZERO,5:BLUE,20:GREY,40:RED,75:BLACK",

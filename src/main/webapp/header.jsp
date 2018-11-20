@@ -1,3 +1,4 @@
+<%@page import="com.redhat.sso.roxy.Controller"%>
 <html>
 <head>
 	<meta http-equiv="cache-control" content="no-cache"/>
@@ -16,10 +17,11 @@
 	<script src="js/bootstrap.min.js"></script>
 	<script src="js/ChartNew.js"></script>
 	<%
-	
-	if (null==session.getAttribute("x-access-token") || "".equals(session.getAttribute("x-access-token"))){
+		if (Controller.isLoginEnabled()){
+			if (null==session.getAttribute("x-access-token") || "".equals(session.getAttribute("x-access-token"))){
 		response.sendRedirect("login.jsp");
-	}
+			}
+		}
 	%>
 	<script>
 	var xxx="<%=session.getAttribute("x-access-token")%>";
