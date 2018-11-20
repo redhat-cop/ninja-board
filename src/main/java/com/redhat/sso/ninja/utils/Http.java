@@ -39,7 +39,7 @@ public class Http{
 	
 	public static synchronized Response http(String method, String url, String data){
 		try {
-			log.info("Http call '"+method+"' to '+url+'"+(null!=data?" (with data length of "+data.length()+" characters)":""));
+			log.info("Http call '"+method+"' to '"+url+"'"+(null!=data?" (with data length of "+data.length()+" characters)":""));
 			URL obj=new URL(url);
 			HttpURLConnection cnn=(HttpURLConnection)obj.openConnection();
 			cnn.setRequestMethod(method.toUpperCase());
