@@ -7,7 +7,12 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.apache.log4j.Logger;
+
+import com.redhat.sso.ninja.Heartbeat2;
+
 public class Http{
+	private static final Logger log = Logger.getLogger(Heartbeat2.class);
 	
 	public static class Response{
 		public Response(int responseCode, String response){
@@ -34,6 +39,7 @@ public class Http{
 	
 	public static synchronized Response http(String method, String url, String data){
 		try {
+			log.info("Http call '"+method+"' to '"+url+"'"+(null!=data?" (with data length of "+data.length()+" characters)":""));
 			URL obj=new URL(url);
 			HttpURLConnection cnn=(HttpURLConnection)obj.openConnection();
 			cnn.setRequestMethod(method.toUpperCase());
@@ -46,11 +52,12 @@ public class Http{
 			}
 			
 			Response response=buildResponse(cnn);
+			log.info("Http call responded with code: "+response.responseCode);
 			cnn.disconnect();
 			return response;
 		}catch(IOException e) {
 //			return new Response(999, null);
-			System.err.println("Http library mis-handled the http response most likely - see exception message: "+ e.getMessage());
+			log.error("Http library mis-handled the http response most likely - see exception message: "+ e.getMessage());
 			e.printStackTrace();
 			return new Response(504, "Connection Timeout");
 //			throw new RuntimeException("Http library mis-handled the http response most likely - see exception", e);
