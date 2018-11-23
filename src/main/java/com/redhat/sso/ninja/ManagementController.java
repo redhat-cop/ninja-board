@@ -1,6 +1,8 @@
 package com.redhat.sso.ninja;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -24,6 +26,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -32,6 +35,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
+import com.google.common.base.Splitter;
 import com.redhat.sso.ninja.chart.Chart2Json;
 import com.redhat.sso.ninja.chart.DataSet2;
 import com.redhat.sso.ninja.utils.IOUtils2;
@@ -54,7 +58,59 @@ public class ManagementController {
 //    System.out.println(new ManagementController().toNextLevel("BLUE", 7).toString());
   }
   
+  public static boolean isLoginEnabled(){
+  	return "true".equalsIgnoreCase(Config.get().getOptions().get("login.enabled"));
+  }
   
+	@POST
+	@Path("/login")
+	public Response login(@Context HttpServletRequest request,@Context HttpServletResponse response) throws JsonGenerationException, JsonMappingException, IOException, URISyntaxException{
+		log.info("/login");
+		String uri=IOUtils.toString(request.getInputStream());
+		final Map<String, String> keyValues=Splitter.on('&').trimResults().withKeyValueSeparator("=").split(uri);
+		log.info("Controller::login():: username="+keyValues.get("username") +", password=****");
+		
+		String jwtToken="";
+		
+		Map<String, String> userAttemptingLogin=Database2.get().getUsers().get(keyValues.get("username"));
+		if (null!=userAttemptingLogin){
+			String base64EncodedActualPassword=userAttemptingLogin.get("password");
+			String base64EncodedPasswordAttempt=java.util.Base64.getEncoder().encodeToString(keyValues.get("password").getBytes());
+			
+			if (base64EncodedActualPassword.equals(base64EncodedPasswordAttempt)){
+				log.info("Login successful");
+				jwtToken="ok";
+			}else{
+				// incorrect password
+			}
+			
+		}else{
+			// user doesnt exist
+		}
+		
+		if ("".equals(jwtToken)){
+			log.info("Login failure");
+		}
+		
+		
+//		if ("admin".equals(keyValues.get("username")) && "admin".equals(keyValues.get("password"))){
+//			log.info("Login successful");
+//			jwtToken="ok";
+//		}else
+//			log.info("Login failure");
+		
+		request.getSession().setAttribute("x-access-token", jwtToken);
+		return Response.status(302).location(new URI("../index.jsp")).header("x-access-token", jwtToken).build();
+	}
+	@GET
+	@Path("/logout")
+	public Response logout(@Context HttpServletRequest request,@Context HttpServletResponse response) throws JsonGenerationException, JsonMappingException, IOException, URISyntaxException{
+		log.info("/logout");
+		request.getSession().setAttribute("x-access-token", null);
+		request.getSession().invalidate();
+		return Response.status(302).location(new URI("../index.jsp")).build();
+	}
+	
   // This doenst work but would be a nice feature
   @GET
   @Path("/loglevel/{level}")
@@ -93,6 +149,8 @@ public class ManagementController {
     if (null!=maxEvents && maxEvents.matches("\\d+")){
       Database2.MAX_EVENT_ENTRIES=Integer.parseInt(maxEvents);
     }
+    
+    Database2.resetInstance();
     
     log.debug("Saved");
     return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Config.get())).build();
