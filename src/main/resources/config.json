@@ -2,22 +2,20 @@
 	"scripts": [
 		{
 			"name": "Trello",
-			"source": "https://raw.githubusercontent.com/redhat-cop/ninja-points/v1.1/trello-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
-			"_source": "file:///home/mallen/Work/ninja-board/src/main/resources/scripts/trello-test.sh -s ${LAST_RUN:yyyy-MM-dd}",
+			"source": "https://raw.githubusercontent.com/redhat-cop/ninja-points/v1.2/trello-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
 			"type": "perl"
 		},
 		{
 			"name": "Github",
-			"source": "https://raw.githubusercontent.com/redhat-cop/ninja-points/v1.1/github-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
-			"_source": "file:///home/mallen/Work/ninja-board/src/main/resources/scripts/github-test.sh -s ${LAST_RUN:yyyy-MM-dd}",
+			"source": "https://raw.githubusercontent.com/redhat-cop/ninja-points/v1.2/github-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
 			"type": "perl"
 		}
 	],
 	"options": {
 		"login.enabled": "false",
 		"root": "${configLocation}",
-		"_roxy-proxy": "https://community-ninja-board-ninja-board.int.open.paas.redhat.com/ninja-roxy",
-		"roxy-proxy": "http://localhost:8083/ninja-roxy",
+		"roxy-proxy": "http://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs",
+		"_roxy-proxy": "http://localhost:8083/ninja-roxy",
 		"heartbeat.intervalInSeconds": "86400000",
 		"events.max": "1000000",
 		"thresholds": "0:ZERO,5:BLUE,20:GREY,40:RED,75:BLACK",
