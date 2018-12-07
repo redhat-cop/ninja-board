@@ -137,7 +137,7 @@ public class Database2{
       if (!new File(STORAGE).getParentFile().exists())
         new File(STORAGE).getParentFile().mkdirs();
       IOUtils2.writeAndClose(Json.newObjectMapper(true).writeValueAsBytes(this), new FileOutputStream(new File(STORAGE)));
-      log.info("Database saved ("+(System.currentTimeMillis()-s)+"ms)");
+      log.info("Database saved ("+(System.currentTimeMillis()-s)+"ms, size="+new File(STORAGE).length()+")");
     }catch (JsonGenerationException e){
       e.printStackTrace();
     }catch (JsonMappingException e){
@@ -153,6 +153,7 @@ public class Database2{
     try{
 //      Database db=new Database();
 //      Database db=Json.newObjectMapper(true).readValue(IOUtils2.toStringAndClose(new FileInputStream(new File(storage))), new TypeReference<HashMap<String,Map<String,Integer>>>(){});
+    	log.info("Database loading (size="+new File(STORAGE).length()+")");
       Database2 db=Json.newObjectMapper(true).readValue(IOUtils2.toStringAndClose(new FileInputStream(new File(STORAGE))), Database2.class);
       return db;
     }catch (JsonParseException e){
@@ -175,9 +176,12 @@ public class Database2{
     return instance;
   }
   public static Database2 get(){
-    if (!new File(STORAGE).exists())
-      new Database2().save();
+    if (!new File(STORAGE).exists()){
+    	log.info("No database file found, creating new/blank/default one...");
+    	new Database2().save();
+    }
     instance=Database2.load();
+    log.info("Replaced 'instance' of database in memory");
     return instance;
   }
   public static void resetInstance(){

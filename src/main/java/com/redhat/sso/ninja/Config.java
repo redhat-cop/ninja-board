@@ -102,8 +102,12 @@ public class Config {
   
   public void save(){
     try{
-      if (!Config.STORAGE.getParentFile().exists()) Config.STORAGE.getParentFile().mkdirs();
+      if (!Config.STORAGE.getParentFile().exists()){
+      	log.info("Config storage folder didn't exist - creating new folder to store config");
+      	Config.STORAGE.getParentFile().mkdirs();
+      }
       IOUtils2.writeAndClose(Json.newObjectMapper(true).writeValueAsString(instance).getBytes(), new FileOutputStream(Config.STORAGE));
+      log.info("Config saved (size="+Config.STORAGE.length()+")");
     }catch (IOException e){
       e.printStackTrace();
     }
@@ -112,8 +116,8 @@ public class Config {
   public static Config get(){
     if (instance==null){
       try{
-        log.debug("Looking for config in: "+STORAGE.getAbsolutePath());
         if (!Config.STORAGE.exists()){
+        	log.info("Config file doesn't exist, creating default one here: "+STORAGE.getAbsolutePath());
           if (!Config.STORAGE.getParentFile().exists()) Config.STORAGE.getParentFile().mkdirs();
           // copy the default config over
           IOUtils.copy(Config.class.getClassLoader().getResourceAsStream(STORAGE.getName()), new FileOutputStream(STORAGE));
@@ -121,6 +125,7 @@ public class Config {
         }
 //          instance=new Config();
 //        }else{
+          log.info("Config loading (size="+Config.STORAGE.length()+")");
           String toLoad=IOUtils2.toStringAndClose(new FileInputStream(Config.STORAGE));
           instance=Json.newObjectMapper(true).readValue(new ByteArrayInputStream(toLoad.getBytes()), Config.class);
 //        }

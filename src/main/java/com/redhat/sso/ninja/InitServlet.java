@@ -12,6 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
 import org.apache.commons.io.IOUtils;
+import org.mortbay.log.Log;
 
 import com.redhat.sso.ninja.utils.DownloadFile;
 
@@ -37,6 +38,7 @@ public class InitServlet extends HttpServlet {
     System.out.println("  Disabled: "+heartbeatDisabled);
     System.out.println("  Interval: "+interval +" (seconds)");
     
+    Log.info("InitServlet fired - initializing database...");
     Database2.get();
     
     if (!heartbeatDisabled)

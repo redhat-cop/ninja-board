@@ -19,12 +19,11 @@
 	<%
 		if (ManagementController.isLoginEnabled()){
 			if (null==session.getAttribute("x-access-token") || "".equals(session.getAttribute("x-access-token"))){
-		response.sendRedirect("login.jsp");
+				response.sendRedirect("login.jsp");
 			}
 		}
 	%>
 	<script>
-	var xxx="<%=session.getAttribute("x-access-token")%>";
 		var jwtToken = "<%=session.getAttribute("x-access-token")!=null?session.getAttribute("x-access-token"):""%>";
 	</script>
 </head>
