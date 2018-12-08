@@ -13,12 +13,10 @@
 				font-family: Arial;
 			}
 		</style>
-	
-	
 
 		<script>
 			//var ctx = "https://community-ninja-board-community-ninja-board.apps.d1.casl.rht-labs.com/community-ninja-board";
-			var ctx = "https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-roxy/api/proxy";
+			var ctx = "https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs/api/proxy";
 			//var ctx = "http://localhost:8082/community-ninja-board";
 			//var ctx = "${pageContext.request.contextPath}";
 		</script>
