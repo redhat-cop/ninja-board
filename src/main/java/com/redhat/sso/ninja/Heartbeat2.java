@@ -37,6 +37,7 @@ import com.redhat.sso.ninja.utils.DownloadFile;
 import com.redhat.sso.ninja.utils.Http;
 import com.redhat.sso.ninja.utils.LevelsUtil;
 import com.redhat.sso.ninja.utils.ParamParser;
+import com.redhat.sso.ninja.utils.RegExHelper;
 import com.redhat.sso.ninja.utils.Tuple;
 
 public class Heartbeat2 {
@@ -155,12 +156,16 @@ public class Heartbeat2 {
                 userInfo.put("username", c.getValue().substring(0, c.getValue().indexOf("@")));
               userInfo.put("email", c.getValue());
             }else if (c.getKey().toLowerCase().contains("trello id")){ // the 'contains' is the text in the google sheet title
-            	String trelloId=c.getValue().replaceAll("@redhat.com", "").replaceAll("@", "").trim();
+            	
+            	// if it has an @, then assume it's an email and strip the latter part
+            	String trelloId=c.getValue().substring(0, (c.getValue().contains("@")?c.getValue().indexOf("@"):c.getValue().length()) );
             	if (!"".equalsIgnoreCase(trelloId) && !"na".equalsIgnoreCase(trelloId) && !"n/a".equalsIgnoreCase(trelloId)){
             		userInfo.put("trelloId", trelloId);
             	}
             }else if (c.getKey().toLowerCase().contains("github id")){ // the 'contains' is the text in the google sheet title
-            	String githubId=c.getValue().replaceAll("@redhat.com", "").replaceAll("@", "").trim();
+              
+            	// if it has an @, then assume it's an email and strip the latter part
+            	String githubId=c.getValue().substring(0, (c.getValue().contains("@")?c.getValue().indexOf("@"):c.getValue().length()) );
             	if (!"".equalsIgnoreCase(githubId) && !"na".equalsIgnoreCase(githubId) && !"n/a".equalsIgnoreCase(githubId)){
             		userInfo.put("githubId", githubId);
             	}
@@ -222,7 +227,7 @@ public class Heartbeat2 {
     			try{
     				List<User> users=userService.search("uid", username);
     				if (users.size()>0){
-    					log.info("Updating displayName from '"+username+"' to '"+users.get(0).getName());
+    					log.info("Updating displayName from '"+username+"' to '"+users.get(0).getName()+"'");
     					e.getValue().put("displayName", users.get(0).getName());
     				}
     				
@@ -278,7 +283,7 @@ public class Heartbeat2 {
       }
       
       
-      File scripts=new File("scripts");
+      File scripts=new File("target/scripts");
       if (!scripts.exists()) scripts.mkdirs();
       
       for(Map<String,Object> script:config.getScripts()){
@@ -317,8 +322,9 @@ public class Heartbeat2 {
           try{
             
             String command=(String)script.get("source");
+            String version=RegExHelper.extract(command, "/(v.+)/");
             String name=(String)script.get("name");
-            File scriptFolder=new File(scripts, name);
+            File scriptFolder=new File(scripts, name+"/"+version);
             scriptFolder.mkdirs(); // ensure the parent folders exist if they dont already
             
 //            URL remoteLocationWithoutParams=new URL(command.contains(" ")?command.substring(0, command.indexOf(" ")):command); // strip script execution params to allow it to be downloaded
@@ -339,7 +345,8 @@ public class Heartbeat2 {
               command=convertLastRun(command, lastRun2);
             }
             
-            log.info("Script downloaded: "+originalCommand);
+            
+            log.info("Script downloaded ("+version+"): "+originalCommand);
             log.info("Script executing: "+command);
             
             Process script_exec=Runtime.getRuntime().exec(command);
