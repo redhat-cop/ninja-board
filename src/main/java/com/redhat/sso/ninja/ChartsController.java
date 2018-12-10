@@ -96,7 +96,7 @@ public class ChartsController{
   @Path("/scorecard/nextlevel/{user}")
   public Response getUserNextLevel(@PathParam("user") String user) throws JsonGenerationException, JsonMappingException, IOException{
     
-    Database2 db=Database2.getCached();
+    Database2 db=Database2.get();
     boolean userExists=db.getScoreCards().containsKey(user);
     
     Chart2Json chart=new Chart2Json();
@@ -124,7 +124,7 @@ public class ChartsController{
   }
   
   private int getTotalPoints(String username){
-    Database2 db=Database2.getCached();
+    Database2 db=Database2.get();
     Map<String, Integer> scorecard=db.getScoreCards().get(username);
     int total=0;
     for(Entry<String, Integer> s:scorecard.entrySet()){
@@ -134,7 +134,7 @@ public class ChartsController{
   }
   
   private int getPointsToNextLevel(String username){
-    Database2 db=Database2.getCached();
+    Database2 db=Database2.get();
     int total=getTotalPoints(username);
     Map<String, String> userInfo=db.getUsers().get(username);
     Integer pointsToNextLevel=LevelsUtil.get().getNextLevel(userInfo.get("level")).getLeft()-total;
