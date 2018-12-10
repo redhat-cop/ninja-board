@@ -169,19 +169,22 @@ public class Database2{
   }
   
   private static Database2 instance=null;
-  public static Database2 getCached(){
-    if (null==instance){
-      instance=Database2.get();
-    }
-    return instance;
-  }
+//  public static Database2 getCached(){
+//    if (null==instance){
+//      instance=Database2.get();
+//    }
+//    return instance;
+//  }
   public static Database2 get(){
     if (!new File(STORAGE).exists()){
-    	log.info("No database file found, creating new/blank/default one...");
+    	log.warn("No database file found, creating new/blank/default one...");
     	new Database2().save();
     }
-    instance=Database2.load();
-    log.info("Replaced 'instance' of database in memory");
+    if (null==instance){
+      instance=Database2.load();
+      log.info("Replaced 'instance' of database in memory");
+    }
+//    instance=Database2.load();
     return instance;
   }
   public static void resetInstance(){

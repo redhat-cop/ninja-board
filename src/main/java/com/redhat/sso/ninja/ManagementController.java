@@ -279,7 +279,7 @@ public class ManagementController {
   @GET
   @Path("/scorecard/breakdown/{user}")
   public Response getUserBreakdown(@PathParam("user") String user) throws JsonGenerationException, JsonMappingException, IOException{
-    Database2 db=Database2.getCached();
+    Database2 db=Database2.get();
     Map<String, Integer> scorecard=db.getScoreCards().get(user);
     
     Chart2Json chart=new Chart2Json();
@@ -306,7 +306,7 @@ public class ManagementController {
   @GET
   @Path("/scorecard/summary/{user}")
   public Response getScorecardSummary(@PathParam("user") String user) throws JsonGenerationException, JsonMappingException, IOException{
-    Database2 db=Database2.getCached();
+    Database2 db=Database2.get();
     
     log.debug("Request made for user ["+user+"]");
     
