@@ -151,8 +151,9 @@ public class ManagementController {
     }
     
     Database2.resetInstance();
+    Database2.get(); //reload it
     
-    log.debug("Saved");
+    log.debug("Config Saved");
     return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Config.get())).build();
   }
   
@@ -238,6 +239,10 @@ public class ManagementController {
     
     //System.out.println("New DB = "+Json.newObjectMapper(true).writeValueAsString(db));
     db.save();
+    
+    Database2.resetInstance();
+    Database2.get(); // reload instance in memory
+    
     System.out.println("New Database Saved");
     return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Database2.get())).build();
   }
