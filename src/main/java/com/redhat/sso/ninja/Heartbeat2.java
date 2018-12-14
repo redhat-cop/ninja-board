@@ -48,6 +48,11 @@ public class Heartbeat2 {
   public static void main(String[] asd){
     try{
     	
+    	for (String x:Arrays.asList("@clementescoffier", "mtakane", "@wolfgangschulze2", "mzali@redhat.com", "kvanwess@redhat.com", "vicken-krissian", "na", "n/a")){
+    		System.out.println("'"+x+"' becomes '"+ new HeartbeatRunnable().cleanupGithubTrelloId(x)+"'");
+    	}
+    	System.exit(0);
+    	
 //    	Database2 db=Database2.get();
 //    	Map<String, Object> script=new HashMap<String, Object>();
 //    	script.put("name", "TestScript");
@@ -138,6 +143,20 @@ public class Heartbeat2 {
       }
       return result;
     }
+    
+    private String cleanupGithubTrelloId(String input){
+    	String result=input;
+    	
+    	// if the id start with @, then strip it
+    	if (result.startsWith("@")) result=result.substring(1, result.length());
+    	
+    	// if the id still contains an @ then assume it's an email and strip the latter part
+    	result=result.substring(0, (result.contains("@")?result.indexOf("@"):result.length()) );
+    	
+    	if (!"".equalsIgnoreCase(result) && !"na".equalsIgnoreCase(result) && !"n/a".equalsIgnoreCase(result))
+    		return result;
+    	return null;
+    }
 
     public boolean addNewlyRegisteredUsers(Database2 db){
       Map<String, Map<String, String>> dbUsers=db.getUsers();
@@ -156,19 +175,13 @@ public class Heartbeat2 {
                 userInfo.put("username", c.getValue().substring(0, c.getValue().indexOf("@")));
               userInfo.put("email", c.getValue());
             }else if (c.getKey().toLowerCase().contains("trello id")){ // the 'contains' is the text in the google sheet title
+            	String trelloId=cleanupGithubTrelloId(c.getValue());
+            	if (null!=trelloId) userInfo.put("trelloId", trelloId);
             	
-            	// if it has an @, then assume it's an email and strip the latter part
-            	String trelloId=c.getValue().substring(0, (c.getValue().contains("@")?c.getValue().indexOf("@"):c.getValue().length()) );
-            	if (!"".equalsIgnoreCase(trelloId) && !"na".equalsIgnoreCase(trelloId) && !"n/a".equalsIgnoreCase(trelloId)){
-            		userInfo.put("trelloId", trelloId);
-            	}
             }else if (c.getKey().toLowerCase().contains("github id")){ // the 'contains' is the text in the google sheet title
+            	String githubId=cleanupGithubTrelloId(c.getValue());
+            	if (null!=githubId) userInfo.put("githubId", githubId);
               
-            	// if it has an @, then assume it's an email and strip the latter part
-            	String githubId=c.getValue().substring(0, (c.getValue().contains("@")?c.getValue().indexOf("@"):c.getValue().length()) );
-            	if (!"".equalsIgnoreCase(githubId) && !"na".equalsIgnoreCase(githubId) && !"n/a".equalsIgnoreCase(githubId)){
-            		userInfo.put("githubId", githubId);
-            	}
             }
           }
           
