@@ -182,7 +182,7 @@ public class Database2{
     }
     if (null==instance){
       instance=Database2.load();
-      log.info("Replaced 'instance' of database in memory");
+      log.info("Loading/Replaced 'instance' of database in memory");
     }
 //    instance=Database2.load();
     return instance;
