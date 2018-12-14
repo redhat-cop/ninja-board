@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -22,7 +24,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.redhat.sso.ninja.utils.DownloadFile;
 
 public class GoogleDrive2 {
-  
+  private static Logger log=Logger.getLogger(GoogleDrive2.class); 
+	
   public static final String DEFAULT_EXECUTABLE="/home/%s/drive_linux";
 //  public static final String DEFAULT_PULL_COMMAND=DEFAULT_EXECUTABLE+" pull -export xls -quiet=true --id %s"; //worked with 0.3.1
   public static final String DEFAULT_PULL_COMMAND=DEFAULT_EXECUTABLE+" pull -export xls -no-prompt --id %s"; // 0.3.7+ changed its output that we parse
@@ -64,7 +67,6 @@ public class GoogleDrive2 {
     
     Process exec = Runtime.getRuntime().exec(command, null, workingFolder);
     
-//    Process exec = Runtime.getRuntime().exec(command, null, new File("/home/mallen/Work/google_drive"));
     exec.waitFor();
     String syserr = IOUtils.toString(exec.getErrorStream());
     String sysout = IOUtils.toString(exec.getInputStream());
@@ -151,18 +153,29 @@ public class GoogleDrive2 {
   public static void initialise(){ //ie. download gdrive executable if necessary
     if (!new File(GoogleDrive2.getDefaultExecutable()).exists()){
       // attempt to download it
+    	File credsFile=new File(new File(GoogleDrive2.getDefaultWorkingFolder(), ".gd"), "credentials.json");
       try{
         String url="https://github.com/odeke-em/drive/releases/download/v0.3.9/drive_linux";
         
         System.out.println("Downloading gdrive from: "+url);
         new DownloadFile().get(url, new File(GoogleDrive2.getDefaultExecutable()).getParentFile(), PosixFilePermission.OTHERS_EXECUTE);
         
-        File credsFile=new File(new File(GoogleDrive2.getDefaultWorkingFolder(), ".gd"), "credentials.json");
         credsFile.getParentFile().mkdirs();
         System.out.println("Deploying credentials.json in: "+credsFile);
-        IOUtils.copy(GoogleDrive2.class.getClassLoader().getResourceAsStream("/gd_credentials.json"), new FileOutputStream(credsFile));
+        
+        InputStream is=GoogleDrive2.class.getClassLoader().getResourceAsStream("/gd_credentials.json");
+        if (null!=is){
+        	IOUtils.copy(is, new FileOutputStream(credsFile));
+        }else if (null!=System.getenv("GD_CREDENTIALS")){
+        	IOUtils.write(System.getenv("GD_CREDENTIALS").getBytes(), new FileOutputStream(credsFile));
+        }else{
+        	log.error("no gdrive creds specified in either resources, or system props");
+        }
+        
       }catch(Exception e){
-        System.out.println("Failed to initialise gdrive and/or credentials");
+        System.out.println("Failed to initialise gdrive and/or credentials, cleaning up exe and creds");
+        credsFile.delete();
+        new File(GoogleDrive2.getDefaultExecutable()).delete();
         e.printStackTrace();
       }
     }else{
