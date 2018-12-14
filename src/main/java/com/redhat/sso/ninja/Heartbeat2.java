@@ -24,12 +24,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.ws.rs.core.Response;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 
 import com.redhat.sso.ninja.user.UserService;
 import com.redhat.sso.ninja.user.UserService.User;
@@ -43,15 +39,10 @@ import com.redhat.sso.ninja.utils.Tuple;
 public class Heartbeat2 {
   private static final Logger log = Logger.getLogger(Heartbeat2.class);
   private static Timer t;
-  private static final long delay=30000l;//=System.getProperty("user.home").indexOf("mallen")>=0?1000l:30000l;
+  private static final long delay=30000l;
 
   public static void main(String[] asd){
     try{
-    	
-    	for (String x:Arrays.asList("@clementescoffier", "mtakane", "@wolfgangschulze2", "mzali@redhat.com", "kvanwess@redhat.com", "vicken-krissian", "na", "n/a")){
-    		System.out.println("'"+x+"' becomes '"+ new HeartbeatRunnable().cleanupGithubTrelloId(x)+"'");
-    	}
-    	System.exit(0);
     	
 //    	Database2 db=Database2.get();
 //    	Map<String, Object> script=new HashMap<String, Object>();
@@ -72,16 +63,10 @@ public class Heartbeat2 {
 //      lastRunC.set(Calendar.MINUTE, 0);
 //      lastRunC.set(Calendar.SECOND, 1);
 //      
-//      System.out.println("LAST RUN: "+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(lastRunC.getTime()));
-//      System.out.println(Heartbeat2.convertLastRun("perl ${user.home}/Work/poc/sso-tools/cop-ninja/github-stats.py -s ${LAST_RUN:yyyy-MM-dd}", lastRunC.getTime()));
-//      System.out.println(Heartbeat2.convertLastRun("sh ${user.home}/Work/poc/sso-tools/cop-ninja/trello.sh -s ${DAYS_FROM_LAST_RUN}", lastRunC.getTime()));
-//      
 //      lastRunC.set(Calendar.DAY_OF_MONTH, 21);
 //      System.out.println("TODAY?: "+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(lastRunC.getTime()));
       
       Heartbeat2.runOnce();
-//        Heartbeat.start(60000l);
-//        Thread.sleep(300000l);
     }catch(Exception e){
       e.printStackTrace();
     }
@@ -98,11 +83,6 @@ public class Heartbeat2 {
         
       }else if (toReplace.contains("DAYS_FROM_LAST_RUN")){
         Date runTo2=java.sql.Date.valueOf(LocalDate.now());
-//        Calendar runTo=Calendar.getInstance();
-//        runTo.setTime(new Date());
-//        runTo.set(Calendar.HOUR, 0);
-//        runTo.set(Calendar.MINUTE, 0);
-//        runTo.set(Calendar.SECOND, 0);
         Integer daysFromLastRun=(int)((runTo2.getTime() - lastRunDate.getTime()) / (1000 * 60 * 60 * 24))+1;
         m.appendReplacement(sb, String.valueOf(daysFromLastRun));
       }else{
@@ -442,8 +422,8 @@ public class Heartbeat2 {
       		// notify the roxy service if configured
       		// store summary, breakdown & nextLevel for each user ;-)
       		
-      		if (null!=config.getOptions().get("roxy-proxy")){
-      			String url=config.getOptions().get("roxy-proxy")+"/api/proxy";
+      		if (null!=config.getOptions().get("graphs-proxy")){
+      			String url=config.getOptions().get("graphs-proxy")+"/api/proxy";
       			log.warn("roxy configured at: "+url);
       			ChartsController cc=new ChartsController();
       			ManagementController mc=new ManagementController();

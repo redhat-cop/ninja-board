@@ -78,27 +78,6 @@ public class Config {
 //    }
 //  }
   
-  public static void main(String[] asd){
-    Config c=Config.get();
-//    c.getOptions().put("sources", "com.redhat.sso.ninja.TrelloSync");
-    
-    c.getScripts().add(new MapBuilder<String, Object>()
-        .put("source", "com.redhat.sso.ninja.TrelloSync")
-        .put("type", "class")
-        .put("options", new MapBuilder<String, String>().put("organizationName","redhatcop").build())
-        .build());
-    c.getScripts().add(new MapBuilder<String, Object>().put("source", "/home/mallen/poc/script1.perl").put("type", "perl").build());
-    c.getScripts().add(new MapBuilder<String, Object>().put("source", "/home/mallen/poc/script2.sh").put("type", "bash").build());
-//    c.getScripts().put("scripts", scripts);
-    
-    
-//    Map<String, String> scripts=new HashMap<String, String>();
-//    scripts.put("doX", "/home/mallen/poc/script1.perl");
-    
-    c.getOptions().put("heartbeat.intervalInSeconds", "60000");
-    c.getValues().put("lastRun", 1520660463301l);
-    c.save();
-  }
   
   public void save(){
     try{

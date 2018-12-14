@@ -48,13 +48,10 @@ public class ManagementController {
   private static final Logger log=Logger.getLogger(ManagementController.class);
   
   public static void main(String[] asd) throws JsonGenerationException, JsonMappingException, IOException{
-//    System.out.println(new ManagementController().register(null,null,null,"[{\"displayName\": \"Mat Allen\",\"username\": \"mallen\",\"trelloId\":\"mallen2\",\"githubId\":\"matallen\"}]"));
-//    System.out.println(new ManagementController().getScorecards().getEntity());
     System.out.println(java.sql.Date.valueOf(LocalDate.now()));
     System.out.println(java.sql.Date.valueOf(LocalDate.now().minus(365, ChronoUnit.DAYS)));
     System.out.println((1000 * 60 * 60 * 24));
     System.out.println(TimeUnit.DAYS.toMillis(1));
-//    System.out.println(new ManagementController().getScorecardSummary("pfann").getEntity());
 //    System.out.println(new ManagementController().toNextLevel("BLUE", 7).toString());
   }
   

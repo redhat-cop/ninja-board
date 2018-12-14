@@ -13,14 +13,13 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 
 import com.redhat.sso.ninja.user.UserService;
-import com.redhat.sso.ninja.user.UserService.User;
 import com.redhat.sso.ninja.utils.Json;
 
 @Path("/user")
 public class UserController {
   
   
-  /** for example /api/user/mallen will return mallen's LDAP details 
+  /** for example /api/user/user1 will return user1's LDAP details 
    * @throws NamingException */
   @GET
   @Path("/{uid}")
