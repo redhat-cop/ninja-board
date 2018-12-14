@@ -25,6 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.redhat.sso.ninja.user.UserService;
@@ -419,10 +420,12 @@ public class Heartbeat2 {
       		log.debug("Updating the \"lastRun\" date");
       		config.getValues().put("lastRun2", sdf.format(runToDate));
       		
-      		// notify the roxy service if configured
-      		// store summary, breakdown & nextLevel for each user ;-)
+      		// notify the graphs proxy service if configured
+      		// store summary, breakdown & nextLevel for each user
+      		String graphsProxyUrl=config.getOptions().get("graphs-proxy");
+      		if (null==graphsProxyUrl) graphsProxyUrl=System.getenv("GRAPHS_PROXY");
       		
-      		if (null!=config.getOptions().get("graphs-proxy")){
+      		if (!StringUtils.isEmpty(graphsProxyUrl)){
       			String url=config.getOptions().get("graphs-proxy")+"/api/proxy";
       			log.warn("roxy configured at: "+url);
       			ChartsController cc=new ChartsController();
@@ -441,7 +444,7 @@ public class Heartbeat2 {
       				
       			}
       		}else{
-      			log.warn("not pushing to roxy");
+      			log.warn("not pushing to graphs proxy - url was: "+graphsProxyUrl);
       		}
       		
       	}else{
