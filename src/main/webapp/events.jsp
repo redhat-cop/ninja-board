@@ -11,9 +11,12 @@ function escapeRegExp(str) {
     return str.replace(/([.*+?^=!:\${}()|\[\]\/\\])/g, "\\$1");
 }
 function loadDataTable(){
+	var userFilter=Utils.getParameterByName("id");
+	
+	
 	$('#example').DataTable( {
         "ajax": {
-            "url": '${pageContext.request.contextPath}/api/events/',
+            "url": '${pageContext.request.contextPath}/api/events/'+(undefined!=userFilter?"?user="+userFilter:""),
             "dataSrc": ""
         },
         "scrollY":        "1300px",
@@ -58,13 +61,21 @@ function loadDataTable(){
 }
 
 $(document).ready(function() {
+	if (null!=Utils.getParameterByName("name")){
+		document.getElementById("title-user").innerText=": "+Utils.getParameterByName("name");
     loadDataTable();
-} );
+	}
+});
 
 
 </script>
 	
     <%@include file="nav.jsp"%>
+
+    <div class="navbar-connector"></div>
+    <div class="navbar-title">
+    	<h2><span class="navbar-title-text">Events<span id="title-user"></span></span></h2>
+    </div>
     
     <div id="solutions">
 		    <div id="solutions-buttonbar">

@@ -67,7 +67,10 @@ public class Heartbeat2 {
 //      lastRunC.set(Calendar.DAY_OF_MONTH, 21);
 //      System.out.println("TODAY?: "+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(lastRunC.getTime()));
       
-      Heartbeat2.runOnce();
+//      Heartbeat2.runOnce();
+      
+      new HeartbeatRunnable().levelUpChecks(Database2.get());
+      
     }catch(Exception e){
       e.printStackTrace();
     }
@@ -382,36 +385,9 @@ public class Heartbeat2 {
         
       } // end of scripts loop
       
-      // do any users need levelling up?
-      int count=1;
-      Map<String, Map<String, String>> users=db.getUsers();
-      while (count>0){ // keep checking, some people may need multiple promotions in one go!
-        count=0;
-        for(Entry<String, Map<String, Integer>> e:db.getScoreCards().entrySet()){
-          String userId=e.getKey();
-          int total=0;
-          for(Entry<String, Integer> s:e.getValue().entrySet()){
-            total+=s.getValue();
-          }
-          Map<String, String> userInfo=users.get(userId);
-          
-          Tuple<Integer, String> currentLevel=LevelsUtil.get().getLevel(userInfo.get("level"));
-          Tuple<Integer, String> nextLevel=LevelsUtil.get().getNextLevel(userInfo.get("level"));
-          if (total>=nextLevel.getLeft() && !currentLevel.getRight().equals(nextLevel.getRight())){
-            // congrats! the user has been promoted!
-            log.info("User "+userId+" has been promoted to level "+nextLevel.getRight()+" with a points score of "+total);
-            userInfo.put("level", nextLevel.getRight());
-            userInfo.put("levelChanged", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));// nextLevel.getRight());
-            
-            db.addEvent("User Promotion", userInfo.get("username"), "Promoted to "+nextLevel.getRight()+" level");
-  //          db.getEvents().add("User Promotion: ["+userInfo.get("username") +"] was promoted to level ["+nextLevel.getRight()+"]");
-            count+=1;
-          }
-          
-        }
-      }
       
-      
+//      // do any users need levelling up?
+      levelUpChecks(db);
       db.save();
       
       if (!((String)config.getValues().get("lastRun2")).startsWith("-")){
@@ -426,7 +402,8 @@ public class Heartbeat2 {
       		if (null==graphsProxyUrl) graphsProxyUrl=System.getenv("GRAPHS_PROXY");
       		
       		if (!StringUtils.isEmpty(graphsProxyUrl)){
-      			String url=config.getOptions().get("graphs-proxy")+"/api/proxy";
+      			String url=graphsProxyUrl+"/api/proxy";
+      			log.warn("graphsProxyUrl is null == "+(null==graphsProxyUrl));
       			log.warn("roxy configured at: "+url);
       			ChartsController cc=new ChartsController();
       			ManagementController mc=new ManagementController();
@@ -455,7 +432,42 @@ public class Heartbeat2 {
       }
       
       config.save();
-    }     
+    }
+    
+    public void levelUpChecks(Database2 db){
+    	log.info("Level-up checks...");
+      int count=1;
+      Map<String, Map<String, String>> users=db.getUsers();
+      while (count>0){ // keep checking, some people may need multiple promotions in one go!
+        count=0;
+        for(Entry<String, Map<String, Integer>> e:db.getScoreCards().entrySet()){
+          String userId=e.getKey();
+          int total=0;
+          for(Entry<String, Integer> s:e.getValue().entrySet()){
+            total+=s.getValue();
+          }
+          Map<String, String> userInfo=users.get(userId);
+          
+          Tuple<Integer, String> currentLevel=LevelsUtil.get().getLevel(userInfo.get("level"));
+          Tuple<Integer, String> nextLevel=LevelsUtil.get().getNextLevel(userInfo.get("level"));
+          if (total>=nextLevel.getLeft() && !currentLevel.getRight().equals(nextLevel.getRight())){
+            // congrats! the user has been promoted!
+            log.info("User "+userId+" has been promoted to level "+nextLevel.getRight()+" with a points score of "+total);
+            userInfo.put("level", nextLevel.getRight());
+            userInfo.put("levelChanged", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));// nextLevel.getRight());
+            
+            db.addEvent("User Promotion", userInfo.get("username"), "Promoted to "+nextLevel.getRight()+" level");
+  //          db.getEvents().add("User Promotion: ["+userInfo.get("username") +"] was promoted to level ["+nextLevel.getRight()+"]");
+            
+            db.addTask("Promoted to "+nextLevel.getRight()+" belt", userInfo.get("username"));
+            
+            count+=1;
+          }
+          
+        }
+      }
+      db.save();
+    }
     
     
     public void allocatePoints(Database2 db, InputStream is, Map<String,Object> script, File scriptFolder, Map<String, String> poolToUserIdMapper) throws NumberFormatException, UnsupportedEncodingException, IOException{

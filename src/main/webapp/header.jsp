@@ -16,6 +16,8 @@
 	<script src="js/jquery.dataTables.min.js"></script>
 	<script src="js/bootstrap.min.js"></script>
 	<script src="js/ChartNew.js"></script>
+	<script src="js/utils.js"></script>
+	<script src="js/http.js"></script>
 	<%
 		if (ManagementController.isLoginEnabled()){
 			if (null==session.getAttribute("x-access-token") || "".equals(session.getAttribute("x-access-token"))){
