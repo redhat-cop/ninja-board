@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
@@ -21,8 +22,6 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.JsonMappingException;
 
-import com.redhat.sso.ninja.utils.Http;
-import com.redhat.sso.ninja.utils.Http.Response;
 import com.redhat.sso.ninja.utils.IOUtils2;
 import com.redhat.sso.ninja.utils.Json;
 
@@ -37,6 +36,7 @@ public class Database2{
   private Map<String, Map<String, Integer>> scorecards;
   private Map<String, Map<String, String>> users;
   private List<Map<String, String>> events;
+  private List<Map<String, String>> tasks;
   
   // PoolId -> UserId + Score
   private String created;
@@ -87,17 +87,47 @@ public class Database2{
     if (null==scorecards) scorecards=new HashMap<String, Map<String,Integer>>();
     return scorecards;
   }
+  
   public List<Map<String, String>> getEvents(){
     if (null==events) events=new ArrayList<Map<String,String>>();
     return events;
   }
+  public enum EVENT_FIELDS{
+  	TIMESTAMP("timestamp"),
+  	TYPE("type"),
+  	USER("user"),
+  	TEXT("text");
+  	public String v;
+  	EVENT_FIELDS(String v){
+  		this.v=v;
+  	}
+  }
+  
+  public List<Map<String, String>> getTasks(){
+    if (null==tasks) tasks=new ArrayList<Map<String, String>>();
+    return tasks;
+  }
+  public enum TASK_FIELDS{
+  	TIMESTAMP("timestamp"),
+  	USER("user"),
+  	
+  	LIST("list"),
+  	ID("id"),
+  	TITLE("title"),
+  	OWNERS("owners"),
+  	LABELS("labels");
+  	public String v;
+  	TASK_FIELDS(String v){
+  		this.v=v;
+  	}
+  }
   
   public void addEvent(String type, String user, String text){
     Map<String,String> event=new HashMap<String, String>();
-    event.put("timestamp", sdf2.format(new Date()));
-    event.put("type", type);
-    event.put("user", user);
-    event.put("text", text);
+    event.put(EVENT_FIELDS.TIMESTAMP.v, sdf2.format(new Date()));
+    event.put(EVENT_FIELDS.TYPE.v, type);
+    event.put(EVENT_FIELDS.USER.v, user);
+    event.put(EVENT_FIELDS.TEXT.v, text);
     getEvents().add(event);
     
     // limit the events to 100 entries
@@ -105,10 +135,15 @@ public class Database2{
       getEvents().remove(0);
     }
   }
-//  public List<String> getEvents(){
-//    if (null==events) events=new ArrayList<String>();
-//    return events;
-//  }
+	public void addTask(String taskText, String user){
+    Map<String,String> task=new HashMap<String, String>();
+    task.put(TASK_FIELDS.TIMESTAMP.v, sdf2.format(new Date()));
+    task.put(TASK_FIELDS.ID.v, UUID.randomUUID().toString());
+    task.put(TASK_FIELDS.TITLE.v, taskText);
+    task.put(TASK_FIELDS.USER.v, user);
+    task.put(TASK_FIELDS.LIST.v, "todo");
+    getTasks().add(task);
+	}
   
   private Set<String> pointsDuplicateChecker=new HashSet<String>();
   public Set<String> getPointsDuplicateChecker(){
@@ -194,5 +229,6 @@ public class Database2{
   public static void main(String[] asd){
     Database2.get().increment("pool", "test", 1, null);
   }
+
 
 }
