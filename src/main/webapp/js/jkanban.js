@@ -313,11 +313,12 @@ var dragula = require('dragula');
                     }
                     
                     
-                    
                     if (self.options.deleteCards)
                       __ondeleteHandler(nodeItemTitle.querySelector(".btnDeleteCard"), nodeItem, self.options.onDelete);
                     
-                    __onupdateHandler(nodeItemTitle.querySelector(".title"), nodeItem, self.options.onUpdate);
+                    __onBlurHandler2(nodeItemTitle.querySelector(".title"), nodeItem, self.options.onUpdate, function (newLabelTextBox, taskId, label){
+                    	// this is only called on successful update of title, so update the title to the new value?
+                    });
                     
                     nodeItem.appendChild(nodeItemTitle);
                     contentBoard.appendChild(nodeItem);
@@ -425,6 +426,11 @@ var dragula = require('dragula');
                 //if (typeof(this.blurfn) === 'function')
                 //    this.blurfn(nodeItem);
             });
+        	target.addEventListener('keypress', function(e){
+        		var key = e.which || e.keyCode;
+        		if (key === 13)
+        			target.blur();
+        	});
         }
         
         function __onupdateHandler(target, nodeItem, onUpdateFn) {
@@ -549,17 +555,6 @@ var dragula = require('dragula');
           result+="</div>";
         
           return result;
-        }
-        
-        function buildMenu(boardId, el, data){
-          console.log("building ctx menu");
-          
-          return
-            "  <ul class='dropdown-menu'>"+
-            "    <li class='dropdown-menu-item' >"+
-            "      <button style='width:200px' onClick='deleteCard("+data.id+")' class='action-btn'>Delete Card</button>"+
-            "    </li>"+
-            "  </ul>";
         }
         
         //init plugin
@@ -1474,14 +1469,4 @@ if (si) {
 module.exports = tick;
 },{}]},{},[1]);
 
-
-//function addLabel(label){
-//	console.log("AddPill function");
-//	var pill="<span class='label-pill ng-scope label-pill-green'>"+el.value+" <button class='btnLabelDelete' data-id='"+nodeItem.dataset.eid+"' data-label='"+el.value+"'>x</button></span>";
-//	el.parentElement.parentElement.innerHTML+=pill;
-//
-//	__onBlurHandler2(el, nodeItem, self.options.onLabelNew);
-//	
-//	//el.parentElement.parentElement.innerHTML
-//}
 

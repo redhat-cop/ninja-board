@@ -105,12 +105,15 @@ $(document).ready(function() {
             	removeLabel(el, el.dataset.id, el.value);
           });
         },
-        onUpdate: function(el, nodeItem){
+        onUpdate: function(el, nodeItem, updateTitle){
         	console.log("onUpdate():: el="+el.value +", nodeItem="+JSON.stringify(nodeItem.dataset));
         	
         	var data={"title":el.value};
-        	Http.httpPost("${pageContext.request.contextPath}/api/tasks/"+nodeItem.dataset.eid, data, function(response){
+        	Http.httpPost("${pageContext.request.contextPath}/api/tasks/"+nodeItem.dataset.eid, data, function(response, status){
 		   				// TODO: get the status and change only if it's a 200 - for now, just hope it went ok
+		   				if (status==200){
+		   					updateTitle(el, el.dataset.id, el.value);
+		   				}
 		    	});
         	
         },
