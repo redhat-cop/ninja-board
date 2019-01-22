@@ -17,6 +17,12 @@ java.util.Calendar
     </div>
     
     <link rel="stylesheet" href="https://raw.githack.com/riktar/jkanban/master/dist/jkanban.min.css">
+    <link rel="stylesheet" href="css/tasks.css">
+    
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/solid.css" integrity="sha384-+0VIRx+yz1WBcCTXBkVQYIBVNEFH1eP6Zknm16roZCyeNg2maWEpk/l/KsyFKs7G" crossorigin="anonymous">
+		<!--link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/regular.css" integrity="sha384-aubIA90W7NxJ+Ly4QHAqo1JBSwQ0jejV75iHhj59KRwVjLVHjuhS3LkDAoa/ltO4" crossorigin="anonymous"-->
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/fontawesome.css" integrity="sha384-jLuaxTTBR42U2qJ/pm4JRouHkEDHkVqH0T1nyQXn1mZ7Snycpf6Rl25VBNthU4z0" crossorigin="anonymous">
+
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
 
     <style>
@@ -24,10 +30,12 @@ java.util.Calendar
             font-family: "Lato";
             margin: 0;
             padding: 0;
+            width: 100%;
         }
         #myKanban {
             overflow-x: auto;
             padding: 20px 0;
+            width: 95%;
         }
         .success {
             background: #00B961;
@@ -46,50 +54,15 @@ java.util.Calendar
 <body>
 <div id="myKanban"></div>
 
-<input type="text" id="newItem" /><button disabled id="addToDo">Add</button>
 
 <!--
+<input type="text" id="newItem" /><button disabled id="addToDo">Add</button>
 <script src="https://raw.githack.com/riktar/jkanban/master/dist/jkanban.min.js"></script>
 -->
 <script src="js/jkanban.js"></script>
 
-<style>
-.kanban-item{
-  padding: 7px !important;
-  box-sizing: border-box;
-  overflow: auto;
-}
-.kanban-item-delete{
-	float: right;
-	overflow: auto;
-}
-.kanban-item-title{
-	float: left;
-	overflow: auto;
-}
-/*
-
-.clearfix {
-  overflow: auto;
-}
-.clearfix::after {
-  content: "";
-  clear: both;
-  display: table;
-}
-*/
-</style>
 
 <script>
-
-function deleteIt(el){
-	console.log(el.dataset.eid);
-	Http.httpPost("${pageContext.request.contextPath}/api/tasks/"+el.dataset.eid+"/delete", null, function(response){
-		// update board to show removal of task?
-				//KanbanTest.refresh();
-				KanbanTest.removeElement(el.dataset.eid);
-	});
-}
 
 $(document).ready(function() {
 	Http.httpGet("${pageContext.request.contextPath}/api/tasks", function(response){
@@ -104,49 +77,78 @@ $(document).ready(function() {
 		//console.log("response.todo="+j.todo);
 		//$('#alertsEnabled').prop("checked", "true"==response.toLowerCase());
 		
+		var id=0;
 		
     var KanbanTest = new jKanban({
         element: '#myKanban',
         gutter: '10px',
         widthBoard: '450px',
         dragBoards: false,
+        contextMenu: true,
         deleteCards: true,
-        customDisplay: function(boardId, el, data){
-        	console.log("customDisplay():: el="+JSON.stringify(el.dataset));
-        	
-        	
-        	return "<table><tr><td>"+data.title+"</td></tr><tr><td>"+data.user+"</td></tr><tr><td>"+data.timestamp.substring(0,10)+"</td></tr></table>";
-        	
-        	return "<table><tr><td>"+data.title+"</td></tr><tr><td>"+data.timestamp.substring(0,10)+"</td></tr></table>";
-        	//return data.title;
+        comments: false,
+        userAssignment: false,
+        labels: true,
+        onLabelNew: function(el, nodeItem, addLabel){
+          console.log("onLabelNew():: el.value="+el.value+", el.dataset="+JSON.stringify(el.dataset) +", nodeItem="+JSON.stringify(nodeItem.dataset));
+          if (undefined==el.value || el.value=="") return;
+          Http.httpPost("${pageContext.request.contextPath}/api/tasks/"+el.dataset.id+"/labels/"+el.value, null, function(response, status){
+            if (status==200)
+            	addLabel(el, el.dataset.id, el.value);
+          });
         },
-        //	console.log("X="+JSON.stringify(element));
-        //	//return "<table style='position:relative;top:-25px;' border=0 width=100%><tr><td>"+element.title+"</td><td rowspan='3' valign='top' align='center'></td></tr><tr><td>"+element.user+"</td></tr><tr><td>"+element.timestamp+"</td></tr></table>";
-        //	//return "<table border=0 width=100%><tr><td>"+element.title+"</td><td rowspan='3' valign='top' align='center'><button onclick='return deleteIt("+element.id+");'>X</button></td></tr><tr><td>"+element.user+"</td></tr><tr><td>"+element.timestamp+"</td></tr></table>";
-        //	
-        //	return "<table border=0 width=100%><tr><td>"+element.title+"</td><td rowspan='3' valign='top' align='center'><button onclick='return deleteIt("+element.id+");'>X</button></td></tr><tr><td>"+element.timestamp+"</td></tr></table>";
-        //	
-        //	
-        //	//return "<table><tr><td>"+element.title+"</td></tr><tr><td>"+element.user+"</td></tr><tr><td>"+element.timestamp+"</td></tr></table>";
-        //	
-        //	//return "<table><tr><td>"+element.title+"</td></tr><tr><td>"+element.timestamp+"</td></tr></table>";
-        //	//return element.title;
-        //},
+        
+        onLabelDelete: function(el, nodeItem, removeLabel){
+          console.log("onLabelDelete():: el="+JSON.stringify(el.dataset) +", nodeItem="+JSON.stringify(nodeItem.dataset));
+          Http.httpDelete("${pageContext.request.contextPath}/api/tasks/"+el.dataset.id+"/labels/"+el.dataset.label, null, function(response, status){
+            if (status==200)
+            	removeLabel(el, el.dataset.id, el.value);
+          });
+        },
+        onUpdate: function(el, nodeItem){
+        	console.log("onUpdate():: el="+el.value +", nodeItem="+JSON.stringify(nodeItem.dataset));
+        	
+        	var data={"title":el.value};
+        	Http.httpPost("${pageContext.request.contextPath}/api/tasks/"+nodeItem.dataset.eid, data, function(response){
+		   				// TODO: get the status and change only if it's a 200 - for now, just hope it went ok
+		    	});
+        	
+        },
         onDelete: function(el){
         	console.log("onDelete():: el="+JSON.stringify(el.dataset));
         	Http.httpPost("${pageContext.request.contextPath}/api/tasks/"+el.dataset.eid+"/delete", null, function(response){
        				KanbanTest.removeElement(el.dataset.eid);
         	});
         },
-        click: function (el) {
-        	console.log("onClick: "+el.dataset.eid);
-        	//
-        	//Http.httpPost("${pageContext.request.contextPath}/api/tasks/"+el.dataset.eid+"/delete", null, function(response){
-        	//	// update board to show removal of task?
-        	//});
+        customDisplay: function(boardId, el, data){
+        	console.log("customDisplay():: el="+JSON.stringify(el.dataset));
         	
-            //console.log("Trigger on all items click!");
+        	return "<textarea id='title_"+data.id+"' style='height:10px' class='title'>"+data.title+"</textarea>";
+        	
+        	
+        	//return "<div class='card'>"+
+        	//			 "<div class='header'><a class='id' href=''>"+id+"</a><span class='right'><button onclick=''><i class='unassigned fa fa-user'></i></button></span></div>"+
+        	//			 "<div class='body'><textarea class='title' onblur='card_title_update(\""+data.id+"\",this);'>"+data.title+"</textarea></div>"+
+        	//			 "<div class='footer clearfix'><div class='footer-labels'></div>"+
+        	//			 "<div class='footer-actions right'>"+
+        	//			   "<button><i class='fas fas-comment-alt'></i></button>"+
+        	//			   "<button><i class='fa fa-dots'></i></button>"+
+        	//			 "</div></div>"+
+        	//			 "</card>";
+        	//
+        	//return "<table><tr><td>"+data.title+"</td></tr><tr><td>"+data.user+"</td></tr><tr><td>"+data.timestamp.substring(0,10)+"</td></tr></table>";
+        	//
+        	//return "<table><tr><td>"+data.title+"</td></tr><tr><td>"+data.timestamp.substring(0,10)+"</td></tr></table>";
         },
+        //click: function (el) {
+        //	console.log("onClick: "+el.dataset.eid);
+        //	//
+        //	//Http.httpPost("${pageContext.request.contextPath}/api/tasks/"+el.dataset.eid+"/delete", null, function(response){
+        //	//	// update board to show removal of task?
+        //	//});
+        //	
+        //    //console.log("Trigger on all items click!");
+        //},
         dropEl:function (el, target, source, sibling) {
         	
         	var taskGuid=el.dataset.eid;
@@ -213,29 +215,32 @@ $(document).ready(function() {
         ]
     });
     
-    $(document).on('click', "#newItem", function() {
-			document.getElementById("addToDo").disabled=document.getElementById("newItem").value.length>0;
-		});
+    //$(document).on('click', "#newItem", function() {
+		//	document.getElementById("addToDo").disabled=document.getElementById("newItem").value.length>0;
+		//});
     
-    var toDoButton = document.getElementById('addToDo');
-    toDoButton.addEventListener('click', function () {
-    	  var newItem={"title":document.getElementById("newItem").value};
-    	  console.log("item text = "+newItem);
-        
-        Http.httpPost("${pageContext.request.contextPath}/api/tasks", newItem, function(response){
-    	  document.getElementById("newItem").value="";
-	        // if server created the task, then show it on the kanban board
-        	KanbanTest.addElement(
-	            "_todo",
-	            {
-	                "id": response,
-	                "title": newItem.title,
-	            }
-	        );
-        });
-      
-    });
+    //var toDoButton = document.getElementById('addToDo');
+    //toDoButton.addEventListener('click', function () {
+    //	  var newItem={"title":document.getElementById("newItem").value};
+    //	  console.log("item text = "+newItem);
+    //    
+    //    Http.httpPost("${pageContext.request.contextPath}/api/tasks", newItem, function(response){
+    //	  document.getElementById("newItem").value="";
+	  //      // if server created the task, then show it on the kanban board
+    //    	KanbanTest.addElement(
+	  //          "_todo",
+	  //          {
+	  //              "id": response,
+	  //              "title": newItem.title,
+	  //          }
+	  //      );
+    //    });
+    //  
+    //});
 	});
+	
+	
+	//$('.dropdown-togglex').dropdown()
 	
 });
 
@@ -245,3 +250,30 @@ $(document).ready(function() {
 </script>
 </body>
 </html>
+
+
+<!--
+<div style="display:none" class="dropdown-menu waffle-dropdown-menu assignees-dropdown-menu ng-scope ng-isolate-scope" card="card" ng-if="expanded">
+  <div class="up-arrow"></div>
+  <div class="up-arrow-inner"></div>
+
+  <div class="text-center waffle-dropdown-menu-header">
+    <p>Assign up to 10 people to this card</p>
+    <input type="text" ng-model="assigneeSearch.login" placeholder="Filter people" class="form-control js-assignee-search ng-pristine ng-valid">
+  </div>
+
+  <ul class="text-left waffle-dropdown-menu-list" ng-click="$event.stopPropagation()">
+    <li class="waffle-dropdown-menu-list-item" ng-click="setAssignees()">
+      <i class="fa fa-times-circle-o clear-selection-icon" aria-hidden="true"></i>
+      <span class="clear-selection-text">Clear assignees</span>
+    </li>
+    <li ng-hide="possibleAssignees" class="text-center ng-hide"><i class="fa fa-spinner fa-spin"></i></li>
+    <li class="waffle-dropdown-menu-list-item ng-scope" bindonce="" ng-repeat="assignee in possibleAssignees | filter:assigneeSearch track by assignee.login" ng-class="{highlight: ($index === 0 &amp;&amp; assigneeSearch)}" ng-click="setAssignees(assignee)">
+      <i ng-class="{'is-picked': isActiveAssignee(assignee)}" class="fa fa-check checkmark"></i>
+      <img bo-src="assignee.avatarUrl" class="img-circle" src="https://avatars3.githubusercontent.com/u/3470466?v=4">
+      <span class="user-login" bo-text="assignee.login">matallen</span>
+    </li>
+  </ul>
+  <button class="close-btn btn" ng-click="close()">Close</button>
+</div>
+-->

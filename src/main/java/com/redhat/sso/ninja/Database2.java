@@ -113,6 +113,7 @@ public class Database2{
   	
   	LIST("list"),
   	ID("id"),
+  	UID("uid"),
   	TITLE("title"),
   	OWNERS("owners"),
   	LABELS("labels");
@@ -138,7 +139,8 @@ public class Database2{
 	public void addTask(String taskText, String user){
     Map<String,String> task=new HashMap<String, String>();
     task.put(TASK_FIELDS.TIMESTAMP.v, sdf2.format(new Date()));
-    task.put(TASK_FIELDS.ID.v, UUID.randomUUID().toString());
+    task.put(TASK_FIELDS.UID.v, UUID.randomUUID().toString());
+    task.put(TASK_FIELDS.ID.v, Config.get().getNextTaskNum());
     task.put(TASK_FIELDS.TITLE.v, taskText);
     task.put(TASK_FIELDS.USER.v, user);
     task.put(TASK_FIELDS.LIST.v, "todo");

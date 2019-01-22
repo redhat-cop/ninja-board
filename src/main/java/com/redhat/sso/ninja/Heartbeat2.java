@@ -459,7 +459,7 @@ public class Heartbeat2 {
             db.addEvent("User Promotion", userInfo.get("username"), "Promoted to "+nextLevel.getRight()+" level");
   //          db.getEvents().add("User Promotion: ["+userInfo.get("username") +"] was promoted to level ["+nextLevel.getRight()+"]");
             
-            db.addTask("Promoted to "+nextLevel.getRight()+" belt", userInfo.get("username"));
+            db.addTask(userInfo.get("username")+" promoted to "+nextLevel.getRight()+" belt", userInfo.get("username"));
             
             count+=1;
           }
