@@ -18,6 +18,7 @@ import java.util.Set;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.JsonMappingException;
 
 import com.redhat.sso.ninja.utils.IOUtils2;
@@ -142,6 +143,21 @@ public class Config {
   
   public void setOptions(Map<String,String> value) {
     this.options=value;
+  }
+  
+  @JsonIgnore
+  public String getNextTaskNum(){
+//  	Config cfg=Config.get();
+  	
+  	if (!getValues().containsKey("lastTaskNum")){
+  		getValues().put("lastTaskNum", 0);
+  	}
+  	
+  	int result=1+(Integer)getValues().get("lastTaskNum");
+  	getValues().put("lastTaskNum", result);
+  	save();
+  	
+  	return String.valueOf(result);
   }
 }
 

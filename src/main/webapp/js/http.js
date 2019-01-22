@@ -21,7 +21,7 @@ Http = {
 	  	}
 	  	
 	  	if (undefined!=callback){
-	  		callback(xhr);
+	  		callback(xhr, this.status);
 	  	}
 	  };
 	},
@@ -42,7 +42,7 @@ Http = {
 		xhr.open("GET", url, true);
 		xhr.send();
 		xhr.onloadend = function () {
-		  callback(xhr.responseText);
+		  callback(xhr.responseText, this.status);
 		  //callback(JSON.parse(xhr.responseText));
 		};
 	}

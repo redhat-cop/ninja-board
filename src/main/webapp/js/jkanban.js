@@ -33,10 +33,6 @@ var dragula = require('dragula');
             dragBoards: true,
             addItemButton: false,
             buttonContent: '+',
-            //customDisplay: function(boardId, element){
-            //	console.log("1xxxxxxxxxxx");
-            //	return element.title;
-            //},
             dragEl: function (el, source) {
             },
             dragendEl: function (el) {
@@ -167,16 +163,10 @@ var dragula = require('dragula');
             }
             //nodeItem.innerHTML = element.title;
             
-            console.log("2xxxxxxxxx");
             var nodeItemTitle = document.createElement('div');
-            nodeItemTitle.classList.add('kanban-item-title');
-            if (undefined!=self.options.customDisplay){
-            	nodeItemTitle.innerHTML+=self.options.customDisplay(board.id, nodeItem);
-            }else{
-            	nodeItemTitle.innerHTML+=element.title;
-            }
+            nodeItemTitle.classList.add('card-item');
+            nodeItemTitle.innerHTML=cardDisplay(board.id, nodeItem);
             nodeItem.appendChild(nodeItemTitle);
-            
             
             //add function
             nodeItem.clickfn = element.click;
@@ -278,21 +268,12 @@ var dragula = require('dragula');
                     var itemKanban = board.item[itemkey];
                     var nodeItem = document.createElement('div');
                     nodeItem.classList.add('kanban-item');
-//                    nodeItem.classList.add('row');
                     nodeItem.dataset.eid = itemKanban.id;
                     
-                    //console.log("3xxxxxxxxx");
                     
                     var nodeItemTitle = document.createElement('div');
-                    nodeItemTitle.classList.add('kanban-item-title');
-//                    nodeItemTitle.classList.add('col-sm-10');
+                    nodeItemTitle.classList.add('card-item');
                     
-                    //console.log("display():: itemKanban.title="+itemKanban.title);
-                    
-                    
-                    //nodeItem.innerHTML="<div style='float:left'>TITLE</div><div style='float:left'>Y</div>";
-                    
-                    //nodeItem.innerHTML = itemKanban.title;
                     //add function
                     nodeItemTitle.clickfn = itemKanban.click;
                     nodeItem.dragfn = itemKanban.drag;
@@ -302,36 +283,43 @@ var dragula = require('dragula');
                     //add click handler of item
                     __onclickHandler(nodeItemTitle, nodeItem);
                     
-                    console.log(JSON.stringify(itemKanban));
+                    //console.log(JSON.stringify(itemKanban));
                     
                     // Display card text
-                    if (undefined!=self.options.customDisplay){
-                    	nodeItemTitle.innerHTML+=self.options.customDisplay(board.id, nodeItem, itemKanban);
-                    }else{
-                    	//nodeItemTitle.innerHTML+="<div class='kanban-item-title'>"+itemKanban.title+"</div>";
-                    	nodeItemTitle.innerHTML+=itemKanban.title;
+                    nodeItemTitle.innerHTML=cardDisplay(board.id, nodeItem, itemKanban);
+                    
+                    if (self.options.labels){
+                      
+                      var labels=nodeItemTitle.querySelectorAll(".btnLabelDelete");
+                      for (i=0; i<labels.length; i++)
+                        __onClickHandler2(labels[i], nodeItem, self.options.onLabelDelete, function(caller){
+                        	caller.parentElement.remove();
+                        });
+                      
+                      var labels=nodeItemTitle.querySelectorAll(".btnLabelNew");
+                      for (i=0; i<labels.length; i++){
+                        __onBlurHandler2(labels[i], nodeItem, self.options.onLabelNew, function (newLabelTextBox, taskId, label){
+                          var pill="<span class='label-pill ng-scope label-pill-green'>"+label+" <button class='btnLabelDelete' data-id='"+taskId+"' data-label='"+label+"'>x</button></span>";
+                          
+                          var labelsWrapper=newLabelTextBox.closest(".labels").querySelector(".labelswrapper"); //look up till we hit .labels, then down to the .labelswrapper span
+                          labelsWrapper.innerHTML+=pill;
+                          newLabelTextBox.value=""; // clear "new label" text box
+                          
+                          __attachOnLabelDeleteHandlers(labelsWrapper, nodeItem);
+                        });
+                      }
+                      
+                      __attachOnLabelDeleteHandlers(nodeItemTitle.querySelector(".labelswrapper"), nodeItem);
                     }
+                    
+                    
+                    
+                    if (self.options.deleteCards)
+                      __ondeleteHandler(nodeItemTitle.querySelector(".btnDeleteCard"), nodeItem, self.options.onDelete);
+                    
+                    __onupdateHandler(nodeItemTitle.querySelector(".title"), nodeItem, self.options.onUpdate);
+                    
                     nodeItem.appendChild(nodeItemTitle);
-                    
-                    // Show Delete button if necessary
-                    if (self.options.deleteCards){
-                    	var del = document.createElement('div');
-                    	del.classList.add('kanban-item-delete');
-                    	//del.classList.add('col-sm-2');
-                    	
-                    	var delBtn = document.createElement('button');
-                    	delBtn.classList.add('kanban-title-button');
-                    	delBtn.classList.add('btn');
-                    	delBtn.classList.add('btn-default');
-                    	delBtn.classList.add('btn-xs');
-                    	delBtn.innerHTML="X";
-                    	__ondeleteHandler(delBtn, nodeItem, self.options.onDelete);
-                    	
-                    	del.appendChild(delBtn);
-                    	
-                    	nodeItem.appendChild(del);
-                    }
-                    
                     contentBoard.appendChild(nodeItem);
                 }
                 //footer board
@@ -400,12 +388,53 @@ var dragula = require('dragula');
             //create container
             var boardContainer = document.createElement('div');
             boardContainer.classList.add('kanban-container');
+            
+            // add menu container
+            //var ctxMenu = document.createElement('div');
+            //ctxMenu.classList.add('ctx-menu');
+            //boardContainer.appendChild(ctxMenu);
+            
             self.container = boardContainer;
             //add boards
             self.addBoards(self.options.boards);
             //appends to container
             self.element.appendChild(self.container);
         };
+        
+        function __attachOnLabelDeleteHandlers(labelsWrapper, nodeItem){
+          var deleteButtons=labelsWrapper.querySelectorAll(".btnLabelDelete");
+          for (i=0; i<deleteButtons.length; i++)
+            __onClickHandler2(deleteButtons[i], nodeItem, self.options.onLabelDelete, function(deleteLabelSuccess){
+            	deleteLabelSuccess.closest(".label-pill").remove();
+            });
+        }
+        
+        function __onClickHandler2(target, nodeItem, clickfn, onSuccess) {
+        	target.addEventListener('click', function (e) {
+                e.preventDefault();
+                clickfn(target, nodeItem, onSuccess);
+                if (typeof(this.clickfn) === 'function')
+                    this.clickfn(nodeItem);
+            });
+        }
+
+        function __onBlurHandler2(target, nodeItem, blurfn, onSuccess) {
+        	target.addEventListener('blur', function (e) {
+                e.preventDefault();
+                blurfn(target, nodeItem, onSuccess);
+                //if (typeof(this.blurfn) === 'function')
+                //    this.blurfn(nodeItem);
+            });
+        }
+        
+        function __onupdateHandler(target, nodeItem, onUpdateFn) {
+        	target.addEventListener('blur', function (e) {
+                e.preventDefault();
+                onUpdateFn(target, nodeItem);
+                if (typeof(this.blurfn) === 'function')
+                    this.blurfn(nodeItem);
+            });
+        }
 
         function __ondeleteHandler(target, nodeItem, clickfn) {
         	target.addEventListener('click', function (e) {
@@ -415,7 +444,7 @@ var dragula = require('dragula');
                     this.clickfn(nodeItem);
             });
         }
-        
+
         function __onclickHandler(target, nodeItem, clickfn) {
         	target.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -461,9 +490,82 @@ var dragula = require('dragula');
             }
         }
 
+        function cardDisplay(boardId, el, data){
+          var result="<div class='card'>";
+          result+="<div class='header'><a class='id' href='#'>"+data.id+"</a><span class='right'>";
+          
+          if (self.options.userAssignment)
+            result+="<button class='action-btn'><i class='unassigned fa fa-user'></i></button>";
+          
+          result+="</span></div>";
+          result+="<div class='body'>";
+          
+          if (undefined!=self.options.customDisplay){
+            result+=self.options.customDisplay(boardId, el, data);
+          }else{
+            result+="<textarea class='title'>"+data.title+"</textarea>";
+          }
+          
+          result+="</div><div class='footer clearfix'>";
+          result+="<div class='labels'>";
+          result+="<span class='labelswrapper'>";
+          if (self.options.labels){
+            if (undefined!=data.labels){
+              var labelsArray=data.labels.split(",");
+              for (i=0;i<labelsArray.length;i++){
+                if (labelsArray[i]!="")
+                  result+="<span class='label-pill ng-scope label-pill-green'>"+labelsArray[i]+" <button class='btnLabelDelete' data-id='"+data.id+"' data-label='"+labelsArray[i]+"'>x</button></span>";
+              }
+            }
+          }
+          
+          result+="</span>";
+          result+="<span class='label-pill ng-scope label-pill-new'><input class='btnLabelNew' onBlur='this.parentNode.classList.remove(\"open\")' onFocus='this.parentNode.classList.add(\"open\")' data-id='"+data.id+"' type='text'/></span>";
+          result+="</div>";
+          
+          result+="<div class='actions right'>";
+          
+          if (self.options.comments)
+            result+="<button class='action-btn'><i class='fas fas-comment-alt'></i></button>";
+            
+          if (self.options.contextMenu){
+            result+='<div class="action-menu">';
+            result+='  <button data-toggle="dropdown" class="dropdown-toggle action-btn" >';
+            result+='    <i class="fa fa-ellipsis-v action-menu-icon"></i>';
+            result+='  </button>';
+            result+='  <ul class="dropdown-menu card-dropdown-menu">';
+            
+            if (self.options.deleteCards){
+              result+='    <li class="dropdown-menu-item">';
+              result+='      <button class="btnDeleteCard action-btn">Delete Card</button>';
+              result+='    </li>';
+            }
+            result+='  </ul>';
+            result+='</div>';
+            
+          }
+          
+          result+="</div></div>";
+          result+="</div>";
+        
+          return result;
+        }
+        
+        function buildMenu(boardId, el, data){
+          console.log("building ctx menu");
+          
+          return
+            "  <ul class='dropdown-menu'>"+
+            "    <li class='dropdown-menu-item' >"+
+            "      <button style='width:200px' onClick='deleteCard("+data.id+")' class='action-btn'>Delete Card</button>"+
+            "    </li>"+
+            "  </ul>";
+        }
+        
         //init plugin
         this.init();
     };
+    
 }());
 
 
@@ -1243,6 +1345,7 @@ function dragula (initialContainers, options) {
   }
 }
 
+
 function touchy (el, op, type, fn) {
   var touch = {
     mouseup: 'touchend',
@@ -1356,6 +1459,7 @@ function getCoord (coord, e) {
   return host[coord];
 }
 
+
 module.exports = dragula;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
@@ -1369,3 +1473,15 @@ if (si) {
 
 module.exports = tick;
 },{}]},{},[1]);
+
+
+//function addLabel(label){
+//	console.log("AddPill function");
+//	var pill="<span class='label-pill ng-scope label-pill-green'>"+el.value+" <button class='btnLabelDelete' data-id='"+nodeItem.dataset.eid+"' data-label='"+el.value+"'>x</button></span>";
+//	el.parentElement.parentElement.innerHTML+=pill;
+//
+//	__onBlurHandler2(el, nodeItem, self.options.onLabelNew);
+//	
+//	//el.parentElement.parentElement.innerHTML
+//}
+
