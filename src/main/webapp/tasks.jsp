@@ -123,7 +123,7 @@ $(document).ready(function() {
         customDisplay: function(boardId, el, data){
         	console.log("customDisplay():: el="+JSON.stringify(el.dataset));
         	
-        	return "<textarea id='title_"+data.id+"' style='height:10px' class='title'>"+data.title+"</textarea>";
+        	return "<textarea id='title_"+data.id+"' style='height:10px' class='title'>"+data.title+"</textarea><br/><span style='border: 3px solid transparent'>"+data.timestamp.substring(0,10)+"</span>";
         	
         	
         	//return "<div class='card'>"+
