@@ -11,10 +11,10 @@ function escapeRegExp(str) {
     return str.replace(/([.*+?^=!:\${}()|\[\]\/\\])/g, "\\$1");
 }
 function loadDataTable(){
-	var userFilter=Utils.getParameterByName("id");
-	
-	
-	$('#example').DataTable( {
+  var userFilter=Utils.getParameterByName("id");
+  
+  
+  $('#example').DataTable( {
         "ajax": {
             "url": '${pageContext.request.contextPath}/api/events/'+(undefined!=userFilter?"?user="+userFilter:""),
             "dataSrc": ""
@@ -32,24 +32,24 @@ function loadDataTable(){
             { "data": "user" }
         ],"columnDefs": [
             { "targets": 2, "orderable": true, "render": function (data,type,row){
-            	
-            	var result=row['text'];
-            	if (/.*\[.+\].*/.test(row['text'])){ // look for a set of square brackets
-            		var before=/.*\[(.+)\].*/.exec(row['text']);
-            		
-            		var split=before[1].split("|");
-            		var title=split[0];
-            		var cardId=split[1];
-            		var link="<a href='https://trello.com/c/"+cardId+"'>"+title+"</a>";
-            		
-            		var find1=escapeRegExp(("["+before[1]+"]").replace(/\[/g,'\\[').replace(/\]/g,'\\]').replace(/\|/g,'\\|'));
-            		var find2=("["+before[1]+"]").replace(/\[/g,'\\[').replace(/\]/g,'\\]').replace(/\|/g,'\\|');
-            		
-            		var after=row['text'].replace(new RegExp(find2, 'g'), link);
-            		
-            		result=after;
-            	}
-            	
+              
+              var result=row['text'];
+              if (/.*\[.+\].*/.test(row['text'])){ // look for a set of square brackets
+                var before=/.*\[(.+)\].*/.exec(row['text']);
+                
+                var split=before[1].split("|");
+                var title=split[0];
+                var cardId=split[1];
+                var link="<a href='https://trello.com/c/"+cardId+"'>"+title+"</a>";
+                
+                var find1=escapeRegExp(("["+before[1]+"]").replace(/\[/g,'\\[').replace(/\]/g,'\\]').replace(/\|/g,'\\|'));
+                var find2=("["+before[1]+"]").replace(/\[/g,'\\[').replace(/\]/g,'\\]').replace(/\|/g,'\\|');
+                
+                var after=row['text'].replace(new RegExp(find2, 'g'), link);
+                
+                result=after;
+              }
+              
               return result;
             }},  
             { "targets": 3, "orderable": true, "render": function (data,type,row){
@@ -61,10 +61,10 @@ function loadDataTable(){
 }
 
 $(document).ready(function() {
-	if (null!=Utils.getParameterByName("name")){
-		document.getElementById("title-user").innerText=": "+Utils.getParameterByName("name");
-    loadDataTable();
-	}
+  if (null!=Utils.getParameterByName("name")){
+    document.getElementById("title-user").innerText=": "+Utils.getParameterByName("name");
+  }
+  loadDataTable();
 });
 
 
