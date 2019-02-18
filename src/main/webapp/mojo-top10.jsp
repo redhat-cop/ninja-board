@@ -16,7 +16,7 @@
 	<body onload="refresh();">
 
 		<script>
-			var ctx = "https://community-ninja-board-community-ninja-board.apps.d2.casl.rht-labs.com/community-ninja-board";
+		  var ctx = "https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs";
 			//var ctx = "http://localhost:8082/community-ninja-board";
 			//var ctx = "${pageContext.request.contextPath}";
 			
@@ -82,7 +82,7 @@ function buildChart(uri, chartElementName, type){
 }
 
 var graphs={
-  "leaderboard":         "/api/leaderboard/10",
+  "leaderboard":         "/api/proxy/leaderboard_10",
 };
 
 function refreshGraph0(graphName, type){
