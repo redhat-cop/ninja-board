@@ -420,6 +420,14 @@ public class Heartbeat2 {
       				}
       				
       			}
+      			
+      			// add the top 10 to the graphs too so they're available externally
+      			try{
+      				Http.post(url+"/leaderboard_10", (String)cc.getLeaderboard2(10).getEntity());
+      			}catch (IOException e){
+    					e.printStackTrace();
+    				}
+      			
       		}else{
       			log.warn("not pushing to graphs proxy - url was: "+graphsProxyUrl);
       		}

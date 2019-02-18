@@ -460,11 +460,12 @@ public class ManagementController {
 //    columns.add(Config.get().new MapBuilder<String,String>().put("title","ID").put("data", "id").build());
     columns.add(new MapBuilder<String,String>().put("title","Name").put("data", "name").build());
     columns.add(new MapBuilder<String,String>().put("title","Total").put("data", "total").build());
-    for(String field:fields)
-      columns.add(new MapBuilder<String,String>().put("title",field).put("data", field).build());  
     
     columns.add(new MapBuilder<String,String>().put("title","Ninja Belt").put("data", "level").build());
     columns.add(new MapBuilder<String,String>().put("title","Points to next level").put("data", "pointsToNextLevel").build());
+    
+    for(String field:fields)
+      columns.add(new MapBuilder<String,String>().put("title",field).put("data", field).build());  
     
     wrapper.put("columns", columns);
     wrapper.put("data", data);
