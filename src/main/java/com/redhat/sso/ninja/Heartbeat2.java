@@ -423,7 +423,9 @@ public class Heartbeat2 {
       			
       			// add the top 10 to the graphs too so they're available externally
       			try{
-      				Http.post(url+"/leaderboard_10", (String)cc.getLeaderboard2(10).getEntity());
+    					if (200!=Http.post(url+"/breakdown_10", (String)cc.getLeaderboard2(10).getEntity()).responseCode)
+    						log.error("Error pushing 'leaderboard' info to roxy");
+//      				Http.post(url+"/leaderboard_10", (String)cc.getLeaderboard2(10).getEntity());
       			}catch (IOException e){
     					e.printStackTrace();
     				}
