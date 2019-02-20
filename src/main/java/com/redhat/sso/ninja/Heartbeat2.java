@@ -391,52 +391,52 @@ public class Heartbeat2 {
       db.save();
       
       if (!((String)config.getValues().get("lastRun2")).startsWith("-")){
-      	
-      	if (scriptFailure==false){
-      		log.debug("Updating the \"lastRun\" date");
-      		config.getValues().put("lastRun2", sdf.format(runToDate));
-      		
-      		// notify the graphs proxy service if configured
-      		// store summary, breakdown & nextLevel for each user
-      		String graphsProxyUrl=config.getOptions().get("graphs-proxy");
-      		if (null==graphsProxyUrl) graphsProxyUrl=System.getenv("GRAPHS_PROXY");
-      		
-      		if (!StringUtils.isEmpty(graphsProxyUrl)){
-      			String url=graphsProxyUrl+"/api/proxy";
-      			log.warn("graphsProxyUrl is null == "+(null==graphsProxyUrl));
-      			log.warn("roxy configured at: "+url);
-      			ChartsController cc=new ChartsController();
-      			ManagementController mc=new ManagementController();
-      			for(String user:db.getUsers().keySet()){
-      				try{
-      					if (200!=Http.post(url+"/nextLevel_"+user, (String)cc.getUserNextLevel(user).getEntity()).responseCode)
-      						log.error("Error pushing 'nextLevel' info for '"+user+"' to roxy");
-      					if (200!=Http.post(url+"/summary_"+user, (String)mc.getScorecardSummary(user).getEntity()).responseCode)
-      						log.error("Error pushing 'summary' info for '"+user+"' to roxy");
-      					if (200!=Http.post(url+"/breakdown_"+user, (String)mc.getUserBreakdown(user).getEntity()).responseCode)
-      						log.error("Error pushing 'breakdown' info for '"+user+"' to roxy");
-      				}catch (IOException e){
-      					e.printStackTrace();
-      				}
-      				
-      			}
-      			
-      			// add the top 10 to the graphs too so they're available externally
-      			try{
-    					if (200!=Http.post(url+"/breakdown_10", (String)cc.getLeaderboard2(10).getEntity()).responseCode)
-    						log.error("Error pushing 'leaderboard' info to roxy");
-//      				Http.post(url+"/leaderboard_10", (String)cc.getLeaderboard2(10).getEntity());
-      			}catch (IOException e){
-    					e.printStackTrace();
-    				}
-      			
-      		}else{
-      			log.warn("not pushing to graphs proxy - url was: "+graphsProxyUrl);
-      		}
-      		
-      	}else{
-      		log.info("NOT Updating the \"lastRun\" date due to a script failure. It will re-run the same period next time and dupe prevention will keep the data correct");
-      	}
+        
+        if (scriptFailure==false){
+          log.debug("Updating the \"lastRun\" date");
+          config.getValues().put("lastRun2", sdf.format(runToDate));
+          
+          // notify the graphs proxy service if configured
+          // store summary, breakdown & nextLevel for each user
+          String graphsProxyUrl=config.getOptions().get("graphs-proxy");
+          if (null==graphsProxyUrl) graphsProxyUrl=System.getenv("GRAPHS_PROXY");
+          
+          if (!StringUtils.isEmpty(graphsProxyUrl)){
+            String url=graphsProxyUrl+"/api/proxy";
+            log.warn("graphsProxyUrl is null == "+(null==graphsProxyUrl));
+            log.warn("roxy configured at: "+url);
+            ChartsController cc=new ChartsController();
+            ManagementController mc=new ManagementController();
+            for(String user:db.getUsers().keySet()){
+              try{
+                if (200!=Http.post(url+"/nextLevel_"+user, (String)cc.getUserNextLevel(user).getEntity()).responseCode)
+                  log.error("Error pushing 'nextLevel' info for '"+user+"' to roxy");
+                if (200!=Http.post(url+"/summary_"+user, (String)mc.getScorecardSummary(user).getEntity()).responseCode)
+                  log.error("Error pushing 'summary' info for '"+user+"' to roxy");
+                if (200!=Http.post(url+"/breakdown_"+user, (String)mc.getUserBreakdown(user).getEntity()).responseCode)
+                  log.error("Error pushing 'breakdown' info for '"+user+"' to roxy");
+              }catch (IOException e){
+                e.printStackTrace();
+              }
+              
+            }
+            
+            // add the top 10 to the graphs too so they're available externally
+            try{
+              if (200!=Http.post(url+"/leaderboard_10", (String)cc.getLeaderboard2(10).getEntity()).responseCode)
+                log.error("Error pushing 'leaderboard' info to roxy");
+//              Http.post(url+"/leaderboard_10", (String)cc.getLeaderboard2(10).getEntity());
+            }catch (IOException e){
+              e.printStackTrace();
+            }
+            
+          }else{
+            log.warn("not pushing to graphs proxy - url was: "+graphsProxyUrl);
+          }
+          
+        }else{
+          log.info("NOT Updating the \"lastRun\" date due to a script failure. It will re-run the same period next time and dupe prevention will keep the data correct");
+        }
       }else{
         log.debug("NOT Updating the \"lastRun\" date because it's a rolling date");
       }
