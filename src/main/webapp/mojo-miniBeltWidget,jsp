@@ -1,0 +1,30 @@
+<html>
+<center>
+<table>
+<tr><td><span id="_name"></span>, you're a</td></tr>
+<tr><td><a href="https://mojo.redhat.com/community/communities-at-red-hat/communities-of-practice-operations/communities-of-practice-ninja-program"><img class="ninjaIcon" id="_level"></a></td></tr>
+</table>
+</center>
+
+<script>
+  var ctx = "https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs";
+  
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", ctx+"/api/proxy/summary_"+getUsername(), true);
+  xhr.send();
+  xhr.onloadend = function () {
+    var json=JSON.parse(xhr.responseText);
+    document.getElementById("_name").innerHTML=json.displayName;
+    document.getElementById("_level").src=ctx+"/images/"+json.level.toLowerCase()+"_belt_icon.png";
+  }
+
+  function getUsername(){
+    if(undefined!=window.parent._jive_current_user){
+      var username=window.parent._jive_current_user.username;
+      var displayName=window.parent._jive_current_user.displayName;
+    }
+    //if(username==undefined) username="mallen";
+      return username;
+  }
+</script>
+</html>
