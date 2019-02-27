@@ -127,3 +127,6 @@ parameters:
 - description: Token for the Trello API.
   name: TRELLO_API_TOKEN
   required: true
+- description: Token for the Gitlab API.
+  name: GITLAB_API_TOKEN
+  required: true
