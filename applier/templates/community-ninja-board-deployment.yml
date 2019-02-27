@@ -130,7 +130,7 @@ parameters:
 - description: Token for the Gitlab API.
   name: GITLAB_API_TOKEN
   required: true
-- description: Google Drive credentials. download this: https://github.com/odeke-em/drive/releases/download/v0.3.9/drive_linux, run './drive_linux init' get use the contents of the .json file from ~/.gd.
+- description: Google Drive credentials. download github.com/odeke-em/drive/releases/download/v0.3.9/drive_linux, run './drive_linux init' get use the contents of the .json file from ~/.gd
   name: GD_CREDENTIALS
   required: true
   
