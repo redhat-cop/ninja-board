@@ -157,20 +157,23 @@ public class GoogleDrive2 {
       try{
         String url="https://github.com/odeke-em/drive/releases/download/v0.3.9/drive_linux";
         
-        System.out.println("Downloading gdrive from: "+url);
+        log.debug("Downloading gdrive from: "+url);
         new DownloadFile().get(url, new File(GoogleDrive2.getDefaultExecutable()).getParentFile(), PosixFilePermission.OTHERS_EXECUTE);
         
         credsFile.getParentFile().mkdirs();
-        System.out.println("Deploying credentials.json in: "+credsFile);
+        log.debug("Deploying credentials.json in: "+credsFile);
         
         InputStream is=GoogleDrive2.class.getClassLoader().getResourceAsStream("/gd_credentials.json");
         if (null!=is){
+        	log.debug("... from internal classloader path of '/gd_credentials.json'");
         	IOUtils.copy(is, new FileOutputStream(credsFile));
         }else if (null!=System.getenv("GD_CREDENTIALS")){
+        	log.debug("... from env variable 'GD_CREDENTIALS'");
         	IOUtils.write(System.getenv("GD_CREDENTIALS").getBytes(), new FileOutputStream(credsFile));
         }else{
         	log.error("no gdrive creds specified in either resources, or system props");
         }
+        log.debug("drive credentials file contains: "+IOUtils.toString(new FileInputStream(credsFile)));
         
       }catch(Exception e){
         System.out.println("Failed to initialise gdrive and/or credentials, cleaning up exe and creds");
