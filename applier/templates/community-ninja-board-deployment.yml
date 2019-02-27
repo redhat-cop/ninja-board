@@ -40,6 +40,8 @@ objects:
             value: ${TRELLO_API_TOKEN}
           - name: TRELLO_API_KEY
             value: ${TRELLO_API_KEY}
+          - name: GITLAB_API_TOKEN
+            value: ${GITLAB_API_TOKEN}
           image: ${APPLICATION_NAME}
           imagePullPolicy: Always
           name: ${APPLICATION_NAME}
