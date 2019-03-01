@@ -1,7 +1,7 @@
 <html>
 <center>
 <table id="race" cellspacing="0" cellpadding="0">
-<tr><td colspan="10" class="header"><center><h2>"Race to Black!"</h2></center></td></tr>
+<tr><td colspan="10" class="header"><center><h2>"Race to Black Belt!"</h2></center></td></tr>
 <!-- 
 <tr class="header"><td class="col">#</td><td class="col"></td><td class="col">Person</td><td class="col">Pts</td></tr>
 -->
@@ -38,7 +38,8 @@
   table tr{
   }
   .header{
-    background-color: #EEE;
+    background-color: #007a87;
+    color: white;
     padding-top: 15px;
     border-bottom: solid 1px #ccc
   }
@@ -114,6 +115,7 @@
     }
     
   }
+  
 
 </script>
 </html>
