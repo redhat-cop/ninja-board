@@ -20,6 +20,12 @@ String graphHeight="100%";
 </head>
 <body onload="refresh();">
   <%@include file="nav.jsp"%>
+  
+  <div class="navbar-connector"></div>
+  <div class="navbar-title">
+   	<h2><span class="navbar-title-text">Leaderboard</span></h2>
+  </div>
+  
   <table style="width:70%; margin: 0 auto;">
 	  <tr>
 	  	<td align="center">

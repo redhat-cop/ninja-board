@@ -64,6 +64,11 @@ public class ChartsController{
       
       c.getLabels().add(null!=userInfo && userInfo.containsKey("displayName")?userInfo.get("displayName"):e.getKey());
       
+      c.getCustom1().add(e.getKey()); // users rh username
+      String level=userInfo.get("level");
+      if (level==null) level="none";
+      c.getCustom2().add(level.toLowerCase()); // belt/level
+      
       if (c.getDatasets().size()<=0) c.getDatasets().add(new DataSet2());
       c.getDatasets().get(0).getData().add(e.getValue());
       c.getDatasets().get(0).setBorderWidth(1);

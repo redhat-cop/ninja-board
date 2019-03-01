@@ -24,12 +24,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.ws.rs.core.Response;
-
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 
 import com.redhat.sso.ninja.user.UserService;
 import com.redhat.sso.ninja.user.UserService.User;
@@ -43,15 +40,10 @@ import com.redhat.sso.ninja.utils.Tuple;
 public class Heartbeat2 {
   private static final Logger log = Logger.getLogger(Heartbeat2.class);
   private static Timer t;
-  private static final long delay=30000l;//=System.getProperty("user.home").indexOf("mallen")>=0?1000l:30000l;
+  private static final long delay=30000l;
 
   public static void main(String[] asd){
     try{
-    	
-    	for (String x:Arrays.asList("@clementescoffier", "mtakane", "@wolfgangschulze2", "mzali@redhat.com", "kvanwess@redhat.com", "vicken-krissian", "na", "n/a")){
-    		System.out.println("'"+x+"' becomes '"+ new HeartbeatRunnable().cleanupGithubTrelloId(x)+"'");
-    	}
-    	System.exit(0);
     	
 //    	Database2 db=Database2.get();
 //    	Map<String, Object> script=new HashMap<String, Object>();
@@ -72,16 +64,13 @@ public class Heartbeat2 {
 //      lastRunC.set(Calendar.MINUTE, 0);
 //      lastRunC.set(Calendar.SECOND, 1);
 //      
-//      System.out.println("LAST RUN: "+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(lastRunC.getTime()));
-//      System.out.println(Heartbeat2.convertLastRun("perl ${user.home}/Work/poc/sso-tools/cop-ninja/github-stats.py -s ${LAST_RUN:yyyy-MM-dd}", lastRunC.getTime()));
-//      System.out.println(Heartbeat2.convertLastRun("sh ${user.home}/Work/poc/sso-tools/cop-ninja/trello.sh -s ${DAYS_FROM_LAST_RUN}", lastRunC.getTime()));
-//      
 //      lastRunC.set(Calendar.DAY_OF_MONTH, 21);
 //      System.out.println("TODAY?: "+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(lastRunC.getTime()));
       
-      Heartbeat2.runOnce();
-//        Heartbeat.start(60000l);
-//        Thread.sleep(300000l);
+//      Heartbeat2.runOnce();
+      
+      new HeartbeatRunnable().levelUpChecks(Database2.get());
+      
     }catch(Exception e){
       e.printStackTrace();
     }
@@ -98,11 +87,6 @@ public class Heartbeat2 {
         
       }else if (toReplace.contains("DAYS_FROM_LAST_RUN")){
         Date runTo2=java.sql.Date.valueOf(LocalDate.now());
-//        Calendar runTo=Calendar.getInstance();
-//        runTo.setTime(new Date());
-//        runTo.set(Calendar.HOUR, 0);
-//        runTo.set(Calendar.MINUTE, 0);
-//        runTo.set(Calendar.SECOND, 0);
         Integer daysFromLastRun=(int)((runTo2.getTime() - lastRunDate.getTime()) / (1000 * 60 * 60 * 24))+1;
         m.appendReplacement(sb, String.valueOf(daysFromLastRun));
       }else{
@@ -139,23 +123,28 @@ public class Heartbeat2 {
 //      System.out.println("getting pool by id: "+key);
       Map<String, String> result=new HashMap<String, String>();
       for(Entry<String, Map<String, String>> e:db.getUsers().entrySet()){
-        result.put(e.getValue().get(key), e.getKey());
+        // support a default of your key id when no pool id is found
+        if (e.getValue().containsKey(key)){
+          result.put(e.getValue().get(key), e.getKey());
+        }else{
+          result.put(e.getKey(), e.getKey()); // default to user id key
+        }
       }
       return result;
     }
     
     private String cleanupGithubTrelloId(String input){
-    	String result=input;
-    	
-    	// if the id start with @, then strip it
-    	if (result.startsWith("@")) result=result.substring(1, result.length());
-    	
-    	// if the id still contains an @ then assume it's an email and strip the latter part
-    	result=result.substring(0, (result.contains("@")?result.indexOf("@"):result.length()) );
-    	
-    	if (!"".equalsIgnoreCase(result) && !"na".equalsIgnoreCase(result) && !"n/a".equalsIgnoreCase(result))
-    		return result;
-    	return null;
+      String result=input;
+      
+      // if the id start with @, then strip it
+      if (result.startsWith("@")) result=result.substring(1, result.length());
+      
+      // if the id still contains an @ then assume it's an email and strip the latter part
+      result=result.substring(0, (result.contains("@")?result.indexOf("@"):result.length()) );
+      
+      if (!"".equalsIgnoreCase(result) && !"na".equalsIgnoreCase(result) && !"n/a".equalsIgnoreCase(result))
+        return result;
+      return null;
     }
 
     public boolean addNewlyRegisteredUsers(Database2 db){
@@ -401,7 +390,67 @@ public class Heartbeat2 {
         
       } // end of scripts loop
       
-      // do any users need levelling up?
+      
+//      // do any users need levelling up?
+      levelUpChecks(db);
+      db.save();
+      
+      if (!((String)config.getValues().get("lastRun2")).startsWith("-")){
+        
+        if (scriptFailure==false){
+          log.debug("Updating the \"lastRun\" date");
+          config.getValues().put("lastRun2", sdf.format(runToDate));
+          
+          // notify the graphs proxy service if configured
+          // store summary, breakdown & nextLevel for each user
+          String graphsProxyUrl=config.getOptions().get("graphs-proxy");
+          if (null==graphsProxyUrl) graphsProxyUrl=System.getenv("GRAPHS_PROXY");
+          
+          if (!StringUtils.isEmpty(graphsProxyUrl)){
+            String url=graphsProxyUrl+"/api/proxy";
+            log.warn("graphsProxyUrl is null == "+(null==graphsProxyUrl));
+            log.warn("roxy configured at: "+url);
+            ChartsController cc=new ChartsController();
+            ManagementController mc=new ManagementController();
+            for(String user:db.getUsers().keySet()){
+              try{
+                if (200!=Http.post(url+"/nextLevel_"+user, (String)cc.getUserNextLevel(user).getEntity()).responseCode)
+                  log.error("Error pushing 'nextLevel' info for '"+user+"' to roxy");
+                if (200!=Http.post(url+"/summary_"+user, (String)mc.getScorecardSummary(user).getEntity()).responseCode)
+                  log.error("Error pushing 'summary' info for '"+user+"' to roxy");
+                if (200!=Http.post(url+"/breakdown_"+user, (String)mc.getUserBreakdown(user).getEntity()).responseCode)
+                  log.error("Error pushing 'breakdown' info for '"+user+"' to roxy");
+              }catch (IOException e){
+                e.printStackTrace();
+              }
+              
+            }
+            
+            // add the top 10 to the graphs too so they're available externally
+            try{
+              if (200!=Http.post(url+"/leaderboard_10", (String)cc.getLeaderboard2(10).getEntity()).responseCode)
+                log.error("Error pushing 'leaderboard' info to roxy");
+//              Http.post(url+"/leaderboard_10", (String)cc.getLeaderboard2(10).getEntity());
+            }catch (IOException e){
+              e.printStackTrace();
+            }
+            
+          }else{
+            log.warn("not pushing to graphs proxy - url was: "+graphsProxyUrl);
+          }
+          
+        }else{
+          log.info("NOT Updating the \"lastRun\" date due to a script failure. It will re-run the same period next time and dupe prevention will keep the data correct");
+        }
+      }else{
+        log.debug("NOT Updating the \"lastRun\" date because it's a rolling date");
+      }
+      
+      config.save();
+    }
+    
+    public void levelUpChecks(Database2 db){
+    	log.info("Level-up checks...");
       int count=1;
       Map<String, Map<String, String>> users=db.getUsers();
       while (count>0){ // keep checking, some people may need multiple promotions in one go!
@@ -424,55 +473,16 @@ public class Heartbeat2 {
             
             db.addEvent("User Promotion", userInfo.get("username"), "Promoted to "+nextLevel.getRight()+" level");
   //          db.getEvents().add("User Promotion: ["+userInfo.get("username") +"] was promoted to level ["+nextLevel.getRight()+"]");
+            
+            db.addTask(userInfo.get("username")+" promoted to "+nextLevel.getRight()+" belt", userInfo.get("username"));
+            
             count+=1;
           }
           
         }
       }
-      
-      
       db.save();
-      
-      if (!((String)config.getValues().get("lastRun2")).startsWith("-")){
-      	
-      	if (scriptFailure==false){
-      		log.debug("Updating the \"lastRun\" date");
-      		config.getValues().put("lastRun2", sdf.format(runToDate));
-      		
-      		// notify the roxy service if configured
-      		// store summary, breakdown & nextLevel for each user ;-)
-      		
-      		if (null!=config.getOptions().get("roxy-proxy")){
-      			String url=config.getOptions().get("roxy-proxy")+"/api/proxy";
-      			log.warn("roxy configured at: "+url);
-      			ChartsController cc=new ChartsController();
-      			ManagementController mc=new ManagementController();
-      			for(String user:db.getUsers().keySet()){
-      				try{
-      					if (200!=Http.post(url+"/nextLevel_"+user, (String)cc.getUserNextLevel(user).getEntity()).responseCode)
-      						log.error("Error pushing 'nextLevel' info for '"+user+"' to roxy");
-      					if (200!=Http.post(url+"/summary_"+user, (String)mc.getScorecardSummary(user).getEntity()).responseCode)
-      						log.error("Error pushing 'summary' info for '"+user+"' to roxy");
-      					if (200!=Http.post(url+"/breakdown_"+user, (String)mc.getUserBreakdown(user).getEntity()).responseCode)
-      						log.error("Error pushing 'breakdown' info for '"+user+"' to roxy");
-      				}catch (IOException e){
-      					e.printStackTrace();
-      				}
-      				
-      			}
-      		}else{
-      			log.warn("not pushing to roxy");
-      		}
-      		
-      	}else{
-      		log.info("NOT Updating the \"lastRun\" date due to a script failure. It will re-run the same period next time and dupe prevention will keep the data correct");
-      	}
-      }else{
-        log.debug("NOT Updating the \"lastRun\" date because it's a rolling date");
-      }
-      
-      config.save();
-    }     
+    }
     
     
     public void allocatePoints(Database2 db, InputStream is, Map<String,Object> script, File scriptFolder, Map<String, String> poolToUserIdMapper) throws NumberFormatException, UnsupportedEncodingException, IOException{
