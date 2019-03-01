@@ -123,7 +123,12 @@ public class Heartbeat2 {
 //      System.out.println("getting pool by id: "+key);
       Map<String, String> result=new HashMap<String, String>();
       for(Entry<String, Map<String, String>> e:db.getUsers().entrySet()){
-        result.put(e.getValue().get(key), e.getKey());
+      	// support a default of your key id when no pool id is found
+      	if (e.getValue().containsKey(key)){
+      		result.put(e.getValue().get(key), e.getKey());
+      	}else{
+      		result.put(e.getKey(), e.getKey()); // default to user id key
+      	}
       }
       return result;
     }
