@@ -123,28 +123,28 @@ public class Heartbeat2 {
 //      System.out.println("getting pool by id: "+key);
       Map<String, String> result=new HashMap<String, String>();
       for(Entry<String, Map<String, String>> e:db.getUsers().entrySet()){
-      	// support a default of your key id when no pool id is found
-      	if (e.getValue().containsKey(key)){
-      		result.put(e.getValue().get(key), e.getKey());
-      	}else{
-      		result.put(e.getKey(), e.getKey()); // default to user id key
-      	}
+        // support a default of your key id when no pool id is found
+        if (e.getValue().containsKey(key)){
+          result.put(e.getValue().get(key), e.getKey());
+        }else{
+          result.put(e.getKey(), e.getKey()); // default to user id key
+        }
       }
       return result;
     }
     
     private String cleanupGithubTrelloId(String input){
-    	String result=input;
-    	
-    	// if the id start with @, then strip it
-    	if (result.startsWith("@")) result=result.substring(1, result.length());
-    	
-    	// if the id still contains an @ then assume it's an email and strip the latter part
-    	result=result.substring(0, (result.contains("@")?result.indexOf("@"):result.length()) );
-    	
-    	if (!"".equalsIgnoreCase(result) && !"na".equalsIgnoreCase(result) && !"n/a".equalsIgnoreCase(result))
-    		return result;
-    	return null;
+      String result=input;
+      
+      // if the id start with @, then strip it
+      if (result.startsWith("@")) result=result.substring(1, result.length());
+      
+      // if the id still contains an @ then assume it's an email and strip the latter part
+      result=result.substring(0, (result.contains("@")?result.indexOf("@"):result.length()) );
+      
+      if (!"".equalsIgnoreCase(result) && !"na".equalsIgnoreCase(result) && !"n/a".equalsIgnoreCase(result))
+        return result;
+      return null;
     }
 
     public boolean addNewlyRegisteredUsers(Database2 db){
