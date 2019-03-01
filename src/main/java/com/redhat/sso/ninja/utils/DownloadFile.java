@@ -13,13 +13,6 @@ import org.apache.log4j.Logger;
 public class DownloadFile{
   private Logger log=Logger.getLogger(this.getClass());
   
-  public static void main(String[] asd) throws IOException{
-    String remoteLocation="http://localhost:8082/community-ninja-board/api/script/github-stats.py -s ABCDEF";
-    File localDestination=new File("/home/mallen/Work/poc/sso-tools/community-ninja-board/target/temp");
-    PosixFilePermission permissions=PosixFilePermission.GROUP_EXECUTE;
-    System.out.println(new DownloadFile().get(remoteLocation, localDestination, permissions));
-  }
-  
   public String get(String remoteLocation, String localDestination, PosixFilePermission... permissions) throws IOException{
     return get(remoteLocation, new File(localDestination), permissions);
   }

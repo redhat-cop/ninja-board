@@ -5,6 +5,17 @@ java.util.Calendar
 
 <%@include file="header.jsp"%>
 
+<style>
+
+.edit-link{
+	font-family: Overpass;
+	/*
+	font-size: smaller;
+	*/
+	font-size: 6pt;
+	vertical-align: super;
+}
+</style>
 <script>
 
 var idFieldName="userId";
@@ -121,6 +132,11 @@ function loadDataTable(){
 						        "pageLength" : 25, // default page entries
 						        "searching" : true,
 						        "order" : [[1,"desc"]],
+						        "columnDefs": [
+						        	{ "targets": 0,  "render": function (data,type,row){
+						        		return "<a href='events.jsp?id="+row['id']+"&name="+row['name']+"'>"+row["name"]+"</a> <span class='edit-link'>(<a href='#' onclick='edit2(\""+row["id"]+"\");' data-toggle='modal' data-target='#exampleModal'>edit</a>)</span>";
+						        	}}
+                		]
               	});
                 
             },
@@ -203,10 +219,14 @@ $(document).ready(function() {
 		  color: #333333;
 		}
 	</style>
-	
+
     <%@include file="nav.jsp"%>
     
-
+	<div class="navbar-connector"></div>
+    <div class="navbar-title">
+    	<h2><span class="navbar-title-text">Scorecards</span></h2>
+    </div>
+		
     <div id="solutions">
 		    <div id="solutions-buttonbar">
 		    <!--

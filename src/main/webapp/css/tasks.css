@@ -1,0 +1,458 @@
+.kanban-board-header{
+	text-align: center;
+}
+.kanban-title-board{
+	color: #eee;
+}
+
+.kanban-item{
+  padding: 4px 1px 4px 4px !important;
+  box-sizing: border-box;
+  overflow: auto;
+  
+  border-radius: 3px;
+  -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.2);
+  -moz-box-shadow: 0 1px 2px rgba(0,0,0,.2);
+  box-shadow: 0 1px 2px rgba(0,0,0,.2);
+  transition: box-shadow 1s;
+  transition: -webkit-box-shadow 1s;
+}
+
+
+.kanban-item-delete{
+	float: right;
+	overflow: auto;
+}
+
+.header{
+	height: 20px;
+	-webkit-border-top-right-radius: 3px;
+  -webkit-border-bottom-right-radius: 0;
+  -webkit-border-bottom-left-radius: 0;
+  -webkit-border-top-left-radius: 3px;
+  -moz-border-radius-topright: 3px;
+  -moz-border-radius-bottomright: 0;
+  -moz-border-radius-bottomleft: 0;
+  -moz-border-radius-topleft: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 3px;
+  -moz-background-clip: padding-box;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+  background-color: #fefefe;
+  cursor: move;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  /* top right bottom left*/
+  padding: 0px 0px 0px 5px;
+  width: 100%;
+}
+.header .id{
+  color: #54acef;
+  -ms-flex: 0 0 auto;
+  -webkit-flex: 0 0 auto;
+  flex: 0 0 auto;
+  font-weight: 700;
+  margin: -6px 0 0 -8px;
+  padding: 5px 6px 0 5px;
+}
+.right{
+  -ms-flex: 1 0 auto;
+  -webkit-flex: 1 0 auto;
+  flex: 1 0 auto;
+  margin-left: 6px;
+  text-align: right;
+}
+
+
+.fa,.fas{
+	/*
+	color: #cdcdcd;
+  height: 20px;
+  padding: 0px 5px 0 7px;
+  transition: all .4s;
+  vertical-align: top;
+	*/
+	
+  color: #cdcdcd;
+  cursor: pointer;
+  font-size: 16px;
+  height: 100%;
+  line-height: 20px;
+  margin-left: 5px;
+  padding: 1px 2px 2px;
+  text-decoration: none;
+  transition: all .4s;
+	
+	display: inline-block;
+	font: normal normal normal 16px/1 FontAwesome;
+	text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.fa-user:before{
+	content: "\f007";
+}
+.fa-dots:before{
+	content: "\f142";
+}
+.fas-comment-alt:before{
+	content: "\f27a";
+}
+.assigned,.unassigned{
+  display: block;
+}
+/*
+.card .body .title{
+  float: left;
+  overflow: auto;
+	width:92%;
+}
+*/
+
+/*
+.card .body textarea.title{
+	overflow: hidden;
+  overflow-wrap: break-word;
+  resize: none;
+  
+	-webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  vertical-align: bottom;
+  
+  height: auto;
+}
+*/
+
+.card .body .title{
+	font-size: 14px;
+	
+  border: 1px solid transparent;
+  border-radius: 3px;
+  box-sizing: border-box;
+  color: #525252;
+  line-height: 18px;
+  margin: 0;
+  min-height: 22px;
+  overflow: hidden;
+  padding: 2px 2px 0;
+  resize: none;
+  white-space: normal;
+
+	width:92%;
+}
+
+.card .footer {
+	height: 22px;
+  padding-top: 3px;
+}
+.labels{
+	height: 22px;
+	/*
+	width: 180px;
+	*/
+	width: 79%;
+	float: left;
+}
+
+.actions{
+	height: 22px;
+	/*
+	width: 200px;
+	*/
+	width: 18%;
+		
+	float: right;
+}
+
+.action-menu-btn{
+	/*
+	position: relative;
+	*/
+	
+}
+
+/*
+.labels label-pill{
+    float: left;
+    margin-right: 5px;
+    background: #ccc
+}
+.labels span{
+	overflow: hidden;
+}
+.labels input{
+	-moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    display: block
+}
+*/
+
+.btnLabelDelete, .btnLabelNew{
+	/*
+    width: 9px;
+    background: url('https://cdn1.iconfinder.com/data/icons/design-estate/66/close-cross-circle-512.png') 10px 10px no-repeat;
+	*/
+    height: 11px;
+	  color: #777;
+	  background: transparent;
+    position: relative;
+    border: 0;
+    top: -1px;
+    left: 9px;
+}
+.btnLabelNew{
+	left:  0px !important;
+}
+.popup-dialog{
+    border: #ccc solid 1px;
+    background-color: white;
+    left: 90%;
+    height: 10%;
+    width: 50%;
+    z-index: 1;
+    position: absolute;
+}
+.label-pill-new{
+	border: #bbb solid 0px;
+}
+.open.label-pill-new, .label-pill-new:hover{
+	border: #bbb solid 1px;
+}
+/*
+textarea:focus,input:focus{ 
+*/
+input:focus{
+    outline: none;
+}
+.label-pill-new input{
+	border: 0px;
+	width: 40px;	
+	height: 14px;
+
+}
+.label-pill{
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    cursor: default;
+    padding: 1 7 1 7;
+    font-size: 8pt;
+    color: white;
+    /*
+    display: inline-block;
+    */
+    line-height: 25px;
+    /*
+    position: relative;
+    top: -3px;
+    */
+    margin: 0 3 0 3;
+}
+.label-pill-green{
+		/*
+		background-color: rgb(127, 226, 152);
+		*/
+		background-color: #71b568;
+    
+}
+
+
+
+/*
+perhaps try getting the event, clicked object/button and setting the absolute position from the x & y of the clicked element
+*/
+
+.actions button,
+.header button{
+	height: 22px;
+	width: 30px;
+	padding: 0px 20px 0px 0px;
+	margin: 0px;
+	/* remove button borders*/
+  border-color: transparent;
+	background-color: transparent;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+.dropdown{
+/*
+	left: auto;
+    margin-top: 3px;
+    padding: 0;
+    right: -9px;
+	position: absolute;
+*/
+	
+}
+
+.clearfix:after{
+	clear: both;
+}
+.card .footer .card-footer-action{
+	/*
+	color: #cdcdcd;
+    cursor: pointer;
+    font-size: 16px;
+    height: 100%;
+    line-height: 20px;
+    margin-left: 5px;
+    padding: 1px 2px 2px;
+    text-decoration: none;
+    transition: all .4s;
+	*/
+}
+
+.dropdown-menu-item{
+    color: #6c6c6c;
+    cursor: pointer;
+    border-top: 1px solid #e6e6e6;
+    height: 35px;
+    line-height: 35px;
+    padding: 0 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: all .3s;
+    width: 100%;
+}
+
+
+.action-btn i:hover, .action-btn i:active, .action-btn i:focus{
+	color: #525252;
+}
+
+
+.dropdown-menu-item:hover{
+	color: #777;
+}
+
+.dropdown-menu-item.highlight, .dropdown-menu-item:hover {
+    background-color: #f6f6f6;
+    color: #525252;
+}
+
+.card-dropdown-menu:before{
+	border-bottom-color: #b1b1b1;
+  border-width: 10px;
+  margin-top: -16px;
+}
+/*
+.card-dropdown-menu:after, .card-dropdown-menu:before{
+    position: absolute;
+}
+*/
+
+.action-menu .card-dropdown-menu:after, .action-menu .card-dropdown-menu:before {
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    position: absolute;
+/*
+    right: 7px;
+*/
+    top: -4px;
+    left: 87%;
+    width: 0;
+}
+.action-menu .card-dropdown-menu:after {
+    border-bottom-color: #fefefe;
+    border-width: 10px;
+    margin-top: -15px;
+}
+
+.dropdown-menu-item button{
+	width: 100%;
+	height: 35px;
+}
+.open>.action-menu{
+/*
+	left:-100px;
+left: 90%;
+*/
+}
+
+.action-menu{
+	position:absolute;
+	width: 18%
+	/*
+	float:right;
+	width: 200px;
+	left:90%;
+	*/
+}
+
+.card-dropdown-menu {
+	position: relative;
+	top: 5px;
+	left: -107%;
+	
+	/*
+	left: 41px;
+	left:-84%;
+	top: 7px;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    font-size: 14px;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+	*/
+}
+.open>.card-dropdown-menu {
+	padding: 0px;
+    /*
+    display: block;
+    top: 0px;
+    position: absolute;
+    top:170px;
+    */
+}
+
+.board .card .footer .card-footer-action {
+	/*
+    color: #cdcdcd;
+    cursor: pointer;
+    font-size: 16px;
+    height: 100%;
+    line-height: 20px;
+    margin-left: 5px;
+    padding: 1px 2px 2px;
+    text-decoration: none;
+    transition: all .4s;
+	*/
+}
+.btn-link, .btn-link:hover, .btn-link:focus, .btn-link:active {
+    border-color: transparent;
+    ent */: ;
+}
+.btn-link, .btn-link:active, .btn-link[disabled], fieldset[disabled] .btn-link {
+    background-color: transparent;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+.btn-link {
+    font-weight: 400;
+    color: #428bca;
+    cursor: pointer;
+    border-radius: 0;
+}

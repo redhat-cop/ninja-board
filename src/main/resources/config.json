@@ -2,29 +2,33 @@
 	"scripts": [
 		{
 			"name": "Trello",
-			"source": "https://raw.githubusercontent.com/redhat-cop/ninja-points/v1.2/trello-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
+			"source": "https://raw.githubusercontent.com/redhat-cop/ninja-points/v1.3/trello-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
 			"type": "perl"
 		},
 		{
 			"name": "Github",
-			"source": "https://raw.githubusercontent.com/redhat-cop/ninja-points/v1.2/github-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
+			"source": "https://raw.githubusercontent.com/redhat-cop/ninja-points/v1.3/github-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
+			"type": "perl"
+		},
+		{
+			"name": "Gitlab",
+			"source": "https://raw.githubusercontent.com/redhat-cop/ninja-points/v1.3/gitlab-stats.py -s ${LAST_RUN:yyyy-MM-dd}",
 			"type": "perl"
 		}
 	],
 	"options": {
 		"login.enabled": "false",
 		"root": "${configLocation}",
-		"roxy-proxy": "http://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs",
-		"_roxy-proxy": "http://localhost:8083/ninja-roxy",
+		"_graphs-proxy": "http://localhost:8083/ninja-roxy",
 		"heartbeat.intervalInSeconds": "86400000",
 		"events.max": "1000000",
 		"thresholds": "0:ZERO,5:BLUE,20:GREY,40:RED,75:BLACK",
 		"ldap.enabled": "true",
-		"users.ldap.provider": "ldap://ldap.corp.redhat.com:389",
+		"_users.ldap.provider": "ldap://server.example.com:123",
 		"users.ldap.baseDN": "ou=users,dc=redhat,dc=com",
 		"users.ldap.searchDN": "(&(objectclass=Person)(%s=%s))"
 	},
 	"values": {
-		"lastRun2": "2018-10-7T00:00:00"
+		"lastRun2": "2019-01-01T00:00:00"
 	}
 }

@@ -18,12 +18,19 @@ import com.redhat.sso.ninja.Config;
 
 public class UserService {
 
-  
+  private String getLDAPProvider(){
+  	String providerString=Config.get().getOptions().get("users.ldap.provider");
+  	if (null==providerString){
+  		providerString=System.getenv("USERS_LDAP_PROVIDER");
+  	}
+  	return providerString;
+  }
+	
   public List<User> search(String field, String value) throws NamingException {
     Hashtable<String,String> env=new Hashtable<String,String>(3);
     
     env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-    env.put(Context.PROVIDER_URL, Config.get().getOptions().get("users.ldap.provider"));
+    env.put(Context.PROVIDER_URL, getLDAPProvider());
     env.put(Context.SECURITY_AUTHENTICATION, "none");
 
 //    try {

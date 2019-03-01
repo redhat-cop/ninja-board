@@ -26,7 +26,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -36,6 +35,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
 import com.google.common.base.Splitter;
+import com.redhat.sso.ninja.Database2.EVENT_FIELDS;
 import com.redhat.sso.ninja.chart.Chart2Json;
 import com.redhat.sso.ninja.chart.DataSet2;
 import com.redhat.sso.ninja.utils.IOUtils2;
@@ -48,13 +48,10 @@ public class ManagementController {
   private static final Logger log=Logger.getLogger(ManagementController.class);
   
   public static void main(String[] asd) throws JsonGenerationException, JsonMappingException, IOException{
-//    System.out.println(new ManagementController().register(null,null,null,"[{\"displayName\": \"Mat Allen\",\"username\": \"mallen\",\"trelloId\":\"mallen2\",\"githubId\":\"matallen\"}]"));
-//    System.out.println(new ManagementController().getScorecards().getEntity());
     System.out.println(java.sql.Date.valueOf(LocalDate.now()));
     System.out.println(java.sql.Date.valueOf(LocalDate.now().minus(365, ChronoUnit.DAYS)));
     System.out.println((1000 * 60 * 60 * 24));
     System.out.println(TimeUnit.DAYS.toMillis(1));
-//    System.out.println(new ManagementController().getScorecardSummary("pfann").getEntity());
 //    System.out.println(new ManagementController().toNextLevel("BLUE", 7).toString());
   }
   
@@ -398,9 +395,22 @@ public class ManagementController {
   
   @GET
   @Path("/events")
-  public Response getEvents() throws JsonGenerationException, JsonMappingException, IOException{
+  public Response getEvents(@Context HttpServletRequest request) throws JsonGenerationException, JsonMappingException, IOException{
     Database2 db=Database2.get();
-    return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(db.getEvents())).build();
+    List<Map<String, String>> events=db.getEvents();
+    List<Map<String, String>> result=new ArrayList<Map<String,String>>();
+    
+    if (1>=request.getParameterMap().size()){
+    	result=events;
+    }else{
+    	for(Map<String, String> event:events){
+    		if (event.get(EVENT_FIELDS.USER.v).equals(request.getParameter("user"))) result.add(event);
+    		if (event.get(EVENT_FIELDS.TYPE.v).equals(request.getParameter("event"))) result.add(event);
+    		
+    	}
+    }
+    
+    return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(result)).build();
   }
   
   
@@ -418,8 +428,6 @@ public class ManagementController {
       row.put("id", e.getKey());
       
       String name=userInfo.containsKey("displayName")?userInfo.get("displayName"):e.getKey();
-      
-      name="<div class='link' title='Edit' onclick='edit2(\""+e.getKey()+"\");' data-toggle='modal' data-target='#exampleModal'>"+name+"</div>";
       
       row.put("name", name);
       int total=0;
@@ -452,11 +460,12 @@ public class ManagementController {
 //    columns.add(Config.get().new MapBuilder<String,String>().put("title","ID").put("data", "id").build());
     columns.add(new MapBuilder<String,String>().put("title","Name").put("data", "name").build());
     columns.add(new MapBuilder<String,String>().put("title","Total").put("data", "total").build());
-    for(String field:fields)
-      columns.add(new MapBuilder<String,String>().put("title",field).put("data", field).build());  
     
     columns.add(new MapBuilder<String,String>().put("title","Ninja Belt").put("data", "level").build());
     columns.add(new MapBuilder<String,String>().put("title","Points to next level").put("data", "pointsToNextLevel").build());
+    
+    for(String field:fields)
+      columns.add(new MapBuilder<String,String>().put("title",field).put("data", field).build());  
     
     wrapper.put("columns", columns);
     wrapper.put("data", data);

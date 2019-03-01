@@ -24,14 +24,14 @@
 				return refreshGraph0('leaderboard', 'HorizontalBar');
 			}
 		</script>
-		
-		<div id="leaderboard_container" class="graph" style="width:1200px; height:100%;">
+		<center>
+		<div id="leaderboard_container" class="graph" style="width:1200px; height:200px;">
 			<div class="graph_header">
-				<div class="graph_header_main cardField">Top 10 Ninjas!</div>
+				<div class="graph_header_main cardField">Race to Black Belt! - Top 10</div>
 			</div>
 			<canvas id="leaderboard" width="1200" height="800"></canvas>
 		</div>
-		
+		</center>
 	
 
 
@@ -100,7 +100,7 @@ function getUsername(){
 		var username=window.parent._jive_current_user.username;
 		var displayName=window.parent._jive_current_user.displayName;
 	}
-  if(username==undefined) username="mallen";
+  //if(username==undefined) username="mallen";
 	return username;
 }
 </script> 
