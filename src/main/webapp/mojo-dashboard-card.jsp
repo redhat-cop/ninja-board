@@ -13,6 +13,8 @@
 				font-family: Arial;
 			}
 		</style>
+	
+	
 
 		<script>
 			//var ctx = "https://community-ninja-board-community-ninja-board.apps.d1.casl.rht-labs.com/community-ninja-board";
@@ -93,84 +95,113 @@
 			position:relative;
 			top:20px;
 		}
-		</style>
-
 		
-		<table border=0 style="width:1000px;">
+		a{
+		  color: white;
+		  text-decoration: none;
+		}
+		a:hover{
+		  text-decoration: underline;
+		}
+		</style>
+		
+		
+		<table id="nav" border=0 style="width: 100%">
 			<tr>
-				<td colspan="2">
-					<table class="card2" border=0>
+				<!--td style="width:33%; vertical-align:top;">
+					
+					<table class="card2">
 						<tr>
-							<td colspan="6"><span class="cardName" id="_error"></span><br/><span id="_error2"></td>
+							<td><a href="/community/communities-at-red-hat/communities-of-practice-operations/communities-of-practice-ninja-program-v2/overview">Return to Ninja Program Homepage</a></td>
 						</tr>
+					</table>
+					
+				</td-->
+				<td>
+					
+					<table id="dashboard" border=0 style="width:1000px;">
 						<tr>
-							<td class="cardName" colspan="2"><span id="_displayName"></span></td>
-							<td class="cardScore" rowspan="4"><img class="ninjaIcon" id="_level"></img></td>
-							<td class="cardScore"><span id="_Trello">0</span></td>
-							<td class="cardScore"><span id="_Github">0</span></td>
-							<td class="cardScore"><!-- chat counter --></td>
-						</tr>
-						<tr>
-							<td class="cardRow">
-								<img class="icon" src="https://www.redhat.com/profiles/rh/themes/redhatdotcom/img/logo.png">
-							</td>
-							<td><span id="_userId"></span></td>
-							<td class="cardScoreText" rowspan="3">trello</td>
-							<td class="cardScoreText" rowspan="3">github</td>
-							<td class="cardScoreText" rowspan="3"><!--chat--></td>
-						</tr>
-						<tr>
-							<td class="cardRow"><img class="icon" src="https://d2k1ftgv7pobq7.cloudfront.net/meta/u/res/images/brand-assets/Logos/0099ec3754bf473d2bbf317204ab6fea/trello-logo-blue.png"></td>
-							<td><span id="_trelloId"></span></td>
-						</tr>
-						<tr>
-							<td class="cardRow"><img  style="height:20px;" src="https://assets-cdn.github.com/images/modules/logos_page/GitHub-Logo.png"></td>
-							<td><span id="_githubId"></span></td>
-						</tr>
-						
-						<tr>
-							<td colspan="6" style="height: 20px;"><!-- SPACER ONLY --></td>
-						</tr>
-						
-						<tr>
-							<td colspan="6">
-								
-								<table border=0 style="width:100%;height:400px">
+							<td colspan="2">
+								<table class="card2" border=0>
 									<tr>
-										<td style="width:50%;">
-											<!-- #################### -->
-											<!-- BOTTOM LEFT DOUGHNUT -->
-											<!-- #################### -->
-											<script>
-												function leaderboardRefresh(){ return refreshGraph0('points', 'Doughnut', colors); }
-											</script>
-											<div id="leaderboard_container" class="graph" >
-												<canvas id="points"></canvas>
-												<center><span class="graph-label">Next Level</span></center>
-											</div>
+										<td colspan="6"><span class="cardName" id="_error"></span><br/><span id="_error2"></td>
+									</tr>
+									<tr>
+										<td class="cardName" colspan="2"><span id="_displayName"></span></td>
+										<td class="cardScore" rowspan="4"><img class="ninjaIcon" id="_level"></img></td>
+										<td class="cardScore"><span id="_Trello">0</span></td>
+										<td class="cardScore"><span id="_Github">0</span></td>
+										<td class="cardScore"><!-- chat counter --></td>
+									</tr>
+									<tr>
+										<td class="cardRow">
+											<img class="icon" src="https://www.redhat.com/profiles/rh/themes/redhatdotcom/img/logo.png">
 										</td>
-										
-										<td>
-											<!-- ##################### -->
-											<!-- BOTTOM RIGHT DOUGHNUT -->
-											<!-- ##################### -->
-											<script>
-												function breakdownRefresh(){ return refreshGraph0('breakdown', 'Doughnut', colorsReverse); }
-											</script>
-											<div id="breakdown_container" class="graph" >
-												<canvas id="breakdown"></canvas>
-												<center><span class="graph-label">Points Breakdown</span></center>
-									    </div>
+										<td><span id="_userId"></span></td>
+										<td class="cardScoreText" rowspan="3">trello</td>
+										<td class="cardScoreText" rowspan="3">github</td>
+										<td class="cardScoreText" rowspan="3"><!--chat--></td>
+									</tr>
+									<tr>
+										<td class="cardRow"><img class="icon" src="https://d2k1ftgv7pobq7.cloudfront.net/meta/u/res/images/brand-assets/Logos/0099ec3754bf473d2bbf317204ab6fea/trello-logo-blue.png"></td>
+										<td><span id="_trelloId"></span></td>
+									</tr>
+									<tr>
+										<td class="cardRow"><img  style="height:20px;" src="https://github.githubassets.com/images/modules/logos_page/GitHub-Logo.png"></td>
+										<td><span id="_githubId"></span></td>
+									</tr>
+									
+									<tr>
+										<td colspan="6" style="height: 20px;"><!-- SPACER ONLY --></td>
+									</tr>
+									
+									<tr>
+										<td colspan="6">
+											
+											<table border=0 style="width:100%;height:400px">
+												<tr>
+													<td style="width:50%;">
+														<!-- #################### -->
+														<!-- BOTTOM LEFT DOUGHNUT -->
+														<!-- #################### -->
+														<script>
+															function leaderboardRefresh(){ return refreshGraph0('points', 'Doughnut', colors); }
+														</script>
+														<div id="leaderboard_container" class="graph" >
+															<canvas id="points"></canvas>
+															<center><span class="graph-label">Next Level</span></center>
+														</div>
+													</td>
+													
+													<td>
+														<!-- ##################### -->
+														<!-- BOTTOM RIGHT DOUGHNUT -->
+														<!-- ##################### -->
+														<script>
+															function breakdownRefresh(){ return refreshGraph0('breakdown', 'Doughnut', colorsReverse); }
+														</script>
+														<div id="breakdown_container" class="graph" >
+															<canvas id="breakdown"></canvas>
+															<center><span class="graph-label">Points Breakdown</span></center>
+												    </div>
+													</td>
+												</tr>
+											</table>
 										</td>
+									</tr>
 									</tr>
 								</table>
 							</td>
 						</tr>
-						</tr>
 					</table>
+					
+				</td>
+				<td style="width: 33%">
+					
 				</td>
 			</tr>
 		</table>
+		
 		
 		
 		
@@ -228,6 +259,8 @@ xhr.onloadend = function () {
 	    }
 	    //console.log(value);
 		});
+		
+		document.getElementById("nav").height=document.getElementById("dashboard").height;
 	}
 }
 
@@ -332,18 +365,23 @@ function buildChart(uri, chartElementName, type, clrs){
   	data.datasets[0].backgroundColor=backgroundColor;// push({"backgroundColor2":backgroundColor});
   	data.datasets[0].borderColor=borderColor;
     
-    if ("points"==chartElementName){
-	    var total=data.datasets[0].data[0]+data.datasets[0].data[1];
-	    var current=data.datasets[0].data[0];
+  	
+  	var centerText="";
+  	var total=0;
+	  for(var i=0;i<data.datasets[0].data.length;i++)
+	    total+=data.datasets[0].data[i];
+  	
+	  centerText=total;
+	  if ("points"==chartElementName){
+		  var current=data.datasets[0].data[0];
 	    if (0==current && 0==total){
-	      var percentage="0%";
-	    }else{
-	    	var percentage=Math.round((current/total)*100)+"%";
-	    }
-    }else{
-    	var percentage="";
-    }
-    
+	      var centerText="0%";
+	    }else
+	    	var centerText=Math.round((current/total)*100)+"%";
+	    
+	  }
+	  
+	  
     if (type=="Doughnut"){
 	    var myDoughnutChart = new Chart(ctx, {
 			    type: 'doughnut',
@@ -351,10 +389,11 @@ function buildChart(uri, chartElementName, type, clrs){
 			    options: {
 						elements: {
 							center: {
-								text: percentage,
+								text: centerText,
 			          color: '#eee', // Default is #000000
 			          fontStyle: 'Arial', // Default is Arial
-			          sidePadding: 20 // Default is 20 (as a percentage)
+			          sidePadding: 20, // Default is 20 (as a percentage)
+			          labelFontSize: 5
 							}
 						},
 						legend:{
