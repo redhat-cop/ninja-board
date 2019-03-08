@@ -1,4 +1,3 @@
-<html>
 <center>
 <table id="race" cellspacing="0" cellpadding="0">
 <tr><td colspan="4" class="header"><center><h2>Race to<br/> Black Belt!</h2></center></td></tr>
@@ -28,7 +27,7 @@
   
   
   body{
-    font-family: Overpass;
+    font-family: Overpass, Sans-serif;
     color: #333;
   }
   table{
@@ -117,25 +116,17 @@
       //c4.className="col col-4";
       //c4.appendChild(c4t);
     }
-    resizeParent();
+    setTimeout(function(){ resizeParent(); }, 500);
   }
   
+  //function resizeParent() {
+	//  var e=window.parent.document.getElementsByClassName("htmlWidgetIframe");
+	//  for (var i=0;i<e.length;i++){
+  //    e[i].style.height = e[i].contentWindow.document.body.scrollHeight + 'px';
+	//  }
+	//}
+  
   function resizeParent() {
-	  
-	  var height = window.innerHeight
-	      || document.documentElement.clientHeight
-	      || document.body.clientHeight;
-	  
-	  var e=window.parent.document.getElementsByClassName("htmlWidgetIframe");
-	  for (var i=0;i<e.length;i++){
-		  e[i].contentWindow.document.body.scrollHeight=height;
-	  }
-	  
-	  //f.contentWindow.document.body.scrollHeight
-  //}
-	  //  if (!window.parent) return;
-	  //  var height = $(document).height();
-	  //  $(window.parent.document).find('iframe').height(height);
+	  window.frameElement.style.height=window.frameElement.contentWindow.document.body.scrollHeight+'px';
 	}
 </script>
-</html>
