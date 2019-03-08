@@ -429,11 +429,19 @@ public class Heartbeat2 {
             // add the top 10 to the graphs too so they're available externally
             try{
               if (200!=Http.post(url+"/leaderboard_10", (String)cc.getLeaderboard2(10).getEntity()).responseCode)
-                log.error("Error pushing 'leaderboard' info to roxy");
-//              Http.post(url+"/leaderboard_10", (String)cc.getLeaderboard2(10).getEntity());
+                log.error("Error pushing 'leaderboard' info to proxy");
             }catch (IOException e){
               e.printStackTrace();
             }
+            
+            // add the Ninjas to the graphs too so they're available externally
+            try{
+              if (200!=Http.post(url+"/ninjas", (String)cc.getNinjas().getEntity()).responseCode)
+                log.error("Error pushing 'ninjas' info to proxy");
+            }catch (IOException e){
+              e.printStackTrace();
+            }
+            
             
           }else{
             log.warn("not pushing to graphs proxy - url was: "+graphsProxyUrl);

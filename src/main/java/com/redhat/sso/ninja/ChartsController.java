@@ -30,8 +30,30 @@ import com.redhat.sso.ninja.utils.MapBuilder;
 public class ChartsController{
 
   @GET
+  @Path("/ninjas")
+  public Response getNinjas() throws JsonGenerationException, JsonMappingException, IOException{
+  	return Response.status(200)
+        .header("Access-Control-Allow-Origin",  "*")
+        .header("Content-Type","application/json")
+        .header("Cache-Control", "no-store, must-revalidate, no-cache, max-age=0")
+        .header("Pragma", "no-cache")
+        .entity(Json.newObjectMapper(true).writeValueAsString(getParticipants(null)))
+        .build();
+  }
+  
+  @GET
   @Path("/leaderboard/{max}")
   public Response getLeaderboard2(@PathParam("max") Integer max) throws JsonGenerationException, JsonMappingException, IOException{
+  	return Response.status(200)
+        .header("Access-Control-Allow-Origin",  "*")
+        .header("Content-Type","application/json")
+        .header("Cache-Control", "no-store, must-revalidate, no-cache, max-age=0")
+        .header("Pragma", "no-cache")
+        .entity(Json.newObjectMapper(true).writeValueAsString(getParticipants(max)))
+    		.build();
+  }
+  
+  public Chart2Json getParticipants(Integer max) throws JsonGenerationException, JsonMappingException, IOException{
     Database2 db=Database2.get();
     Map<String, Map<String, Integer>> leaderboard=db.getLeaderboard();
     Map<String, Integer> totals=new HashMap<String, Integer>();
@@ -62,6 +84,8 @@ public class ChartsController{
     for(Entry<String, Integer> e:sortedTotals.entrySet()){
       Map<String, String> userInfo=db.getUsers().get(e.getKey());
       
+      if (null==max && userInfo.get("level").equalsIgnoreCase("zero")) break; // all ninjas with belts
+      
       c.getLabels().add(null!=userInfo && userInfo.containsKey("displayName")?userInfo.get("displayName"):e.getKey());
       
       c.getCustom1().add(e.getKey()); // users rh username
@@ -86,14 +110,10 @@ public class ChartsController{
       c.getDatasets().get(0).getBorderColor().add(colors.get(userInfo.get("level").toUpperCase()).getSecond());
       
       count=count+1;
-      if (count>=max) break;
+      if (null!=max && count>=max) break; // hard maximum suppled as param
     }
-    return Response.status(200)
-        .header("Access-Control-Allow-Origin",  "*")
-        .header("Content-Type","application/json")
-        .header("Cache-Control", "no-store, must-revalidate, no-cache, max-age=0")
-        .header("Pragma", "no-cache")
-        .entity(Json.newObjectMapper(true).writeValueAsString(c)).build();
+    
+    return c;
   }
   
   // UI call (user dashboard) - returns the payload to render a chart displaying the current points and points to the next level
