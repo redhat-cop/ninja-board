@@ -1,22 +1,40 @@
-<html>
 <center>
 <table id="race" cellspacing="0" cellpadding="0">
-<tr><td colspan="4" class="header"><center><h2>"Race to Black!"</h2></center></td></tr>
+<tr><td colspan="4" class="header"><center><h2>Race to<br/> Black Belt!</h2></center></td></tr>
 <!-- 
 <tr class="header"><td class="col">#</td><td class="col"></td><td class="col">Person</td><td class="col">Pts</td></tr>
 -->
 </table>
 </center>
 
+  <!--
+  #jive-body-layout-lss .jive-body-layout-l{
+    margin: 0 -1090px 0 0 !important;
+  }
+  #jive-body-layout-lss .jive-body-layout-l .jive-widget-container-large{
+  	margin-right: 35% !important;
+    float: left !important;
+  }
+  .jive-body-layout-s, .jive-body-layout-s1, .jive-body-layout-s2{
+    width: 15% !important;
+    float: right !important;
+  }
+  #jive-body-layout-lss .jive-body-layout-s1, #jive-body-layout-lss .jive-body-layout-s2{
+    padding-left: 30px !important;
+  }
+  -->
 <style>
+  
+  
   body{
-    font-family: Overpass;
+    font-family: Overpass, Sans-serif;
     color: #333;
   }
   table{
-    border: 1px black;
-    cellspacing: 0;
-    cellpadding: 0;
+    border: solid 1px #ddd;
+    cellspacing: 0px;
+    cellpadding: 0px;
+    width:210px; /* width of the mojo widget in Overview mode, remove for Tiles mode*/
   }
   /*
   table tr td:not(:first-child){
@@ -24,12 +42,13 @@
   */
   table tr:not(:first-child) td{
     padding: 4px;
-    border-bottom: solid 1px #ccc;
+    border-bottom: solid 1px #ddd;
   }
   table tr{
   }
   .header{
-    background-color: #EEE;
+    background-color: #007a87;
+    color: white;
     padding-top: 15px;
   }
   .header td{
@@ -44,6 +63,12 @@
   .col{
     padding-left:  10px;
     padding-right: 10px;
+  }
+  .col-3{
+    text-align: center;
+  }
+  .even td{
+    background-color: f9f9f9;
   }
 </style>
 
@@ -62,6 +87,7 @@
     
     for(var i=0;i<topX;i++){
       var newRow   = tableRef.insertRow(tableRef.rows.length);
+      newRow.className=i%2?"even":"odd";
       // add numeric
       var c1  = newRow.insertCell(0);
       var c1t  = document.createTextNode(i+1);
@@ -79,18 +105,28 @@
       
       // add Name
       var c3  = newRow.insertCell(2);
-      var c3t  = document.createTextNode(json['labels'][i]);
+      var c3t  = document.createTextNode("");
+      c3.innerHTML=json['labels'][i] +"<br/>"+json['datasets'][0]['data'][i]+"pts";
       c3.className="col col-3";
       c3.appendChild(c3t);
       
       // add Pts
-      var c4  = newRow.insertCell(3);
-      var c4t  = document.createTextNode(json['datasets'][0]['data'][i]+"pts");
-      c4.className="col col-4";
-      c4.appendChild(c4t);
+      //var c4  = newRow.insertCell(3);
+      //var c4t  = document.createTextNode(json['datasets'][0]['data'][i]+"pts");
+      //c4.className="col col-4";
+      //c4.appendChild(c4t);
     }
-    
+    setTimeout(function(){ resizeParent(); }, 500);
   }
-
+  
+  //function resizeParent() {
+	//  var e=window.parent.document.getElementsByClassName("htmlWidgetIframe");
+	//  for (var i=0;i<e.length;i++){
+  //    e[i].style.height = e[i].contentWindow.document.body.scrollHeight + 'px';
+	//  }
+	//}
+  
+  function resizeParent() {
+	  window.frameElement.style.height=window.frameElement.contentWindow.document.body.scrollHeight+'px';
+	}
 </script>
-</html>
