@@ -100,7 +100,6 @@ function getUsername(){
 		var username=window.parent._jive_current_user.username;
 		var displayName=window.parent._jive_current_user.displayName;
 	}
-  //if(username==undefined) username="mallen";
 	return username;
 }
 </script> 

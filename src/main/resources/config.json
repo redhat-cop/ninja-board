@@ -29,6 +29,6 @@
 		"users.ldap.searchDN": "(&(objectclass=Person)(%s=%s))"
 	},
 	"values": {
-		"lastRun2": "2019-01-01T00:00:00"
+		"lastRun2": "2019-03-01T00:00:00"
 	}
 }
