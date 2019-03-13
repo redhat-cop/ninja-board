@@ -209,7 +209,7 @@ public class Heartbeat2 {
             
             // Notify everyone on the Ninja chat group of a new registree
             String displayName=userInfo.containsKey("displayName")?userInfo.get("displayName"):userInfo.get("username");
-            new ChatNotification().send("New User Registered: <https://mojo.redhat.com/people/"+userInfo.get("username")+">|"+displayName+">");
+            new ChatNotification().send("New User Registered: <https://mojo.redhat.com/people/"+userInfo.get("username")+"|"+displayName+">");
             
           }else if (dbUsers.containsKey(userInfo.get("username"))){
             log.debug("User already registered: "+userInfo.get("username"));
