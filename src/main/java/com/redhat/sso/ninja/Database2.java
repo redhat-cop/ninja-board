@@ -136,6 +136,7 @@ public class Database2{
       getEvents().remove(0);
     }
   }
+  // user is the target user: ie. fbloggs
 	public void addTask(String taskText, String user){
     Map<String,String> task=new HashMap<String, String>();
     task.put(TASK_FIELDS.TIMESTAMP.v, sdf2.format(new Date()));

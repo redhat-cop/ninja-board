@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
@@ -30,19 +32,28 @@ public class Http{
 	}
 	
 	public static Response get(String url){
-		return http("GET", url, null);
+		return http("GET", url, null, null);
 	}
 	
 	public static Response post(String url, String data){
-		return http("POST", url, data);
+		return http("POST", url, data, null);
+	}
+	public static Response post(String url, String data, Map<String,String> headers){
+		return http("POST", url, data, headers);
 	}
 	
-	public static synchronized Response http(String method, String url, String data){
+	public static synchronized Response http(String method, String url, String data, Map<String,String> headers){
 		try {
 //			log.info("Http call '"+method+"' to '"+url+"'"+(null!=data?" (with data length of "+data.length()+" characters)":""));
 			URL obj=new URL(url);
 			HttpURLConnection cnn=(HttpURLConnection)obj.openConnection();
 			cnn.setRequestMethod(method.toUpperCase());
+			
+			if (headers!=null){
+				for(Entry<String, String> e:headers.entrySet()){
+					cnn.setRequestProperty(e.getKey(), e.getValue());
+				}
+			}
 			
 			if ("POST".equalsIgnoreCase(method) && null!=data){
 				cnn.setDoOutput(true);

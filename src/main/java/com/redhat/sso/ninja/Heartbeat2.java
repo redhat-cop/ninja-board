@@ -28,6 +28,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.redhat.sso.ninja.Database2.TASK_FIELDS;
 import com.redhat.sso.ninja.user.UserService;
 import com.redhat.sso.ninja.user.UserService.User;
 import com.redhat.sso.ninja.utils.DownloadFile;
@@ -205,6 +206,10 @@ public class Heartbeat2 {
             db.getScoreCards().put(userInfo.get("username"), new HashMap<String, Integer>());
             
             db.addEvent("New User Registered", userInfo.get("username"), "");
+            
+            // Notify everyone on the Ninja chat group of a new registree
+            String displayName=userInfo.containsKey("displayName")?userInfo.get("displayName"):userInfo.get("username");
+            new ChatNotification().send("New User Registered: <https://mojo.redhat.com/people/"+userInfo.get("username")+"|"+displayName+">");
             
           }else if (dbUsers.containsKey(userInfo.get("username"))){
             log.debug("User already registered: "+userInfo.get("username"));
@@ -480,9 +485,13 @@ public class Heartbeat2 {
             userInfo.put("levelChanged", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));// nextLevel.getRight());
             
             db.addEvent("User Promotion", userInfo.get("username"), "Promoted to "+nextLevel.getRight()+" level");
-  //          db.getEvents().add("User Promotion: ["+userInfo.get("username") +"] was promoted to level ["+nextLevel.getRight()+"]");
             
-            db.addTask(userInfo.get("username")+" promoted to "+nextLevel.getRight()+" belt", userInfo.get("username"));
+            String displayName=userInfo.containsKey("displayName")?userInfo.get("displayName"):userInfo.get("username");
+            String title=displayName+" promoted to "+nextLevel.getRight()+" belt";
+            db.addTask(title, userInfo.get("username"));
+            
+            // Notify everyone on the Ninja chat group of a new belt promotion
+            new ChatNotification().send(title);
             
             count+=1;
           }

@@ -26,7 +26,10 @@
 		"ldap.enabled": "true",
 		"_users.ldap.provider": "ldap://server.example.com:123",
 		"users.ldap.baseDN": "ou=users,dc=redhat,dc=com",
-		"users.ldap.searchDN": "(&(objectclass=Person)(%s=%s))"
+		"users.ldap.searchDN": "(&(objectclass=Person)(%s=%s))",
+		"googlehangoutschat.webhook.notifications.enabled": "false",
+		"googlehangoutschat.webhook.template": "{\"text\":\"%s\"}",
+		"googlehangoutschat.webhook.url": ""
 	},
 	"values": {
 		"lastRun2": "2019-03-01T00:00:00"
