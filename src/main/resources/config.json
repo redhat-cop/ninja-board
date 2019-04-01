@@ -21,6 +21,7 @@
 		"root": "${configLocation}",
 		"_graphs-proxy": "http://localhost:8083/ninja-roxy",
 		"heartbeat.intervalInSeconds": "86400000",
+		"heartbeat.startTime": "21:00",
 		"events.max": "1000000",
 		"thresholds": "0:ZERO,5:BLUE,20:GREY,40:RED,75:BLACK",
 		"ldap.enabled": "true",
@@ -28,8 +29,8 @@
 		"users.ldap.baseDN": "ou=users,dc=redhat,dc=com",
 		"users.ldap.searchDN": "(&(objectclass=Person)(%s=%s))",
 		"googlehangoutschat.webhook.notifications.enabled": "false",
-		"googlehangoutschat.webhook.template": "{\"text\":\"%s\"}",
-		"googlehangoutschat.webhook.url": ""
+		"googlehangoutschat.webhook.template": "{'text':'%s'}",
+		"googlehangoutschat.webhook.url": "https://chat.googleapis.com/v1/spaces/AAAAf_Wccc0/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=JAFhUHfvCdnEHhoL3xBEES_nbpqP2hXIMxYOyYHgCqc%3D"
 	},
 	"values": {
 		"lastRun2": "2019-03-01T00:00:00"

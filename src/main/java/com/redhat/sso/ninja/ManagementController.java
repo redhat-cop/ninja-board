@@ -135,12 +135,16 @@ public class ManagementController {
     
     // re-start the heartbeat with a new interval
     //TODO: reset the heartbeat ONLY if the interval changed from what it was before
-    String heartbeatInterval=newConfig.getOptions().get("heartbeat.intervalInSeconds");
-    if (null!=heartbeatInterval && heartbeatInterval.matches("\\d+")){
-      log.info("Re-setting heartbeat with interval: "+heartbeatInterval);
+//    String startTime=(String)Config.get().getOptions().get("heartbeat.startTime");
+//    if (null==startTime) startTime="21:00"; // default to 9PM
+//    String heartbeatInterval=newConfig.getOptions().get("heartbeat.intervalInSeconds");
+//    if (null!=heartbeatInterval && heartbeatInterval.matches("\\d+")){
+//      log.info("Re-setting heartbeat with interval: "+heartbeatInterval);
       Heartbeat2.stop();
-      Heartbeat2.start(Long.parseLong(heartbeatInterval));
-    }
+      Heartbeat2.start(Config.get());
+//      Heartbeat2.start(Long.parseLong(heartbeatInterval));
+//      Heartbeat2.start(Config.get());
+//    }
     
     String maxEvents=newConfig.getOptions().get("events.max");
     if (null!=maxEvents && maxEvents.matches("\\d+")){

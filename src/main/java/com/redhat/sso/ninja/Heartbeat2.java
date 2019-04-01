@@ -8,11 +8,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.attribute.PosixFilePermission;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -27,8 +29,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.mortbay.log.Log;
 
-import com.redhat.sso.ninja.Database2.TASK_FIELDS;
 import com.redhat.sso.ninja.user.UserService;
 import com.redhat.sso.ninja.user.UserService.User;
 import com.redhat.sso.ninja.utils.DownloadFile;
@@ -45,33 +47,7 @@ public class Heartbeat2 {
 
   public static void main(String[] asd){
     try{
-    	
-//    	Database2 db=Database2.get();
-//    	Map<String, Object> script=new HashMap<String, Object>();
-//    	script.put("name", "TestScript");
-//    	File scriptFolder=new File("target/test");
-//    	Map<String, String> poolToUserIdMapper=new HashMap<String, String>();
-//    	
-//    	InputStream is=Heartbeat2.class.getClassLoader().getResourceAsStream("scripts/trello-test.txt");
-//    	
-//    	new HeartbeatRunnable().allocatePoints(db, is, script, scriptFolder, poolToUserIdMapper);
-    	
-//        System.out.println(TimeUnit.DAYS.toMillis(1));
-      
-//      Calendar lastRunC=Calendar.getInstance();
-//      lastRunC.setTime(new Date());
-//      lastRunC.set(Calendar.DAY_OF_MONTH, 1);
-//      lastRunC.set(Calendar.HOUR, 0);
-//      lastRunC.set(Calendar.MINUTE, 0);
-//      lastRunC.set(Calendar.SECOND, 1);
-//      
-//      lastRunC.set(Calendar.DAY_OF_MONTH, 21);
-//      System.out.println("TODAY?: "+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(lastRunC.getTime()));
-      
-//      Heartbeat2.runOnce();
-      
       new HeartbeatRunnable().levelUpChecks(Database2.get());
-      
     }catch(Exception e){
       e.printStackTrace();
     }
@@ -107,10 +83,80 @@ public class Heartbeat2 {
     new HeartbeatRunnable().run();
   }
   
-  public static void start(long intervalInMs) {
-    t = new Timer("cop-ninja-heartbeat", false);
-    t.scheduleAtFixedRate(new HeartbeatRunnable(), delay, intervalInMs);
+  public static void start(Config config) {
+  	boolean heartbeatDisabled="true".equalsIgnoreCase((String)config.getOptions().get("heartbeat.disabled"));
+    
+  	if (!heartbeatDisabled){
+	  	String intervalString=(String)config.getOptions().get("heartbeat.intervalInSeconds");
+	    String startTime=(String)config.getOptions().get("heartbeat.startTime");
+	    
+	    if (null==intervalString) intervalString="60000";
+	    int interval=Integer.parseInt(intervalString);
+	    
+	    if (null==startTime) startTime="21:00"; // default to 9PM
+	    
+	    long msToStartTime=30000l;
+	    try{
+	    	msToStartTime=new Heartbeat2().getMillisToNextTime(startTime);
+	    }catch(ParseException e){
+	    }
+	    SimpleDateFormat sdf=new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
+	    String dateTimeToStart=sdf.format(System.currentTimeMillis()+msToStartTime);
+	    
+	    System.out.println("Heartbeat (Start or ReStart):");
+	    System.out.println("  Status:  "+(heartbeatDisabled?"Disabled":"Enabled"));
+	    System.out.println("  StartTime: "+dateTimeToStart +" (in "+msToSensibleString(msToStartTime)+" time)");
+	    System.out.println("  Interval:  "+interval +"ms ("+msToSensibleString(interval)+")");
+	    
+	    Log.info("InitServlet fired - initializing database...");
+	    Database2.get();
+    
+    	Heartbeat2.start(msToStartTime, interval);
+  	}
+    
   }
+  private static void start(long msToStartTime, long intervalInMs) {
+    t = new Timer("cop-ninja-heartbeat", false);
+    t.scheduleAtFixedRate(new HeartbeatRunnable(), msToStartTime, intervalInMs);
+  }
+  private long getMillisToNextTime(String time) throws ParseException{
+  	SimpleDateFormat sdf=new SimpleDateFormat("HH:mm");
+  	Calendar start=newCalendar(System.currentTimeMillis());
+  	Calendar cTime=newCalendar(sdf.parse(time).getTime());
+  	start.set(Calendar.HOUR_OF_DAY, cTime.get(Calendar.HOUR_OF_DAY));
+  	start.set(Calendar.MINUTE, cTime.get(Calendar.MINUTE));
+  	start.set(Calendar.SECOND, cTime.get(Calendar.SECOND));
+  	
+  	Calendar now=newCalendar(System.currentTimeMillis());
+  	
+  	int nowHour=now.get(Calendar.HOUR_OF_DAY);
+  	int startHour=start.get(Calendar.HOUR_OF_DAY);
+  	if (nowHour>=startHour){
+  		// too late today, move to tomorrow
+  		start.set(Calendar.DAY_OF_MONTH, start.get(Calendar.DAY_OF_MONTH)+1);
+  	}
+  	return start.getTimeInMillis()-now.getTimeInMillis();
+  }
+  private static Calendar newCalendar(long millis){
+  	Calendar c=Calendar.getInstance();
+  	c.setTime(new Date(millis));
+  	return c;
+  }
+  static int[] s=new int[]{1000,60,60,24,365};
+  static String[] d=new String[]{"ms","s","m","h","d"};
+  public static String msToSensibleString(long ms){
+  	double result=ms;
+  	String denomination=d[0];
+  	for(int i=0;i<=s.length;i++){
+  		if (result>=s[i]){
+  			result=result/(double)s[i];
+  			denomination=d[i+1];
+  		}else
+  			break;
+  	}
+  	return new DecimalFormat("##.###").format(result)+denomination;
+  }
+  
 
   public static void stop() {
     t.cancel();

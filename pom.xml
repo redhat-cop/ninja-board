@@ -4,13 +4,13 @@
   <!--
   export MAVEN_OPTS="$MAVEN_OPTS -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"
   mvn clean package -DskipTests jetty:run -Djetty.port=8082
+  mvn package -DskipTests jetty:run -Djetty.port=8082
   
   
   FEATURES:
   1) integrate with google sheets api to register the users
   2) get perl scripts executing on openshift pods
   3) timer per script? so we can have for example github firing more regularly than trello
-  
   
   -->
  
@@ -83,61 +83,11 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>3.8</version>
 		</dependency>
-	<!-- 
-	 -->
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
 			<artifactId>json-simple</artifactId>
 			<version>1.1</version>
 		</dependency>
-		<!-- totp dependency -->
-<!-- 
-	<dependency>
-    <groupId>org.jboss.aerogear</groupId>
-    <artifactId>aerogear-otp-java</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
-</dependency>
-
-		<dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcprov-jdk14</artifactId>
-			<version>1.51</version>
-		</dependency>
-		
-	<dependency>
-    <groupId>com.unboundid</groupId>
-    <artifactId>unboundid-ldapsdk</artifactId>
-    <version>3.0.0</version>
-</dependency>
-	   <dependency>
-        <groupId>org.apache.poi</groupId>
-        <artifactId>poi</artifactId>
-        <version>3.8</version>
-    </dependency>
-		<dependency>
-		    <groupId>com.google.oauth-client</groupId>
-		    <artifactId>google-oauth-client</artifactId>
-		    <version>1.20.0</version>
-		</dependency>
- -->
-
-<!--
-		<dependency>
-		    <groupId>com.google.api-client</groupId>
-		    <artifactId>google-api-client</artifactId>
-		    <version>1.23.0</version>
-		</dependency>
-		<dependency>
-		    <groupId>com.google.oauth-client</groupId>
-		    <artifactId>google-oauth-client-jetty</artifactId>
-		    <version>1.23.0</version>
-		</dependency>
-		<dependency>
-		    <groupId>com.google.apis</groupId>
-		    <artifactId>google-api-services-sheets</artifactId>
-		    <version>v4-rev515-1.23.0</version>
-		</dependency>
--->
 
 
 		<dependency>
@@ -180,52 +130,6 @@
             <artifactId>resteasy-jaxrs</artifactId>
             <version>2.2.1.GA</version>
         </dependency>
-        <!-- 
-        <dependency>
-            <groupId>org.jfree</groupId>
-            <artifactId>jfreechart</artifactId>
-            <version>1.0.19</version>
-        </dependency>
-         -->
-<!--
-				<dependency>
-					<groupId>org.apache.camel</groupId>
-					<artifactId>camel-core</artifactId>
-					<version>2.14.0</version>
-				</dependency>
--->
-
-
-<!--
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-core</artifactId>
-			<version>2.13.1</version>
-		</dependency>
-		<dependency>
-			<groupId>net.java.quickcheck</groupId>
-			<artifactId>quickcheck</artifactId>
-			<version>0.6</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>4.2.5</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.monitoring</groupId>
-			<artifactId>event-monitor-core</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.thoughtworks.xstream</groupId>
-			<artifactId>xstream</artifactId>
-			<version>1.4.4</version>
-		</dependency>
--->
-
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
