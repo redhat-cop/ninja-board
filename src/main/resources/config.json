@@ -30,7 +30,7 @@
 		"users.ldap.searchDN": "(&(objectclass=Person)(%s=%s))",
 		"googlehangoutschat.webhook.notifications.enabled": "false",
 		"googlehangoutschat.webhook.template": "{'text':'%s'}",
-		"googlehangoutschat.webhook.url": "https://chat.googleapis.com/v1/spaces/hBltvAAAAAE/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=rjzmXJ3zX2R2Nrlsz42RToxEbK2ZMaop-Zq9RB9ZQgs%3D"
+		"googlehangoutschat.webhook.url": ""
 	},
 	"values": {
 		"lastRun2": "2019-03-01T00:00:00"
