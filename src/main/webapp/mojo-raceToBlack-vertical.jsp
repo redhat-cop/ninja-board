@@ -70,6 +70,11 @@
   .even td{
     background-color: f9f9f9;
   }
+  .belt{ color: white; }
+  .belt-black{ background-color: black !important;}
+  .belt-red{   background-color: #af0505   !important;}
+  .belt-grey{  background-color: grey  !important;}
+  .belt-blue{  background-color: #3333bd  !important;}
 </style>
 
 <script>
@@ -107,7 +112,7 @@
       var c3  = newRow.insertCell(2);
       var c3t  = document.createTextNode("");
       c3.innerHTML=json['labels'][i] +"<br/>"+json['datasets'][0]['data'][i]+"pts";
-      c3.className="col col-3";
+      c3.className="col col-3 belt belt-"+json['custom2'][i];
       c3.appendChild(c3t);
       
       // add Pts
@@ -130,3 +135,4 @@
 	  window.frameElement.style.height=window.frameElement.contentWindow.document.body.scrollHeight+'px';
 	}
 </script>
+
