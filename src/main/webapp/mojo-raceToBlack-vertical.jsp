@@ -1,31 +1,10 @@
 <center>
 <table id="race" cellspacing="0" cellpadding="0">
-<tr><td colspan="4" class="header"><center><h2>Race to<br/> Black Belt!</h2></center></td></tr>
-<!-- 
-<tr class="header"><td class="col">#</td><td class="col"></td><td class="col">Person</td><td class="col">Pts</td></tr>
--->
+<tr><td colspan="4" class="header"><center><h2>Race to<br/> Black Belt!</h2><div class="subtitle">First to 75 points wins the race!</div></center></td></tr>
 </table>
 </center>
 
-  <!--
-  #jive-body-layout-lss .jive-body-layout-l{
-    margin: 0 -1090px 0 0 !important;
-  }
-  #jive-body-layout-lss .jive-body-layout-l .jive-widget-container-large{
-  	margin-right: 35% !important;
-    float: left !important;
-  }
-  .jive-body-layout-s, .jive-body-layout-s1, .jive-body-layout-s2{
-    width: 15% !important;
-    float: right !important;
-  }
-  #jive-body-layout-lss .jive-body-layout-s1, #jive-body-layout-lss .jive-body-layout-s2{
-    padding-left: 30px !important;
-  }
-  -->
 <style>
-  
-  
   body{
     font-family: Overpass, Sans-serif;
     color: #333;
@@ -51,6 +30,14 @@
     color: white;
     padding-top: 15px;
   }
+  .header h2{
+    margin-bottom: 3px;
+  }
+  .subtitle{
+  	font-size: 10pt;
+  	color: white;
+  	padding-bottom: 3px;
+  }
   .header td{
     font-weight: bold; 
   }
@@ -70,6 +57,11 @@
   .even td{
     background-color: f9f9f9;
   }
+  .belt{ color: white; }
+  .belt-black{ background-color: black !important;}
+  .belt-red{   background-color: #a21c20  !important;}
+  .belt-grey{  background-color: #aaaaaa  !important;}
+  .belt-blue{  background-color: #a4dbea  !important;}
 </style>
 
 <script>
@@ -107,7 +99,7 @@
       var c3  = newRow.insertCell(2);
       var c3t  = document.createTextNode("");
       c3.innerHTML=json['labels'][i] +"<br/>"+json['datasets'][0]['data'][i]+"pts";
-      c3.className="col col-3";
+      c3.className="col col-3 belt belt-"+json['custom2'][i];
       c3.appendChild(c3t);
       
       // add Pts
@@ -130,3 +122,4 @@
 	  window.frameElement.style.height=window.frameElement.contentWindow.document.body.scrollHeight+'px';
 	}
 </script>
+
