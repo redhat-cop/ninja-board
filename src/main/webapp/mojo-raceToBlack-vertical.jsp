@@ -72,9 +72,9 @@
   }
   .belt{ color: white; }
   .belt-black{ background-color: black !important;}
-  .belt-red{   background-color: #af0505   !important;}
-  .belt-grey{  background-color: grey  !important;}
-  .belt-blue{  background-color: #3333bd  !important;}
+  .belt-red{   background-color: #a21c20  !important;}
+  .belt-grey{  background-color: #aaaaaa  !important;}
+  .belt-blue{  background-color: #a4dbea  !important;}
 </style>
 
 <script>
