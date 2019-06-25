@@ -15,6 +15,14 @@ java.util.Calendar
 	font-size: 6pt;
 	vertical-align: super;
 }
+
+.btn{
+  padding: 2px 12px !important;
+}
+.btn-small{
+	height: 25px;
+	
+}
 </style>
 <script>
 
@@ -139,6 +147,10 @@ function loadDataTable(){
                 		]
               	});
                 
+                // tag the export to the left of the search button
+                var btnExport=`<button style="position:relative;height:25px;width:75px;left:-18px;top:-3px;" class="btn btn-primary btn-small" name="Export" onclick="window.location.href='<%=request.getContextPath()%>/api/scorecards/export/xls';">Export</button>`;
+                document.getElementById("example_filter").innerHTML=btnExport+"&nbsp;"+document.getElementById("example_filter").innerHTML;
+                
             },
             "dataType": "json"
         },
@@ -232,6 +244,7 @@ $(document).ready(function() {
 		    <!--
 		        <button style="position:relative;height:30px;width:75px;left:0px;top:0px;"   class="btn btn-primary" name="New"    onclick="reset();" type="button" data-toggle="modal" data-target="#exampleModal" data-whatever="@new" disabled>New</button>
 		        <button style="position:relative;height:30px;width:75px;left:0px;top:0px;"   class="btn btn-primary" name="Export" onclick="window.location.href='<%=request.getContextPath()%>/api/analytics/export/xls';" disabled>Export</button>
+		    <button style="position:relative;height:30px;width:75px;left:0px;top:0px;"   class="btn btn-primary" name="Export" onclick="window.location.href='<%=request.getContextPath()%>/api/scorecards/export/xls';">Export</button>
 		    -->
 		    </div>
 		    <div id="tableDiv">
