@@ -19,6 +19,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -109,10 +110,17 @@ public class ExportController{
   	
   	
   	// export the data
+    File file=new File("export."+format.toLowerCase());
+    FileOutputStream fileOS=new FileOutputStream(file);
   	try{
       switch(Format.valueOf(format)){
       case json:
-        return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(data)).build();
+        IOUtils.write(Json.newObjectMapper(true).writeValueAsString(data), fileOS);
+        IOUtils.closeQuietly(fileOS);
+        return Response.ok(file, MediaType.APPLICATION_OCTET_STREAM)
+            .header("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"" ) //optional
+            .build();
+        
       case csv:
         StringBuffer sb=new StringBuffer();
         
@@ -127,12 +135,13 @@ public class ExportController{
         	}
           sb.append("\n");
         }
-        return Response.status(200).entity(sb.toString()).build();
+        IOUtils.write(sb.toString(), fileOS);
+        IOUtils.closeQuietly(fileOS);
+        return Response.ok(file, MediaType.APPLICATION_OCTET_STREAM)
+            .header("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"" ) //optional
+            .build();
+
       case xls:
-      	
-	      File file=new File("export.xls");
-	      FileOutputStream fileOut=new FileOutputStream(file);
-	      
 	      HSSFWorkbook wb=new HSSFWorkbook();
 	      HSSFSheet s=wb.createSheet("Scorecards");
 	      
@@ -152,9 +161,9 @@ public class ExportController{
       		rowCount=rowCount+1;
         }
 	      
-	      wb.write(fileOut);
-	      fileOut.flush();
-	      fileOut.close();
+	      wb.write(fileOS);
+	      fileOS.flush();
+	      fileOS.close();
         return Response.ok(file, MediaType.APPLICATION_OCTET_STREAM)
             .header("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"" ) //optional
             .build();
