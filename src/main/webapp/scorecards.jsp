@@ -15,6 +15,14 @@ java.util.Calendar
 	font-size: 6pt;
 	vertical-align: super;
 }
+
+.btn{
+  padding: 2px 12px !important;
+}
+.btn-small{
+	height: 25px;
+	
+}
 </style>
 <script>
 
@@ -138,6 +146,24 @@ function loadDataTable(){
 						        	}}
                 		]
               	});
+                // position:relative;height:25px;width:75px;left:-18px;top:-3px;
+                // tag the export to the left of the search button
+                var btnExport=`
+                <div style="left:-20px;float:left;" class="dropdown">
+                   <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                     Export
+                   </button>
+                   <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                     <a class="dropdown-item" href="api/scorecards/export/csv">...as CSV</a><br/>
+                     <a class="dropdown-item" href="api/scorecards/export/xls">...as XLS</a><br/>
+                     <a class="dropdown-item" href="api/scorecards/export/json">...as JSON</a>
+                   </div>
+                 </div>
+                 `;
+                
+                
+                //var btnExport=`<button style="position:relative;height:25px;width:75px;left:-18px;top:-3px;" class="btn btn-primary btn-small" name="Export" onclick="window.location.href='<%=request.getContextPath()%>/api/scorecards/export/xls';">Export</button>`;
+                document.getElementById("example_filter").innerHTML=btnExport+"&nbsp;"+document.getElementById("example_filter").innerHTML;
                 
             },
             "dataType": "json"
@@ -155,54 +181,8 @@ function loadDataTable(){
 }
 
 $(document).ready(function() {
-    //alert(oTable);
-    //oSettings=oTable.fnSettings();
-    
-    loadDataTable();
-    
-//    $('#example').DataTable( {
-//        "ajax": {
-//            "url": '${pageContext.request.contextPath}/api/scorecards/',
-//            "success": function(json){
-//	            	var tableHeaders;
-//	            	$.each(json.columns, function(i, val){
-//	              	tableHeaders += "<th>" + val + "</th>";
-//	              });
-//	              $("#tableDiv").empty();
-//                $("#tableDiv").append('<table id="example" class="display" cellspacing="0" width="100%"><thead><tr>' + tableHeaders + '</tr></thead></table>');
-//                $('#example').dataTable(json);
-//            },
-//            "dataType": "json"
-//        },
-//        
-////        "scrollY":        "540px",
-//        "scrollCollapse": true,
-//        "paging":         false,
-//        
-//        "lengthMenu": [[10, 25, 50, 100, 200, -1], [10, 25, 50, 100, 200, "All"]], // page entry options
-//        "pageLength" : 10, // default page entries
-////        "columns": [
-////            { "data": "id" },
-////            { "data": "name" },
-////            { "data": "trello" },
-////            { "data": "githubPullRequests" },
-////            { "data": "githubReviewedPullRequests" },
-////            { "data": "githubClosedIssues" },
-////            { "data": "total"},
-////            { "data": "id" }
-////        ]
-//        
-////        ,"columnDefs": [
-////            { "targets": 0, "orderData": [1,2,3] }
-////           ,{ "targets": 1, "orderData": [1,2,3] }
-////           ,{ "targets": 2, "orderData": [1,2,3] }
-////           ,{ "targets": 3, "orderData": [1,2,3] }
-////           ,{ "targets": 7, "render": function (data,type,row){
-////							return "<div class='btn btn-image' title='Edit' onclick='edit2(\""+row["id"]+"\");' data-toggle='modal' data-target='#exampleModal' style='background-image: url(images/edit-icon-grey-30-active.png)'></div>";
-////						}}
-////        ]
-//    } );
-} );
+  loadDataTable();
+});
 
 
 </script>
@@ -232,6 +212,7 @@ $(document).ready(function() {
 		    <!--
 		        <button style="position:relative;height:30px;width:75px;left:0px;top:0px;"   class="btn btn-primary" name="New"    onclick="reset();" type="button" data-toggle="modal" data-target="#exampleModal" data-whatever="@new" disabled>New</button>
 		        <button style="position:relative;height:30px;width:75px;left:0px;top:0px;"   class="btn btn-primary" name="Export" onclick="window.location.href='<%=request.getContextPath()%>/api/analytics/export/xls';" disabled>Export</button>
+		    <button style="position:relative;height:30px;width:75px;left:0px;top:0px;"   class="btn btn-primary" name="Export" onclick="window.location.href='<%=request.getContextPath()%>/api/scorecards/export/xls';">Export</button>
 		    -->
 		    </div>
 		    <div id="tableDiv">
