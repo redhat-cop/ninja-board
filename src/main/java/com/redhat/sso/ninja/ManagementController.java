@@ -396,25 +396,27 @@ public class ManagementController {
     return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString("OK")).build();
   }
   
-  
   @GET
   @Path("/events")
   public Response getEvents(@Context HttpServletRequest request) throws JsonGenerationException, JsonMappingException, IOException{
+  	return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(getEvents(request.getParameter("user"), request.getParameter("event")))).build();
+  }
+  public List<Map<String, String>> getAllEvents() throws JsonGenerationException, JsonMappingException, IOException{
+  	return getEvents(null, null);
+  }
+  public List<Map<String, String>> getEvents(String user, String event) throws JsonGenerationException, JsonMappingException, IOException{
     Database2 db=Database2.get();
-    List<Map<String, String>> events=db.getEvents();
     List<Map<String, String>> result=new ArrayList<Map<String,String>>();
     
-    if (1>=request.getParameterMap().size()){
-    	result=events;
+    if (null==user && null==event){
+    	result=db.getEvents();
     }else{
-    	for(Map<String, String> event:events){
-    		if (event.get(EVENT_FIELDS.USER.v).equals(request.getParameter("user"))) result.add(event);
-    		if (event.get(EVENT_FIELDS.TYPE.v).equals(request.getParameter("event"))) result.add(event);
-    		
+    	for(Map<String, String> e:db.getEvents()){
+    		if (e.get(EVENT_FIELDS.USER.v).equals(user)) result.add(e);
+    		if (e.get(EVENT_FIELDS.TYPE.v).equals(event)) result.add(e);
     	}
     }
-    
-    return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(result)).build();
+    return result;
   }
   
   
