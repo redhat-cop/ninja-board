@@ -57,6 +57,21 @@ function loadDataTable(){
             }}
         ]
     } );
+  
+    var btnExport=`
+      <div style="left:-20px;float:left;" class="dropdown export">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Export
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <a class="dropdown-item" href="api/events/export/csv">... as CSV</a><br/>
+          <a class="dropdown-item" href="api/events/export/xls">... as XLS</a><br/>
+          <a class="dropdown-item" href="api/events/export/json">... as JSON</a>
+        </div>
+      </div>
+      `;
+    document.getElementById("example_filter").innerHTML=btnExport+"&nbsp;"+document.getElementById("example_filter").innerHTML;
+      
     
 }
 
@@ -76,6 +91,28 @@ $(document).ready(function() {
     <div class="navbar-title">
     	<h2><span class="navbar-title-text">Events<span id="title-user"></span></span></h2>
     </div>
+    
+    <style>
+    table tr td:nth-child(1), table tr td:nth-child(2){
+    	white-space: nowrap;
+    }
+    /*
+    table:nth-child(0), table:nth-child(1){
+    	white-space: nowrap;
+    }
+    */
+    
+    .export button{
+    	height: 26px;
+	    padding: 0px;
+	    padding-left: 11px;
+	    padding-right: 12px;
+    }
+		.export div .dropdown-item{
+			padding-left: 10px;
+		}
+    
+    </style>
     
     <div id="solutions">
 		    <div id="solutions-buttonbar">
