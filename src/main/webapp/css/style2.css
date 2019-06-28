@@ -80,16 +80,15 @@
 .navbar-header a:visited   {color:#FFE;}
 .navbar-header a:hover     {color:#CCC;}
 .navbar-header a:active    {color:#CCC;}
-.dropdown a:link           {color:#FFF;}
-.dropdown a:visited        {color:#FFF;}
-.dropdown a:focus          {color:#333;}
-.dropdown a:hover          {color:#333;}
-.dropdown a:active         {color:#333;}
-.dropdown-menu li a:link   {color:#333;}
-.dropdown-menu li a:visited{color:#333;}
-.dropdown-menu li a:hover  {color:#333;}
-.dropdown-menu li a:active {color:#333;} 
-
+.navbar-nav .dropdown a:link           {color:#FFF;}
+.navbar-nav .dropdown a:visited        {color:#FFF;}
+.navbar-nav .dropdown a:focus          {color:#333;}
+.navbar-nav .dropdown a:hover          {color:#333;}
+.navbar-nav .dropdown a:active         {color:#333;}
+.navbar-nav .dropdown-menu li a:link   {color:#333;}
+.navbar-nav .dropdown-menu li a:visited{color:#333;}
+.navbar-nav .dropdown-menu li a:hover  {color:#333;}
+.navbar-nav .dropdown-menu li a:active {color:#333;} 
 
 
 .btn-image:hover{opacity: .9}
