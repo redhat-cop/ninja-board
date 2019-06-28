@@ -149,19 +149,17 @@ function loadDataTable(){
                 // position:relative;height:25px;width:75px;left:-18px;top:-3px;
                 // tag the export to the left of the search button
                 var btnExport=`
-                <div style="left:-20px;float:left;" class="dropdown">
+                <div style="left:-20px;float:left;" class="dropdown export">
                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                      Export
                    </button>
                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                     <a class="dropdown-item" href="api/scorecards/export/csv">...as CSV</a><br/>
-                     <a class="dropdown-item" href="api/scorecards/export/xls">...as XLS</a><br/>
-                     <a class="dropdown-item" href="api/scorecards/export/json">...as JSON</a>
+                     <a class="dropdown-item" href="api/scorecards/export/csv">... as CSV</a><br/>
+                     <a class="dropdown-item" href="api/scorecards/export/xls">... as XLS</a><br/>
+                     <a class="dropdown-item" href="api/scorecards/export/json">... as JSON</a>
                    </div>
                  </div>
                  `;
-                
-                
                 //var btnExport=`<button style="position:relative;height:25px;width:75px;left:-18px;top:-3px;" class="btn btn-primary btn-small" name="Export" onclick="window.location.href='<%=request.getContextPath()%>/api/scorecards/export/xls';">Export</button>`;
                 document.getElementById("example_filter").innerHTML=btnExport+"&nbsp;"+document.getElementById("example_filter").innerHTML;
                 
@@ -188,6 +186,9 @@ $(document).ready(function() {
 </script>
 	
 	<style>
+		.export div .dropdown-item{
+			padding-left: 10px;
+		}
 		.link{
 			cursor: pointer;
 			font-weight: bold;
