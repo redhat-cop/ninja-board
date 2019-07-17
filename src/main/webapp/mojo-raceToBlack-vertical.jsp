@@ -70,7 +70,7 @@
   var ctx = "https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs";
   
   var xhr = new XMLHttpRequest();
-  xhr.open("GET", ctx+"/api/proxy/leaderboard_10", true);
+  xhr.open("GET", ctx+"/api/proxy/leaderboard", true);
   xhr.send();
   xhr.onloadend = function () {
     var json=JSON.parse(xhr.responseText);
