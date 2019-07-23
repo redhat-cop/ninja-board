@@ -168,6 +168,17 @@ public class ManagementController {
     return Response.status(200).entity("RUNNING").build();
   }
   
+  @GET
+  @Path("/scripts/runNow")
+  public Response runScriptsNow(@Context HttpServletRequest request, @Context HttpServletResponse response, @Context ServletContext servletContext){
+  	Heartbeat2.runOnce();
+  	Database2.resetInstance();
+  	Database2.get(); //reload it
+    log.debug("Scripts run completed");
+    return Response.status(200).entity("OK").build();
+  }
+  
+  
   // manually (via rest) to register new users via a rest/json payload
   @POST
   @Path("/users/register")
