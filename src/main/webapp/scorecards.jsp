@@ -160,8 +160,13 @@ function loadDataTable(){
                    </div>
                  </div>
                  `;
-                //var btnExport=`<button style="position:relative;height:25px;width:75px;left:-18px;top:-3px;" class="btn btn-primary btn-small" name="Export" onclick="window.location.href='<%=request.getContextPath()%>/api/scorecards/export/xls';">Export</button>`;
-                document.getElementById("example_filter").innerHTML=btnExport+"&nbsp;"+document.getElementById("example_filter").innerHTML;
+                 
+                 // Insert Export button next to Search box
+                 var searchBoxDiv=document.querySelector("#example_filter");
+                 var wrapper=searchBoxDiv.parentNode;
+                 var newNode = document.createElement("span");
+                 newNode.innerHTML=btnExport+"&nbsp;";
+                 searchBoxDiv.appendChild(newNode);
                 
             },
             "dataType": "json"
