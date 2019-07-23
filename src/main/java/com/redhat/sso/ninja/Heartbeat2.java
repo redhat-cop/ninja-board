@@ -510,7 +510,7 @@ public class Heartbeat2 {
             
             // add the top 10 to the graphs too so they're available externally
             try{
-              if (200!=Http.post(url+"/leaderboard", (String)cc.getLeaderboard2(15).getEntity()).responseCode)
+              if (200!=Http.post(url+"/leaderboard_10", (String)cc.getLeaderboard2(10).getEntity()).responseCode)
                 log.error("Error pushing 'leaderboard' info to proxy");
             }catch (IOException e){
               e.printStackTrace();
