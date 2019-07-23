@@ -70,7 +70,13 @@ function loadDataTable(){
         </div>
       </div>
       `;
-    document.getElementById("example_filter").innerHTML=btnExport+"&nbsp;"+document.getElementById("example_filter").innerHTML;
+	    
+      // Insert Export button next to Search box
+	    var searchBoxDiv=document.querySelector("#example_filter");
+	    var wrapper=searchBoxDiv.parentNode;
+	    var newNode = document.createElement("span");
+	    newNode.innerHTML=btnExport+"&nbsp;";
+	    searchBoxDiv.appendChild(newNode);
       
     
 }
