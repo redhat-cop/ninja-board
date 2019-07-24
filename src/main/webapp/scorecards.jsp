@@ -161,21 +161,12 @@ function loadDataTable(){
                  </div>
                  `;
                  
-<<<<<<< HEAD
-                 // Insert Export button next to Search box
-                 var searchBoxDiv=document.querySelector("#example_filter");
-                 var wrapper=searchBoxDiv.parentNode;
-                 var newNode = document.createElement("span");
-                 newNode.innerHTML=btnExport+"&nbsp;";
-                 searchBoxDiv.appendChild(newNode);
-=======
 	               // Insert Export button next to Search box
 	               var searchBoxDiv=document.querySelector("#example_filter");
 	               var wrapper=searchBoxDiv.parentNode;
 	               var newNode = document.createElement("span");
 	               newNode.innerHTML=btnExport+"&nbsp;";
 	               searchBoxDiv.appendChild(newNode);
->>>>>>> adding the export fix again because github is unintelligable and it's vanished somewhere
                 
             },
             "dataType": "json"
