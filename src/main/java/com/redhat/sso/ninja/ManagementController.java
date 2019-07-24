@@ -158,17 +158,15 @@ public class ManagementController {
     return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Config.get())).build();
   }
   
-  
   @GET
   @Path("/scripts/runNow")
   public Response runScriptsNow(@Context HttpServletRequest request, @Context HttpServletResponse response, @Context ServletContext servletContext){
-  	Heartbeat2.runOnce();
+  	Heartbeat2.runOnceAsync();
   	Database2.resetInstance();
   	Database2.get(); //reload it
-    log.debug("Scripts run completed");
-    return Response.status(200).entity("OK").build();
+    log.debug("Scripts run started - check logs for results");
+    return Response.status(200).entity("RUNNING").build();
   }
-  
   
   // manually (via rest) to register new users via a rest/json payload
   @POST
