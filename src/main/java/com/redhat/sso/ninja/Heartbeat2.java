@@ -43,11 +43,13 @@ import com.redhat.sso.ninja.utils.Tuple;
 public class Heartbeat2 {
   private static final Logger log = Logger.getLogger(Heartbeat2.class);
   private static Timer t;
-  private static final long delay=30000l;
+  private static Timer tRunOnce;
+//  private static final long delay=30000l;
 
   public static void main(String[] asd){
     try{
-      new HeartbeatRunnable().levelUpChecks(Database2.get());
+    	Heartbeat2.runOnceAsync();
+//      new HeartbeatRunnable().levelUpChecks(Database2.get());
     }catch(Exception e){
       e.printStackTrace();
     }
@@ -80,7 +82,12 @@ public class Heartbeat2 {
   }
   
   public static void runOnce(){
-    new HeartbeatRunnable().run();
+    new HeartbeatRunnable(null).run();
+  }
+  
+  public static void runOnceAsync(){
+  	tRunOnce = new Timer("cop-ninja-heartbeat", false);
+  	tRunOnce.schedule(new HeartbeatRunnable(tRunOnce), 0);
   }
   
   public static void start(Config config) {
@@ -117,7 +124,7 @@ public class Heartbeat2 {
   }
   private static void start(long msToStartTime, long intervalInMs) {
     t = new Timer("cop-ninja-heartbeat", false);
-    t.scheduleAtFixedRate(new HeartbeatRunnable(), msToStartTime, intervalInMs);
+    t.scheduleAtFixedRate(new HeartbeatRunnable(null), msToStartTime, intervalInMs);
   }
   private long getMillisToNextTime(String time) throws ParseException{
   	SimpleDateFormat sdf=new SimpleDateFormat("HH:mm");
@@ -165,6 +172,11 @@ public class Heartbeat2 {
 
   static class HeartbeatRunnable extends TimerTask {
     static SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    private Timer t;
+    
+    public HeartbeatRunnable(Timer t){
+    	this.t=t;
+    }
     
     public Map<String, String> getUsersByPool(Database2 db, String key){
 //      System.out.println("getting pool by id: "+key);
@@ -506,6 +518,8 @@ public class Heartbeat2 {
       }
       
       config.save();
+      
+      if (t!=null) t.cancel();
     }
     
     public void levelUpChecks(Database2 db){
