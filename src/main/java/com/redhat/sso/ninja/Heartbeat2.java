@@ -384,6 +384,7 @@ public class Heartbeat2 {
         }else if ("sh".equalsIgnoreCase((String)script.get("type"))
                || "bash".equalsIgnoreCase((String)script.get("type"))
                || "python".equalsIgnoreCase((String)script.get("type"))
+               || "script".equalsIgnoreCase((String)script.get("type"))
                || "perl".equalsIgnoreCase((String)script.get("type"))){
           try{
             
@@ -588,7 +589,12 @@ public class Heartbeat2 {
     		
     		if (s.contains("/")){ // ignore the line if it doesn't contain a slash
     			String[] split=s.split("/");
+    			
+    			// take the last section of the script name as the pool id. so "trello" stays as "trello", but "trello.thoughtleadership" becomes "thoughtleadership" where the "trello" part is the source type/context
     			String pool=(String)script.get("name");
+    			String[] splitPool=pool.split("\\.");
+    			pool=splitPool[splitPool.length-1];
+    			
     			String actionId;
     			String poolUserId;
     			Integer inc;
