@@ -34,6 +34,7 @@ import org.mortbay.log.Log;
 import com.redhat.sso.ninja.user.UserService;
 import com.redhat.sso.ninja.user.UserService.User;
 import com.redhat.sso.ninja.utils.DownloadFile;
+import com.redhat.sso.ninja.utils.FluentCalendar;
 import com.redhat.sso.ninja.utils.Http;
 import com.redhat.sso.ninja.utils.LevelsUtil;
 import com.redhat.sso.ninja.utils.ParamParser;
@@ -383,6 +384,7 @@ public class Heartbeat2 {
         }else if ("sh".equalsIgnoreCase((String)script.get("type"))
                || "bash".equalsIgnoreCase((String)script.get("type"))
                || "python".equalsIgnoreCase((String)script.get("type"))
+               || "script".equalsIgnoreCase((String)script.get("type"))
                || "perl".equalsIgnoreCase((String)script.get("type"))){
           try{
             
@@ -407,7 +409,8 @@ public class Heartbeat2 {
 //            System.setProperty("server", "http://localhost:8082/community-ninja-board");
             
             if (command.contains("${LAST_RUN") || command.contains("${DAYS_FROM_LAST_RUN")){
-              command=convertLastRun(command, lastRun2);
+            	Date lastRun=FluentCalendar.get(lastRun2).add(Calendar.DAY_OF_MONTH, -1).build().getTime();
+            	command=convertLastRun(command, lastRun);
             }
             
             
@@ -586,7 +589,12 @@ public class Heartbeat2 {
     		
     		if (s.contains("/")){ // ignore the line if it doesn't contain a slash
     			String[] split=s.split("/");
+    			
+    			// take the last section of the script name as the pool id. so "trello" stays as "trello", but "trello.thoughtleadership" becomes "thoughtleadership" where the "trello" part is the source type/context
     			String pool=(String)script.get("name");
+    			String[] splitPool=pool.split("\\.");
+    			pool=splitPool[splitPool.length-1];
+    			
     			String actionId;
     			String poolUserId;
     			Integer inc;
