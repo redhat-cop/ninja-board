@@ -17,6 +17,7 @@
 		}
 	],
 	"options": {
+		"gdrive.releases.url": "https://github.com/odeke-em/drive/releases/download/v0.3.9/",
 		"login.enabled": "false",
 		"root": "${configLocation}",
 		"_graphs-proxy": "http://localhost:8083/ninja-roxy",
