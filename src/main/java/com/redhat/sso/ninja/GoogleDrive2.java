@@ -202,8 +202,9 @@ public class GoogleDrive2 {
     }
 
     static void initialise() { //ie. download gdrive executable if necessary
-        if (!new File(GoogleDrive2.getDefaultExecutable()).exists()) {
+        if (!Files.exists(Paths.get(GoogleDrive2.getDefaultExecutable()))) {
             // attempt to download it
+            log.debug("gdrive executable not found; attempting to download.");
             File credsFile = Paths.get(GoogleDrive2.getDefaultWorkingFolder(), ".gd", "credentials.json").toFile();
             try {
 
