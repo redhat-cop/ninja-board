@@ -1,8 +1,10 @@
 package com.redhat.sso.ninja.user;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
@@ -55,20 +57,20 @@ public class UserService {
 //        }
         
         User u=new User();
-        u.uid           =safeToString(attrs.get("uid"));
-        u.name          =safeToString(attrs.get("cn"));
-        u.country       =safeToString(attrs.get("co"));
-        u.employeeNumber=safeToString(attrs.get("employeeNumber"));
-        u.mail          =safeToString(attrs.get("mail"));
-        u.mobile        =safeToString(attrs.get("mobile"));
-        u.location      =safeToString(attrs.get("rhatLocation"));
-        u.jobTitle1     =safeToString(attrs.get("rhatJobTitle"));
-        u.jobTitle2     =safeToString(attrs.get("title"));
-        u.costCenter    =safeToString(attrs.get("rhatCostCenter"));
-        u.costCenterDesc=safeToString(attrs.get("rhatCostCenterDesc"));
-        u.geo           =safeToString(attrs.get("rhatGeo"));
-        u.hireDate      =safeToString(attrs.get("rhatHireDate"));
-        u.jobCode       =safeToString(attrs.get("rhatJobCode"));
+        u.userInfo.put("uid",            safeToString(attrs.get("uid")));
+        u.userInfo.put("name",           safeToString(attrs.get("cn")));
+        u.userInfo.put("country",        safeToString(attrs.get("co")));
+        u.userInfo.put("employeeNumber", safeToString(attrs.get("employeeNumber")));
+        u.userInfo.put("mail",           safeToString(attrs.get("mail")));
+        u.userInfo.put("mobile",         safeToString(attrs.get("mobile")));
+        u.userInfo.put("location",       safeToString(attrs.get("rhatLocation")));
+        u.userInfo.put("jobTitle1",      safeToString(attrs.get("rhatJobTitle")));
+        u.userInfo.put("jobTitle2",      safeToString(attrs.get("title")));
+        u.userInfo.put("costCenter",     safeToString(attrs.get("rhatCostCenter")));
+        u.userInfo.put("costCenterDesc", safeToString(attrs.get("rhatCostCenterDesc")));
+        u.userInfo.put("geo",            safeToString(attrs.get("rhatGeo")));
+        u.userInfo.put("hireDate",       safeToString(attrs.get("rhatHireDate")));
+        u.userInfo.put("jobCode",        safeToString(attrs.get("rhatJobCode")));
         result2.add(u);
       }
       return result2;
@@ -95,35 +97,22 @@ public class UserService {
   }
 
   public class User{
-    private String uid;
-    private String name;
-    private String country;
-    private String employeeNumber;
-    private String mail;
-    private String mobile;
-    private String geo;
-    private String costCenter;
-    private String costCenterDesc;
-    private String location;
-    private String jobTitle1;
-    private String jobTitle2;
-    private String hireDate;
-    private String jobCode;
-    
-    public String getUid()               {return uid;}
-    public String getName()              {return name;}
-    public String getCountry()           {return country;}
-    public String getEmployeeNumber()    {return employeeNumber;}
-    public String getMail()              {return mail;}
-    public String getMobile()            {return mobile;}
-    public String getRhatGeo()           {return geo;}
-    public String getRhatCostCenter()    {return costCenter;}
-    public String getRhatCostCenterDesc(){return costCenterDesc;}
-    public String getRhatJobTitle()      {return jobTitle1;}
-    public String getTitle()             {return jobTitle2;}
-    public String getRhatLocation()      {return location;}
-    public String getHireDate()          {return hireDate;}
-    public String getJobCode()           {return jobCode;}
+  	Map<String,String> userInfo=new HashMap<String,String>();
+  	public Map<String,String> asMap(){return userInfo;};
+    public String getUid()               {return userInfo.get("uid");}
+    public String getName()              {return userInfo.get("name");}
+    public String getCountry()           {return userInfo.get("country");}
+    public String getEmployeeNumber()    {return userInfo.get("employeeNumber");}
+    public String getMail()              {return userInfo.get("mail");}
+    public String getMobile()            {return userInfo.get("mobile");}
+    public String getRhatGeo()           {return userInfo.get("geo");}
+    public String getRhatCostCenter()    {return userInfo.get("costCenter");}
+    public String getRhatCostCenterDesc(){return userInfo.get("costCenterDesc");}
+    public String getRhatJobTitle()      {return userInfo.get("jobTitle1");}
+    public String getTitle()             {return userInfo.get("jobTitle2");}
+    public String getRhatLocation()      {return userInfo.get("location");}
+    public String getHireDate()          {return userInfo.get("hireDate");}
+    public String getJobCode()           {return userInfo.get("jobCode");}
   }
 
 }

@@ -91,9 +91,12 @@
       
       var name=json['labels'][i];
       var points=json['datasets'][0]['data'][i]+"pts";
-      var belt=(json['custom2'][i]=="zero"?"No":"<span class='belt-"+json['custom2'][i]+"'>"+uCase(json['custom2'][i])) +" Belt</span>";
+      var username=json['custom1'][i].split("|")[0];
+      var belt=json['custom1'][i].split("|")[1];
+      var geo=json['custom1'][i].split("|")[2];
+      belt=(belt=="zero"?"No":"<span class='belt-"+belt+"'>"+uCase(belt)) +" Belt</span>";
       var NL="<br/>";
-      td.innerHTML="<img src='https://mojo.redhat.com/people/"+json['custom1'][i]+"/avatar/200.png?a=925089' class='avatar' /><div>"+NL+name+NL+belt+NL+points+"</div>";
+      td.innerHTML="<img src='https://mojo.redhat.com/people/"+username+"/avatar/200.png?a=925089' class='avatar' /><div>"+NL+name+NL+geo+NL+belt+NL+points+"</div>";
       
     }
     setTimeout(function(){ resizeParent(); }, 500);

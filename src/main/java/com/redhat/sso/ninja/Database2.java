@@ -53,6 +53,17 @@ public class Database2{
   	this.version=version;
   }
   
+  public static String buildLink(Map<String,String> params){
+  	if (!params.containsKey("linkId")) return "";
+  	if (params.get("id").startsWith("TR")){
+  		return "([Trello card: "+params.get("linkId")+"|https://trello.com/c/"+params.get("linkId")+"])";
+  	}else if (params.get("id").startsWith("GH")){
+  		return "([Github card: "+params.get("linkId")+"|https://github.com/"+params.get("org")+"/"+params.get("board")+"/issues/"+params.get("linkId")+"])";
+  	//}else if (params.get("id").startsWith("GL")){
+  	//	return "([Gitlab card: "+params.get("linkId")+"|"+params.get("linkId")+"])";
+  	}
+  	return "";
+  }
   
   public Database2 increment(String poolId, String userId, Integer increment, Map<String, String> params){
     if (null==poolId || null==userId){
@@ -65,12 +76,12 @@ public class Database2{
       log.info("Incrementing points: user="+userId+", poolId="+poolId+", increment/points="+increment+" + params="+params);
       scorecards.get(userId).put(poolId, scorecards.get(userId).get(poolId)+increment);
       
-    	if (params!=null && params.get("id")!=null && params.get("id").startsWith("TR") && null!=params.get("linkId")){ // its a trello point
-    		addEvent("Points Increment", userId, increment+" point"+(increment<=1?"":"s")+" added to "+poolId+ " ([Trello card: "+params.get("linkId")+"|"+params.get("linkId")+"])");
-    	}else{ // it's a point from any other source
-    		addEvent("Points Increment", userId, increment+" point"+(increment<=1?"":"s")+" added to "+poolId);
-    	}
-      
+      if (params!=null && params.size()>1){ //because "id" is always added
+      	addEvent("Points Increment", userId, increment+" point"+(increment<=1?"":"s")+" added to "+poolId+ " "+buildLink(params));
+      }else{
+      	// no params & therefore no link
+      	addEvent("Points Increment", userId, increment+" point"+(increment<=1?"":"s")+" added to "+poolId);
+      }
       
     }else{
       log.debug("Unregistered user detected ["+userId+"]");
