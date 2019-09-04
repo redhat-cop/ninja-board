@@ -1,3 +1,4 @@
+<script src="js/utils.js"></script>
 <center>
 <table id="wall" cellspacing="0" cellpadding="0">
 </table>
@@ -55,10 +56,10 @@
   .belt-black{ color: black; }
   
 </style>
-
 <script>
   
-  var ctx = "https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs";
+  var ctx=(Utils.getParameterByName("source")!=undefined?Utils.getParameterByName("source"):"https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs");
+  //var ctx = "https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs";
   //var ctx = "http://localhost:8082/community-ninja-board";
 	
   var xhr = new XMLHttpRequest();
