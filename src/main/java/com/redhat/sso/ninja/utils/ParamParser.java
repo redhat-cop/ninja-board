@@ -12,7 +12,7 @@ public class ParamParser{
 		String[] pairs=paramString.split(",");
 		for (String p : pairs){
 			int i=p.indexOf("=");
-			result.put(URLDecoder.decode(p.substring(0, i), "UTF-8"), URLDecoder.decode(p.substring(i+1), "UTF-8"));
+			result.put(URLDecoder.decode(p.substring(0, i).trim(), "UTF-8"), URLDecoder.decode(p.substring(i+1), "UTF-8"));
 		}
 		return result;
 	}

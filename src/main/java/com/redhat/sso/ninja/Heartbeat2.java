@@ -17,9 +17,11 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -31,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.mortbay.log.Log;
 
+import com.google.common.collect.Lists;
 import com.redhat.sso.ninja.user.UserService;
 import com.redhat.sso.ninja.user.UserService.User;
 import com.redhat.sso.ninja.utils.DownloadFile;
@@ -207,13 +210,13 @@ public class Heartbeat2 {
       return null;
     }
 
-    public boolean addNewlyRegisteredUsers(Database2 db){
+    public boolean addNewlyRegisteredUsers(Database2 db, Config cfg){
       Map<String, Map<String, String>> dbUsers=db.getUsers();
       UserService userService=new UserService();
       boolean userServiceDown=false;
       try{
         GoogleDrive2 drive=new GoogleDrive2();
-        File file=drive.downloadFile("1E91hT_ZpySyvhnANxqZ7hcBSM2EEd9TqfQF-cavB8hQ");
+        File file=drive.downloadFile(cfg.getOptions().get("googlesheets.registration.id"));
         List<Map<String, String>> rows=drive.parseExcelDocument(file);
         for(Map<String,String> r:rows){
           Map<String, String> userInfo=new HashMap<String, String>();
@@ -234,19 +237,20 @@ public class Heartbeat2 {
             }
           }
           
-//          System.out.println("DBUsers.containsKey('"+userInfo.get("username")+"') = "+dbUsers.containsKey(userInfo.get("username")));
-          
+          // populate all the fields we can from LDAP IF THE USER DOESN'T ALREADY EXIST IN THE DATABASE
           if (null!=userInfo.get("username") && !dbUsers.containsKey(userInfo.get("username"))){
             
             // attempt to set the display name if we can get access to RH ldap
           	String ldapEnabled=Config.get().getOptions().get("ldap.enabled");
-            userServiceDown=ldapEnabled!=null && "true".equalsIgnoreCase(ldapEnabled); //temporarily set whilst we have no access to LDAP
+            userServiceDown=userServiceDown || !"true".equalsIgnoreCase(ldapEnabled); //temporarily set whilst we have no access to LDAP
             try{
               if (!userServiceDown){
                 log.debug("UserService(LDAP) is UP, populating the 'displayName'");
                 List<User> users=userService.search("uid", userInfo.get("username"));
-                if (users.size()>0)
+                if (users.size()>0){
                   userInfo.put("displayName", users.get(0).getName());
+                  userInfo.put("geo", users.get(0).getRhatGeo());
+                }
               }else{
 //                log.debug("UserService(LDAP) is DOWN, skipping populating the 'displayName'");
               }
@@ -255,7 +259,7 @@ public class Heartbeat2 {
               e.printStackTrace();
               userServiceDown=true;
             }
-
+            
             userInfo.put("level", LevelsUtil.get().getBaseLevel().getRight());
             userInfo.put("levelChanged", new SimpleDateFormat("yyyy-MM-dd").format(new Date())); // date of registration
             log.info("New User Registered: "+userInfo.get("username") +" ["+userInfo+"]");
@@ -269,6 +273,7 @@ public class Heartbeat2 {
             // Notify everyone on the Ninja chat group of a new registree
             String displayName=userInfo.containsKey("displayName")?userInfo.get("displayName"):userInfo.get("username");
             new ChatNotification().send("New User Registered: <https://mojo.redhat.com/people/"+userInfo.get("username")+"|"+displayName+">");
+//            }// /newUser
             
           }else if (dbUsers.containsKey(userInfo.get("username"))){
             log.debug("User already registered: "+userInfo.get("username"));
@@ -282,19 +287,30 @@ public class Heartbeat2 {
       return true;
     }
     
+    enum FieldMapping{
+    	displayName("name"),
+    	geo("geo");
+    	public String value;
+    	private FieldMapping(String k){ this.value=k; }
+    }
     private boolean updateUsersDetailsUsingLDAPInfo(Database2 db){
     	UserService userService=new UserService();
     	for(Entry<String, Map<String, String>> e:db.getUsers().entrySet()){
     		
     		String username=e.getKey();
     		
-    		if (!e.getValue().containsKey("displayName")){
-    			
+    		Set<String> missingFields=new HashSet<String>(Lists.newArrayList("displayName","geo"));
+    		missingFields.removeAll(new HashSet<String>(e.getValue().keySet()));
+    		if (missingFields.size()>0){
     			try{
     				List<User> users=userService.search("uid", username);
     				if (users.size()>0){
-    					log.info("Updating displayName from '"+username+"' to '"+users.get(0).getName()+"'");
-    					e.getValue().put("displayName", users.get(0).getName());
+    					for(String field:missingFields){
+    						FieldMapping fm=FieldMapping.valueOf(field);
+    						log.info("Updating "+fm.name()+" for '"+username+"' to '"+users.get(0).asMap().get(fm.value)+"'");
+    						e.getValue().put(fm.name(), users.get(0).asMap().get(fm.value));
+    					}
+    					
     				}
     				
     			}catch(Exception ex){
@@ -315,7 +331,7 @@ public class Heartbeat2 {
       final Config config=Config.get();
       final Database2 db=Database2.get();
       
-      boolean successfullyAccessedRegistrationSheet=addNewlyRegisteredUsers(db);
+      boolean successfullyAccessedRegistrationSheet=addNewlyRegisteredUsers(db, config);
       if (!successfullyAccessedRegistrationSheet) return;
       updateUsersDetailsUsingLDAPInfo(db);
       
@@ -617,8 +633,8 @@ public class Heartbeat2 {
 //    						log.info("Incrementing registered user "+poolUserId+" by "+inc);
     						db.increment(pool, userId, inc, params);//.save();
     					}else{
-    						log.info("Unable to find '"+poolUserId+"' "+script.get("name")+" user - not registered?");
-    						db.addEvent("Lost Points", poolUserId +"("+script.get("name")+")", script.get("name")+" user '"+poolUserId+"' was not found - not registered?");
+    						log.info("Unable to find '"+poolUserId+"' "+script.get("name")+" user - not registered? "+Database2.buildLink(params));
+    						db.addEvent("Lost Points", poolUserId +"("+script.get("name")+")", script.get("name")+" user '"+poolUserId+"' was not found - not registered? "+Database2.buildLink(params));
     					}
     				}else{
     					// it's a duplicate increment for that actionId & user, so ignore it
