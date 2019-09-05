@@ -58,12 +58,12 @@
 </style>
 <script>
   
-  var ctx=(Utils.getParameterByName("source")!=undefined?Utils.getParameterByName("source"):"https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs");
+  var DEFAULT_CTX="https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs";
+  var ctx=(Utils.getParameterByName("source")!=undefined?Utils.getParameterByName("source"):DEFAULT_CTX);
   //var ctx = "https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs";
   //var ctx = "http://localhost:8082/community-ninja-board";
-	
   var xhr = new XMLHttpRequest();
-  xhr.open("GET", ctx+"/api"+(ctx.indexOf('localhost')>0?"":"/proxy")+"/ninjas", true);
+  xhr.open("GET", ctx+"/api"+(Utils.getParameterByName("source")!=undefined?"":"/proxy")+"/ninjas", true);
   xhr.send();
   xhr.onloadend = function () {
     var json=JSON.parse(xhr.responseText);
@@ -89,6 +89,11 @@
     	
       var td = newRow.insertCell(i%cols);
       td.className="col";
+      
+      if (json['custom1'][i].split("|").length!=3){
+    	  console.log("ERROR: Input format is incorrect");
+    	  break;
+      }
       
       var name=json['labels'][i];
       var points=json['datasets'][0]['data'][i]+"pts";
