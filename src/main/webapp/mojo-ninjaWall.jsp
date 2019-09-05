@@ -1,3 +1,4 @@
+<script src="js/utils.js"></script>
 <center>
 <table id="wall" cellspacing="0" cellpadding="0">
 </table>
@@ -55,14 +56,14 @@
   .belt-black{ color: black; }
   
 </style>
-
 <script>
   
-  var ctx = "https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs";
+  var DEFAULT_CTX="https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs";
+  var ctx=(Utils.getParameterByName("source")!=undefined?Utils.getParameterByName("source"):DEFAULT_CTX);
+  //var ctx = "https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs";
   //var ctx = "http://localhost:8082/community-ninja-board";
-	
   var xhr = new XMLHttpRequest();
-  xhr.open("GET", ctx+"/api"+(ctx.indexOf('localhost')>0?"":"/proxy")+"/ninjas", true);
+  xhr.open("GET", ctx+"/api"+(Utils.getParameterByName("source")!=undefined?"":"/proxy")+"/ninjas", true);
   xhr.send();
   xhr.onloadend = function () {
     var json=JSON.parse(xhr.responseText);
@@ -89,11 +90,19 @@
       var td = newRow.insertCell(i%cols);
       td.className="col";
       
+      if (json['custom1'][i].split("|").length!=3){
+    	  console.log("ERROR: Input format is incorrect");
+    	  break;
+      }
+      
       var name=json['labels'][i];
       var points=json['datasets'][0]['data'][i]+"pts";
-      var belt=(json['custom2'][i]=="zero"?"No":"<span class='belt-"+json['custom2'][i]+"'>"+uCase(json['custom2'][i])) +" Belt</span>";
+      var username=json['custom1'][i].split("|")[0];
+      var belt=json['custom1'][i].split("|")[1];
+      var geo=json['custom1'][i].split("|")[2];
+      belt=(belt=="zero"?"No":"<span class='belt-"+belt+"'>"+uCase(belt)) +" Belt</span>";
       var NL="<br/>";
-      td.innerHTML="<img src='https://mojo.redhat.com/people/"+json['custom1'][i]+"/avatar/200.png?a=925089' class='avatar' /><div>"+NL+name+NL+belt+NL+points+"</div>";
+      td.innerHTML="<img src='https://mojo.redhat.com/people/"+username+"/avatar/200.png?a=925089' class='avatar' /><div>"+NL+name+NL+geo+NL+belt+NL+points+"</div>";
       
     }
     setTimeout(function(){ resizeParent(); }, 500);

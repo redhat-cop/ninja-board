@@ -22,6 +22,7 @@
 		"_graphs-proxy": "http://localhost:8083/ninja-roxy",
 		"heartbeat.intervalInSeconds": "86400000",
 		"heartbeat.startTime": "21:00",
+		"googlesheets.registration.id": "1E91hT_ZpySyvhnANxqZ7hcBSM2EEd9TqfQF-cavB8hQ",
 		"events.max": "1000000",
 		"thresholds": "0:ZERO,5:BLUE,20:GREY,40:RED,75:BLACK",
 		"ldap.enabled": "true",
