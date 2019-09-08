@@ -68,6 +68,7 @@ public class Database2 {
     this.version = version;
   }
 
+<<<<<<< HEAD
   public static String buildLink(Map<String,String> params){
     if (!params.containsKey("linkId")) return "";
     if (params.get("id").startsWith("TR")){
@@ -86,6 +87,14 @@ public class Database2 {
       log.error("Either pool id or user id is null.");
       throw new IllegalArgumentException("Unable to add due to null key [poolId=" + poolId + ", userId=" + userId + "]");
     }
+=======
+
+  public Database2 increment(String poolId, String userId, Integer increment, Map<String, String> params) {
+    if (StringUtils.isBlank(poolId) || StringUtils.isBlank(userId)) {
+      log.error("Either pool id or user id is null.");
+      throw new IllegalArgumentException("Unable to add due to null key [poolId=" + poolId + ", userId=" + userId + "]");
+    }
+>>>>>>> 71c3cf65d45b182e92ba974f67b75e399b05fc19
     if (users.containsKey(userId)) { // means the user is registered
       scorecards.computeIfAbsent(userId, (k) -> new HashMap<>());
       Map<String, Integer> scorecard = scorecards.get(userId);
@@ -94,7 +103,11 @@ public class Database2 {
       scorecard.put(poolId, scorecards.get(userId).get(poolId) + increment);
 
       if (params != null && params.get("id") != null && params.get("id").startsWith("TR") && null != params.get("linkId")) { // its a trello point
+<<<<<<< HEAD
         addEvent("Points Increment", userId, increment + " point" + (increment <= 1 ? "" : "s") + " added to " + poolId + buildLink(params));
+=======
+        addEvent("Points Increment", userId, increment + " point" + (increment <= 1 ? "" : "s") + " added to " + poolId + " ([Trello card: " + params.get("linkId") + "|" + params.get("linkId") + "])");
+>>>>>>> 71c3cf65d45b182e92ba974f67b75e399b05fc19
       } else { // it's a point from any other source
         addEvent("Points Increment", userId, increment + " point" + (increment <= 1 ? "" : "s") + " added to " + poolId);
       }
@@ -285,12 +298,21 @@ public class Database2 {
     instance = new Database2();
     instance.mode = Mode.IN_MEMORY;
     return instance;
+<<<<<<< HEAD
   }
 
   public static void resetInstance() {
     instance = null;
   }
 
+=======
+  }
+
+  public static void resetInstance() {
+    instance = null;
+  }
+
+>>>>>>> 71c3cf65d45b182e92ba974f67b75e399b05fc19
   public static void main(String[] asd) {
     Database2.get().increment("pool", "test", 1, null);
   }
