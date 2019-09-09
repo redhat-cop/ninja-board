@@ -1,3 +1,12 @@
+
+body {
+    font-family: "RedHatText",Helvetica,helvetica,arial,sans-serif;
+}
+
+#main_nav .navbar-nav:not(.navbar-right) {
+    padding-right: 1rem;
+}
+
 .navbar{
 	width:100%;
 	min-height:25px !important;
@@ -24,12 +33,12 @@
 .navbar-title-text{
 	background-color:#1f1f1f;
 	color:#eee;
-	font-size: 20pt;
+	font-size: 2rem;
 	padding: 0px 15px 0px 15px; 
 	border-radius: 0px 4px 4px 4px;
 }
 .navbar-title-user{
-	font-size: 15pt;
+	font-size: 1.5rem;
 	padding: 0px 15px 0px 15px; 
 	border-radius: 0px 4px 4px 4px;
 	height: 30px;
@@ -51,16 +60,22 @@
 .navbar-brand2 {
   height: 50px;
   padding: 15px 15px;
-  font-size: 18px;
+  font-size: 1.8rem;
   line-height: 20px;
 }
+
+.navbar-brand2 img[role=logo] {
+    width: 12rem;
+    height: 6rem;
+}
+
 .navbar-brand2:hover,
 .navbar-brand2:focus {
   text-decoration: none;
 }
+
 .menu-title{
-	font-size: 18px;
-	font-family: Overpass;
+	font-size: 1.8rem;
 	padding-top: 21px !important;
 	padding-left: 5px !important;
 	padding-right: 5px !important;
@@ -105,10 +120,10 @@
 
 
 .graph{
-	width:1200px;
-	font-family: Overpass,Helvetica,helvetica,arial,sans-serif;
-  font-size: 1.2222222222em;
+    width:1200px;
+	font-size: 1.2222222222em;
 }
+
 /*	background-color:#EEEEEE;*/
 .graph_header{
   width: 100%;
@@ -119,7 +134,7 @@
 	padding: 20px;
 	color: #cc0000;
 	font-weight: 400;
-	font-size: 24pt;
+	font-size: 2.4rem;
 	text-align: left;
 }
 .graph_header_sub{
@@ -127,6 +142,6 @@
 	padding: 20px;
 	color: #666666;
 	font-weight: normal;
-	font-size: 14pt;
+	font-size: 1.4rem;
 	text-align: left;
 }
