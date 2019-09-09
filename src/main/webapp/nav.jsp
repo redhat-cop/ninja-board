@@ -42,9 +42,9 @@ function myFunction(x) {
 }
 </script>
 
-<div class="navbar">
+<div id="main_nav" class="navbar">
   <div class="navbar-header">
-    <a href="<%=request.getContextPath()%>" class="navbar-brand2"><img src="images/redhat-logo.png"/>
+    <a href="<%=request.getContextPath()%>" class="navbar-brand2"><img role="logo" src="images/logo.svg"/>
     	<span class="navbar-brand3"></span>
     </a>
   </div>
