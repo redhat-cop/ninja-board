@@ -1,21 +1,17 @@
 package com.redhat.sso.ninja.utils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 public class MapUtilities{
   public static <K, V extends Comparable<V>> List<Entry<K, V>> sortByValue(Map<K, V> map){
-    List<Entry<K, V>> entries=new ArrayList<Entry<K, V>>(map.entrySet());
-    Collections.sort(entries, new ByValue<K, V>());
+    List<Entry<K, V>> entries= new ArrayList<>(map.entrySet());
+    Collections.sort(entries, new ByValue<>());
     return entries;
   }
   public static <K extends Comparable<K>, V> List<Entry<K, V>> sortByKey(Map<K, V> map){
-    List<Entry<K, V>> entries=new ArrayList<Entry<K, V>>(map.entrySet());
-    Collections.sort(entries, new ByKey<K, V>());
+    List<Entry<K, V>> entries= new ArrayList<>(map.entrySet());
+    Collections.sort(entries, new ByKey<>());
     return entries;
   }
   private static class ByValue<K, V extends Comparable<V>> implements Comparator<Entry<K, V>>{

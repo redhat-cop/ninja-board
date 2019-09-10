@@ -28,6 +28,8 @@ galaxy
 /.settings/
 /.classpath
 /.project
+/.idea
 
-.idea
-*.env
+# environment files
+**/*.env
+

@@ -1,10 +1,9 @@
 package com.redhat.sso.ninja;
 
-import java.util.concurrent.TimeUnit;
-
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
+import java.util.concurrent.TimeUnit;
 
 public class InitServlet extends HttpServlet {
 	

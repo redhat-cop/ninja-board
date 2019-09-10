@@ -1,6 +1,11 @@
 package com.redhat.sso.ninja;
 
-import static com.jayway.restassured.RestAssured.given;
+import com.jayway.restassured.specification.RequestSpecification;
+import com.redhat.sso.ninja.utils.MapBuilder;
+import groovy.lang.GroovyClassLoader;
+import mjson.Json;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.util.HashMap;
@@ -10,14 +15,7 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-
-import com.jayway.restassured.specification.RequestSpecification;
-import com.redhat.sso.ninja.utils.MapBuilder;
-
-import groovy.lang.GroovyClassLoader;
-import mjson.Json;
+import static com.jayway.restassured.RestAssured.given;
 
 
 /**
@@ -101,9 +99,9 @@ public class TrelloSync extends ScriptBase{
     }
   }
   
-  private Map<String, Integer> cardCount=new HashMap<String, Integer>();
-  private Map<String, Integer> pointsStats=new HashMap<String, Integer>();
-  private Map<String, String> memberIdMapping=new HashMap<String, String>();
+  private Map<String, Integer> cardCount= new HashMap<>();
+  private Map<String, Integer> pointsStats= new HashMap<>();
+  private Map<String, String> memberIdMapping= new HashMap<>();
 
   public void parse(String orgName, Integer days, String author){
 //    TrelloSync s=new TrelloSync();

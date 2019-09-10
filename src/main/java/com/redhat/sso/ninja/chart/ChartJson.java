@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Set;
 
 public class ChartJson {
-  private Set<String> labels=new LinkedHashSet<String>();
-  private List<DataSet> datasets=new ArrayList<DataSet>();
+  private Set<String> labels= new LinkedHashSet<>();
+  private List<DataSet> datasets= new ArrayList<>();
   
   public Set<String> getLabels() {
     return labels;

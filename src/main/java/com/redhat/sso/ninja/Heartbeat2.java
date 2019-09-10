@@ -1,48 +1,26 @@
 package com.redhat.sso.ninja;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import com.google.common.collect.Lists;
+import com.redhat.sso.ninja.user.UserService;
+import com.redhat.sso.ninja.user.UserService.User;
+import com.redhat.sso.ninja.utils.*;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+import org.mortbay.log.Log;
+
+import java.io.*;
 import java.nio.file.attribute.PosixFilePermission;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-import org.mortbay.log.Log;
-
-import com.google.common.collect.Lists;
-import com.redhat.sso.ninja.user.UserService;
-import com.redhat.sso.ninja.user.UserService.User;
-import com.redhat.sso.ninja.utils.DownloadFile;
-import com.redhat.sso.ninja.utils.FluentCalendar;
-import com.redhat.sso.ninja.utils.Http;
-import com.redhat.sso.ninja.utils.LevelsUtil;
-import com.redhat.sso.ninja.utils.ParamParser;
-import com.redhat.sso.ninja.utils.RegExHelper;
-import com.redhat.sso.ninja.utils.Tuple;
 
 public class Heartbeat2 {
   private static final Logger log = Logger.getLogger(Heartbeat2.class);
@@ -184,7 +162,7 @@ public class Heartbeat2 {
     
     public Map<String, String> getUsersByPool(Database2 db, String key){
 //      System.out.println("getting pool by id: "+key);
-      Map<String, String> result=new HashMap<String, String>();
+      Map<String, String> result= new HashMap<>();
       for(Entry<String, Map<String, String>> e:db.getUsers().entrySet()){
         // support a default of your key id when no pool id is found
         if (e.getValue().containsKey(key)){
@@ -219,7 +197,7 @@ public class Heartbeat2 {
         File file=drive.downloadFile(cfg.getOptions().get("googlesheets.registration.id"));
         List<Map<String, String>> rows=drive.parseExcelDocument(file);
         for(Map<String,String> r:rows){
-          Map<String, String> userInfo=new HashMap<String, String>();
+          Map<String, String> userInfo= new HashMap<>();
           for(Entry<String, String> c:r.entrySet()){
             if (c.getKey().toLowerCase().contains("timestamp")){
             }else if (c.getKey().toLowerCase().contains("email")){
@@ -266,7 +244,7 @@ public class Heartbeat2 {
             dbUsers.put(userInfo.get("username"), userInfo);
             
             // add the user a zero scorecard
-            db.getScoreCards().put(userInfo.get("username"), new HashMap<String, Integer>());
+            db.getScoreCards().put(userInfo.get("username"), new HashMap<>());
             
             db.addEvent("New User Registered", userInfo.get("username"), "");
             
@@ -299,8 +277,8 @@ public class Heartbeat2 {
     		
     		String username=e.getKey();
     		
-    		Set<String> missingFields=new HashSet<String>(Lists.newArrayList("displayName","geo"));
-    		missingFields.removeAll(new HashSet<String>(e.getValue().keySet()));
+    		Set<String> missingFields= new HashSet<>(Lists.newArrayList("displayName", "geo"));
+    		missingFields.removeAll(new HashSet<>(e.getValue().keySet()));
     		if (missingFields.size()>0){
     			try{
     				List<User> users=userService.search("uid", username);
@@ -592,7 +570,7 @@ public class Heartbeat2 {
     		scriptLog.append(s).append("\n");
     		log.debug(s);
     		
-    		Map<String, String> params=new HashMap<String, String>();
+    		Map<String, String> params= new HashMap<>();
     		// check for params here, extract them if present for use later on
     		if (s.matches(".* \\[.*\\]")){
     			Matcher m=paramsPattern.matcher(s);
