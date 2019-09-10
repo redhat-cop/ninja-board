@@ -9,6 +9,7 @@
 	<title>Communities of Practice</title>
 	
 	<link href="css/jquery.dataTables.min.css" rel="stylesheet">
+	<link type="text/css" rel="stylesheet" href="https://static.redhat.com/libs/redhat/redhat-font/2/webfonts/red-hat-font.css" media="all" />
 	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="css/style2.css" type="text/css">
 	
