@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 
-import os, json, requests, sys, argparse
-from datetime import datetime, timedelta
+import argparse
+import os
+import requests
+import sys
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 # Fill in GitHub Token

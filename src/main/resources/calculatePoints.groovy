@@ -1,5 +1,7 @@
-import java.util.regex.*;
-import mjson.Json;
+import mjson.Json
+
+import java.util.regex.Matcher
+import java.util.regex.Pattern;
 
 def calculate(Json card){
   def cardName=card.at("name").asString();

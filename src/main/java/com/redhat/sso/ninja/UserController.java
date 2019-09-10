@@ -1,19 +1,17 @@
 package com.redhat.sso.ninja;
 
-import java.io.IOException;
-import java.util.List;
+import com.redhat.sso.ninja.user.UserService;
+import com.redhat.sso.ninja.utils.Json;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 
 import javax.naming.NamingException;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
-
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-
-import com.redhat.sso.ninja.user.UserService;
-import com.redhat.sso.ninja.utils.Json;
+import java.io.IOException;
+import java.util.List;
 
 @Path("/user")
 public class UserController {

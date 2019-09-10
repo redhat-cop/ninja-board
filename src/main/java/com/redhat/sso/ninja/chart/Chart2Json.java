@@ -1,10 +1,6 @@
 package com.redhat.sso.ninja.chart;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Chart2Json {
   private Set<String> labels= new LinkedHashSet<>(); // not sure this should be a Set, I think it should be a list since each corresponds to a dataset item. Sets would collapse identical text causing an unintended offset

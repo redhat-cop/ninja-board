@@ -1,13 +1,8 @@
 package com.redhat.sso.ninja.utils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import org.apache.commons.io.IOUtils;
+
+import java.io.*;
 
 public abstract class IOUtils2{
   

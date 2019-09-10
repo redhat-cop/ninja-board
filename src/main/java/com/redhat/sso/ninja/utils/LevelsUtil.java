@@ -1,9 +1,9 @@
 package com.redhat.sso.ninja.utils;
 
+import com.redhat.sso.ninja.Config;
+
 import java.util.LinkedList;
 import java.util.List;
-
-import com.redhat.sso.ninja.Config;
 
 public class LevelsUtil{
   static LevelsUtil instance;

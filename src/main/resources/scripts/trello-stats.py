@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 
-import os, json, requests, sys, argparse, collections, re
-from datetime import datetime, timedelta
+import argparse
+import collections
+import os
+import re
+import requests
+import sys
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 TRELLO_ORG_NAME = 'redhatcop'

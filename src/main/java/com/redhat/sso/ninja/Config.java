@@ -1,5 +1,13 @@
 package com.redhat.sso.ninja;
 
+import com.redhat.sso.ninja.utils.IOUtils2;
+import com.redhat.sso.ninja.utils.Json;
+import io.github.cdimascio.dotenv.Dotenv;
+import io.github.cdimascio.dotenv.DotenvEntry;
+import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -7,15 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import io.github.cdimascio.dotenv.Dotenv;
-import io.github.cdimascio.dotenv.DotenvEntry;
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
-import org.codehaus.jackson.annotate.JsonIgnore;
-
-import com.redhat.sso.ninja.utils.IOUtils2;
-import com.redhat.sso.ninja.utils.Json;
 
 public class Config {
   private static final Logger log = Logger.getLogger(Config.class);

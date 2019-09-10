@@ -1,28 +1,10 @@
 package com.redhat.sso.ninja;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.redhat.sso.ninja.user.Event;
+import com.redhat.sso.ninja.utils.Json;
+import com.redhat.sso.ninja.utils.MapBuilder;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -31,10 +13,19 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.codehaus.jackson.type.TypeReference;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
-import com.redhat.sso.ninja.utils.Json;
-import com.redhat.sso.ninja.utils.MapBuilder;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 @Path("/")
 public class ExportController{

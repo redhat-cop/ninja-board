@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 
-import os, json, requests, sys, argparse, collections, re, operator, csv
-from datetime import datetime, timedelta
+import argparse
+import collections
+import csv
+import os
+import requests
+import sys
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 ROCKETCHAT_SERVER_DEFAULT = 'chat.consulting.redhat.com'

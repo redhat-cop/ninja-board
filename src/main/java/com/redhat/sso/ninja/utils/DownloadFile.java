@@ -1,14 +1,14 @@
 package com.redhat.sso.ninja.utils;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermission;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
 
 public class DownloadFile{
   private Logger log=Logger.getLogger(this.getClass());

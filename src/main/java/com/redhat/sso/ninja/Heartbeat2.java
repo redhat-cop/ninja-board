@@ -1,48 +1,26 @@
 package com.redhat.sso.ninja;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import com.google.common.collect.Lists;
+import com.redhat.sso.ninja.user.UserService;
+import com.redhat.sso.ninja.user.UserService.User;
+import com.redhat.sso.ninja.utils.*;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+import org.mortbay.log.Log;
+
+import java.io.*;
 import java.nio.file.attribute.PosixFilePermission;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-import org.mortbay.log.Log;
-
-import com.google.common.collect.Lists;
-import com.redhat.sso.ninja.user.UserService;
-import com.redhat.sso.ninja.user.UserService.User;
-import com.redhat.sso.ninja.utils.DownloadFile;
-import com.redhat.sso.ninja.utils.FluentCalendar;
-import com.redhat.sso.ninja.utils.Http;
-import com.redhat.sso.ninja.utils.LevelsUtil;
-import com.redhat.sso.ninja.utils.ParamParser;
-import com.redhat.sso.ninja.utils.RegExHelper;
-import com.redhat.sso.ninja.utils.Tuple;
 
 public class Heartbeat2 {
   private static final Logger log = Logger.getLogger(Heartbeat2.class);
