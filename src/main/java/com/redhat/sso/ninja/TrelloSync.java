@@ -101,9 +101,9 @@ public class TrelloSync extends ScriptBase{
     }
   }
   
-  private Map<String, Integer> cardCount=new HashMap<String, Integer>();
-  private Map<String, Integer> pointsStats=new HashMap<String, Integer>();
-  private Map<String, String> memberIdMapping=new HashMap<String, String>();
+  private Map<String, Integer> cardCount= new HashMap<>();
+  private Map<String, Integer> pointsStats= new HashMap<>();
+  private Map<String, String> memberIdMapping= new HashMap<>();
 
   public void parse(String orgName, Integer days, String author){
 //    TrelloSync s=new TrelloSync();

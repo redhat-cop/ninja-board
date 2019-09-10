@@ -190,7 +190,7 @@ public class ManagementController {
 
         db.getUsers().put(username, userInfo);
         log.debug("New User Registered (via API): " + Json.newObjectMapper(true).writeValueAsString(userInfo));
-        db.getScoreCards().put(username, new HashMap<String, Integer>());
+        db.getScoreCards().put(username, new HashMap<>());
 
         db.addEvent("New User Registered (via API)", username, "");
       }
@@ -267,7 +267,7 @@ public class ManagementController {
 
     String payload = "{\"status\":\"ERROR\",\"message\":\"Unable to find user: " + user + "\", \"displayName\":\"You (" + user + ") are not registered\"}";
     if (scorecard != null && userInfo != null) {
-      Map<String, Object> data = new HashMap<String, Object>();
+      Map<String, Object> data = new HashMap<>();
       data.put("userId", user);
       data.putAll(scorecard);
       data.putAll(userInfo);
@@ -327,10 +327,10 @@ public class ManagementController {
     String payload = "{\"status\":\"ERROR\",\"message\":\"Unable to find user: " + user + "\", \"displayName\":\"" + user + " not registered\"}";
 
     if (userInfo != null) {
-      Map<String, Object> data = new HashMap<String, Object>();
+      Map<String, Object> data = new HashMap<>();
       data.put("userId", user);
 
-      Map<String, Integer> consolidatedTotals = new HashMap<String, Integer>();
+      Map<String, Integer> consolidatedTotals = new HashMap<>();
       Integer total = 0;
       if (scorecard != null) {
         for (Entry<String, Integer> e : scorecard.entrySet()) {
@@ -429,12 +429,12 @@ public class ManagementController {
   @Path("/scorecards")
   public Response getScorecards() throws JsonGenerationException, JsonMappingException, IOException {
     Database2 db = Database2.get();
-    List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
+    List<Map<String, Object>> data = new ArrayList<>();
 
-    Set<String> fields = new HashSet<String>();
+    Set<String> fields = new HashSet<>();
 
     for (Entry<String, Map<String, Integer>> e : db.getScoreCards().entrySet()) {
-      Map<String, Object> row = new HashMap<String, Object>();
+      Map<String, Object> row = new HashMap<>();
       Map<String, String> userInfo = db.getUsers().get(e.getKey());
       row.put("id", e.getKey());
 
@@ -466,8 +466,8 @@ public class ManagementController {
       }
     }
 
-    Map<String, Object> wrapper = new HashMap<String, Object>();
-    List<Map<String, String>> columns = new ArrayList<Map<String, String>>();
+    Map<String, Object> wrapper = new HashMap<>();
+    List<Map<String, String>> columns = new ArrayList<>();
 //    columns.add(Config.get().new MapBuilder<String,String>().put("title","ID").put("data", "id").build());
     columns.add(new MapBuilder<String, String>().put("title", "Name").put("data", "name").build());
     columns.add(new MapBuilder<String, String>().put("title", "Total").put("data", "total").build());

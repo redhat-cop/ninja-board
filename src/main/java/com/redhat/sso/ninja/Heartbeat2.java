@@ -184,7 +184,7 @@ public class Heartbeat2 {
     
     public Map<String, String> getUsersByPool(Database2 db, String key){
 //      System.out.println("getting pool by id: "+key);
-      Map<String, String> result=new HashMap<String, String>();
+      Map<String, String> result= new HashMap<>();
       for(Entry<String, Map<String, String>> e:db.getUsers().entrySet()){
         // support a default of your key id when no pool id is found
         if (e.getValue().containsKey(key)){
@@ -219,7 +219,7 @@ public class Heartbeat2 {
         File file=drive.downloadFile(cfg.getOptions().get("googlesheets.registration.id"));
         List<Map<String, String>> rows=drive.parseExcelDocument(file);
         for(Map<String,String> r:rows){
-          Map<String, String> userInfo=new HashMap<String, String>();
+          Map<String, String> userInfo= new HashMap<>();
           for(Entry<String, String> c:r.entrySet()){
             if (c.getKey().toLowerCase().contains("timestamp")){
             }else if (c.getKey().toLowerCase().contains("email")){
@@ -266,7 +266,7 @@ public class Heartbeat2 {
             dbUsers.put(userInfo.get("username"), userInfo);
             
             // add the user a zero scorecard
-            db.getScoreCards().put(userInfo.get("username"), new HashMap<String, Integer>());
+            db.getScoreCards().put(userInfo.get("username"), new HashMap<>());
             
             db.addEvent("New User Registered", userInfo.get("username"), "");
             
@@ -299,8 +299,8 @@ public class Heartbeat2 {
     		
     		String username=e.getKey();
     		
-    		Set<String> missingFields=new HashSet<String>(Lists.newArrayList("displayName","geo"));
-    		missingFields.removeAll(new HashSet<String>(e.getValue().keySet()));
+    		Set<String> missingFields= new HashSet<>(Lists.newArrayList("displayName", "geo"));
+    		missingFields.removeAll(new HashSet<>(e.getValue().keySet()));
     		if (missingFields.size()>0){
     			try{
     				List<User> users=userService.search("uid", username);
@@ -592,7 +592,7 @@ public class Heartbeat2 {
     		scriptLog.append(s).append("\n");
     		log.debug(s);
     		
-    		Map<String, String> params=new HashMap<String, String>();
+    		Map<String, String> params= new HashMap<>();
     		// check for params here, extract them if present for use later on
     		if (s.matches(".* \\[.*\\]")){
     			Matcher m=paramsPattern.matcher(s);

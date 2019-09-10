@@ -29,7 +29,7 @@ public class UserService {
   }
 	
   public List<User> search(String field, String value) throws NamingException {
-    Hashtable<String,String> env=new Hashtable<String,String>(3);
+    Hashtable<String,String> env= new Hashtable<>(3);
     
     env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
     env.put(Context.PROVIDER_URL, getLDAPProvider());
@@ -43,7 +43,7 @@ public class UserService {
       String baseDN=Config.get().getOptions().get("users.ldap.baseDN");
       String searchDN=String.format(Config.get().getOptions().get("users.ldap.searchDN"), field, value);
       NamingEnumeration<?> namingEnum=ctx.search(baseDN, searchDN, getSimpleSearchControls());
-      List<User> result2=new ArrayList<UserService.User>();
+      List<User> result2= new ArrayList<>();
       
       while (namingEnum.hasMore()) {
         SearchResult result=(SearchResult) namingEnum.next();
@@ -97,7 +97,7 @@ public class UserService {
   }
 
   public class User{
-  	Map<String,String> userInfo=new HashMap<String,String>();
+  	Map<String,String> userInfo= new HashMap<>();
   	public Map<String,String> asMap(){return userInfo;};
     public String getUid()               {return userInfo.get("uid");}
     public String getName()              {return userInfo.get("name");}

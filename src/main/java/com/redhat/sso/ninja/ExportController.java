@@ -113,7 +113,7 @@ public class ExportController{
 
     // Manage Columns (and their data field name)
     List<Map<String, Object>> columnsRaw=result.get("columns");
-    Map<String,String> dataHeaderMapping=new HashMap<String, String>();
+    Map<String,String> dataHeaderMapping= new HashMap<>();
     for(Map<String,Object> column:columnsRaw){
       String header=(String)column.get("title");
       dataHeaderMapping.put(header, (String)column.get("data"));

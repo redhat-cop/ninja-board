@@ -32,7 +32,7 @@ public class DataSet2 {
 //    this.strokeColor=strokeColor;
 //  }
   public List<Integer> getData() {
-    if (data==null) data=new ArrayList<Integer>();
+    if (data==null) data= new ArrayList<>();
     return data;
   }
   public void setData(List<Integer> data) {
@@ -45,14 +45,14 @@ public class DataSet2 {
     this.borderWidth = borderWidth;
   }
   public List<String> getBackgroundColor() {
-    if (backgroundColor==null) backgroundColor=new ArrayList<String>();
+    if (backgroundColor==null) backgroundColor= new ArrayList<>();
     return backgroundColor;
   }
   public void setBackgroundColor(List<String> backgroundColor) {
     this.backgroundColor = backgroundColor;
   }
   public List<String> getBorderColor() {
-    if (borderColor==null) borderColor=new ArrayList<String>();
+    if (borderColor==null) borderColor= new ArrayList<>();
     return borderColor;
   }
   public void setBorderColor(List<String> borderColor) {

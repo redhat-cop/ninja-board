@@ -55,7 +55,7 @@ public class DataSetLine2 {
 //    this.strokeColor=strokeColor;
 //  }
   public List<Integer> getData() {
-    if (data==null) data=new ArrayList<Integer>();
+    if (data==null) data= new ArrayList<>();
     return data;
   }
   public void setData(List<Integer> data) {

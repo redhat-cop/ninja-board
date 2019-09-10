@@ -10,7 +10,7 @@ import java.util.Set;
 public class FilePermissions{
 
   public static void set(File file, PosixFilePermission... perms) throws IOException{
-    Set<PosixFilePermission> perms2 = new HashSet<PosixFilePermission>();
+    Set<PosixFilePermission> perms2 = new HashSet<>();
     for(PosixFilePermission p:perms)
       perms2.add(p);
     Files.setPosixFilePermissions(file.toPath(), perms2);
