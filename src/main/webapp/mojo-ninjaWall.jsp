@@ -1,4 +1,3 @@
-<script src="js/utils.js"></script>
 <center>
 <table id="wall" cellspacing="0" cellpadding="0">
 </table>
@@ -57,6 +56,23 @@
   
 </style>
 <script>
+Utils = {
+		
+		getParameterByName: function(name, url) {
+			if (!url) url = window.location.href;
+			name = name.replace(/[\[\]]/g, "\\$&");
+			var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+			    results = regex.exec(url);
+			if (!results) return undefined;
+			if (!results[2]) return '';
+			return decodeURIComponent(results[2].replace(/\+/g, " "));
+		},
+		
+		findAncestor: function findAncestor (el, cls) {
+			while ((el = el.parentElement) && !el.classList.contains(cls));
+			return el;
+		}
+	}
   
   var DEFAULT_CTX="https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs";
   var ctx=(Utils.getParameterByName("source")!=undefined?Utils.getParameterByName("source"):DEFAULT_CTX);
