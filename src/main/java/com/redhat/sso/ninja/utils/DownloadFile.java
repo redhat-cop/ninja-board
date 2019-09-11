@@ -1,5 +1,9 @@
 package com.redhat.sso.ninja.utils;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -7,11 +11,8 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermission;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
-
 public class DownloadFile{
-  private Logger log=Logger.getLogger(this.getClass());
+  private Logger log= LogManager.getLogger(this.getClass());
   
   public String get(String remoteLocation, String localDestination, PosixFilePermission... permissions) throws IOException{
     return get(remoteLocation, new File(localDestination), permissions);

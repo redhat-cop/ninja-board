@@ -1,32 +1,21 @@
 package com.redhat.sso.ninja;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-
-import org.apache.log4j.Logger;
+import com.redhat.sso.ninja.utils.IOUtils2;
+import com.redhat.sso.ninja.utils.Json;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.JsonMappingException;
 
-import com.redhat.sso.ninja.utils.IOUtils2;
-import com.redhat.sso.ninja.utils.Json;
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class Database2{
-  private static final Logger log=Logger.getLogger(Database2.class);
+  private static final Logger log= LogManager.getLogger(Database2.class);
   public static final String STORAGE="target/ninja-persistence/database2.json";
   public static final File STORAGE_AS_FILE=new File(STORAGE);
   public static Integer MAX_EVENT_ENTRIES=1000;

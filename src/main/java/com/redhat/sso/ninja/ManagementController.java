@@ -1,20 +1,21 @@
 package com.redhat.sso.ninja;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+import com.google.common.base.Splitter;
+import com.redhat.sso.ninja.Database2.EVENT_FIELDS;
+import com.redhat.sso.ninja.chart.Chart2Json;
+import com.redhat.sso.ninja.chart.DataSet2;
+import com.redhat.sso.ninja.utils.IOUtils2;
+import com.redhat.sso.ninja.utils.Json;
+import com.redhat.sso.ninja.utils.LevelsUtil;
+import com.redhat.sso.ninja.utils.MapBuilder;
+import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -25,27 +26,19 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
-
-import com.google.common.base.Splitter;
-import com.redhat.sso.ninja.Database2.EVENT_FIELDS;
-import com.redhat.sso.ninja.chart.Chart2Json;
-import com.redhat.sso.ninja.chart.DataSet2;
-import com.redhat.sso.ninja.utils.IOUtils2;
-import com.redhat.sso.ninja.utils.Json;
-import com.redhat.sso.ninja.utils.LevelsUtil;
-import com.redhat.sso.ninja.utils.MapBuilder;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 @Path("/")
 public class ManagementController {
-  private static final Logger log=Logger.getLogger(ManagementController.class);
+  private static final Logger log= LogManager.getLogger(ManagementController.class);
   
   public static void main(String[] asd) throws JsonGenerationException, JsonMappingException, IOException{
     System.out.println(java.sql.Date.valueOf(LocalDate.now()));
@@ -112,7 +105,7 @@ public class ManagementController {
   @GET
   @Path("/loglevel/{level}")
   public Response setLogLevel(@Context HttpServletRequest request,@Context HttpServletResponse response,@Context ServletContext servletContext, @PathParam("level") String level) throws JsonGenerationException, JsonMappingException, IOException{
-    LogManager.getRootLogger().setLevel(org.apache.log4j.Level.toLevel(level));
+    Configurator.setRootLevel(org.apache.logging.log4j.Level.toLevel(level));
     return Response.status(200).entity("{\"status\":\"DONE\", \"Message\":\"Changed Log level to: "+LogManager.getRootLogger().getLevel().toString()+"\"}").build();
   }
   

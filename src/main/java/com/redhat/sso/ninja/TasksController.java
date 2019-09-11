@@ -1,39 +1,28 @@
 package com.redhat.sso.ninja;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.UUID;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.google.common.base.Joiner;
+import com.redhat.sso.ninja.Database2.TASK_FIELDS;
+import com.redhat.sso.ninja.utils.Json;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import com.redhat.sso.ninja.Database2.TASK_FIELDS;
-import com.redhat.sso.ninja.utils.Json;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.*;
+import java.util.Map.Entry;
 
 @Path("/")
 public class TasksController {
-  private static final Logger log=Logger.getLogger(TasksController.class);
+  private static final Logger log= LogManager.getLogger(TasksController.class);
   
 
   

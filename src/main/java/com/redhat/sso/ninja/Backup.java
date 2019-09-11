@@ -1,5 +1,10 @@
 package com.redhat.sso.ninja;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -8,12 +13,8 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
-
 public class Backup {
-  private static final Logger log = Logger.getLogger(Backup.class);
+  private static final Logger log = LogManager.getLogger(Backup.class);
   private static Timer t;
 
   public static void main(String[] asd){

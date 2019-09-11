@@ -1,6 +1,12 @@
 package com.redhat.sso.ninja;
 
-import static com.jayway.restassured.RestAssured.given;
+import com.jayway.restassured.specification.RequestSpecification;
+import com.redhat.sso.ninja.utils.MapBuilder;
+import groovy.lang.GroovyClassLoader;
+import mjson.Json;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.util.HashMap;
@@ -10,14 +16,7 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-
-import com.jayway.restassured.specification.RequestSpecification;
-import com.redhat.sso.ninja.utils.MapBuilder;
-
-import groovy.lang.GroovyClassLoader;
-import mjson.Json;
+import static com.jayway.restassured.RestAssured.given;
 
 
 /**
@@ -27,7 +26,7 @@ import mjson.Json;
  */
 
 public class TrelloSync extends ScriptBase{
-  private static final Logger log=Logger.getLogger(TrelloSync.class);
+  private static final Logger log= LogManager.getLogger(TrelloSync.class);
   
   /*
    * 
