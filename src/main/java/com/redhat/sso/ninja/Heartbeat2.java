@@ -34,6 +34,7 @@ import org.apache.log4j.Logger;
 import org.mortbay.log.Log;
 
 import com.google.common.collect.Lists;
+import com.redhat.sso.ninja.ChatNotification.ChatEvent;
 import com.redhat.sso.ninja.user.UserService;
 import com.redhat.sso.ninja.user.UserService.User;
 import com.redhat.sso.ninja.utils.DownloadFile;
@@ -210,7 +211,7 @@ public class Heartbeat2 {
       return null;
     }
 
-    public boolean addNewlyRegisteredUsers(Database2 db, Config cfg){
+    public boolean addOrUpdateRegisteredUsers(Database2 db, Config cfg){
       Map<String, Map<String, String>> dbUsers=db.getUsers();
       UserService userService=new UserService();
       boolean userServiceDown=false;
@@ -222,6 +223,7 @@ public class Heartbeat2 {
           Map<String, String> userInfo=new HashMap<String, String>();
           for(Entry<String, String> c:r.entrySet()){
             if (c.getKey().toLowerCase().contains("timestamp")){
+//FEATURE:RegistrationDate            	userInfo.put("reg", c.getValue().substring(0, c.getValue().indexOf(" "))); // get the "dd/mm/yyyy" from "dd/mm/yyyy hh:mm:ss"
             }else if (c.getKey().toLowerCase().contains("email")){
               if (c.getValue().contains("@"))
                 userInfo.put("username", c.getValue().substring(0, c.getValue().indexOf("@")));
@@ -272,9 +274,16 @@ public class Heartbeat2 {
             
             // Notify everyone on the Ninja chat group of a new registree
             String displayName=userInfo.containsKey("displayName")?userInfo.get("displayName"):userInfo.get("username");
-            new ChatNotification().send("New User Registered: <https://mojo.redhat.com/people/"+userInfo.get("username")+"|"+displayName+">");
-//            }// /newUser
+            new ChatNotification().send(ChatEvent.onRegistration, "New User Registered: <https://mojo.redhat.com/people/"+userInfo.get("username")+"|"+displayName+">");
             
+//            }// /newUser
+          
+            
+//FEATURE:RegistrationDate          }else if (null!=userInfo.get("username") && !dbUsers.containsKey(userInfo.get("username")) && null==dbUsers.get(userInfo.get("username")).get("reg")){
+//FEATURE:RegistrationDate          	// update registration date for support purposes
+//FEATURE:RegistrationDate          	Map<String, String> user=dbUsers.get(userInfo.get("username"));
+//FEATURE:RegistrationDate          	user.put("reg", userInfo.get("reg"));
+          	
           }else if (dbUsers.containsKey(userInfo.get("username"))){
             log.debug("User already registered: "+userInfo.get("username"));
           }
@@ -331,7 +340,7 @@ public class Heartbeat2 {
       final Config config=Config.get();
       final Database2 db=Database2.get();
       
-      boolean successfullyAccessedRegistrationSheet=addNewlyRegisteredUsers(db, config);
+      boolean successfullyAccessedRegistrationSheet=addOrUpdateRegisteredUsers(db, config);
       if (!successfullyAccessedRegistrationSheet) return;
       updateUsersDetailsUsingLDAPInfo(db);
       
@@ -566,11 +575,11 @@ public class Heartbeat2 {
             db.addEvent("User Promotion", userInfo.get("username"), "Promoted to "+nextLevel.getRight()+" level");
             
             String displayName=userInfo.containsKey("displayName")?userInfo.get("displayName"):userInfo.get("username");
-            String title=displayName+" promoted to "+nextLevel.getRight()+" belt";
-            db.addTask(title, userInfo.get("username"));
+            String message="<https://mojo.redhat.com/people/"+userInfo.get("username")+"|"+displayName+"> promoted to "+nextLevel.getRight()+" belt";
+            db.addTask(message, userInfo.get("username"));
             
             // Notify everyone on the Ninja chat group of a new belt promotion
-            new ChatNotification().send(title);
+            new ChatNotification().send(ChatEvent.onBeltPromotion, message);
             
             count+=1;
           }

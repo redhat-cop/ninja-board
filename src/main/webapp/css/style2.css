@@ -66,7 +66,7 @@ body {
 
 .navbar-brand2 img[role=logo] {
     width: 12rem;
-    height: 6rem;
+    height: 56px; /* Updated from rem to fit the tob bar sizing */
 }
 
 .navbar-brand2:hover,
