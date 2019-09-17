@@ -37,7 +37,7 @@ table.dataTable tbody td{
 .navbar-title-text{
 	background-color:#1f1f1f;
 	color:#eee;
-	font-size: 2rem;
+	font-size: 2.5rem;
 	padding: 0px 15px 0px 15px; 
 	border-radius: 0px 4px 4px 4px;
 }
@@ -63,7 +63,7 @@ table.dataTable tbody td{
 }
 .navbar-brand2 {
   height: 50px;
-  padding: 15px 26px;
+  padding: 15px 23px;
   font-size: 1.8rem;
   line-height: 20px;
 }
@@ -79,7 +79,7 @@ table.dataTable tbody td{
 }
 
 .menu-title{
-	font-size: 1.8rem;
+	font-size: 1.9rem;
 	padding-top: 21px !important;
 	padding-left: 5px !important;
 	padding-right: 5px !important;
