@@ -3,8 +3,12 @@ body {
     font-family: "RedHatText",Helvetica,helvetica,arial,sans-serif;
 }
 
+table.dataTable tbody td{
+	padding: 6px 10px !important;
+}
+
 #main_nav .navbar-nav:not(.navbar-right) {
-    padding-right: 1rem;
+    padding-right: 0rem;
 }
 
 .navbar{
@@ -59,7 +63,7 @@ body {
 }
 .navbar-brand2 {
   height: 50px;
-  padding: 15px 15px;
+  padding: 15px 26px;
   font-size: 1.8rem;
   line-height: 20px;
 }
