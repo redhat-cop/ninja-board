@@ -28,179 +28,145 @@
 		<!-- CARD -->
 		<!--######-->
 		<style>
-		//.card{
-		//	border:1px solid #BBB;
-		//	width:80%;
-		//	border-radius: 5px;
-		//	padding: 10px;
-		//	background: #EEE;
-		//	position: relative;
-		//	top: 45px;
-		//}
-		//.card tr td{
-		//}
-		//.cardField{
-		//	color: #444;
-		//	font-weight: bold;
-		//}
-		.card2{
-			border:1px solid #BBB;
-			width: 100%;
-			border-radius: 12px;
-			padding: 10px;
-			background: rgb(0,65,83);
-			//background: rgb(163,219,232);
-			
-			font-family: Arial;
-			font-size: 14pt;
-			color: #eee;
-			/*
-			position: relative;
-			top: 45px;
-			*/
-		}
-		.cardName{
-			vertical-align: top;
-			font-weight: bold;
-			font-size: 28pt;
-			color: #eee;
-		}
-		.cardScore{
-			vertical-align: top;
-			text-align: center;
-			font-weight: bold;
-			font-size: 34pt;
-			color: #eee;
-		}
-		.cardRow{
-			width:100px;
-		}
-		.cardScoreText{
-			vertical-align: top;
-			text-align: center;
-			font-size:8pt;
-		}
-		.icon{
-			height: 25px;
-		}
-		.ninjaIcon{
-			clip: rect(0px,50px,25px,0px);
-			height: 80px;
-		}
-		.graph-label{
-			font-size: 22pt;
-			font-family: Arial;
-			color: #eee;
-			font-weight: bold;
-			position:relative;
-			top:20px;
-		}
-		
-		a{
-		  color: white;
-		  text-decoration: none;
-		}
-		a:hover{
-		  text-decoration: underline;
-		}
+
+		    .ninja-fullwidth { width: 100%: }
+		    .ninja-noborder { border: 0; }
+
+            .card2{
+                border:1px solid #BBB;
+                width: 100%;
+                padding: 10px;
+                background: rgb(0,65,83);
+                //background: rgb(163,219,232);
+
+                font-family: Arial;
+                font-size: 14pt;
+                color: #eee;
+                /*
+                position: relative;
+                top: 45px;
+                */
+            }
+            .cardName{
+                vertical-align: top;
+                font-weight: bold;
+                font-size: 28pt;
+                color: #eee;
+            }
+            .cardScore{
+                vertical-align: top;
+                text-align: center;
+                font-weight: bold;
+                font-size: 34pt;
+                color: #eee;
+            }
+            .cardRow{
+                width:100px;
+            }
+            .cardScoreText{
+                vertical-align: top;
+                text-align: center;
+                font-size:8pt;
+            }
+            .icon{
+                height: 25px;
+            }
+            .ninjaIcon{
+                clip: rect(0px,50px,25px,0px);
+                height: 80px;
+            }
+            .graph-label{
+                font-size: 22pt;
+                font-family: Arial;
+                color: #eee;
+                font-weight: bold;
+                position:relative;
+                top:20px;
+            }
+
+            a{
+              color: white;
+              text-decoration: none;
+            }
+            a:hover{
+              text-decoration: underline;
+            }
 		</style>
 		
 		
-		<table id="nav" border=0 style="width: 100%">
-			<tr>
-				<!--td style="width:33%; vertical-align:top;">
-					
-					<table class="card2">
-						<tr>
-							<td><a href="/community/communities-at-red-hat/communities-of-practice-operations/communities-of-practice-ninja-program-v2/overview">Return to Ninja Program Homepage</a></td>
-						</tr>
-					</table>
-					
-				</td-->
-				<td>
-					
-					<table id="dashboard" border=0 style="width:1000px;">
-						<tr>
-							<td colspan="2">
-								<table class="card2" border=0>
-									<tr>
-										<td colspan="6"><span class="cardName" id="_error"></span><br/><span id="_error2"></td>
-									</tr>
-									<tr>
-										<td class="cardName" colspan="2"><span id="_displayName"></span></td>
-										<td class="cardScore" rowspan="4"><img class="ninjaIcon" id="_level"></img></td>
-										<td class="cardScore"><span id="_Trello">0</span></td>
-										<td class="cardScore"><span id="_Github">0</span></td>
-										<td class="cardScore"><!-- chat counter --></td>
-									</tr>
-									<tr>
-										<td class="cardRow">
-											<img class="icon" src="https://www.redhat.com/profiles/rh/themes/redhatdotcom/img/logo.png">
-										</td>
-										<td><span id="_userId"></span></td>
-										<td class="cardScoreText" rowspan="3">trello</td>
-										<td class="cardScoreText" rowspan="3">github</td>
-										<td class="cardScoreText" rowspan="3"><!--chat--></td>
-									</tr>
-									<tr>
-										<td class="cardRow"><img class="icon" src="https://d2k1ftgv7pobq7.cloudfront.net/meta/u/res/images/brand-assets/Logos/0099ec3754bf473d2bbf317204ab6fea/trello-logo-blue.png"></td>
-										<td><span id="_trelloId"></span></td>
-									</tr>
-									<tr>
-										<td class="cardRow"><img  style="height:20px;" src="https://github.githubassets.com/images/modules/logos_page/GitHub-Logo.png"></td>
-										<td><span id="_githubId"></span></td>
-									</tr>
-									
-									<tr>
-										<td colspan="6" style="height: 20px;"><!-- SPACER ONLY --></td>
-									</tr>
-									
-									<tr>
-										<td colspan="6">
-											
-											<table border=0 style="width:100%;height:400px">
-												<tr>
-													<td style="width:50%;">
-														<!-- #################### -->
-														<!-- BOTTOM LEFT DOUGHNUT -->
-														<!-- #################### -->
-														<script>
-															function leaderboardRefresh(){ return refreshGraph0('points', 'Doughnut', colors); }
-														</script>
-														<div id="leaderboard_container" class="graph" >
-															<canvas id="points"></canvas>
-															<center><span class="graph-label">Next Level</span></center>
-														</div>
-													</td>
-													
-													<td>
-														<!-- ##################### -->
-														<!-- BOTTOM RIGHT DOUGHNUT -->
-														<!-- ##################### -->
-														<script>
-															function breakdownRefresh(){ return refreshGraph0('breakdown', 'Doughnut', colorsReverse); }
-														</script>
-														<div id="breakdown_container" class="graph" >
-															<canvas id="breakdown"></canvas>
-															<center><span class="graph-label">Points Breakdown</span></center>
-												    </div>
-													</td>
-												</tr>
-											</table>
-										</td>
-									</tr>
-									</tr>
-								</table>
-							</td>
-						</tr>
-					</table>
-					
-				</td>
-				<td style="width: 33%">
-					
-				</td>
-			</tr>
-		</table>
+		<div id="nav" border=0 style="width: 100%">
+            <div id="dashboard" class="ninja-noborder ninja-full-width">
+                <table class="card2 ninja-noborder">
+                    <tr>
+                        <td colspan="6"><span class="cardName" id="_error"></span><br/><span id="_error2"></td>
+                    </tr>
+                    <tr>
+                        <td class="cardName" colspan="2"><span id="_displayName"></span></td>
+                        <td class="cardScore" rowspan="4"><img class="ninjaIcon" id="_level"></img></td>
+                        <td class="cardScore"><span id="_Trello">0</span></td>
+                        <td class="cardScore"><span id="_Github">0</span></td>
+                        <td class="cardScore"><!-- chat counter --></td>
+                    </tr>
+                    <tr>
+                        <td class="cardRow">
+                            <img class="icon" src="https://www.redhat.com/profiles/rh/themes/redhatdotcom/img/logo.png">
+                        </td>
+                        <td><span id="_userId"></span></td>
+                        <td class="cardScoreText" rowspan="3">trello</td>
+                        <td class="cardScoreText" rowspan="3">github</td>
+                        <td class="cardScoreText" rowspan="3"><!--chat--></td>
+                    </tr>
+                    <tr>
+                        <td class="cardRow"><img class="icon" src="https://d2k1ftgv7pobq7.cloudfront.net/meta/u/res/images/brand-assets/Logos/0099ec3754bf473d2bbf317204ab6fea/trello-logo-blue.png"></td>
+                        <td><span id="_trelloId"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="cardRow"><img  style="height:20px;" src="https://github.githubassets.com/images/modules/logos_page/GitHub-Logo.png"></td>
+                        <td><span id="_githubId"></span></td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="6" style="height: 20px;"><!-- SPACER ONLY --></td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="6">
+
+                            <table border=0 style="width:100%;height:400px">
+                                <tr>
+                                    <td style="width:50%;">
+                                        <!-- #################### -->
+                                        <!-- BOTTOM LEFT DOUGHNUT -->
+                                        <!-- #################### -->
+                                        <script>
+                                            function leaderboardRefresh(){ return refreshGraph0('points', 'Doughnut', colors); }
+                                        </script>
+                                        <div id="leaderboard_container" class="graph" >
+                                            <canvas id="points"></canvas>
+                                            <center><span class="graph-label">Next Level</span></center>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <!-- ##################### -->
+                                        <!-- BOTTOM RIGHT DOUGHNUT -->
+                                        <!-- ##################### -->
+                                        <script>
+                                            function breakdownRefresh(){ return refreshGraph0('breakdown', 'Doughnut', colorsReverse); }
+                                        </script>
+                                        <div id="breakdown_container" class="graph" >
+                                            <canvas id="breakdown"></canvas>
+                                            <center><span class="graph-label">Points Breakdown</span></center>
+                                    </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    </tr>
+                </table>
+            </div>
+		</div>
 		
 		
 		
