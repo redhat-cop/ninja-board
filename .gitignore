@@ -30,4 +30,5 @@ galaxy
 /.project
 
 .idea
+*.iml
 *.env

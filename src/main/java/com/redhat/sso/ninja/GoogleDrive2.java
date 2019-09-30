@@ -15,7 +15,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -24,7 +25,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.redhat.sso.ninja.utils.DownloadFile;
 
 public class GoogleDrive2 {
-  private static Logger log=Logger.getLogger(GoogleDrive2.class); 
+  private static Logger log= LogManager.getLogger(GoogleDrive2.class);
 	
   public static final String DEFAULT_EXECUTABLE="/home/%s/drive_linux";
 //  public static final String DEFAULT_PULL_COMMAND=DEFAULT_EXECUTABLE+" pull -export xls -quiet=true --id %s"; //worked with 0.3.1

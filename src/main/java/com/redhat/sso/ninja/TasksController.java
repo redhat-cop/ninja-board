@@ -22,7 +22,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 
@@ -33,7 +34,7 @@ import com.redhat.sso.ninja.utils.Json;
 
 @Path("/")
 public class TasksController {
-  private static final Logger log=Logger.getLogger(TasksController.class);
+  private static final Logger log= LogManager.getLogger(TasksController.class);
   
 
   

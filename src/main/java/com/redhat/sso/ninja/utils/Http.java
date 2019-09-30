@@ -9,12 +9,12 @@ import java.net.URL;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.log4j.Logger;
-
 import com.redhat.sso.ninja.Heartbeat2;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Http{
-	private static final Logger log = Logger.getLogger(Http.class);
+	private static final Logger log = LogManager.getLogger(Http.class);
 	
 	public static class Response{
 		public Response(int responseCode, String response){
