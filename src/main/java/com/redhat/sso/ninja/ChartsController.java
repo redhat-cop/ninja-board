@@ -56,7 +56,7 @@ public class ChartsController{
   public Chart2Json getParticipants(Integer max) throws JsonGenerationException, JsonMappingException, IOException{
     Database2 db=Database2.get();
     Map<String, Map<String, Integer>> leaderboard=db.getLeaderboard();
-    Map<String, Integer> totals=new HashMap<String, Integer>();
+    Map<String, Integer> totals= new HashMap<>();
     for(Entry<String, Map<String, Integer>> e:leaderboard.entrySet()){
       Integer t=0;
       for(Entry<String, Integer> e2:e.getValue().entrySet()){
@@ -67,19 +67,19 @@ public class ChartsController{
     }
     
     //reorder
-    List<Entry<String, Integer>> list=new LinkedList<Map.Entry<String, Integer>>(totals.entrySet());
+    List<Entry<String, Integer>> list= new LinkedList<>(totals.entrySet());
     Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
       public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
           return (o2.getValue()).compareTo(o1.getValue());
       }
     });
-    HashMap<String, Integer> sortedTotals=new LinkedHashMap<String, Integer>();
+    HashMap<String, Integer> sortedTotals= new LinkedHashMap<>();
     for (Entry<String, Integer> e:list) {
       sortedTotals.put(e.getKey(), e.getValue());
     }
     
     Chart2Json c=new Chart2Json();
-    c.setDatasets(new ArrayList<DataSet2>());
+    c.setDatasets(new ArrayList<>());
     int count=0;
     for(Entry<String, Integer> e:sortedTotals.entrySet()){
       Map<String, String> userInfo=db.getUsers().get(e.getKey());
@@ -99,11 +99,11 @@ public class ChartsController{
       
       // TODO: set this to the color of the belt. should be on the ui side, not server
       Map<String,Pair<String,String>> colors=new MapBuilder<String,Pair<String,String>>()
-          .put("BLUE",  new Pair<String, String>("rgba(0,0,163,0.7)",     "rgba(0,0,163,0.8)"))
-          .put("GREY",  new Pair<String, String>("rgba(130,130,130,0.7)", "rgba(130,130,130,0.8)"))
-          .put("RED",   new Pair<String, String>("rgba(163,0,0,0.7)",     "rgba(163,0,0,0.8)"))
-          .put("BLACK", new Pair<String, String>("rgba(20,20,20,0.7)",    "rgba(20,20,20,0.8)"))
-          .put("ZERO",  new Pair<String, String>("rgba(255,255,255,0.7)", "rgba(255,255,255,0.8)"))
+          .put("BLUE", new Pair<>("rgba(0,0,163,0.7)", "rgba(0,0,163,0.8)"))
+          .put("GREY", new Pair<>("rgba(130,130,130,0.7)", "rgba(130,130,130,0.8)"))
+          .put("RED", new Pair<>("rgba(163,0,0,0.7)", "rgba(163,0,0,0.8)"))
+          .put("BLACK", new Pair<>("rgba(20,20,20,0.7)", "rgba(20,20,20,0.8)"))
+          .put("ZERO", new Pair<>("rgba(255,255,255,0.7)", "rgba(255,255,255,0.8)"))
           // ZERO???
           .build();
       c.getDatasets().get(0).getBackgroundColor().add(colors.get(userInfo.get("level").toUpperCase()).getFirst());

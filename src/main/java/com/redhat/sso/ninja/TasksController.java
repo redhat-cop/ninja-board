@@ -47,7 +47,7 @@ public class TasksController {
 		log.debug("data = "+data);
 		Database2 db=Database2.get();
 		
-		Map<String, String> task=new HashMap<String, String>();
+		Map<String, String> task= new HashMap<>();
 		mjson.Json json=mjson.Json.read(data);
 		for(Entry<String, Object> e:json.asMap().entrySet()){
 			task.put(e.getKey(), (String)e.getValue());
@@ -68,7 +68,7 @@ public class TasksController {
 	public Response getTasks(@Context HttpServletRequest request,@Context HttpServletResponse response) throws JsonGenerationException, JsonMappingException, IOException, URISyntaxException{
 		log.info("GetTasks:: [GET] /tasks");
 		
-		Map<String, List<Map<String, String>>> boards=new HashMap<String, List<Map<String,String>>>();
+		Map<String, List<Map<String, String>>> boards= new HashMap<>();
 		List<Map<String, String>> tasks=Database2.get().getTasks();
 		for(Map<String, String> task:tasks){
 			String list=task.get(TASK_FIELDS.LIST.v);
@@ -76,7 +76,7 @@ public class TasksController {
 			log.debug("task "+task.get("id")+" list name = "+list);
 			
 			if (!boards.containsKey(list))
-				boards.put(list, new ArrayList<Map<String,String>>());
+				boards.put(list, new ArrayList<>());
 			boards.get(list).add(task);
 		}
 		
@@ -150,7 +150,7 @@ public class TasksController {
 				
 				String f=task.get(TASK_FIELDS.LABELS.v);
 				
-				List<String> newList=new ArrayList<String>();
+				List<String> newList= new ArrayList<>();
 				for(String x:f.split(",")){
 					if (!label.equals(x) && !"".equals(x)){
 						newList.add(x);
@@ -176,7 +176,7 @@ public class TasksController {
 					task.put(TASK_FIELDS.LABELS.v, "");
 				
 				String f=task.get(TASK_FIELDS.LABELS.v);
-				List<String> split=new ArrayList<String>();
+				List<String> split= new ArrayList<>();
 				for(String x:f.split(","))
 					split.add(x);
 				split.add(label);

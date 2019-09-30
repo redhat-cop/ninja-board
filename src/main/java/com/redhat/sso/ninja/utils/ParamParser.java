@@ -8,7 +8,7 @@ import java.util.Map;
 public class ParamParser{
 
 	public Map<String, String> splitParams(String paramString) throws UnsupportedEncodingException{
-		Map<String, String> result=new LinkedHashMap<String, String>();
+		Map<String, String> result= new LinkedHashMap<>();
 		String[] pairs=paramString.split(",");
 		for (String p : pairs){
 			int i=p.indexOf("=");

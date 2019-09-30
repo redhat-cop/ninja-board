@@ -102,9 +102,9 @@ public class GoogleDrive2 {
     // parse excel file using apache poi
     // read out "tasks" and create/update solutions
     // use timestamp (column A) as the unique identifier (if in doubt i'll hash it with the requester's username)
-    List<Map<String,String>> entries=new ArrayList<Map<String,String>>();
+    List<Map<String,String>> entries= new ArrayList<>();
     FileInputStream in=null;
-    if (file==null || !file.exists()) return new ArrayList<Map<String,String>>();
+    if (file==null || !file.exists()) return new ArrayList<>();
     try{
       in=new FileInputStream(file);
       XSSFWorkbook wb=new XSSFWorkbook(in);
@@ -112,7 +112,7 @@ public class GoogleDrive2 {
       int maxColumns=20;
       
       for(int iRow=getHeaderRow()+1;iRow<=s.getLastRowNum();iRow++){
-        Map<String,String> e=new HashMap<String,String>();
+        Map<String,String> e= new HashMap<>();
         for(int iColumn=0;iColumn<=maxColumns;iColumn++){
           if (s.getRow(getHeaderRow()).getCell(iColumn)==null) continue;
           String header=s.getRow(getHeaderRow()).getCell(iColumn).getStringCellValue();
