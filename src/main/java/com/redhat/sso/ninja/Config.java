@@ -66,9 +66,9 @@ public class Config {
   
   
   
-  public Map<String,String> getOptions() {if (options==null) options=new HashMap<String, String>(); return options;}
-  public List<Map<String,Object>> getScripts() {if (scripts==null) scripts=new ArrayList<Map<String, Object>>(); return scripts;}
-  public Map<String,Object> getValues() {if (values==null) values=new HashMap<String, Object>(); return values;}
+  public Map<String,String> getOptions() {if (options==null) options= new HashMap<>(); return options;}
+  public List<Map<String,Object>> getScripts() {if (scripts==null) scripts= new ArrayList<>(); return scripts;}
+  public Map<String,Object> getValues() {if (values==null) values= new HashMap<>(); return values;}
   
 //  class MapBuilder<K,V>{
 //    Map<K, V> values=new HashMap<K, V>();

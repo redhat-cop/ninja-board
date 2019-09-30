@@ -75,10 +75,10 @@ public class ExportController{
     
     List<Map<String, String>> data=new ManagementController().getAllEvents();
     
-    Set<String> headerset=new HashSet<String>();
+    Set<String> headerset= new HashSet<>();
     for(Map<String, String> row:data)
       headerset.addAll(row.keySet());
-    List<String> headers=new ArrayList<String>();
+    List<String> headers= new ArrayList<>();
     headers.addAll(headerset);
     
     // Sort the data columns
@@ -98,7 +98,7 @@ public class ExportController{
     if (!EnumUtils.isValidEnum(Format.class, format)) throw new RuntimeException("format must be in "+Joiner.on(",").join(EnumUtils.getEnumList(Format.class)));
     
     
-    List<String> headers=new ArrayList<String>();
+    List<String> headers= new ArrayList<>();
     String jsonToOutput=(String)new ManagementController().getScorecards().getEntity();
     
     // Convert data back from datatables json format back to a flatter format for exporting
@@ -107,7 +107,7 @@ public class ExportController{
     
     // Manage Columns (and their data field name)
     List<Map<String, Object>> columnsRaw=result.get("columns");
-    Map<String,String> dataHeaderMapping=new HashMap<String, String>();
+    Map<String,String> dataHeaderMapping= new HashMap<>();
     for(Map<String,Object> column:columnsRaw){
       String header=(String)column.get("title");
       dataHeaderMapping.put(header, (String)column.get("data"));
@@ -120,9 +120,9 @@ public class ExportController{
     
     // Normalize the data into a single map/row
     // flatten the data from a Map of String->Object to String->String
-    List<Map<String,String>> data=new ArrayList<Map<String,String>>();
+    List<Map<String,String>> data= new ArrayList<>();
     for(Map<String,Object> dataItem:dataRaw){
-      Map<String,String> entry=new HashMap<String, String>();
+      Map<String,String> entry= new HashMap<>();
       for(Entry<String, Object> die:dataItem.entrySet()){
         entry.put(die.getKey(), String.valueOf(die.getValue()));
       }

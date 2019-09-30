@@ -25,13 +25,13 @@ public class LevelsUtil{
     }
   }
   
-  private List<Tuple<Integer,String>> levels=new LinkedList<Tuple<Integer,String>>();
+  private List<Tuple<Integer,String>> levels= new LinkedList<>();
   private Tuple<Integer,String> base;
   private Tuple<Integer,String> top;
   public LevelsUtil(String levelConfig){
     for(String levelValueAndText:levelConfig.split(",")){
       String[] level=levelValueAndText.split(":");
-      levels.add(new Tuple<Integer,String>(Integer.valueOf(level[0]), level[1]));
+      levels.add(new Tuple<>(Integer.valueOf(level[0]), level[1]));
     }
     base=levels.get(0);
     top=levels.get(levels.size()-1);

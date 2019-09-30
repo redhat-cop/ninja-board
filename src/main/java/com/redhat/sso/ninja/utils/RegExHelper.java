@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RegExHelper{
-	private static Map<String,Pattern> cache=new HashMap<String,Pattern>();
+	private static Map<String,Pattern> cache= new HashMap<>();
 	
 	private static Matcher buildMatcher(String regex, String input){
 		if (!cache.containsKey(regex)) cache.put(regex, Pattern.compile(regex));

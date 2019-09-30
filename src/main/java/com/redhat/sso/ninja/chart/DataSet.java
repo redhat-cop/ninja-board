@@ -14,12 +14,12 @@ public class DataSet {
   
   private List<String> backgroundColor;
   public List<String> getBackgroundColor() {
-    if (backgroundColor==null) backgroundColor=new ArrayList<String>();
+    if (backgroundColor==null) backgroundColor= new ArrayList<>();
     return backgroundColor;
   }
   private List<String> borderColor;
   public List<String> getBorderColor() {
-    if (borderColor==null) borderColor=new ArrayList<String>();
+    if (borderColor==null) borderColor= new ArrayList<>();
     return borderColor;
   }
   
@@ -44,7 +44,7 @@ public class DataSet {
     this.strokeColor=strokeColor;
   }
   public List<Integer> getData() {
-    if (data==null) data=new ArrayList<Integer>();
+    if (data==null) data= new ArrayList<>();
     return data;
   }
   public void setData(List<Integer> data) {

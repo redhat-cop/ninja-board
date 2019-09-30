@@ -72,7 +72,7 @@ public class Database2{
       return this;
     }
     if (users.containsKey(userId)){ // means the user is registered
-      if (null==scorecards.get(userId)) scorecards.put(userId, new HashMap<String, Integer>());
+      if (null==scorecards.get(userId)) scorecards.put(userId, new HashMap<>());
       if (null==scorecards.get(userId).get(poolId)) scorecards.get(userId).put(poolId, 0);
       log.info("Incrementing points: user="+userId+", poolId="+poolId+", increment/points="+increment+" + params="+params);
       scorecards.get(userId).put(poolId, scorecards.get(userId).get(poolId)+increment);
@@ -92,16 +92,16 @@ public class Database2{
   }
   
   public Map<String, Map<String, String>> getUsers(){
-    if(null==users) users=new HashMap<String, Map<String, String>>();
+    if(null==users) users= new HashMap<>();
     return users;
   }
   public Map<String, Map<String, Integer>> getScoreCards(){
-    if (null==scorecards) scorecards=new HashMap<String, Map<String,Integer>>();
+    if (null==scorecards) scorecards= new HashMap<>();
     return scorecards;
   }
   
   public List<Map<String, String>> getEvents(){
-    if (null==events) events=new ArrayList<Map<String,String>>();
+    if (null==events) events= new ArrayList<>();
     return events;
   }
   public enum EVENT_FIELDS{
@@ -116,7 +116,7 @@ public class Database2{
   }
   
   public List<Map<String, String>> getTasks(){
-    if (null==tasks) tasks=new ArrayList<Map<String, String>>();
+    if (null==tasks) tasks= new ArrayList<>();
     return tasks;
   }
   public enum TASK_FIELDS{
@@ -136,7 +136,7 @@ public class Database2{
   }
   
   public void addEvent(String type, String user, String text){
-    Map<String,String> event=new HashMap<String, String>();
+    Map<String,String> event= new HashMap<>();
     event.put(EVENT_FIELDS.TIMESTAMP.v, sdf2.format(new Date()));
     event.put(EVENT_FIELDS.TYPE.v, type);
     event.put(EVENT_FIELDS.USER.v, user);
@@ -150,7 +150,7 @@ public class Database2{
   }
   // user is the target user: ie. fbloggs
 	public void addTask(String taskText, String user){
-    Map<String,String> task=new HashMap<String, String>();
+    Map<String,String> task= new HashMap<>();
     task.put(TASK_FIELDS.TIMESTAMP.v, sdf2.format(new Date()));
     task.put(TASK_FIELDS.UID.v, UUID.randomUUID().toString());
     task.put(TASK_FIELDS.ID.v, Config.get().getNextTaskNum());
@@ -160,18 +160,18 @@ public class Database2{
     getTasks().add(task);
 	}
   
-  private Set<String> pointsDuplicateChecker=new HashSet<String>();
+  private Set<String> pointsDuplicateChecker= new HashSet<>();
   public Set<String> getPointsDuplicateChecker(){
-    if (null==pointsDuplicateChecker) pointsDuplicateChecker=new HashSet<String>();
+    if (null==pointsDuplicateChecker) pointsDuplicateChecker= new HashSet<>();
     return pointsDuplicateChecker;
   }
   
   @JsonIgnore
-  private Map<String, Map<String, Integer>> leaderboard=new HashMap<String, Map<String, Integer>>();
+  private Map<String, Map<String, Integer>> leaderboard= new HashMap<>();
   public Map<String, Map<String, Integer>> getLeaderboard(){
 //    leaderboard.putAll(users);
     for(Entry<String, Map<String, String>> e:users.entrySet()){
-      leaderboard.put(e.getKey(), new HashMap<String, Integer>());
+      leaderboard.put(e.getKey(), new HashMap<>());
     }
     
     for(Entry<String, Map<String, Integer>> e:scorecards.entrySet()){
