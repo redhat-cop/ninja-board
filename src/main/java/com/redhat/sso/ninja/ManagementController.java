@@ -158,7 +158,7 @@ public class ManagementController {
     log.debug("Config Saved");
     return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Config.get())).build();
   }
-  
+
   @GET
   @Path("/scripts/runNow")
   public Response runScriptsNow(@Context HttpServletRequest request, @Context HttpServletResponse response, @Context ServletContext servletContext){

@@ -33,7 +33,7 @@ public class Config {
   private List<Map<String,Object>> scripts=null;
   private Map<String,String> options=null;
   private Map<String,Object> values=null;
-  
+  private List<Map<String,String>> notifications=null;
   
   public Config(){}
   public Config(String json){
@@ -43,6 +43,7 @@ public class Config {
       this.options=x.options;
       this.scripts=x.scripts;
       this.values=x.values;
+      this.notifications=x.notifications;
       instance=this;
     }catch (JsonParseException e){
       // TODO Auto-generated catch block
@@ -69,6 +70,7 @@ public class Config {
   public Map<String,String> getOptions() {if (options==null) options=new HashMap<String, String>(); return options;}
   public List<Map<String,Object>> getScripts() {if (scripts==null) scripts=new ArrayList<Map<String, Object>>(); return scripts;}
   public Map<String,Object> getValues() {if (values==null) values=new HashMap<String, Object>(); return values;}
+  public List<Map<String,String>> getNotifications() {if (notifications==null) notifications=new ArrayList<Map<String, String>>(); return notifications;}
   
 //  class MapBuilder<K,V>{
 //    Map<K, V> values=new HashMap<K, V>();

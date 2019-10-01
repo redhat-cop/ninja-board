@@ -43,8 +43,8 @@ public class ExportController{
   
   public static void main(String[] asd) throws IOException{
     System.out.println(
-//        new ExportController().exportScorecards(null, "xls").getEntity()
-        new ExportController().exportEvents(null,  "csv").getEntity()
+        new ExportController().exportScorecards(null, "xls").getEntity()
+//        new ExportController().exportEvents(null,  "csv").getEntity()
     );
   }
   
@@ -114,9 +114,6 @@ public class ExportController{
       headers.add(header);
     }
     headers.add("id");
-
-    // Sort the data columns
-    Collections.sort(headers, new HeaderComparator(new String[]{"id","name","belt","total","points","github","gitlab","trello"}));
     
     // Normalize the data into a single map/row
     // flatten the data from a Map of String->Object to String->String
@@ -128,6 +125,20 @@ public class ExportController{
       }
       data.add(entry);
     }
+    
+    Database2 db=Database2.get();
+    for(Map<String,String> d:data){
+    	Map<String, String> userInfo=db.getUsers().get(d.get("id"));
+    	for(Entry<String, String> e:userInfo.entrySet()){
+    		if (e.getKey().equals("email") || e.getKey().endsWith("Id")){
+    			if (!headers.contains(e.getKey())) headers.add(e.getKey());
+    			d.put(e.getKey(), userInfo.get(e.getKey()));
+    		}    		
+    	}
+    }
+    
+    // Sort the data columns
+    Collections.sort(headers, new HeaderComparator(new String[]{"id","name","email","belt","total","points","github","gitlab","trello","thought"}));
     
     // Sort the data rows by Total Points
     Collections.sort(data, new Comparator<Map<String,String>>(){

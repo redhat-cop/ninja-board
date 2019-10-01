@@ -70,26 +70,41 @@
   var ctx = "https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs";
   
   var xhr = new XMLHttpRequest();
-  xhr.open("GET", ctx+"/api/proxy/leaderboard_10", true);
+  //xhr.open("GET", ctx+"/api/proxy/leaderboard_10", true);
+  xhr.open("GET", ctx+"/api/proxy/ninjas", true);
   xhr.send();
   xhr.onloadend = function () {
     var json=JSON.parse(xhr.responseText);
     
     var tableRef = document.getElementById('race');
     
-    for(var i=0;i<topX;i++){
+    //for(var i=0;i<topX;i++){
+    //	if (json['custom1'][i]=='mallen'){ json['custom1'].splice(i); json['labels'].splice(i); }
+    //	if (json['custom1'][i]=='ablock'){ json['custom1'].splice(i); json['labels'].splice(i); }
+    //	if (json['custom1'][i]=='esauer'){ json['custom1'].splice(i); json['labels'].splice(i); }
+    //}
+    var xx=1;
+    for(var i=0;i<json['labels'].length;i++){
+    	if (xx>10) break;
+    	var custom1=json['custom1'][i].split("|");
+    	if (custom1[0]=='mallen') continue;
+    	if (custom1[0]=='ablock') continue;
+    	if (custom1[0]=='esauer') continue;
+    	
+    	
       var newRow   = tableRef.insertRow(tableRef.rows.length);
       newRow.className=i%2?"even":"odd";
       // add numeric
       var c1  = newRow.insertCell(0);
-      var c1t  = document.createTextNode(i+1);
+      //var c1t  = document.createTextNode(i+1);
+      var c1t  = document.createTextNode(xx++);
       c1.className="col col-1";
       c1.appendChild(c1t);
       
       // add Image
       var c2  = newRow.insertCell(1);
       var c2t  = document.createElement('img');
-      c2t.src="https://mojo.redhat.com/people/"+json['custom1'][i]+"/avatar/200.png?a=925089";
+      c2t.src="https://mojo.redhat.com/people/"+custom1[0]+"/avatar/200.png?a=925089";
       c2t.style="width: 50px; height: 50px"
     	c2t.className="avatar";
       c2.className="col col-2";
@@ -99,7 +114,7 @@
       var c3  = newRow.insertCell(2);
       var c3t  = document.createTextNode("");
       c3.innerHTML=json['labels'][i] +"<br/>"+json['datasets'][0]['data'][i]+"pts";
-      c3.className="col col-3 belt belt-"+json['custom2'][i];
+      c3.className="col col-3 belt belt-"+custom1[1];
       c3.appendChild(c3t);
       
       // add Pts
@@ -122,4 +137,3 @@
 	  window.frameElement.style.height=window.frameElement.contentWindow.document.body.scrollHeight+'px';
 	}
 </script>
-
