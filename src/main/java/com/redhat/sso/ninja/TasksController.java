@@ -33,7 +33,7 @@ import com.redhat.sso.ninja.utils.Json;
 
 @Path("/")
 public class TasksController {
-  private static final Logger log= Logger.getLogger(TasksController.class);
+  private static final Logger log=Logger.getLogger(TasksController.class);
   
 
   
