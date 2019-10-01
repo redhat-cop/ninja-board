@@ -26,7 +26,7 @@ import com.redhat.sso.ninja.utils.IOUtils2;
 import com.redhat.sso.ninja.utils.Json;
 
 public class Database2{
-  private static final Logger log= Logger.getLogger(Database2.class);
+  private static final Logger log=Logger.getLogger(Database2.class);
   public static final String STORAGE="target/ninja-persistence/database2.json";
   public static final File STORAGE_AS_FILE=new File(STORAGE);
   public static Integer MAX_EVENT_ENTRIES=1000;

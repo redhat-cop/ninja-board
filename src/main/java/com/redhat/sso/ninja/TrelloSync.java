@@ -27,7 +27,7 @@ import mjson.Json;
  */
 
 public class TrelloSync extends ScriptBase{
-  private static final Logger log= Logger.getLogger(TrelloSync.class);
+  private static final Logger log=Logger.getLogger(TrelloSync.class);
   
   /*
    * 
