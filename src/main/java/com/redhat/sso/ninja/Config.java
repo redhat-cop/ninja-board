@@ -16,8 +16,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -27,7 +26,7 @@ import com.redhat.sso.ninja.utils.Json;
 import com.redhat.sso.ninja.utils.MapBuilder;
 
 public class Config {
-  private static final Logger log= LogManager.getLogger(Config.class);
+  private static final Logger log= Logger.getLogger(Config.class);
   public static final File STORAGE=new File("target/ninja-persistence", "config.json");
   private static Config instance;
   private List<Map<String,Object>> scripts=null;
