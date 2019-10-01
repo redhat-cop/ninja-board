@@ -28,21 +28,6 @@
 		<!-- CARD -->
 		<!--######-->
 		<style>
-		//.card{
-		//	border:1px solid #BBB;
-		//	width:80%;
-		//	border-radius: 5px;
-		//	padding: 10px;
-		//	background: #EEE;
-		//	position: relative;
-		//	top: 45px;
-		//}
-		//.card tr td{
-		//}
-		//.cardField{
-		//	color: #444;
-		//	font-weight: bold;
-		//}
 		.card2{
 			border:1px solid #BBB;
 			width: 100%;
@@ -108,15 +93,6 @@
 		
 		<table id="nav" border=0 style="width: 100%">
 			<tr>
-				<!--td style="width:33%; vertical-align:top;">
-					
-					<table class="card2">
-						<tr>
-							<td><a href="/community/communities-at-red-hat/communities-of-practice-operations/communities-of-practice-ninja-program-v2/overview">Return to Ninja Program Homepage</a></td>
-						</tr>
-					</table>
-					
-				</td-->
 				<td>
 					
 					<table id="dashboard" border=0 style="width:1000px;">
@@ -124,39 +100,48 @@
 							<td colspan="2">
 								<table class="card2" border=0>
 									<tr>
-										<td colspan="6"><span class="cardName" id="_error"></span><br/><span id="_error2"></td>
+										<td colspan="7"><span class="cardName" id="_error"></span><br/><span id="_error2"></td>
 									</tr>
 									<tr>
-										<td class="cardName" colspan="2"><span id="_displayName"></span></td>
-										<td class="cardScore" rowspan="4"><img class="ninjaIcon" id="_level"></img></td>
-										<td class="cardScore"><span id="_Trello">0</span></td>
-										<td class="cardScore"><span id="_Github">0</span></td>
-										<td class="cardScore"><!-- chat counter --></td>
+										<td class="cardName" colspan="2"><span class="_displayName"></span></td>
+										<td class="cardScore" rowspan="5"><img class="ninjaIcon _level"></img></td>
+										<td class="cardScore"><span class="_Trello">0</span></td>
+										<td class="cardScore"><span class="_Github">0</span></td>
+										<td class="cardScore"><span class="_Gitlab">0</span></td>
+										<td class="cardScore"><span class="_ThoughtLeadership">0</span></td>
+										<!--td class="cardScore"></td--> <!--chat-->
 									</tr>
 									<tr>
 										<td class="cardRow">
 											<img class="icon" src="https://www.redhat.com/profiles/rh/themes/redhatdotcom/img/logo.png">
 										</td>
-										<td><span id="_userId"></span></td>
-										<td class="cardScoreText" rowspan="3">trello</td>
-										<td class="cardScoreText" rowspan="3">github</td>
-										<td class="cardScoreText" rowspan="3"><!--chat--></td>
+										<td><span class="_userId"></span></td>
+										<td class="cardScoreText" style="width:120px;" rowspan="4">Trello</td>
+										<td class="cardScoreText" style="width:120px;" rowspan="4">Github</td>
+										<td class="cardScoreText" style="width:120px;" rowspan="4">Gitlab</td>
+										<td class="cardScoreText" style="width:120px;" rowspan="4">Thought Leadership</td>
+										<!--td class="cardScoreText" rowspan="4"></td--> <!--chat-->
 									</tr>
 									<tr>
 										<td class="cardRow"><img class="icon" src="https://d2k1ftgv7pobq7.cloudfront.net/meta/u/res/images/brand-assets/Logos/0099ec3754bf473d2bbf317204ab6fea/trello-logo-blue.png"></td>
-										<td><span id="_trelloId"></span></td>
+										<td><span class="_trelloId"></span></td>
 									</tr>
 									<tr>
 										<td class="cardRow"><img  style="height:20px;" src="https://github.githubassets.com/images/modules/logos_page/GitHub-Logo.png"></td>
-										<td><span id="_githubId"></span></td>
+										<td><span class="_githubId"></span></td>
+									</tr>
+									<tr>
+										<td class="cardRow">
+										<svg height="20" viewBox="0 0 1231 342" xmlns="http://www.w3.org/2000/svg" class="nav-logo"> <g fill="none" fill-rule="evenodd"> <g fill="#8C929D" class="wordmark"> <path d="M764.367 94.13h-20.803l.066 154.74h84.155v-19.136h-63.352l-.066-135.603zM907.917 221.7c-5.2 5.434-13.946 10.87-25.766 10.87-15.838 0-22.22-7.797-22.22-17.957 0-15.354 10.637-22.678 33.332-22.678 4.255 0 11.11.472 14.655 1.18v28.586zm-21.51-93.787c-16.8 0-32.208 5.952-44.23 15.858l7.352 12.73c8.51-4.962 18.91-9.924 33.802-9.924 17.02 0 24.585 8.742 24.585 23.39v7.56c-3.31-.71-10.164-1.184-14.42-1.184-36.404 0-54.842 12.757-54.842 39.454 0 23.86 14.656 35.908 36.876 35.908 14.97 0 29.314-6.852 34.278-17.954l3.782 15.118h14.657v-79.14c0-25.04-10.874-41.815-41.84-41.815zM995.368 233.277c-7.802 0-14.657-.945-19.858-3.308v-71.58c7.093-5.908 15.84-10.16 26.95-10.16 20.092 0 27.893 14.174 27.893 37.09 0 32.6-12.53 47.957-34.985 47.957m8.742-105.364c-18.592 0-28.6 12.64-28.6 12.64V120.59l-.066-26.458H955.116l.066 150.957c10.164 4.25 24.11 6.613 39.24 6.613 38.768 0 57.442-24.804 57.442-67.564 0-33.783-17.26-56.227-47.754-56.227M538.238 110.904c18.438 0 30.258 6.142 38.06 12.285l8.938-15.477c-12.184-10.678-28.573-16.417-46.053-16.417-44.204 0-75.17 26.932-75.17 81.267 0 56.935 33.407 79.14 71.624 79.14 19.148 0 35.46-4.488 46.096-8.976l-.435-60.832V162.76h-56.734v19.135h36.167l.437 46.184c-4.727 2.362-13 4.252-24.11 4.252-30.73 0-51.297-19.32-51.297-60.006 0-41.34 21.275-61.422 52.478-61.422M684.534 94.13h-20.33l.066 25.988v89.771c0 25.04 10.874 41.814 41.84 41.814 4.28 0 8.465-.39 12.53-1.126v-18.245c-2.943.45-6.083.707-9.455.707-17.02 0-24.585-8.74-24.585-23.387v-61.895h34.04v-17.01H684.6l-.066-36.617zM612.62 248.87h20.33V130.747h-20.33v118.12zM612.62 114.448h20.33V94.13h-20.33v20.318z"></path> </g> <path d="M185.398 341.13l68.013-209.322H117.39L185.4 341.13z" fill="#E24329" class="logo-svg-shape logo-dark-orange-shape"></path> <path d="M185.398 341.13l-68.013-209.322h-95.32L185.4 341.128z" fill="#FC6D26" class="logo-svg-shape logo-orange-shape"></path> <path d="M22.066 131.808l-20.67 63.61c-1.884 5.803.18 12.16 5.117 15.744L185.398 341.13 22.066 131.807z" fill="#FCA326" class="logo-svg-shape logo-light-orange-shape"></path> <path d="M22.066 131.808h95.32L76.42 5.735c-2.107-6.487-11.284-6.487-13.39 0L22.065 131.808z" fill="#E24329" class="logo-svg-shape logo-dark-orange-shape"></path> <path d="M185.398 341.13l68.013-209.322h95.32L185.4 341.128z" fill="#FC6D26" class="logo-svg-shape logo-orange-shape"></path> <path d="M348.73 131.808l20.67 63.61c1.884 5.803-.18 12.16-5.117 15.744L185.398 341.13 348.73 131.807z" fill="#FCA326" class="logo-svg-shape logo-light-orange-shape"></path> <path d="M348.73 131.808h-95.32L294.376 5.735c2.108-6.487 11.285-6.487 13.392 0l40.963 126.073z" fill="#E24329" class="logo-svg-shape logo-dark-orange-shape"></path> </g> </svg></td>
+										<td><span class="_userId"></span></td>
 									</tr>
 									
 									<tr>
-										<td colspan="6" style="height: 20px;"><!-- SPACER ONLY --></td>
+										<td colspan="7" style="height: 20px;"><!-- SPACER ONLY --></td>
 									</tr>
 									
 									<tr>
-										<td colspan="6">
+										<td colspan="8">
 											
 											<table border=0 style="width:100%;height:400px">
 												<tr>
@@ -212,58 +197,88 @@
 <script>
 
 function getUsername(){
-	if(undefined!=window.parent._jive_current_user){
-		var username=window.parent._jive_current_user.username;
-		var displayName=window.parent._jive_current_user.displayName;
-	}
-  if(username==undefined) username="mallen";
-	return username;
+	  var username;
+	  if (undefined!=window.parent._jive_current_user)
+		  username=window.parent._jive_current_user.username;
+	  if (undefined!=window._jive_current_user)
+		  username=window._jive_current_user.username;
+	  
+	  if(window.location.href.includes("localhost")) username="mallen";
+	  return username;
 }
+//function getUsername(){
+//	if(undefined!=window.parent._jive_current_user){
+//		var username=window.parent._jive_current_user.username;
+//		var displayName=window.parent._jive_current_user.displayName;
+//	}
+//  if(window.location.href.includes("localhost")) username="mallen";
+//	return username;
+//}
 
+setTimeout(function(){ displ(); }, 200);
 
-var xhr = new XMLHttpRequest();
-xhr.open("GET", ctx+"/summary_"+getUsername(), true);
-xhr.send();
-xhr.onloadend = function () {
-  console.log("statusCode="+xhr.status);
-  
-	var json=JSON.parse(xhr.responseText);
-  if (xhr.status==500){
-    // json['displayName'] is not just a username in the event of a 500 error. its a message. need to change this at some point
-  	$("#_error").html(json['displayName']+". Please click <a style='color:white;' target='_new' href='https://mojo.redhat.com/external-link.jspa?url=https%3A%2F%2Fdocs.google.com%2Fforms%2Fd%2Fe%2F1FAIpQLSdWGcCks2zKKnVoZFQz3CieLQDc1lsSex_Knwh_-eyRm0ZQTg%2Fviewform'>here</a> to register");
-  	$("#_error2").html("Please note registration takes approx. 24 hours");
+function displ(){
+  username=getUsername();
+  if (username==undefined){
+	  setTimeout(function(){ displ(); }, 200);
+	  return;
   }
   
-  if (xhr.status==200){
-		if (json['displayName']==undefined){
-		  $("#_displayName").text(json['username']);
-		}else{
-			$("#_displayName").text(json['displayName']);
-		}
-		Object.keys(json).forEach(function(key) {
-	    value = json[key];
+  graphs={
+	  "points":         "/nextLevel_"+username,
+	  "breakdown":      "/breakdown_"+username,
+	};
+  refresh();
+
+	var xhr = new XMLHttpRequest();
+	xhr.open("GET", ctx+"/summary_"+username, true);
+	xhr.send();
+	xhr.onloadend = function () {
+	  console.log("statusCode="+xhr.status);
+	  
+		var json=JSON.parse(xhr.responseText);
+	  if (xhr.status==500){
+	    // json['displayName'] is not just a username in the event of a 500 error. its a message. need to change this at some point
+	  	$("#_error").html(json['displayName']+". Please click <a style='color:white;' target='_new' href='https://mojo.redhat.com/external-link.jspa?url=https%3A%2F%2Fdocs.google.com%2Fforms%2Fd%2Fe%2F1FAIpQLSdWGcCks2zKKnVoZFQz3CieLQDc1lsSex_Knwh_-eyRm0ZQTg%2Fviewform'>here</a> to register");
+	  	$("#_error2").html("Please note registration takes approx. 24 hours");
+	  }
+	  
+	  if (xhr.status==200){
+			if (json['displayName']==undefined){
+			  $("._displayName").text(json['username']);
+			}else{
+				$("._displayName").text(json['displayName']);
+			}
+			Object.keys(json).forEach(function(key) {
+		    value = json[key];
+				
+		    //console.log(document.getElementsByClassName("_"+key).length);
+		    if (document.getElementsByClassName("_"+key).length>0){
+		    //if (null!=document.getElementsByClassName("_"+key)){
+		    	console.log("setting [_"+key+"] to ["+value+"]");
+			    //$("#_"+key).text(value);
+			    
+			    $("._"+key).each(function(index) {
+			    	$(this).text(value);
+			    });
+			    
+		    	
+		    	if (key=="level"){
+						document.getElementsByClassName("_level")[0].src=ctx+"/../../images/"+value.toLowerCase()+"_belt_icon.png";
+		    	}else{
+		    	  //$("#_"+key).text(value);
+		    		//document.getElementById("_"+key).innerText=value;
+		    	}
+		    }else{
+		    	//console.log("NOT setting [_"+key+"] to ["+value+"]");
+		    }
+		    //console.log(value);
+			});
 			
-	    
-	    if (null!=document.getElementById("_"+key)){
-	    	console.log("setting [_"+key+"] to ["+value+"]");
-		    $("#_"+key).text(value);
-	    	
-	    	if (key=="level"){
-					document.getElementById("_level").src=ctx+"/../../images/"+value.toLowerCase()+"_belt_icon.png";
-	    	}else{
-	    	  //$("#_"+key).text(value);
-	    		//document.getElementById("_"+key).innerText=value;
-	    	}
-	    }else{
-	    	//console.log("NOT setting [_"+key+"] to ["+value+"]");
-	    }
-	    //console.log(value);
-		});
-		
-		document.getElementById("nav").height=document.getElementById("dashboard").height;
+			document.getElementById("nav").height=document.getElementById("dashboard").height;
+		}
 	}
 }
-
 
 //alert('Display Name: ' + window.parent._jive_current_user.displayName +  
 //'\nAnonymous: ' + window.parent._jive_current_user.anonymous+  
@@ -422,7 +437,7 @@ function refresh(){
 	leaderboardRefresh();
 	breakdownRefresh();
 }
-refresh();
+//refresh();
 </script>
 </div>
 </center>

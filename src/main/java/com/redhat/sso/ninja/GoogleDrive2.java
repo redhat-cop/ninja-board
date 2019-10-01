@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.attribute.PosixFilePermission;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -99,6 +100,8 @@ public class GoogleDrive2 {
   }
   
   public List<Map<String,String>> parseExcelDocument(File file) throws FileNotFoundException, IOException{
+  	SimpleDateFormat sdf=new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+  	
     // parse excel file using apache poi
     // read out "tasks" and create/update solutions
     // use timestamp (column A) as the unique identifier (if in doubt i'll hash it with the requester's username)
@@ -126,7 +129,7 @@ public class GoogleDrive2 {
             }catch(Exception ex){}
             if (!e.containsKey(header))
               try{
-                e.put(header, cell.getDateCellValue().toString());
+                e.put(header, sdf.format(cell.getDateCellValue()));
               }catch(Exception ex){}
           
         }
