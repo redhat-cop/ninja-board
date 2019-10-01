@@ -223,7 +223,6 @@ public class Heartbeat2 {
           Map<String, String> userInfo=new HashMap<String, String>();
           for(Entry<String, String> c:r.entrySet()){
             if (c.getKey().toLowerCase().contains("timestamp")){
-//FEATURE:RegistrationDate            	userInfo.put("reg", c.getValue().substring(0, c.getValue().indexOf(" "))); // get the "dd/mm/yyyy" from "dd/mm/yyyy hh:mm:ss"
             }else if (c.getKey().toLowerCase().contains("email")){
               if (c.getValue().contains("@"))
                 userInfo.put("username", c.getValue().substring(0, c.getValue().indexOf("@")));
@@ -279,10 +278,6 @@ public class Heartbeat2 {
 //            }// /newUser
           
             
-//FEATURE:RegistrationDate          }else if (null!=userInfo.get("username") && !dbUsers.containsKey(userInfo.get("username")) && null==dbUsers.get(userInfo.get("username")).get("reg")){
-//FEATURE:RegistrationDate          	// update registration date for support purposes
-//FEATURE:RegistrationDate          	Map<String, String> user=dbUsers.get(userInfo.get("username"));
-//FEATURE:RegistrationDate          	user.put("reg", userInfo.get("reg"));
           	
           }else if (dbUsers.containsKey(userInfo.get("username"))){
             log.debug("User already registered: "+userInfo.get("username"));
