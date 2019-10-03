@@ -27,8 +27,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -45,7 +46,7 @@ import com.redhat.sso.ninja.utils.MapBuilder;
 
 @Path("/")
 public class ManagementController {
-  private static final Logger log=Logger.getLogger(ManagementController.class);
+  private static final Logger log=LogManager.getLogger(ManagementController.class);
   
   public static void main(String[] asd) throws JsonGenerationException, JsonMappingException, IOException{
     System.out.println(java.sql.Date.valueOf(LocalDate.now()));
