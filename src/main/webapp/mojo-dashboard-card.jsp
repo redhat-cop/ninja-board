@@ -90,11 +90,6 @@
 		}
 		</style>
 		
-		
-		<table id="nav" border=0 style="width: 100%">
-			<tr>
-				<td>
-					
 					<table id="dashboard" border=0 style="width:1000px;">
 						<tr>
 							<td colspan="2">
@@ -180,40 +175,31 @@
 						</tr>
 					</table>
 					
-				</td>
-				<td style="width: 33%">
-					
-				</td>
-			</tr>
-		</table>
-		
-		
-		
-		
-	
-
-
 
 <script>
+Utils = {
+		getParameterByName: function(name, url) {
+			if (!url) url = window.location.href;
+			name = name.replace(/[\[\]]/g, "\\$&");
+			var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+			    results = regex.exec(url);
+			if (!results) return undefined;
+			if (!results[2]) return '';
+			return decodeURIComponent(results[2].replace(/\+/g, " "));
+		}
+}
 
 function getUsername(){
 	  var username;
-	  if (undefined!=window.parent._jive_current_user)
+	  if (Utils.getParameterByName("username")!=undefined) username=Utils.getParameterByName("username");
+	  if (username==undefined && undefined!=window.parent._jive_current_user)
 		  username=window.parent._jive_current_user.username;
-	  if (undefined!=window._jive_current_user)
+	  if (username==undefined && undefined!=window._jive_current_user)
 		  username=window._jive_current_user.username;
 	  
-	  if(window.location.href.includes("localhost")) username="mallen";
+	  if(username==undefined && window.location.href.includes("localhost")) username="mallen";
 	  return username;
 }
-//function getUsername(){
-//	if(undefined!=window.parent._jive_current_user){
-//		var username=window.parent._jive_current_user.username;
-//		var displayName=window.parent._jive_current_user.displayName;
-//	}
-//  if(window.location.href.includes("localhost")) username="mallen";
-//	return username;
-//}
 
 setTimeout(function(){ displ(); }, 200);
 
