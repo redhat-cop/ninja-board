@@ -198,7 +198,7 @@ public class Heartbeat2 {
       return result;
     }
     
-    private String cleanupGithubTrelloId(String input){
+    public String cleanupGithubTrelloId(String input){
       String result=input;
       
       // if the id start with @, then strip it

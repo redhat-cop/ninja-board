@@ -33,6 +33,9 @@ public class Http{
 	public static Response get(String url){
 		return http("GET", url, null, null);
 	}
+	public static Response get(String url, Map<String,String> headers){
+		return http("GET", url, null, headers);
+	}
 	
 	public static Response post(String url, String data){
 		return http("POST", url, data, null);
