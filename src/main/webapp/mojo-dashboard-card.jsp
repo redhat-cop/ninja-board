@@ -17,9 +17,8 @@
 	
 
 		<script>
-			//var ctx = "https://community-ninja-board-community-ninja-board.apps.d1.casl.rht-labs.com/community-ninja-board";
 			var ctx = "https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs/api/proxy";
-			//var ctx = "http://localhost:8082/community-ninja-board";
+			//var ctx = "http://localhost:8082/community-ninja-board/api/scorecard";
 			//var ctx = "${pageContext.request.contextPath}";
 		</script>
 		
@@ -89,12 +88,7 @@
 		  text-decoration: underline;
 		}
 		</style>
-		
-		
-		<table id="nav" border=0 style="width: 100%">
-			<tr>
-				<td>
-					
+					<span id="userSelect"></span>
 					<table id="dashboard" border=0 style="width:1000px;">
 						<tr>
 							<td colspan="2">
@@ -180,58 +174,53 @@
 						</tr>
 					</table>
 					
-				</td>
-				<td style="width: 33%">
-					
-				</td>
-			</tr>
-		</table>
-		
-		
-		
-		
-	
-
-
 
 <script>
+Utils = {
+		getParameterByName: function(name, url) {
+			if (!url) url = window.location.href;
+			name = name.replace(/[\[\]]/g, "\\$&");
+			var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+			    results = regex.exec(url);
+			if (!results) return undefined;
+			if (!results[2]) return '';
+			return decodeURIComponent(results[2].replace(/\+/g, " "));
+		}
+}
 
 function getUsername(){
 	  var username;
-	  if (undefined!=window.parent._jive_current_user)
+	  if (Utils.getParameterByName("username")!=undefined) username=Utils.getParameterByName("username");
+	  if (username==undefined && undefined!=window.parent._jive_current_user)
 		  username=window.parent._jive_current_user.username;
-	  if (undefined!=window._jive_current_user)
+	  if (username==undefined && undefined!=window._jive_current_user)
 		  username=window._jive_current_user.username;
 	  
-	  if(window.location.href.includes("localhost")) username="mallen";
+	  if(username==undefined && window.location.href.includes("localhost")) username="mallen";
 	  return username;
 }
-//function getUsername(){
-//	if(undefined!=window.parent._jive_current_user){
-//		var username=window.parent._jive_current_user.username;
-//		var displayName=window.parent._jive_current_user.displayName;
-//	}
-//  if(window.location.href.includes("localhost")) username="mallen";
-//	return username;
-//}
 
 setTimeout(function(){ displ(); }, 200);
 
 function displ(){
-  username=getUsername();
-  if (username==undefined){
+	username=getUsername();
+	if (username==undefined){
 	  setTimeout(function(){ displ(); }, 200);
 	  return;
   }
+	_displ(username);
+}
+
+function _displ(username){
   
   graphs={
-	  "points":         "/nextLevel_"+username,
-	  "breakdown":      "/breakdown_"+username,
+	  "points":         "/next"+(ctx.includes("localhost")?"l":"L")+"evel"+(ctx.includes("localhost")?"/":"_")+username,
+	  "breakdown":      "/breakdown"+(ctx.includes("localhost")?"/":"_")+username,
 	};
   refresh();
 
 	var xhr = new XMLHttpRequest();
-	xhr.open("GET", ctx+"/summary_"+username, true);
+	xhr.open("GET", ctx+"/summary"+(ctx.includes("localhost")?"/":"_")+username, true);
 	xhr.send();
 	xhr.onloadend = function () {
 	  console.log("statusCode="+xhr.status);
@@ -274,6 +263,10 @@ function displ(){
 		    }
 		    //console.log(value);
 			});
+			
+			if ("true"==json['admin']){
+				document.getElementById("userSelect").innerHTML=`<input type='text' id='username' value='`+username+`'><input type='button' value='Go' onclick='_displ(document.getElementById("username").value); return false;'/>`;
+			}
 			
 			document.getElementById("nav").height=document.getElementById("dashboard").height;
 		}
