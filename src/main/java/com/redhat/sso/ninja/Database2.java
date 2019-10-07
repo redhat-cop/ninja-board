@@ -200,9 +200,7 @@ public class Database2{
   
   public static synchronized Database2 load(){
     try{
-//      Database db=new Database();
-//      Database db=Json.newObjectMapper(true).readValue(IOUtils2.toStringAndClose(new FileInputStream(new File(storage))), new TypeReference<HashMap<String,Map<String,Integer>>>(){});
-    	log.info("Database loading (size="+new File(STORAGE).length()+")");
+      log.info("Database loading (size="+new File(STORAGE).length()+")");
       Database2 db=Json.newObjectMapper(true).readValue(IOUtils2.toStringAndClose(new FileInputStream(new File(STORAGE))), Database2.class);
       return db;
     }catch (JsonParseException e){
@@ -218,22 +216,16 @@ public class Database2{
   }
   
   private static Database2 instance=null;
-//  public static Database2 getCached(){
-//    if (null==instance){
-//      instance=Database2.get();
-//    }
-//    return instance;
-//  }
   public static Database2 get(){
+  	if (instance!=null) return instance;
+  	
     if (!new File(STORAGE).exists()){
     	log.warn("No database file found, creating new/blank/default one...");
     	new Database2().save();
     }
-    if (null==instance){
-      instance=Database2.load();
-      log.info("Loading/Replaced 'instance' of database in memory");
-    }
-//    instance=Database2.load();
+    instance=Database2.load();
+    log.info("Loading/Replaced 'instance' of database in memory");
+    
     return instance;
   }
   public static void resetInstance(){

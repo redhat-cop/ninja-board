@@ -42,8 +42,25 @@ Http = {
 		xhr.open("GET", url, true);
 		xhr.send();
 		xhr.onloadend = function () {
-		  callback(xhr.responseText, this.status);
-		  //callback(JSON.parse(xhr.responseText));
+			callback(xhr.responseText, this.status);
+			//callback(JSON.parse(xhr.responseText));
+		};
+	},
+	httpGetObject: function httpGetObject(url, callback, onError){
+		var xhr = new XMLHttpRequest();
+		xhr.open("GET", url, true);
+		//xhr.setRequestHeader("Accept", "application/json");
+		xhr.send();
+		xhr.onloadend = function () {
+			if (this.status==200){
+				callback(JSON.parse(xhr.responseText));
+			}else{
+				onError(this.status, xhr.responseText);
+			}
+			if (this.status==403){
+				console.log("Error: xhr call returned 403, redirecting to '.'. Request url was "+url);
+				//self.location.href=".";
+			}
 		};
 	}
 }
