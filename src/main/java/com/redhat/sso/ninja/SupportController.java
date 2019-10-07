@@ -44,8 +44,8 @@ public class SupportController {
 //  	if (true) System.exit(0);
   	
   	SupportController test=new SupportController(){
-  		public String getTrelloApiKey(){return "39cca1583d34154be24aa99ee024106d";}
-  		public String getTrelloApiToken(){return "85e332445c4d221e09ecd0d1309a795c4f6aa0b99249852d896d3cee1f235610";}
+  		public String getTrelloApiKey(){return "xxx";}
+  		public String getTrelloApiToken(){return "xxxx";}
   	};
   	
   	
