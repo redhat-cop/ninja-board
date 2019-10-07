@@ -17,9 +17,8 @@
 	
 
 		<script>
-			//var ctx = "https://community-ninja-board-community-ninja-board.apps.d1.casl.rht-labs.com/community-ninja-board";
 			var ctx = "https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs/api/proxy";
-			//var ctx = "http://localhost:8082/community-ninja-board";
+			//var ctx = "http://localhost:8082/community-ninja-board/api/scorecard";
 			//var ctx = "${pageContext.request.contextPath}";
 		</script>
 		
@@ -89,7 +88,7 @@
 		  text-decoration: underline;
 		}
 		</style>
-		
+					<span id="userSelect"></span>
 					<table id="dashboard" border=0 style="width:1000px;">
 						<tr>
 							<td colspan="2">
@@ -204,20 +203,24 @@ function getUsername(){
 setTimeout(function(){ displ(); }, 200);
 
 function displ(){
-  username=getUsername();
-  if (username==undefined){
+	username=getUsername();
+	if (username==undefined){
 	  setTimeout(function(){ displ(); }, 200);
 	  return;
   }
+	_displ(username);
+}
+
+function _displ(username){
   
   graphs={
-	  "points":         "/nextLevel_"+username,
-	  "breakdown":      "/breakdown_"+username,
+	  "points":         "/next"+(ctx.includes("localhost")?"l":"L")+"evel"+(ctx.includes("localhost")?"/":"_")+username,
+	  "breakdown":      "/breakdown"+(ctx.includes("localhost")?"/":"_")+username,
 	};
   refresh();
 
 	var xhr = new XMLHttpRequest();
-	xhr.open("GET", ctx+"/summary_"+username, true);
+	xhr.open("GET", ctx+"/summary"+(ctx.includes("localhost")?"/":"_")+username, true);
 	xhr.send();
 	xhr.onloadend = function () {
 	  console.log("statusCode="+xhr.status);
@@ -260,6 +263,10 @@ function displ(){
 		    }
 		    //console.log(value);
 			});
+			
+			if ("true"==json['admin']){
+				document.getElementById("userSelect").innerHTML=`<input type='text' id='username' value='`+username+`'><input type='button' value='Go' onclick='_displ(document.getElementById("username").value); return false;'/>`;
+			}
 			
 			document.getElementById("nav").height=document.getElementById("dashboard").height;
 		}
