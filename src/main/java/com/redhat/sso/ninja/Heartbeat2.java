@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.mortbay.log.Log;
 
 import com.google.common.collect.Lists;
@@ -197,7 +198,7 @@ public class Heartbeat2 {
       return result;
     }
     
-    private String cleanupGithubTrelloId(String input){
+    public String cleanupGithubTrelloId(String input){
       String result=input;
       
       // if the id start with @, then strip it
@@ -211,14 +212,57 @@ public class Heartbeat2 {
       return null;
     }
 
+    public Map<String, Map<String, String>> getUsersFromRegistrationSheet(Config config) throws IOException, InterruptedException{
+      Map<String, Map<String, String>> result=new HashMap<String, Map<String,String>>();
+      
+      GoogleDrive3 drive=new GoogleDrive3(3000);
+      File file=drive.downloadFile(config.getOptions().get("googlesheets.registration.id"));
+      List<Map<String, String>> rows=drive.parseExcelDocument(file, new GoogleDrive3.HeaderRowFinder(){
+        public int getHeaderRow(XSSFSheet s){
+          return 0;
+        }}, new SimpleDateFormat("dd-MM-yyyy"));
+      for(Map<String,String> r:rows){
+        Map<String, String> userInfo=new HashMap<String, String>();
+        for(Entry<String, String> c:r.entrySet()){
+          if (c.getKey().toLowerCase().contains("timestamp")){
+            userInfo.put("reg", c.getValue());
+          }else if (c.getKey().toLowerCase().contains("email")){
+            if (c.getValue().contains("@"))
+              userInfo.put("username", c.getValue().substring(0, c.getValue().indexOf("@")));
+            userInfo.put("email", c.getValue());
+          }else if (c.getKey().toLowerCase().contains("trello id")){ // the 'contains' is the text in the google sheet title
+            String trelloId=cleanupGithubTrelloId(c.getValue());
+            if (null!=trelloId) userInfo.put("trelloId", trelloId);
+            
+          }else if (c.getKey().toLowerCase().contains("github id")){ // the 'contains' is the text in the google sheet title
+            String githubId=cleanupGithubTrelloId(c.getValue());
+            if (null!=githubId) userInfo.put("githubId", githubId);
+            
+          }
+        }
+        result.put(userInfo.get("username"), userInfo);
+      }
+      return result;
+    }
+
+//    public void getUsersFromRegistrationSheet(Config cfg){
+////    public Map<String, Map<String, String>> getUsersFromRegistrationSheet(Config cfg) throws IOException, InterruptedException{
+//    }
+    
     public boolean addOrUpdateRegisteredUsers(Database2 db, Config cfg){
       Map<String, Map<String, String>> dbUsers=db.getUsers();
       UserService userService=new UserService();
       boolean userServiceDown=false;
       try{
-        GoogleDrive2 drive=new GoogleDrive2();
-        File file=drive.downloadFile(cfg.getOptions().get("googlesheets.registration.id"));
-        List<Map<String, String>> rows=drive.parseExcelDocument(file);
+      	
+//        GoogleDrive2 drive=new GoogleDrive2();
+      	GoogleDrive3 drive=new GoogleDrive3();
+      	File file=drive.downloadFile(cfg.getOptions().get("googlesheets.registration.id"));
+      	List<Map<String, String>> rows=drive.parseExcelDocument(file, new GoogleDrive3.HeaderRowFinder(){
+            public int getHeaderRow(XSSFSheet s){
+              return 0;
+            }}, new SimpleDateFormat("yyyy/MM/dd"));
+//        List<Map<String, String>> rows=drive.parseExcelDocument(file);
         for(Map<String,String> r:rows){
           Map<String, String> userInfo=new HashMap<String, String>();
           for(Entry<String, String> c:r.entrySet()){
@@ -228,12 +272,12 @@ public class Heartbeat2 {
                 userInfo.put("username", c.getValue().substring(0, c.getValue().indexOf("@")));
               userInfo.put("email", c.getValue());
             }else if (c.getKey().toLowerCase().contains("trello id")){ // the 'contains' is the text in the google sheet title
-            	String trelloId=cleanupGithubTrelloId(c.getValue());
-            	if (null!=trelloId) userInfo.put("trelloId", trelloId);
-            	
+              String trelloId=cleanupGithubTrelloId(c.getValue());
+              if (null!=trelloId) userInfo.put("trelloId", trelloId);
+              
             }else if (c.getKey().toLowerCase().contains("github id")){ // the 'contains' is the text in the google sheet title
-            	String githubId=cleanupGithubTrelloId(c.getValue());
-            	if (null!=githubId) userInfo.put("githubId", githubId);
+              String githubId=cleanupGithubTrelloId(c.getValue());
+              if (null!=githubId) userInfo.put("githubId", githubId);
               
             }
           }
@@ -242,7 +286,7 @@ public class Heartbeat2 {
           if (null!=userInfo.get("username") && !dbUsers.containsKey(userInfo.get("username"))){
             
             // attempt to set the display name if we can get access to RH ldap
-          	String ldapEnabled=Config.get().getOptions().get("ldap.enabled");
+            String ldapEnabled=Config.get().getOptions().get("ldap.enabled");
             userServiceDown=userServiceDown || !"true".equalsIgnoreCase(ldapEnabled); //temporarily set whilst we have no access to LDAP
             try{
               if (!userServiceDown){
@@ -278,7 +322,6 @@ public class Heartbeat2 {
 //            }// /newUser
           
             
-          	
           }else if (dbUsers.containsKey(userInfo.get("username"))){
             log.debug("User already registered: "+userInfo.get("username"));
           }

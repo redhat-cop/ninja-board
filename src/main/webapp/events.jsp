@@ -12,7 +12,7 @@ function escapeRegExp(str) {
 }
 function loadDataTable(){
   var userFilter=Utils.getParameterByName("id");
-  
+  var textFilter=Utils.getParameterByName("filter")!=undefined?Utils.getParameterByName("filter"):"";
   
   $('#example').DataTable( {
         "ajax": {
@@ -25,6 +25,7 @@ function loadDataTable(){
         "lengthMenu": [[10, 25, 50, 100, 200, -1], [10, 25, 50, 100, 200, "All"]], // page entry options
         "pageLength" : 5, // default page entries
         "order" : [[0,"desc"]],
+        "oSearch": {"sSearch": textFilter},
         "columns": [
             { "data": "timestamp" },
             { "data": "type" },
