@@ -146,10 +146,8 @@ public class ManagementController {
 //      Heartbeat2.start(Config.get());
 //    }
     
-    String maxEvents=newConfig.getOptions().get("events.max");
-    if (null!=maxEvents && maxEvents.matches("\\d+")){
-      Database2.MAX_EVENT_ENTRIES=Integer.parseInt(maxEvents);
-    }
+    Database2.maxEventEntries=0;
+    Database2.getMaxEventEntries();
     
     Database2.resetInstance();
     Database2.get(); //reload it
