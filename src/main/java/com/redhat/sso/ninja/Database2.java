@@ -29,7 +29,7 @@ public class Database2{
   private static final Logger log=Logger.getLogger(Database2.class);
   public static final String STORAGE="target/ninja-persistence/database2.json";
   public static final File STORAGE_AS_FILE=new File(STORAGE);
-  public static Integer MAX_EVENT_ENTRIES=1000;
+  public static Integer maxEventEntries=0;
   public static boolean systemUpdating=false;
   
   // User -> Pool (sub pool separated with a dot) + Score
@@ -63,6 +63,16 @@ public class Database2{
   	//	return "([Gitlab card: "+params.get("linkId")+"|"+params.get("linkId")+"])";
   	}
   	return "";
+  }
+  
+  public static synchronized Integer getMaxEventEntries(){
+  	if (maxEventEntries<=0){
+  		String max=Config.get().getOptions().get("events.max");
+  		if (null!=max && max.matches("\\d+")){
+  			maxEventEntries=Integer.parseInt(max);
+  		}
+  	}
+  	return maxEventEntries;
   }
   
   public Database2 increment(String poolId, String userId, Integer increment, Map<String, String> params){
@@ -142,8 +152,8 @@ public class Database2{
     event.put(EVENT_FIELDS.TEXT.v, text);
     getEvents().add(event);
     
-    // limit the events to 100 entries
-    while (getEvents().size()>MAX_EVENT_ENTRIES){
+    // limit the events to a configurable number of entries
+    while (getEvents().size()>getMaxEventEntries()){
       getEvents().remove(0);
     }
   }
