@@ -211,8 +211,18 @@ function displ(){
 	_displ(username);
 }
 
+var resets=[];
 function _displ(username){
   
+	for(k in resets){
+		//var es=document.getElementsByClassName(k);
+		//for(e in es){
+	    $("."+k).each(function(index) {
+	    	$(this).text(resets[k]);
+	    });
+		//}
+	}
+		
   graphs={
 	  "points":         "/next"+(ctx.includes("localhost")?"l":"L")+"evel"+(ctx.includes("localhost")?"/":"_")+username,
 	  "breakdown":      "/breakdown"+(ctx.includes("localhost")?"/":"_")+username,
@@ -233,11 +243,7 @@ function _displ(username){
 	  }
 	  
 	  if (xhr.status==200){
-			if (json['displayName']==undefined){
-			  $("._displayName").text(json['username']);
-			}else{
-				$("._displayName").text(json['displayName']);
-			}
+
 			Object.keys(json).forEach(function(key) {
 		    value = json[key];
 				
@@ -248,6 +254,7 @@ function _displ(username){
 			    //$("#_"+key).text(value);
 			    
 			    $("._"+key).each(function(index) {
+			    	resets[this.className]=$(this).text();
 			    	$(this).text(value);
 			    });
 			    
@@ -263,6 +270,12 @@ function _displ(username){
 		    }
 		    //console.log(value);
 			});
+			
+			if (json['displayName']==undefined){
+					$("._displayName").text(json['username']);
+			}else{
+				$("._displayName").text(json['displayName']);
+			}
 			
 			if ("true"==json['admin']){
 				document.getElementById("userSelect").innerHTML=`<input type='text' id='username' value='`+username+`'><input type='button' value='Go' onclick='_displ(document.getElementById("username").value); return false;'/>`;
