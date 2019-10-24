@@ -96,7 +96,7 @@ $(document).ready(function() {
     	var list=document.getElementById("list").value;
     	var org=document.getElementById("org").value;
     	
-    	document.getElementById("cardData").innerHTML="<tr><td colspan='6'><center>Loading...</center></td></tr>";
+    	document.getElementById("cardData").innerHTML="<tr><td colspan='7'><center>Loading...</center></td></tr>";
     	
     	Http.httpGetObject("/community-ninja-board/api/support/trello/"+username+"/cards?org="+org+"&daysOld="+daysOld+(list.length>0?"&list="+list:""), function(data){
     		document.getElementById("cardData").innerHTML="";
@@ -127,10 +127,11 @@ $(document).ready(function() {
 							<td>`+(undefined!=dateMovedToDone?dateMovedToDone:"Never")+`</td>
 							<td>`+eventFound+`</td>
 							<td class='`+dupeWarn+`'>`+data[key]['hasDupeRecord']+`</td>
+							<td><a href='support-trello-card.jsp?username=`+username+`&cardShortId=`+data[key]['shortId']+`'>open</a></td>
     				</tr>`;
    				
     		}
-    		document.getElementById("cardData").innerHTML+=`<tr><td></td><td></td><td id='totals' style='font-weight:bold;'></td><td colspan='3'></td></tr>`;
+    		document.getElementById("cardData").innerHTML+=`<tr><td></td><td></td><td id='totals' style='font-weight:bold;'></td><td colspan='4'></td></tr>`;
    			calc();
     	},function(statusCode, errorText){
     		console.log("Error -> "+statusCode +" -> "+errorText);
@@ -225,6 +226,7 @@ $(document).ready(function() {
 		    		<th><span title="Using Trello Activity logs, this is the date this card moved to (or passed) Done. It doesnt mean it's in the Done column now, it means it has been in the past">Date moved to Done</span></th>
 		    		<th>Ninja Event Found</th>
 		    		<th><span title="Does a 'duplicate check' record exist for this card + user ID in the Ninja database? If so, then the card has been counted and they've accrued points for this card">Has been counted?</span></th>
+		    		<th>Investigate further</th>
 		    	</tr>
 	    	</thead>
 	    	<tbody id="cardData">
