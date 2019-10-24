@@ -77,6 +77,19 @@ $(document).ready(function() {
     var username;
     var errors=[];
     
+    
+    $( document ).ready(function() {
+	    <%if (request.getParameter("cardShortId")!=null){%>
+	    getById("cardShortId").value="<%=request.getParameter("cardShortId")%>";
+	    <%}%>
+	    <%if (request.getParameter("username")!=null){%>
+	    getById("supportUsername").value="<%=request.getParameter("username")%>";
+	    <%}%>
+	    <%if (request.getParameter("cardShortId")!=null && request.getParameter("username")!=null){%>
+	    go('supportUsername');
+	    <%}%>
+    });
+    
     function go(objId){
     	username=document.getElementById(objId).value;
     	Http.httpGetObject("/community-ninja-board/api/support/user/"+username, function(data){
@@ -130,7 +143,7 @@ $(document).ready(function() {
     	
     	//document.getElementById("cardData").innerHTML="<tr><td colspan='6'><center>Loading...</center></td></tr>";
     	
-    	Http.httpGetObject("/community-ninja-board/api/support/trello/"+username+"/card/"+getById("cardshortId").value+"", function(data){
+    	Http.httpGetObject("/community-ninja-board/api/support/trello/"+username+"/card/"+getById("cardShortId").value+"", function(data){
     		//document.getElementById("cardData").innerHTML="";
     		for (var key in data){
     			var boardShortId=data[key]['boardShortId'];
@@ -306,9 +319,10 @@ $(document).ready(function() {
     		<tr>
     			<td class="title">Trello ShortId:</td>
     			<!--
-    			<td><input type="text" id="cardshortId" value="fK2OKjD8"/></td>
+    			<td><input type="text" id="cardShortId" value="fK2OKjD8"/></td>
+    			<td><input type="text" id="cardShortId" value="7N1IZgPA"/></td>
     			-->
-    			<td><input type="text" id="cardshortId" value="7N1IZgPA"/></td>
+    			<td><input type="text" id="cardShortId" value=""/></td>
     		</tr>
     		<!--
     		<tr>
@@ -327,7 +341,7 @@ $(document).ready(function() {
     		-->
     		<tr>
     			<td class="title">Red Hat username:</td>
-    			<td><input type="text" id="supportUsername" value="mallen"/></td>
+    			<td><input type="text" id="supportUsername" value=""/></td>
     			<td><input type="button" name="go" value="Go!" onclick="go('supportUsername');"/></td>
     		</tr>
     	</table>
