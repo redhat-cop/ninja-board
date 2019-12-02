@@ -76,11 +76,11 @@ $(document).ready(function() {
     		document.getElementById("pointsBreakdown").innerHTML="";
     		for (var k in data['points']){
     			var style="";
-    			if ((document.getElementById("org").value.includes("servicesmarketing") && k.includes("ThoughtLeadership")) ||
-    					(document.getElementById("org").value.includes("redhatcop") && !k.includes("ThoughtLeadership"))
-    					){
-    				style='font-weight: bold;';
-    			}
+    			//if ((document.getElementById("org").value.includes("servicesmarketing") && k.includes("ThoughtLeadership")) ||
+    			//		(document.getElementById("org").value.includes("redhatcop") && !k.includes("ThoughtLeadership"))
+    			//		){
+    			//	style='font-weight: bold;';
+    			//}
    				document.getElementById("pointsBreakdown").innerHTML+="<span style='"+style+"'>"+k +"="+ data['points'][k]+"</span><br/>";
     		}
     		//document.getElementById("pointsBreakdown").innerHTML=data['points'];
@@ -160,6 +160,7 @@ $(document).ready(function() {
     				<select id="org">
     					<option value="redhatcop">redhatcop</option>
     					<option value="servicesmarketing">servicesmarketing</option>
+    					<option value="kmocopsteam">kmocopsteam</option>
     				</select>
     			</td>
     		</tr>
