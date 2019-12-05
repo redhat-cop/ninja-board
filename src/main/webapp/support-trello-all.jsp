@@ -116,7 +116,7 @@ $(document).ready(function() {
     			
     			// checks
     			
-    			dupeWarn=("false"==data[key]['hasDupeRecord'] && undefined==dateMovedToDone?"warn":"");
+    			dupeWarn=("false"==data[key]['hasCardUserDupeRecord'] && undefined==dateMovedToDone?"warn":"");
     			
     			
     			document.getElementById("cardData").innerHTML+=`
@@ -126,7 +126,7 @@ $(document).ready(function() {
 							<td>`+pointsFromCardTitle+`</td>
 							<td>`+(undefined!=dateMovedToDone?dateMovedToDone:"Never")+`</td>
 							<td>`+eventFound+`</td>
-							<td class='`+dupeWarn+`'>`+data[key]['hasDupeRecord']+`</td>
+							<td class='`+dupeWarn+`'>`+data[key]['hasCardUserDupeRecord']+`</td>
 							<td><a href='support-trello-card.jsp?username=`+username+`&cardShortId=`+data[key]['shortId']+`'>open</a></td>
     				</tr>`;
    				

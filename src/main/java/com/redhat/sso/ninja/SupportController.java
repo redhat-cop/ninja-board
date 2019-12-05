@@ -267,7 +267,7 @@ public class SupportController {
 //  		this.id=id; this.name=name; this.shortLink=shortLink;
 //  	}
   	private String id,name,shortId,boardId,boardShortId,boardName,trelloId,expectedPoints,listId,listName;
-  	private boolean completed,hasDupeRecord;
+  	private boolean completed,hasCardDupeRecord,hasCardUserDupeRecord;
   	private String completedDate;
   	private List<Member> members;
   	public String getId(){ return id; }
@@ -281,7 +281,8 @@ public class SupportController {
   	public String getListId(){ return listId; }
   	public String getListName(){ return listName; }
   	public boolean getCompleted(){ return completed; }
-  	public boolean getHasDupeRecord(){ return hasDupeRecord; }
+  	public boolean getHasCardDupeRecord(){ return hasCardDupeRecord; }
+  	public boolean getHasCardUserDupeRecord(){ return hasCardUserDupeRecord; }
   	public String getCompletedDate(){ return completedDate; }
   	public List<Member> getMembers(){ return members; }
   	
@@ -323,9 +324,18 @@ public class SupportController {
   }
 
   public Card populateDupeCheck(Card card, String trelloId){
-  	System.out.println("checking for dupe: "+"TR"+card.id+"."+trelloId);
-		if (Database2.get().getPointsDuplicateChecker().contains("TR"+card.id+"."+trelloId))
-			card.hasDupeRecord=true;
+//  	System.out.println("checking for card dupe: "+"TR"+card.id);
+  		for (String d:Database2.get().getPointsDuplicateChecker()){
+//  			System.out.println("CARDDUPE ("+"TR"+card.id+", "+d.startsWith("TR"+card.id)+"):: "+d);
+  			if (d.startsWith("TR"+card.id)){
+  				card.hasCardDupeRecord=true;
+  			}
+//  			System.out.println("USERDUPE ("+"TR"+card.id+"."+trelloId+", "+d.startsWith("TR"+card.id+"."+trelloId)+"):: "+d);
+  			if (d.equals("TR"+card.id+"."+trelloId)){
+  				card.hasCardUserDupeRecord=true;
+  			}
+  		}
+		
 		return card;
   }
   public Card populateExpectedPoints(Card card){
