@@ -1,4 +1,12 @@
 <center>
+<div style="width:100%; background-color:#000">
+ <div style="color:#fff; font-size:30px; font-weight:bold;">COMMUNITIES OF PRACTICE</div>
+ <div style="color:#fff; font-size:30px; font-weight:bold;">YOUR GIVEBACK NINJA PROGRAM DASHBOARD</div>
+</div>
+<div style="width:100%; background-color:#f2f1f1;">
+ <div style="color:#444; font-size:10pt;">Hover over the chart to see your progress and/or what is needed to reach the next belt level.</div>
+</div>
+<br/>
 <div style="height:500px;">
 	
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -8,12 +16,6 @@
 		
 		<script src="https://www.chartjs.org/dist/2.7.2/Chart.bundle.js"></script>
 		
-		<style>
-			body{
-				font-family: Arial;
-			}
-		</style>
-	
 	
 
 		<script>
@@ -27,17 +29,33 @@
 		<!-- CARD -->
 		<!--######-->
 		<style>
+		body{
+			font-family: Overpass, Arial, sans-serif;
+			background-color: #f2f1f1;
+		}
 		.card2{
 			border:1px solid #BBB;
 			width: 100%;
 			border-radius: 12px;
 			padding: 10px;
-			background: rgb(0,65,83);
-			//background: rgb(163,219,232);
 			
+			/*v3*/
+			background: white;
+			font-family: Overpass, Arial, sans-serif;
+			font-size: 14pt;
+			color: #333;
+			
+			/*v2
+			background: rgb(0,65,83);
 			font-family: Arial;
 			font-size: 14pt;
 			color: #eee;
+			*/
+			
+			/*v1
+			background: rgb(163,219,232);
+			*/
+			
 			/*
 			position: relative;
 			top: 45px;
@@ -47,14 +65,18 @@
 			vertical-align: top;
 			font-weight: bold;
 			font-size: 28pt;
+			/*
 			color: #eee;
+			*/
 		}
 		.cardScore{
 			vertical-align: top;
 			text-align: center;
 			font-weight: bold;
 			font-size: 34pt;
+			/*
 			color: #eee;
+			*/
 		}
 		.cardRow{
 			width:100px;
@@ -62,7 +84,7 @@
 		.cardScoreText{
 			vertical-align: top;
 			text-align: center;
-			font-size:8pt;
+			font-size:9pt;
 		}
 		.icon{
 			height: 25px;
@@ -73,8 +95,10 @@
 		}
 		.graph-label{
 			font-size: 22pt;
+			/*
 			font-family: Arial;
 			color: #eee;
+			*/
 			font-weight: bold;
 			position:relative;
 			top:20px;
@@ -94,7 +118,7 @@
 							<td colspan="2">
 								<table class="card2" border=0>
 									<tr>
-										<td colspan="7"><span class="cardName" id="_error"></span><br/><span id="_error2"></td>
+										<td colspan="8"><span class="cardName" id="_error"></span><br/><span id="_error2"></td>
 									</tr>
 									<tr>
 										<td class="cardName" colspan="2"><span class="_displayName"></span></td>
@@ -103,6 +127,7 @@
 										<td class="cardScore"><span class="_Github">0</span></td>
 										<td class="cardScore"><span class="_Gitlab">0</span></td>
 										<td class="cardScore"><span class="_ThoughtLeadership">0</span></td>
+										<td class="cardScore"><span class="_ServicesSupport">0</span></td>
 										<!--td class="cardScore"></td--> <!--chat-->
 									</tr>
 									<tr>
@@ -110,10 +135,11 @@
 											<img class="icon" src="https://www.redhat.com/profiles/rh/themes/redhatdotcom/img/logo.png">
 										</td>
 										<td><span class="_userId"></span></td>
-										<td class="cardScoreText" style="width:120px;" rowspan="4">Trello</td>
-										<td class="cardScoreText" style="width:120px;" rowspan="4">Github</td>
-										<td class="cardScoreText" style="width:120px;" rowspan="4">Gitlab</td>
-										<td class="cardScoreText" style="width:120px;" rowspan="4">Thought Leadership</td>
+										<td class="cardScoreText" style="width:110px;" rowspan="4">Trello</td>
+										<td class="cardScoreText" style="width:110px;" rowspan="4">Github</td>
+										<td class="cardScoreText" style="width:110px;" rowspan="4">Gitlab</td>
+										<td class="cardScoreText" style="width:110px;" rowspan="4">Thought Leadership</td>
+										<td class="cardScoreText" style="width:110px;" rowspan="4">Services Support Initatives</td>
 										<!--td class="cardScoreText" rowspan="4"></td--> <!--chat-->
 									</tr>
 									<tr>
@@ -131,7 +157,7 @@
 									</tr>
 									
 									<tr>
-										<td colspan="7" style="height: 20px;"><!-- SPACER ONLY --></td>
+										<td colspan="8" style="height: 20px;"><hr/><!-- SPACER ONLY --></td>
 									</tr>
 									
 									<tr>
@@ -173,7 +199,8 @@
 							</td>
 						</tr>
 					</table>
-					
+					&nbsp;<br/>
+					&nbsp;<br/>
 
 <script>
 Utils = {
@@ -411,7 +438,8 @@ function buildChart(uri, chartElementName, type, clrs){
 						elements: {
 							center: {
 								text: centerText,
-			          color: '#eee', // Default is #000000
+								color: '#333',
+			          //color: '#eee', // Default is #000000
 			          fontStyle: 'Arial', // Default is Arial
 			          sidePadding: 20, // Default is 20 (as a percentage)
 			          labelFontSize: 5
@@ -421,7 +449,8 @@ function buildChart(uri, chartElementName, type, clrs){
 							display: true,
 							position: "bottom",
 							labels: {
-								fontColor: "#eee",
+								//fontColor: "#eee",
+								fontColor: "#333",
 								fontSize: 12
 							}
 						}

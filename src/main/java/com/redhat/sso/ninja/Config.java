@@ -81,7 +81,10 @@ public class Config {
 //    }
 //  }
   
-  
+  public void reload(){
+  	instance=null;
+  	get();
+  }
   public void save(){
     try{
       if (!Config.STORAGE.getParentFile().exists()){
