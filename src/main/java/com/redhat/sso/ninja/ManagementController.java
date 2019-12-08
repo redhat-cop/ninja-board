@@ -400,7 +400,13 @@ public class ManagementController {
     }
     
     db.save();
-    return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString("OK")).build();
+    return Response.status(200)
+    		.entity(Json.newObjectMapper(true).writeValueAsString("OK"))
+        .header("Access-Control-Allow-Origin",  "*")
+        .header("Content-Type","application/json")
+        .header("Cache-Control", "no-store, must-revalidate, no-cache, max-age=0")
+        .header("Pragma", "no-cache")
+    		.build();
   }
   
   @GET
@@ -483,7 +489,13 @@ public class ManagementController {
     wrapper.put("columns", columns);
     wrapper.put("data", data);
     
-    return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(wrapper)).build();
+    return Response.status(200)
+    		.entity(Json.newObjectMapper(true).writeValueAsString(wrapper))
+        .header("Access-Control-Allow-Origin",  "*")
+        .header("Content-Type","application/json")
+        .header("Cache-Control", "no-store, must-revalidate, no-cache, max-age=0")
+        .header("Pragma", "no-cache")
+    		.build();
   }
   
   

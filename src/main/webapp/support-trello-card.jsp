@@ -91,6 +91,7 @@ $(document).ready(function() {
     });
     
     function go(objId){
+    	
     	username=document.getElementById(objId).value;
     	Http.httpGetObject("/community-ninja-board/api/support/user/"+username, function(data){
     		var displayName=data['displayName'];
@@ -119,30 +120,21 @@ $(document).ready(function() {
    				for (var k in data['points'])
    					points+="<tr><td>"+k+"</td><td style='white-space: nowrap;'>"+data['points'][k]+" points</td></tr>";
    				document.getElementById("pointsBreakdown").innerHTML=points+"</table>";
-   				
-   				
-	    		//document.getElementById("pointsBreakdown").innerHTML="<table>";
-	    		//for (var k in data['points']){
-	    		//	var style="";
-	   			//	document.getElementById("pointsBreakdown").innerHTML+="<span style='"+style+"'>"+k +"="+ data['points'][k]+"</span><br/>";
-	    		//}
 	    		document.getElementById("pointsBreakdown").innerHTML+="</table>";
    			}
     		userData=data;
-    		analyse();
+    		go2(username);//analyse();
     		
     	},function(statusCode, errorText){
     		console.log("Error -> "+statusCode +" -> "+errorText);
     	});
     	
-    	
+    }
+    
+    function go2(username){
     	var now=new Date();
     	var from=new Date(getById("startDate").value);
     	var daysOld=Math.round((now.getTime() - from.getTime()) / (1000 * 3600 * 24));
-    	
-    	
-    	//document.getElementById("cardData").innerHTML="<tr><td colspan='6'><center>Loading...</center></td></tr>";
-    	
     	Http.httpGetObject("/community-ninja-board/api/support/trello/"+username+"/card/"+getById("cardShortId").value+"", function(data){
     		//document.getElementById("cardData").innerHTML="";
     		for (var key in data){
@@ -160,43 +152,9 @@ $(document).ready(function() {
     			
     			// checks
     			
-    			dupeWarn=("false"==data[key]['hasDupeRecord'] && undefined==dateMovedToDone?"warn":"");
-    			dupeTitle="No, this card has not been counted for trello user: "+trelloUsername;
-    			
-    			
-    			//var hasDupeRecord=data[key]['hasDupeRecord'];
-    			//var hasBeenDone=dateMovedToDone!=undefined;
-    			//
-    			//var message="", rectification="";
-    			//// "You already have points for this card"
-    			//if (hasDupeRecord){
-    			//	message="You already have points for this card";
-    			//}
-    			//// "Card isn't completed yet"
-    			//if (!hasDupeRecord && !hasBeenDone){
-    			//	message="Card has not been moved to Done yet";
-    			//	rectification="";
-    			//}
-    			//// "Card has been completed, but you are not a member"
-    			//if (!hasDupeRecord && hasBeenDone && !data[key]['members'].includes(trelloUsername)){
-    			//	message=username+" (trello:@"+trelloUsername+") is not a member of this card and it's been Done already";
-    			//	rectification="Move the card back out, add (trello:@"+trelloUsername+") as a member, and then move the card back into the Done column";
-    			//}
-    			//// "You were assigned a member of this card after this card was moved to Done"
-    			//// CANT DO THIS UNTIL WE PARSE THE ACTIVITIES BETTER
-    			//
-    			//// Card was completed before the user registered
-    			//// TODO: this wont work unless the user info is loaded first - race condition danger - needs re-engineering
-    			////if (new Date(dateMovedToDone)<new Date(userData['date_registered'])){
-    			////	message=username+" registered after the card was moved to done";
-    			////	rectification="None, if the user wasn't registered prior to the card being completed, they're not eligible for points";
-    			////}
-    			//
-    			//// Card was completed before the start of the program
-    			//if (from>new Date(dateMovedToDone)){
-    			//	message="Card was moved to done ("+dateMovedToDone+") before the start of the program ("+getById("startDate").value+")";
-    			//	rectification="Only cards after the program start date accrue points";
-    			//}
+    			dupeWarn=("false"==data[key]['hasCardDupeRecord'] && undefined==dateMovedToDone?"warn":"");
+    			cardDupeTitle="No, this card has not been counted for trello user: "+trelloUsername;
+    			cardUserDupeTitle="No, this card has not been counted for trello user: "+trelloUsername;
     			
     			var members="";
     			for(m in data[key]['members']){
@@ -207,7 +165,8 @@ $(document).ready(function() {
     			document.getElementById("trelloCardPointsExpected").innerHTML=pointsFromCardTitle;
     			document.getElementById("trelloCardMembers").innerHTML=members;
     			document.getElementById("trelloCardDateMovedToDone").innerHTML=(undefined!=dateMovedToDone?dateMovedToDone:"Never");
-    			document.getElementById("trelloCardCounted").innerHTML=`<span title="`+dupeTitle+`">`+data[key]['hasDupeRecord']+`</span>`;
+    			document.getElementById("trelloCardSeen").innerHTML=`<span title="`+cardDupeTitle+`">`+data[key]['hasCardDupeRecord']+`</span>`;
+    			document.getElementById("trelloCardCounted").innerHTML=`<span title="`+cardUserDupeTitle+`">`+data[key]['hasCardUserDupeRecord']+`</span>`;
     			//document.getElementById("trelloCardMessage").innerHTML=message;
     			//document.getElementById("trelloCardResolution").innerHTML=rectification;
     			
@@ -232,7 +191,6 @@ $(document).ready(function() {
     	},function(statusCode, errorText){
     		console.log("Error -> "+statusCode +" -> "+errorText);
     	});
-    	
     }
     
     function getById(id){ return document.getElementById(id); }
@@ -243,31 +201,35 @@ $(document).ready(function() {
     		var from=new Date(getById("startDate").value);
     		var trelloUsername=cardData['trelloId'];
     		var dateMovedToDone=cardData['completedDate'];
-				var hasDupeRecord=cardData['hasDupeRecord'];
+				var hasCardDupeRecord=cardData['hasCardDupeRecord'];
+				var hasCardUserDupeRecord=cardData['hasCardUserDupeRecord'];
 				var hasBeenDone=dateMovedToDone!=undefined;
 				var message="", rectification="";
 				
 				// internal data error checking
-				if (dateMovedToDone!=undefined && hasDupeRecord==false){
+				if (dateMovedToDone!=undefined && hasCardDupeRecord==false){
 					message="Card is in (or has been through) 'Done', however Ninja has no record for this card in the database";
 					rectification="Contact Ninja support with the username & trello short ID - this needs more investigation"
 					setMessage(message, rectification); return;
 				}
 				
-				
 				// "You already have points for this card"
-				if (hasDupeRecord){
+				if (hasCardUserDupeRecord){
 					message=userData["displayName"]+" already has points for this card";
 					setMessage(message, rectification); return;
 				}
 				// "Card isn't completed yet"
-				if (!hasDupeRecord && !hasBeenDone){
+				if (!hasBeenDone){
 					message="Card has not been moved to Done yet";
 					rectification="The card must be completed and moved to 'Done' column in Trello. Also, ensure the members have been assigned";
 					setMessage(message, rectification); return;
 				}
+				
+				// Card has not been seen by Ninja system
+				//TODO:
+				
 				// "Card has been completed, but you are not a member"
-				if (!hasDupeRecord && hasBeenDone && !cardData['members'].includes(trelloUsername)){
+				if (!hasCardUserDupeRecord && hasBeenDone && !cardData['members'].includes(trelloUsername)){
 					message=username+" (trello:@"+trelloUsername+") is not a member of this card and it's been Done already";
 					rectification="Move the card back out, add (trello:@"+trelloUsername+") as a member, and then move the card back into the Done column";
 					setMessage(message, rectification); return;
@@ -380,7 +342,8 @@ $(document).ready(function() {
 		    		<tr><td class="title">Point Expected</td><td><span id="trelloCardPointsExpected"></span></td></tr>
 		    		<tr><td class="title">Members</td><td><span id="trelloCardMembers"></span></td></tr>
 		    		<tr><td class="title"><span title="Using Trello Activity logs, this is the date this card moved to (or passed) Done. It doesnt mean it's in the Done column now, it means it has been in the past">Date moved to Done</span></td><td><span id="trelloCardDateMovedToDone"></span></td></tr>
-		    		<tr><td class="title"><span title="Does a 'duplicate check' record exist for this card + user ID in the Ninja database? If so, then the card has been counted and they've accrued points for this card">Has been counted?</span></td><td><span id="trelloCardCounted"></span></td></tr>
+		    		<tr><td class="title"><span title="Has the card been processed in any way by the system, regardless of the user">Has card been seen?</span></td><td><span id="trelloCardSeen"></span></td></tr>
+		    		<tr><td class="title"><span title="Does a 'duplicate check' record exist for this card + user ID in the Ninja database? If so, then the card has been counted and they've accrued points for this card">Has card been counted for user?</span></td><td><span id="trelloCardCounted"></span></td></tr>
 		    		<tr><td class="title">Message</td><td><span id="trelloCardMessage"></span></td></tr>
 		    		<tr><td class="title">Resolution</td><td><span id="trelloCardResolution"></span></td></tr>
 		    	</table>

@@ -76,11 +76,11 @@ $(document).ready(function() {
     		document.getElementById("pointsBreakdown").innerHTML="";
     		for (var k in data['points']){
     			var style="";
-    			if ((document.getElementById("org").value.includes("servicesmarketing") && k.includes("ThoughtLeadership")) ||
-    					(document.getElementById("org").value.includes("redhatcop") && !k.includes("ThoughtLeadership"))
-    					){
-    				style='font-weight: bold;';
-    			}
+    			//if ((document.getElementById("org").value.includes("servicesmarketing") && k.includes("ThoughtLeadership")) ||
+    			//		(document.getElementById("org").value.includes("redhatcop") && !k.includes("ThoughtLeadership"))
+    			//		){
+    			//	style='font-weight: bold;';
+    			//}
    				document.getElementById("pointsBreakdown").innerHTML+="<span style='"+style+"'>"+k +"="+ data['points'][k]+"</span><br/>";
     		}
     		//document.getElementById("pointsBreakdown").innerHTML=data['points'];
@@ -116,7 +116,7 @@ $(document).ready(function() {
     			
     			// checks
     			
-    			dupeWarn=("false"==data[key]['hasDupeRecord'] && undefined==dateMovedToDone?"warn":"");
+    			dupeWarn=("false"==data[key]['hasCardUserDupeRecord'] && undefined==dateMovedToDone?"warn":"");
     			
     			
     			document.getElementById("cardData").innerHTML+=`
@@ -126,7 +126,7 @@ $(document).ready(function() {
 							<td>`+pointsFromCardTitle+`</td>
 							<td>`+(undefined!=dateMovedToDone?dateMovedToDone:"Never")+`</td>
 							<td>`+eventFound+`</td>
-							<td class='`+dupeWarn+`'>`+data[key]['hasDupeRecord']+`</td>
+							<td class='`+dupeWarn+`'>`+data[key]['hasCardUserDupeRecord']+`</td>
 							<td><a href='support-trello-card.jsp?username=`+username+`&cardShortId=`+data[key]['shortId']+`'>open</a></td>
     				</tr>`;
    				
@@ -160,6 +160,7 @@ $(document).ready(function() {
     				<select id="org">
     					<option value="redhatcop">redhatcop</option>
     					<option value="servicesmarketing">servicesmarketing</option>
+    					<option value="kmocopsteam">kmocopsteam</option>
     				</select>
     			</td>
     		</tr>
