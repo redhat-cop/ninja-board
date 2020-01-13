@@ -1,0 +1,9 @@
+# Use this file to define and provide secure values during provisioning
+
+github_api_token: ""
+trello_api_token: ""
+trello_api_key: ""
+gitlab_api_token: ""
+gd_credentials: ''
+xgraphs_proxy: ""
+users_ldap_provider: ""
