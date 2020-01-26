@@ -42,18 +42,35 @@ pipeline {
     
     stage ('Verify Deployment to Dev') {
       steps {
+        verifyDeployment(projectName: "${DEV_NAMESPACE}", targetApp: "${APPLICATION_NAME}")
+      }
+    }
+
+    stage ('Promote to Prod') {
+      agent none
+      steps {
+        script {
+          input message: "Promote Ninja Board to Prod?"
+        }
+      }
+    }
+
+    stage ('Tag Image to Prod'){
+      steps {
         script {
           openshift.withCluster() {
             openshift.withProject() {
-              def dcObj = openshift.selector('dc', APPLICATION_NAME).object()
-              def podSelector = openshift.selector('pod', [deployment: "${APPLICATION_NAME}-${dcObj.status.latestVersion}"])
-              podSelector.untilEach {
-                  echo "pod: ${it.name()}"
-                  return it.object().status.containerStatuses[0].ready
-              }
+              echo "Promoting via tag from ${DEV_NAMESPACE} to ${PROD_NAMESPACE}/${APPLICATION_NAME}"
+              tagImage(sourceImagePath: "${DEV_NAMESPACE}", sourceImageName: "${APPLICATION_NAME}", toImagePath: "${PROD_NAMESPACE}", toImageName: "${APPLICATION_NAME}", toImageTag: "latest")
             }
           }
         }
+      }
+    }
+
+    stage ('Verify Deployment to Prod') {
+      steps {
+        verifyDeployment(projectName: "${PROD_NAMESPACE}", targetApp: "${APPLICATION_NAME}")
       }
     }
   } 
