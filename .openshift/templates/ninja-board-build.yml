@@ -108,6 +108,10 @@ objects:
             value: ${SOURCE_REPOSITORY_URL}
           - name: SOURCE_REPOSITORY_REF
             value: ${SOURCE_REPOSITORY_REF}
+          - name: DEV_NAMESPACE
+            value: ${DEV_NAMESPACE}
+          - name: PROD_NAMESPACE
+            value: ${PROD_NAMESPACE}
     triggers:
       - type: ConfigChange
 parameters:
@@ -143,3 +147,9 @@ parameters:
   name: UPSTREAM_IMAGESTREAM_NAMESPACE
   value: openshift
   required: false
+- description: Name of the Development Namespace
+  name: DEV_NAMESPACE
+  required: true
+- description: Name of the Production Namespace
+  name: PROD_NAMESPACE
+  required: true

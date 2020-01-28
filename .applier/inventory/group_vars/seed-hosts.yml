@@ -16,6 +16,17 @@ openshift_cluster_content:
         tags:
           - projects-{{ ninja_board_prod_namespace }}
           - projects
+  - object: rbac
+    content:
+      - name: ninja-board-rbac
+        template: "{{ inventory_dir }}/../../.openshift/templates/rbac.yml"
+        action: create
+        params_from_vars:
+          DEV_NAMESPACE: "{{ ninja_board_dev_namespace }}"
+          PROD_NAMESPACE: "{{ ninja_board_prod_namespace }}"
+        tags:
+          - projects-{{ ninja_board_prod_namespace }}
+          - projects
   - object: cicd
     content:
       - name: Deploy Jenkins Master
@@ -33,13 +44,15 @@ openshift_cluster_content:
         params_from_vars:
           SOURCE_REPOSITORY_URL: "{{ source_repo }}"
           SOURCE_REPOSITORY_REF: "{{ source_ref }}"
+          DEV_NAMESPACE: "{{ ninja_board_dev_namespace }}"
+          PROD_NAMESPACE: "{{ ninja_board_prod_namespace }}"
         namespace: "{{ ninja_board_dev_namespace }}"
         tags:
           - projects-{{ ninja_board_dev_namespace }}
           - builds
   - object: deployments
     content:
-      - name: "deploy-ninja-board"
+      - name: "deploy-ninja-board-dev"
         template: "{{ inventory_dir }}/../../.openshift/templates/ninja-board-deployment.yml"
         params_from_vars:
           GITHUB_API_TOKEN: "{{ github_api_token }}"
@@ -52,4 +65,18 @@ openshift_cluster_content:
         namespace: "{{ ninja_board_dev_namespace }}"
         tags:
           - projects-{{ ninja_board_dev_namespace }}
+          - deployments
+      - name: "deploy-ninja-board-prod"
+        template: "{{ inventory_dir }}/../../.openshift/templates/ninja-board-deployment.yml"
+        params_from_vars:
+          GITHUB_API_TOKEN: "{{ github_api_token }}"
+          TRELLO_API_TOKEN: "{{ trello_api_token }}"
+          TRELLO_API_KEY: "{{ trello_api_key }}"
+          GITLAB_API_TOKEN: "{{ gitlab_api_token }}"
+          GD_CREDENTIALS: "{{ gd_credentials }}"
+          XGRAPHS_PROXY: "{{ xgraphs_proxy }}"
+          USERS_LDAP_PROVIDER: "{{ users_ldap_provider }}"
+        namespace: "{{ ninja_board_prod_namespace }}"
+        tags:
+          - projects-{{ ninja_board_prod_namespace }}
           - deployments
