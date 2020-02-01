@@ -1,8 +1,6 @@
 # community-ninja-board
 
-
-
-
+Front end user interface for the Giveback Ninja Program 
 
 ## Deployment locally (laptop) / or for DEV purposes 
 
@@ -33,19 +31,17 @@ mvn clean package -DskipTests jetty:run -Djetty.port=8082
 
 ### Setting up the deployment config files
 
-**Optional:** If you want to deploy a different github repository (ie, a forked copy of redhat-cop/ninja-board), then update *applier/params/community-ninja-board-build*
-```
-SOURCE_REPOSITORY_URL=https://github.com/<your repository>/ninja-board
-```
+**Optional:** If you want to deploy a different github repository (ie, a forked copy of redhat-cop/ninja-board), then update the ansible variable `source_repo` in *.applier/inventory/group_vars/all.yml* or specify it as an extra variable.
 
 Configure the mandatory deployment parameters in *applier/params/community-ninja-board-deployment*
 ```
-GITHUB_API_TOKEN=<your token>
-TRELLO_API_TOKEN=<your token>
-TRELLO_API_KEY=<your token>
-GITLAB_API_TOKEN=<your token>
-GD_CREDENTIALS=<contents of you google drive credentials.json file (not escaped)>
+github_api_token=<your token>
+trello_api_token=<your token>
+...
 ```
+
+Alternatively, you can target each of the environments for deployment by prepending `dev_` or `prod_` before each variable.s
+
 
 ### Getting your google drive credentials.json file
 ```
@@ -61,23 +57,19 @@ After you've entered the auto code, the credentials are stored in *gdrive_temp/.
 
 
 
-### Deploying the application
+## Deploying the application
+
+First, login to OpenShift
 
 ```
 oc login <openshift url>
-oc new-project <project name>
-deploy.sh <project name>
 ```
 
+### Deployment Using the OpenShift Applier
 
-## Old Info - superceded by the above
+The project can be deployed using the [openshift-applier](https://github.com/redhat-cop/openshift-applier).
 
-
-## Deployment Using the OpenShift Applier
-
-Alternatively to the manual deployment of the core projects and supporting infrastructure, the project can be deployed using the [openshift-applier](https://github.com/redhat-cop/openshift-applier).
-
-### Prerequisites
+#### Prerequisites
 
 The following prerequisites must be satisfied:
 
@@ -85,7 +77,7 @@ The following prerequisites must be satisfied:
 2. OpenShift Command Line Interface (CLI)
 3. OpenShift environment
 
-### Deployment
+#### Deployment
 
 Utilize the following steps to deploy the project
 
@@ -101,12 +93,12 @@ Utilize the following steps to deploy the project
     ansible-galaxy install -r requirements.yml --roles-path=galaxy
     ``` 
  
-3. Update credentials in the _applier/params/community-ninja-board-deployment_ file
+3. Ensure the variables have been updated in the _ninja-board-deployment_ params file
 
 4. Execute the _openshift-applier_
 
     ```
-    ansible-playbook -i applier/inventory galaxy/openshift-applier/playbooks/openshift-cluster-seed.yml
+    ansible-playbook -i applier/inventory galaxy/openshift-applier/playbooks/openshift-cluster-seed.yml -e="@.openshift/params/ninja-board-deployment
     ```
 
 Once complete, all of the resources should be available in OpenShift
