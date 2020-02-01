@@ -42,7 +42,7 @@ pipeline {
     
     stage ('Verify Deployment to Dev') {
       steps {
-        rollout([projectName: "${DEV_NAMESPACE}", resourceKindAndName: "dc/${APPLICATION_NAME}"])
+        rollout([projectName: "${DEV_NAMESPACE}", resourceKindAndName: "dc/${APPLICATION_NAME}", latest: false])
       }
     }
 
@@ -70,7 +70,7 @@ pipeline {
 
     stage ('Verify Deployment to Prod') {
       steps {
-        rollout([projectName: "${PROD_NAMESPACE}", resourceKindAndName: "dc/${APPLICATION_NAME}"])
+        rollout([projectName: "${PROD_NAMESPACE}", resourceKindAndName: "dc/${APPLICATION_NAME}", latest: false])
       }
     }
   } 
