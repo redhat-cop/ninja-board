@@ -497,6 +497,8 @@ public class Heartbeat2 {
               
               db.addEvent("Script Execution FAILED", "", command+"\nERROR (stderr):\n"+sb.toString());
               
+              new ChatNotification().send(ChatEvent.onScriptError, name+" script failure occurred. Please investigate");
+              
               scriptFailure=true;
               
             }else{

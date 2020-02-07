@@ -37,7 +37,7 @@
 	"notifications":[
 		{
 			"channel":"google chat webhook url here",
-			"events": "onRegistration,onBeltPromotion",
+			"events": "onRegistration,onBeltPromotion,onScriptError",
 			"enabled": "false"
 		}
 	]
