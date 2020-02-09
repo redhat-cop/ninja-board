@@ -9,7 +9,7 @@ import com.redhat.sso.ninja.utils.Http.Response;
 import com.redhat.sso.ninja.utils.MapBuilder;
 
 public class ChatNotification{
-	public enum ChatEvent{onRegistration,onBeltPromotion}
+	public enum ChatEvent{onRegistration,onBeltPromotion,onScriptError}
 	public static void main(String[] asd){
 		Config c=Config.get();
 		System.out.println("googlehangoutschat.webhook.template="+c.getOptions().get("googlehangoutschat.webhook.template"));
