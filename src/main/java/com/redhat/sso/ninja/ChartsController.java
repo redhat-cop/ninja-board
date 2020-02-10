@@ -6,10 +6,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -19,6 +21,8 @@ import javax.ws.rs.core.Response;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.google.gdata.util.common.base.Pair;
 import com.redhat.sso.ninja.chart.Chart2Json;
 import com.redhat.sso.ninja.chart.DataSet2;
@@ -28,7 +32,7 @@ import com.redhat.sso.ninja.utils.MapBuilder;
 
 @Path("/")
 public class ChartsController{
-
+	
   @GET
   @Path("/ninjas")
   public Response getNinjas() throws JsonGenerationException, JsonMappingException, IOException{
@@ -53,38 +57,45 @@ public class ChartsController{
     		.build();
   }
   
+  static Integer total(Map<String,Integer> points){
+  	int t=0;
+  	for(Entry<String, Integer> e:points.entrySet()){
+  		t+=e.getValue();
+  	}
+  	return t;
+  }
   public Chart2Json getParticipants(Integer max) throws JsonGenerationException, JsonMappingException, IOException{
     Database2 db=Database2.get();
     Map<String, Map<String, Integer>> leaderboard=db.getLeaderboard();
     Map<String, Integer> totals=new HashMap<String, Integer>();
     for(Entry<String, Map<String, Integer>> e:leaderboard.entrySet()){
-      Integer t=0;
-      for(Entry<String, Integer> e2:e.getValue().entrySet()){
-        t+=e2.getValue();
-      }
-      e.getValue().put("total", t);
-      totals.put(e.getKey(), t);
+      totals.put(e.getKey(), total(e.getValue()));
     }
+    
+    // identify past years for historical badges
+    Set<String> historyYears=db.getScorecardHistory().keySet();
+    List<String> historyYearsList=new ArrayList<String>(historyYears);
+    Collections.sort(historyYearsList);
+    historyYears=new LinkedHashSet<String>(historyYearsList);
+    
     
     //reorder
     List<Entry<String, Integer>> list=new LinkedList<Map.Entry<String, Integer>>(totals.entrySet());
-    Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
-      public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
-          return (o2.getValue()).compareTo(o1.getValue());
-      }
-    });
+    Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() { public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+      return (o2.getValue()).compareTo(o1.getValue());
+    }});
     HashMap<String, Integer> sortedTotals=new LinkedHashMap<String, Integer>();
-    for (Entry<String, Integer> e:list) {
+    for (Entry<String, Integer> e:list)
       sortedTotals.put(e.getKey(), e.getValue());
-    }
     
+    // Build Chart data structure
     Chart2Json c=new Chart2Json();
     c.setDatasets(new ArrayList<DataSet2>());
     int count=0;
     for(Entry<String, Integer> e:sortedTotals.entrySet()){
       Map<String, String> userInfo=db.getUsers().get(e.getKey());
       
-      if (null==max && userInfo.get("level").equalsIgnoreCase("zero")) break; // all ninjas with belts
+      if (null==max && userInfo.get("level").equalsIgnoreCase("zero")) continue; // all ninjas with belts. break should work if ordered correctly
       
       c.getLabels().add(null!=userInfo && userInfo.containsKey("displayName")?userInfo.get("displayName"):e.getKey());
       
@@ -92,6 +103,17 @@ public class ChartsController{
       String level=userInfo.get("level");
       if (level==null) level="none";
       c.getCustom1().add(e.getKey()+"|"+level.toLowerCase()+"|"+geo); // users rh username, belt & geo
+      
+      List<String> pastYearBadges=Lists.newArrayList();
+      for(String year:historyYears){
+      	String pastYearHistory=db.getScorecardHistory().get(year).get(e.getKey());
+      	if (null!=pastYearHistory){
+      		String belt=pastYearHistory.split("\\|")[0];
+      		String total=pastYearHistory.split("\\|")[1];
+      		pastYearBadges.add(String.format("%s|%s|%s",year,belt,total));
+      	}
+      }
+      c.getCustom2().add(Joiner.on(",").join(pastYearBadges));
       
       if (c.getDatasets().size()<=0) c.getDatasets().add(new DataSet2());
       c.getDatasets().get(0).getData().add(e.getValue());
