@@ -7,9 +7,13 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -25,6 +29,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.LogManager;
@@ -38,6 +43,7 @@ import com.google.common.base.Splitter;
 import com.redhat.sso.ninja.Database2.EVENT_FIELDS;
 import com.redhat.sso.ninja.chart.Chart2Json;
 import com.redhat.sso.ninja.chart.DataSet2;
+import com.redhat.sso.ninja.utils.Http;
 import com.redhat.sso.ninja.utils.IOUtils2;
 import com.redhat.sso.ninja.utils.Json;
 import com.redhat.sso.ninja.utils.LevelsUtil;
@@ -47,67 +53,168 @@ import com.redhat.sso.ninja.utils.MapBuilder;
 public class ManagementController {
   private static final Logger log=Logger.getLogger(ManagementController.class);
   
-  public static void main(String[] asd) throws JsonGenerationException, JsonMappingException, IOException{
+  public static void main(String[] asd) throws JsonGenerationException, JsonMappingException, IOException, URISyntaxException{
     System.out.println(java.sql.Date.valueOf(LocalDate.now()));
     System.out.println(java.sql.Date.valueOf(LocalDate.now().minus(365, ChronoUnit.DAYS)));
     System.out.println((1000 * 60 * 60 * 24));
     System.out.println(TimeUnit.DAYS.toMillis(1));
 //    System.out.println(new ManagementController().toNextLevel("BLUE", 7).toString());
+    
+    new ManagementController().yearEnd(null,  null,  "FY20");
   }
   
   public static boolean isLoginEnabled(){
-  	return "true".equalsIgnoreCase(Config.get().getOptions().get("login.enabled"));
+    return "true".equalsIgnoreCase(Config.get().getOptions().get("login.enabled"));
   }
   
-	@POST
-	@Path("/login")
-	public Response login(@Context HttpServletRequest request,@Context HttpServletResponse response) throws JsonGenerationException, JsonMappingException, IOException, URISyntaxException{
-		log.info("/login");
-		String uri=IOUtils.toString(request.getInputStream());
-		final Map<String, String> keyValues=Splitter.on('&').trimResults().withKeyValueSeparator("=").split(uri);
-		log.info("Controller::login():: username="+keyValues.get("username") +", password=****");
-		
-		String jwtToken="";
-		
-		Map<String, String> userAttemptingLogin=Database2.get().getUsers().get(keyValues.get("username"));
-		if (null!=userAttemptingLogin){
-			String base64EncodedActualPassword=userAttemptingLogin.get("password");
-			String base64EncodedPasswordAttempt=java.util.Base64.getEncoder().encodeToString(keyValues.get("password").getBytes());
-			
-			if (base64EncodedActualPassword.equals(base64EncodedPasswordAttempt)){
-				log.info("Login successful");
-				jwtToken="ok";
-			}else{
-				// incorrect password
-			}
-			
-		}else{
-			// user doesnt exist
-		}
-		
-		if ("".equals(jwtToken)){
-			log.info("Login failure");
-		}
-		
-		
-//		if ("admin".equals(keyValues.get("username")) && "admin".equals(keyValues.get("password"))){
-//			log.info("Login successful");
-//			jwtToken="ok";
-//		}else
-//			log.info("Login failure");
-		
-		request.getSession().setAttribute("x-access-token", jwtToken);
-		return Response.status(302).location(new URI("../index.jsp")).header("x-access-token", jwtToken).build();
-	}
-	@GET
-	@Path("/logout")
-	public Response logout(@Context HttpServletRequest request,@Context HttpServletResponse response) throws JsonGenerationException, JsonMappingException, IOException, URISyntaxException{
-		log.info("/logout");
-		request.getSession().setAttribute("x-access-token", null);
-		request.getSession().invalidate();
-		return Response.status(302).location(new URI("../index.jsp")).build();
-	}
-	
+  private ResponseBuilder newResponse(int status){
+    return Response.status(status)
+     .header("Access-Control-Allow-Origin",  "*")
+     .header("Content-Type","application/json")
+     .header("Cache-Control", "no-store, must-revalidate, no-cache, max-age=0")
+     .header("Pragma", "no-cache")
+     .header("X-Content-Type-Options", "nosniff");
+  }
+  
+  @POST
+  @Path("/yearEnd/{priorYear}")
+  public Response yearEnd(@Context HttpServletRequest request,@Context HttpServletResponse response,@PathParam("priorYear") String priorYear) throws JsonGenerationException, JsonMappingException, IOException, URISyntaxException{
+    log.info("Year Ending for - "+priorYear+". Note: This will loose some data (such as point buckets) as it archives the current years information");
+    Database2 db=Database2.get();
+    
+    if (db.getScorecardHistory().containsKey(priorYear))
+      return newResponse(400).entity("Can't do that - the key '"+priorYear+"' already exists!").build();
+    
+    // cleanup scorecards and backup in to a year dated bucket
+    Map<String, String> history=new LinkedHashMap<String, String>();
+    Map<String, Integer> totals=new HashMap<String, Integer>();
+    for(Entry<String, Map<String, Integer>> e:db.getScoreCards().entrySet()){
+      if (null!=e.getValue() && e.getValue().size()>0){
+      String belt=db.getUsers().get(e.getKey()).get("level");
+      String total=String.valueOf(ChartsController.total(e.getValue()));
+      history.put(e.getKey(), belt+"|"+total);
+      totals.put(e.getKey(), Integer.valueOf(total));
+      }
+    }
+    
+    // reorder by total
+    List<Entry<String, Integer>> list=new LinkedList<Map.Entry<String, Integer>>(totals.entrySet());
+    Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() { public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+      return (o2.getValue()).compareTo(o1.getValue());
+    }});
+    HashMap<String, Integer> sortedTotals=new LinkedHashMap<String, Integer>();
+    for (Entry<String, Integer> e:list)
+      sortedTotals.put(e.getKey(), e.getValue());
+    
+    Map<String, String> sortedHistory=new LinkedHashMap<String, String>();
+    for(Entry<String, Integer> e:sortedTotals.entrySet())
+      sortedHistory.put(e.getKey(), history.get(e.getKey()));
+    
+    // write the history for the 'priorYear'
+    db.getScorecardHistory().put(priorYear, sortedHistory);
+    
+    // clear current points
+    db.getScoreCards().clear();
+    
+    //clear current belt status
+    for(Entry<String, Map<String, String>> e:db.getUsers().entrySet()){
+      e.getValue().put("level", "ZERO");
+      e.getValue().put("levelChanged", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+    }
+    
+    db.save();
+    
+    return newResponse(200).entity("OK, it's done!").build();
+  }
+  
+  private String getParameter(HttpServletRequest request, String name, String defaultValue){
+    if (null!=request.getParameter(name))
+      return request.getParameter(name);
+    return defaultValue;
+  }
+  
+  @GET
+  @Path("/checkTrelloIDs")
+  public Response checkTrelloIds(@Context HttpServletRequest request) throws JsonGenerationException, JsonMappingException, IOException, InterruptedException{
+    int max=Integer.valueOf(getParameter(request,"max","-1"));
+    
+    Map<String,String> unknownUsers=new HashMap<String,String>();
+    Database2 db=Database2.get();
+    int count=0;
+    for(Entry<String, Map<String, String>> e:db.getUsers().entrySet()){
+      count+=1;
+      String trelloId=e.getValue().get("trelloId");
+      if (null==trelloId || "null".equals(trelloId.trim().toLowerCase())|| "".equals(trelloId.trim().toLowerCase())){
+        unknownUsers.put(e.getKey(), "Not Registered?");
+        continue;
+      }
+//      System.out.println("Checking trello user: "+trelloId);
+      String trelloCheckUrl="https://api.trello.com/1/members/"+trelloId;
+      int rc=Http.get(trelloCheckUrl).responseCode;
+      
+      long wait=1000/(100/10); //(no more than 100 requests per 10 seconds, or 10 per second)
+      
+      if (200==rc){
+        // user exists
+      }else if(404==rc){
+        // user doesnt exist
+        unknownUsers.put(e.getKey(), trelloId);
+      }else if(429==rc){ // Too Many Requests
+        int waitInSeconds=10;
+        System.out.println("Waiting a while ("+waitInSeconds+"s) due to 'Too Many Requests'! HTTP 429 received");
+        Thread.sleep(waitInSeconds*1000);
+//        break;
+      }
+      Thread.sleep(wait+100/*ms*/);
+      
+      if (max>0 && count>=max) break;
+    }
+    
+    return newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(unknownUsers)).build();
+  }
+  
+  @POST
+  @Path("/login")
+  public Response login(@Context HttpServletRequest request,@Context HttpServletResponse response) throws JsonGenerationException, JsonMappingException, IOException, URISyntaxException{
+    log.info("/login");
+    String uri=IOUtils.toString(request.getInputStream());
+    final Map<String, String> keyValues=Splitter.on('&').trimResults().withKeyValueSeparator("=").split(uri);
+    log.info("Controller::login():: username="+keyValues.get("username") +", password=****");
+    
+    String jwtToken="";
+    
+    Map<String, String> userAttemptingLogin=Database2.get().getUsers().get(keyValues.get("username"));
+    if (null!=userAttemptingLogin){
+      String base64EncodedActualPassword=userAttemptingLogin.get("password");
+      String base64EncodedPasswordAttempt=java.util.Base64.getEncoder().encodeToString(keyValues.get("password").getBytes());
+      
+      if (base64EncodedActualPassword.equals(base64EncodedPasswordAttempt)){
+        log.info("Login successful");
+        jwtToken="ok";
+      }else{
+        // incorrect password
+      }
+      
+    }else{
+      // user doesnt exist
+    }
+    
+    if ("".equals(jwtToken)){
+      log.info("Login failure");
+    }
+    
+    request.getSession().setAttribute("x-access-token", jwtToken);
+    return Response.status(302).location(new URI("../index.jsp")).header("x-access-token", jwtToken).build();
+  }
+  @GET
+  @Path("/logout")
+  public Response logout(@Context HttpServletRequest request,@Context HttpServletResponse response) throws JsonGenerationException, JsonMappingException, IOException, URISyntaxException{
+    log.info("/logout");
+    request.getSession().setAttribute("x-access-token", null);
+    request.getSession().invalidate();
+    return Response.status(302).location(new URI("../index.jsp")).build();
+  }
+  
   // This doenst work but would be a nice feature
   @GET
   @Path("/loglevel/{level}")
@@ -159,9 +266,9 @@ public class ManagementController {
   @GET
   @Path("/scripts/runNow")
   public Response runScriptsNow(@Context HttpServletRequest request, @Context HttpServletResponse response, @Context ServletContext servletContext){
-  	Heartbeat2.runOnceAsync();
-  	Database2.resetInstance();
-  	Database2.get(); //reload it
+    Heartbeat2.runOnceAsync();
+    Database2.resetInstance();
+    Database2.get(); //reload it
     log.debug("Scripts run started - check logs for results");
     return Response.status(200).entity("RUNNING").build();
   }
@@ -279,12 +386,7 @@ public class ManagementController {
       payload=Json.newObjectMapper(true).writeValueAsString(data);
     }
     
-    return Response.status(payload.contains("ERROR")?500:200)
-        .header("Access-Control-Allow-Origin",  "*")
-        .header("Content-Type","application/json")
-        .header("Cache-Control", "no-store, must-revalidate, no-cache, max-age=0")
-        .header("Pragma", "no-cache")
-        .entity(payload).build();
+    return newResponse(payload.contains("ERROR")?500:200).entity(payload).build();
   }
   
   
@@ -307,12 +409,7 @@ public class ManagementController {
       chart.getLabels().add("No Points");
       chart.getDatasets().get(0).getData().add(0);
     }
-    return Response.status(200)
-        .header("Access-Control-Allow-Origin",  "*")
-        .header("Content-Type","application/json")
-        .header("Cache-Control", "no-store, must-revalidate, no-cache, max-age=0")
-        .header("Pragma", "no-cache")
-        .entity(Json.newObjectMapper(true).writeValueAsString(chart)).build();
+    return newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(chart)).build();
   }
   
   // UI call (user dashboard) - returns user scorecard data to display the user dashboard
@@ -351,12 +448,7 @@ public class ManagementController {
       payload=Json.newObjectMapper(true).writeValueAsString(data);
     }
     
-    return Response.status(payload.contains("ERROR")?500:200)
-        .header("Access-Control-Allow-Origin",  "*")
-        .header("Content-Type","application/json")
-        .header("Cache-Control", "no-store, must-revalidate, no-cache, max-age=0")
-        .header("Pragma", "no-cache")
-        .entity(payload).build();
+    return newResponse(200).entity(payload).build();
   }
 
   // UI call (edit/update user) - updates an existing user with new values & points
@@ -395,39 +487,32 @@ public class ManagementController {
           //// ALERT! unknown field
           //log.error("UNKNOWN FIELD: "+k+" = "+map.get(k));
         }
-
       }
     }
     
     db.save();
-    return Response.status(200)
-    		.entity(Json.newObjectMapper(true).writeValueAsString("OK"))
-        .header("Access-Control-Allow-Origin",  "*")
-        .header("Content-Type","application/json")
-        .header("Cache-Control", "no-store, must-revalidate, no-cache, max-age=0")
-        .header("Pragma", "no-cache")
-    		.build();
+    return newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString("OK")).build();
   }
   
   @GET
   @Path("/events")
   public Response getEvents(@Context HttpServletRequest request) throws JsonGenerationException, JsonMappingException, IOException{
-  	return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(getEvents(request.getParameter("user"), request.getParameter("event")))).build();
+    return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(getEvents(request.getParameter("user"), request.getParameter("event")))).build();
   }
   public List<Map<String, String>> getAllEvents() throws JsonGenerationException, JsonMappingException, IOException{
-  	return getEvents(null, null);
+    return getEvents(null, null);
   }
   public List<Map<String, String>> getEvents(String user, String event) throws JsonGenerationException, JsonMappingException, IOException{
     Database2 db=Database2.get();
     List<Map<String, String>> result=new ArrayList<Map<String,String>>();
     
     if (null==user && null==event){
-    	result=db.getEvents();
+      result=db.getEvents();
     }else{
-    	for(Map<String, String> e:db.getEvents()){
-    		if (e.get(EVENT_FIELDS.USER.v).equals(user)) result.add(e);
-    		if (e.get(EVENT_FIELDS.TYPE.v).equals(event)) result.add(e);
-    	}
+      for(Map<String, String> e:db.getEvents()){
+        if (e.get(EVENT_FIELDS.USER.v).equals(user)) result.add(e);
+        if (e.get(EVENT_FIELDS.TYPE.v).equals(event)) result.add(e);
+      }
     }
     return result;
   }
@@ -489,13 +574,7 @@ public class ManagementController {
     wrapper.put("columns", columns);
     wrapper.put("data", data);
     
-    return Response.status(200)
-    		.entity(Json.newObjectMapper(true).writeValueAsString(wrapper))
-        .header("Access-Control-Allow-Origin",  "*")
-        .header("Content-Type","application/json")
-        .header("Cache-Control", "no-store, must-revalidate, no-cache, max-age=0")
-        .header("Pragma", "no-cache")
-    		.build();
+    return newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(wrapper)).build();
   }
   
   

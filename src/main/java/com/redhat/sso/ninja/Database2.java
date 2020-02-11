@@ -189,6 +189,11 @@ public class Database2{
     }
     return leaderboard;
   }
+  private Map<String, Map<String,String>> scorecardHistory=new HashMap<String, Map<String,String>>();
+  public Map<String, Map<String,String>> getScorecardHistory(){
+  	if (null==scorecardHistory) scorecardHistory=new HashMap<String, Map<String,String>>();
+  	return scorecardHistory;
+  }
   
   public synchronized void save(){
     try{

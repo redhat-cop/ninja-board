@@ -390,8 +390,8 @@ public class SupportController {
   	String list=request.getParameter("list");
   	String org=request.getParameter("org");
   	
-  	TrelloAPI t=new TrelloAPI(getTrelloApiKey(), getTrelloApiToken());
-  	t.initialize(org);
+//  	TrelloAPI t=new TrelloAPI(getTrelloApiKey(), getTrelloApiToken());
+//  	t.initialize(org);
   	List<Card> cards=trelloCards(username, org, list, Integer.parseInt(daysOld));
   			
   	return Response.status(200)
