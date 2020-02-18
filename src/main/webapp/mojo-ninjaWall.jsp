@@ -25,7 +25,7 @@
   table tr{
   }
   .header{
-    background-color: #007a87;
+    background-color: #000000;
     color: white;
     padding-top: 15px;
     text-align: center;
@@ -100,7 +100,7 @@
   //var ctx = "https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs";
   //var ctx = "http://localhost:8082/community-ninja-board";
   var xhr = new XMLHttpRequest();
-  xhr.open("GET", ctx+"/api"+(Utils.getParameterByName("source")!=undefined?"":"/proxy")+"/ninjas", true);
+  xhr.open("GET", ctx+"/api"+(Utils.getParameterByName("source")!=undefined && Utils.getParameterByName("source").includes("localhost")?"":"/proxy")+"/ninjas", true);
   xhr.send();
   xhr.onloadend = function () {
    var json=JSON.parse(xhr.responseText);
@@ -112,7 +112,7 @@
    // Header
    var hdr_tr = tableRef.insertRow(tableRef.rows.length);
    var hdr_td  = hdr_tr.insertCell(0);
-   var hdr_n  = document.createTextNode("Ninja Wall");
+   var hdr_n  = document.createTextNode("NINJA WALL");
    hdr_td.className="header";
    hdr_td.colSpan=cols;
    hdr_td.appendChild(hdr_n);

@@ -26,6 +26,7 @@ import com.google.common.collect.Lists;
 import com.google.gdata.util.common.base.Pair;
 import com.redhat.sso.ninja.chart.Chart2Json;
 import com.redhat.sso.ninja.chart.DataSet2;
+import com.redhat.sso.ninja.utils.Http;
 import com.redhat.sso.ninja.utils.Json;
 import com.redhat.sso.ninja.utils.LevelsUtil;
 import com.redhat.sso.ninja.utils.MapBuilder;
@@ -36,25 +37,13 @@ public class ChartsController{
   @GET
   @Path("/ninjas")
   public Response getNinjas() throws JsonGenerationException, JsonMappingException, IOException{
-  	return Response.status(200)
-        .header("Access-Control-Allow-Origin",  "*")
-        .header("Content-Type","application/json")
-        .header("Cache-Control", "no-store, must-revalidate, no-cache, max-age=0")
-        .header("Pragma", "no-cache")
-        .entity(Json.newObjectMapper(true).writeValueAsString(getParticipants(null)))
-        .build();
+  	return Http.newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(getParticipants(null))).build();
   }
   
   @GET
   @Path("/leaderboard/{max}")
   public Response getLeaderboard2(@PathParam("max") Integer max) throws JsonGenerationException, JsonMappingException, IOException{
-  	return Response.status(200)
-        .header("Access-Control-Allow-Origin",  "*")
-        .header("Content-Type","application/json")
-        .header("Cache-Control", "no-store, must-revalidate, no-cache, max-age=0")
-        .header("Pragma", "no-cache")
-        .entity(Json.newObjectMapper(true).writeValueAsString(getParticipants(max)))
-    		.build();
+  	return Http.newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(getParticipants(max))).build();
   }
   
   static Integer total(Map<String,Integer> points){
@@ -162,12 +151,7 @@ public class ChartsController{
       chart.getDatasets().get(0).getData().add(Integer.parseInt(Config.get().getOptions().get("thresholds").split(":")[0])); // blue level threshold
     }
     
-    return Response.status(200)
-        .header("Access-Control-Allow-Origin",  "*")
-        .header("Content-Type","application/json")
-        .header("Cache-Control", "no-store, must-revalidate, no-cache, max-age=0")
-        .header("Pragma", "no-cache")
-        .entity(Json.newObjectMapper(true).writeValueAsString(chart)).build();
+    return Http.newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(chart)).build();
   }
   
   private int getTotalPoints(String username){

@@ -94,4 +94,13 @@ public class Http{
 		}
 		return new Response(responseCode, response.toString());
 	}
+	
+  public static javax.ws.rs.core.Response.ResponseBuilder newResponse(int status){
+    return javax.ws.rs.core.Response.status(status)
+     .header("Access-Control-Allow-Origin",  "*")
+     .header("Content-Type","application/json")
+     .header("Cache-Control", "no-store, must-revalidate, no-cache, max-age=0")
+     .header("Pragma", "no-cache")
+     .header("X-Content-Type-Options", "nosniff");
+  }
 }

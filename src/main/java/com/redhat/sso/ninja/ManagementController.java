@@ -67,15 +67,6 @@ public class ManagementController {
     return "true".equalsIgnoreCase(Config.get().getOptions().get("login.enabled"));
   }
   
-  private ResponseBuilder newResponse(int status){
-    return Response.status(status)
-     .header("Access-Control-Allow-Origin",  "*")
-     .header("Content-Type","application/json")
-     .header("Cache-Control", "no-store, must-revalidate, no-cache, max-age=0")
-     .header("Pragma", "no-cache")
-     .header("X-Content-Type-Options", "nosniff");
-  }
-  
   @POST
   @Path("/yearEnd/{priorYear}")
   public Response yearEnd(@Context HttpServletRequest request,@Context HttpServletResponse response,@PathParam("priorYear") String priorYear) throws JsonGenerationException, JsonMappingException, IOException, URISyntaxException{
@@ -83,7 +74,7 @@ public class ManagementController {
     Database2 db=Database2.get();
     
     if (db.getScorecardHistory().containsKey(priorYear))
-      return newResponse(400).entity("Can't do that - the key '"+priorYear+"' already exists!").build();
+      return Http.newResponse(400).entity("Can't do that - the key '"+priorYear+"' already exists!").build();
     
     // cleanup scorecards and backup in to a year dated bucket
     Map<String, String> history=new LinkedHashMap<String, String>();
@@ -124,7 +115,7 @@ public class ManagementController {
     
     db.save();
     
-    return newResponse(200).entity("OK, it's done!").build();
+    return Http.newResponse(200).entity("OK, it's done!").build();
   }
   
   private String getParameter(HttpServletRequest request, String name, String defaultValue){
@@ -170,7 +161,7 @@ public class ManagementController {
       if (max>0 && count>=max) break;
     }
     
-    return newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(unknownUsers)).build();
+    return Http.newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(unknownUsers)).build();
   }
   
   @POST
@@ -227,7 +218,7 @@ public class ManagementController {
   @GET
   @Path("/config/get")
   public Response configGet(@Context HttpServletRequest request,@Context HttpServletResponse response,@Context ServletContext servletContext) throws JsonGenerationException, JsonMappingException, IOException{
-    return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Config.get())).build();
+    return Http.newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(Config.get())).build();
   }
   
   // saves a new complete config
@@ -260,7 +251,7 @@ public class ManagementController {
     Database2.get(); //reload it
     
     log.debug("Config Saved");
-    return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Config.get())).build();
+    return Http.newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(Config.get())).build();
   }
 
   @GET
@@ -270,7 +261,7 @@ public class ManagementController {
     Database2.resetInstance();
     Database2.get(); //reload it
     log.debug("Scripts run started - check logs for results");
-    return Response.status(200).entity("RUNNING").build();
+    return Http.newResponse(200).entity("RUNNING").build();
   }
   
   // manually (via rest) to register new users via a rest/json payload
@@ -309,10 +300,10 @@ public class ManagementController {
       }
       
       db.save();
-      return Response.status(200).entity("{\"status\":\"DONE\"}").build();
+      return Http.newResponse(200).entity("{\"status\":\"DONE\"}").build();
     }catch(IOException e){
       e.printStackTrace();
-      return Response.status(500).entity("{\"status\":\"ERROR\",\"message\":\""+e.getMessage()+"\"}").build();  
+      return Http.newResponse(500).entity("{\"status\":\"ERROR\",\"message\":\""+e.getMessage()+"\"}").build();  
     }
     
   }
@@ -332,9 +323,9 @@ public class ManagementController {
       Database2 db=Database2.get();
       db.increment(pool, user, Integer.valueOf(increment), null).save();
       db.save();
-      return Response.status(200).entity("{\"status\":\"DONE\"}").build();
+      return Http.newResponse(200).entity("{\"status\":\"DONE\"}").build();
     }catch(Exception e){
-      return Response.status(500).entity("{\"status\":\"ERROR\",\"message\":\""+e.getMessage()+"\"}").build();  
+      return Http.newResponse(500).entity("{\"status\":\"ERROR\",\"message\":\""+e.getMessage()+"\"}").build();  
     }
   }
   
@@ -342,7 +333,7 @@ public class ManagementController {
   @GET
   @Path("/database/get")
   public Response getDatabase() throws JsonGenerationException, JsonMappingException, IOException{
-    return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Database2.get())).build();
+    return Http.newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(Database2.get())).build();
   }
   
   // saves/replaces the database content
@@ -359,9 +350,16 @@ public class ManagementController {
     Database2.get(); // reload instance in memory
     
     System.out.println("New Database Saved");
-    return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Database2.get())).build();
+    return Http.newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(Database2.get())).build();
   }
-
+  
+  // reloads the database content from persistence
+  @GET
+  @Path("/database/reload")
+  public Response reloadDatabase() throws JsonGenerationException, JsonMappingException, IOException{
+  	Database2.resetInstance();
+    return Http.newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(Database2.get())).build();
+  }
   
   // UI call (edit user) - returns the scorecard and userInfo data for be able to display and edit one specific user
   @GET
@@ -386,7 +384,7 @@ public class ManagementController {
       payload=Json.newObjectMapper(true).writeValueAsString(data);
     }
     
-    return newResponse(payload.contains("ERROR")?500:200).entity(payload).build();
+    return Http.newResponse(payload.contains("ERROR")?500:200).entity(payload).build();
   }
   
   
@@ -409,7 +407,7 @@ public class ManagementController {
       chart.getLabels().add("No Points");
       chart.getDatasets().get(0).getData().add(0);
     }
-    return newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(chart)).build();
+    return Http.newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(chart)).build();
   }
   
   // UI call (user dashboard) - returns user scorecard data to display the user dashboard
@@ -448,7 +446,7 @@ public class ManagementController {
       payload=Json.newObjectMapper(true).writeValueAsString(data);
     }
     
-    return newResponse(200).entity(payload).build();
+    return Http.newResponse(200).entity(payload).build();
   }
 
   // UI call (edit/update user) - updates an existing user with new values & points
@@ -491,13 +489,13 @@ public class ManagementController {
     }
     
     db.save();
-    return newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString("OK")).build();
+    return Http.newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString("OK")).build();
   }
   
   @GET
   @Path("/events")
   public Response getEvents(@Context HttpServletRequest request) throws JsonGenerationException, JsonMappingException, IOException{
-    return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(getEvents(request.getParameter("user"), request.getParameter("event")))).build();
+    return Http.newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(getEvents(request.getParameter("user"), request.getParameter("event")))).build();
   }
   public List<Map<String, String>> getAllEvents() throws JsonGenerationException, JsonMappingException, IOException{
     return getEvents(null, null);
@@ -574,7 +572,7 @@ public class ManagementController {
     wrapper.put("columns", columns);
     wrapper.put("data", data);
     
-    return newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(wrapper)).build();
+    return Http.newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(wrapper)).build();
   }
   
   
