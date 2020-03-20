@@ -56,15 +56,6 @@ This will output a url you need to visit and sign in, which will return an auth 
 After you've entered the auto code, the credentials are stored in *gdrive_temp/.gd/credentials.json*.
 
 
-
-## Deploying the application
-
-First, login to OpenShift
-
-```
-oc login <openshift url>
-```
-
 ### Deployment Using the OpenShift Applier
 
 The project can be deployed using the [openshift-applier](https://github.com/redhat-cop/openshift-applier).
@@ -76,6 +67,14 @@ The following prerequisites must be satisfied:
 1. [Ansible](https://www.ansible.com/)
 2. OpenShift Command Line Interface (CLI)
 3. OpenShift environment
+
+#### Login to OpenShift
+
+Login to OpenShift
+
+```
+oc login <openshift url>
+```
 
 #### Deployment
 
@@ -98,7 +97,7 @@ Utilize the following steps to deploy the project
 4. Execute the _openshift-applier_
 
     ```
-    ansible-playbook -i applier/inventory galaxy/openshift-applier/playbooks/openshift-cluster-seed.yml -e="@.openshift/params/ninja-board-deployment
+    ansible-playbook -i .applier/inventory galaxy/openshift-applier/playbooks/openshift-cluster-seed.yml -e="@.openshift/params/ninja-board-deployment
     ```
 
 Once complete, all of the resources should be available in OpenShift
