@@ -97,7 +97,7 @@ Utilize the following steps to deploy the project
 4. Execute the _openshift-applier_
 
     ```
-    ansible-playbook -i .applier/inventory galaxy/openshift-applier/playbooks/openshift-cluster-seed.yml -e="@.openshift/params/ninja-board-deployment
+    ansible-playbook -i .applier/inventory galaxy/openshift-applier/playbooks/openshift-cluster-seed.yml -e="@.openshift/params/ninja-board-deployment"
     ```
 
 Once complete, all of the resources should be available in OpenShift
