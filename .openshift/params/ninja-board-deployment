@@ -1,0 +1,29 @@
+# Use this file to define and provide secure values during provisioning
+
+github_api_token: ""
+trello_api_token: ""
+trello_api_key: ""
+gitlab_api_token: ""
+gd_credentials: ''
+xgraphs_proxy: ""
+users_ldap_provider: ""
+
+# Alternatively, use environment speicfic variables
+
+## Development
+#dev_github_api_token: ""
+#dev_trello_api_token: ""
+#dev_trello_api_key: ""
+#dev_gitlab_api_token: ""
+#dev_gd_credentials: ''
+#dev_xgraphs_proxy: ""
+#dev_users_ldap_provider: ""
+
+## Production
+#prod_github_api_token: ""
+#prod_trello_api_token: ""
+#prod_trello_api_key: ""
+#prod_gitlab_api_token: ""
+#prod_gd_credentials: ''
+#prod_xgraphs_proxy: ""
+#prod_users_ldap_provider: ""

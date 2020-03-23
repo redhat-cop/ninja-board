@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Template
 labels:
-  template: community-ninja-board-build
+  template: ninja-board-build
 metadata:
   annotations:
-    description: Build the Community Ninja Board Application
+    description: Build the Ninja Board Application
     iconClass: icon-java
     tags: java
-  name: community-ninja-board-build
+  name: ninja-board-build
 objects:
 - apiVersion: v1
   kind: ImageStream
@@ -51,9 +51,6 @@ objects:
           namespace: ${UPSTREAM_IMAGESTREAM_NAMESPACE}
       type: Source
     triggers:
-    - imageChange: {}
-      type: ImageChange
-    - type: ConfigChange
 - apiVersion: v1
   kind: BuildConfig
   metadata:
@@ -66,11 +63,8 @@ objects:
         kind: ImageStreamTag
         name: ${APPLICATION_NAME}:latest
     source:
-      contextDir: ${CONTEXT_DIR}
-      git:
-        ref: ${SOURCE_REPOSITORY_REF}
-        uri: ${SOURCE_REPOSITORY_URL}
-      type: Git
+      binary: {}
+      type: Binary
     strategy:
       sourceStrategy:
         from:
@@ -79,20 +73,58 @@ objects:
           namespace: ${BASE_IMAGESTREAM_NAMESPACE}
       type: Source
     triggers:
-    - imageChange: {}
-      type: ImageChange
-    - type: ConfigChange
+- kind: "BuildConfig"
+  apiVersion: "v1"
+  metadata:
+    name: ${BASE_IMAGE_NAME}-pipeline
+  spec:
+    source:
+      git:
+        uri: ${SOURCE_REPOSITORY_URL}
+        ref: ${SOURCE_REPOSITORY_REF}
+    strategy:
+      jenkinsPipelineStrategy:
+        jenkinsfilePath: Jenkinsfile.base
+        env:
+          - name: APPLICATION_NAME
+            value: ${BASE_IMAGE_NAME}
+    triggers:
+      - type: ConfigChange
+- kind: "BuildConfig"
+  apiVersion: "v1"
+  metadata:
+    name: ${APPLICATION_NAME}-pipeline
+  spec:
+    source:
+      git:
+        uri: ${SOURCE_REPOSITORY_URL}
+        ref: ${SOURCE_REPOSITORY_REF}
+    strategy:
+      jenkinsPipelineStrategy:
+        env:
+          - name: APPLICATION_NAME
+            value: ${APPLICATION_NAME}
+          - name: SOURCE_REPOSITORY_URL
+            value: ${SOURCE_REPOSITORY_URL}
+          - name: SOURCE_REPOSITORY_REF
+            value: ${SOURCE_REPOSITORY_REF}
+          - name: DEV_NAMESPACE
+            value: ${DEV_NAMESPACE}
+          - name: PROD_NAMESPACE
+            value: ${PROD_NAMESPACE}
+    triggers:
+      - type: ConfigChange
 parameters:
 - description: The name for the application.
   displayName: Application name
   name: APPLICATION_NAME
   required: true
-  value: community-ninja-board
+  value: ninja-board
 - description: The name for the base image.
   displayName: Base image name name
   name: BASE_IMAGE_NAME
   required: true
-  value: community-ninja-board-base
+  value: ninja-board-base
 - description: Git source URI for application
   name: SOURCE_REPOSITORY_URL
   required: true
@@ -115,3 +147,9 @@ parameters:
   name: UPSTREAM_IMAGESTREAM_NAMESPACE
   value: openshift
   required: false
+- description: Name of the Development Namespace
+  name: DEV_NAMESPACE
+  required: true
+- description: Name of the Production Namespace
+  name: PROD_NAMESPACE
+  required: true

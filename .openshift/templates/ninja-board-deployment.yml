@@ -1,12 +1,22 @@
 apiVersion: v1
 kind: Template
 labels:
-  template: community-ninja-board-deployment
+  template: ninja-board-deployment
 metadata:
   annotations:
-    description: Deploy the Community Ninja Board Application
-  name: community-ninja-board-deployment
+    description: Deploy the Ninja Board Application
+  name: ninja-board-deployment
 objects:
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: ${APPLICATION_NAME}
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: "${PV_SIZE}"
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -32,8 +42,6 @@ objects:
             value: ${JWS_ADMIN_USERNAME}
           - name: JWS_ADMIN_PASSWORD
             value: ${JWS_ADMIN_PASSWORD}
-          - name: JWS_ADMIN_PASSWORD
-            value: ${JWS_ADMIN_PASSWORD}
           - name: GITHUB_API_TOKEN
             value: ${GITHUB_API_TOKEN}
           - name: TRELLO_API_TOKEN
@@ -44,6 +52,10 @@ objects:
             value: ${GITLAB_API_TOKEN}
           - name: GD_CREDENTIALS
             value: ${GD_CREDENTIALS}
+          - name: XGRAPHS_PROXY
+            value: ${XGRAPHS_PROXY}
+          - name: USERS_LDAP_PROVIDER
+            value: ${USERS_LDAP_PROVIDER}
           image: ${APPLICATION_NAME}
           imagePullPolicy: Always
           name: ${APPLICATION_NAME}
@@ -61,7 +73,15 @@ objects:
               - -c
               - curl -s -u ${JWS_ADMIN_USERNAME}:${JWS_ADMIN_PASSWORD} 'http://localhost:8080/manager/jmxproxy/?get=Catalina%3Atype%3DServer&att=stateName'
                 |grep -iq 'stateName *= *STARTED'
+          volumeMounts:
+          - mountPath: /home/jboss
+            name: ${APPLICATION_NAME}
+            subPath: target/ninja-persistence
         terminationGracePeriodSeconds: 60
+        volumes:
+        - name: ${APPLICATION_NAME}
+          persistentVolumeClaim:
+            claimName: ${APPLICATION_NAME}
     triggers:
     - imageChangeParams:
         automatic: true
@@ -69,7 +89,7 @@ objects:
         - ${APPLICATION_NAME}
         from:
           kind: ImageStreamTag
-          name: ${APPLICATION_NAME}:latest
+          name: ${APPLICATION_NAME}:${APPLICATION_TAG}
       type: ImageChange
     - type: ConfigChange
 - apiVersion: v1
@@ -81,7 +101,7 @@ objects:
       application: ${APPLICATION_NAME}
     name: ${APPLICATION_NAME}
   spec:
-    path: "/community-ninja-board" 
+    path: "/ninja-board" 
     host: ${HOSTNAME_HTTP}
     to:
       name: ${APPLICATION_NAME}
@@ -106,7 +126,11 @@ parameters:
 - description: The name for the application.
   name: APPLICATION_NAME
   required: true
-  value: community-ninja-board
+  value: ninja-board
+- description: ImageStreamTag for the application.
+  name: APPLICATION_TAG
+  required: true
+  value: latest
 - description: 'Custom hostname for http service route.  Leave blank for default hostname,
     e.g.: <application-name>-<project>.<default-domain-suffix>'
   name: HOSTNAME_HTTP
@@ -120,6 +144,10 @@ parameters:
   generate: expression
   name: JWS_ADMIN_PASSWORD
   required: true
+- description: Token for the GitHub API.
+  name: PV_SIZE
+  required: true
+  value: "1Gi"
 - description: Token for the GitHub API.
   name: GITHUB_API_TOKEN
   required: true
@@ -135,7 +163,9 @@ parameters:
 - description: Google Drive credentials.
   name: GD_CREDENTIALS
   required: true
-  
-  
-  
-  
+- description: Graphs proxy address.
+  name: XGRAPHS_PROXY
+  required: true
+- description: LDAP Provider address.
+  name: USERS_LDAP_PROVIDER
+  required: true

@@ -1,0 +1,28 @@
+---
+apiVersion: v1
+kind: Template
+metadata:
+  name: ninja-board-rbac
+objects:
+- apiVersion: v1
+  groupNames: null
+  kind: RoleBinding
+  metadata:
+    creationTimestamp: null
+    name: edit
+    namespace: ${PROD_NAMESPACE}
+  roleRef:
+    name: edit
+  subjects:
+  - kind: ServiceAccount
+    name: jenkins
+    namespace: ${DEV_NAMESPACE}
+  userNames:
+  - system:serviceaccount:${DEV_NAMESPACE}:jenkins
+parameters:
+- description: Name of the Development Namespace
+  name: DEV_NAMESPACE
+  required: true
+- description: Name of the Production Namespace
+  name: PROD_NAMESPACE
+  required: true
