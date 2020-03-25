@@ -85,6 +85,9 @@ public class ManagementController {
     if (db.getScorecardHistory().containsKey(priorYear))
       return newResponse(400).entity("Can't do that - the key '"+priorYear+"' already exists!").build();
     
+    // clear outstanding tasks
+    db.getTasks().clear();
+    
     // cleanup scorecards and backup in to a year dated bucket
     Map<String, String> history=new LinkedHashMap<String, String>();
     Map<String, Integer> totals=new HashMap<String, Integer>();
@@ -119,10 +122,12 @@ public class ManagementController {
     //clear current belt status
     for(Entry<String, Map<String, String>> e:db.getUsers().entrySet()){
       e.getValue().put("level", "ZERO");
-      e.getValue().put("levelChanged", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+      e.getValue().remove("levelChanged");
+//      e.getValue().put("levelChanged", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
     }
     
     db.save();
+    Database2.resetInstance();
     
     return newResponse(200).entity("OK, it's done!").build();
   }
@@ -227,7 +232,7 @@ public class ManagementController {
   @GET
   @Path("/config/get")
   public Response configGet(@Context HttpServletRequest request,@Context HttpServletResponse response,@Context ServletContext servletContext) throws JsonGenerationException, JsonMappingException, IOException{
-    return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Config.get())).build();
+    return newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(Config.get())).build();
   }
   
   // saves a new complete config
@@ -260,7 +265,7 @@ public class ManagementController {
     Database2.get(); //reload it
     
     log.debug("Config Saved");
-    return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Config.get())).build();
+    return newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(Config.get())).build();
   }
 
   @GET
@@ -270,7 +275,16 @@ public class ManagementController {
     Database2.resetInstance();
     Database2.get(); //reload it
     log.debug("Scripts run started - check logs for results");
-    return Response.status(200).entity("RUNNING").build();
+    return newResponse(200).entity("RUNNING").build();
+  }
+  
+  @GET
+  @Path("/scripts/publishGraphs")
+  public Response pushGraphDataOnly(@Context HttpServletRequest request, @Context HttpServletResponse response, @Context ServletContext servletContext){
+  	Database2 db=Database2.get();
+  	Config cfg=Config.get();
+  	new Heartbeat2.HeartbeatRunnable(null).publishGraphsData(db, cfg);
+    return newResponse(200).entity("RUNNING").build();
   }
   
   // manually (via rest) to register new users via a rest/json payload
@@ -526,22 +540,27 @@ public class ManagementController {
     
     Set<String> fields=new HashSet<String>();
     
-    for(Entry<String, Map<String, Integer>> e:db.getScoreCards().entrySet()){
+    for(Entry<String, Map<String, String>> u:db.getUsers().entrySet()){
+    	String username=u.getKey();
+    	Map<String,String> userInfo=u.getValue();
+    	Map<String, Integer> scorecard=db.getScoreCards().get(u.getKey());
+    	
       Map<String, Object> row=new HashMap<String, Object>();
-      Map<String,String> userInfo=db.getUsers().get(e.getKey());
-      row.put("id", e.getKey());
-      
-      String name=userInfo.containsKey("displayName")?userInfo.get("displayName"):e.getKey();
-      
-      row.put("name", name);
+      row.put("id", username);
+      row.put("name", userInfo.containsKey("displayName")?userInfo.get("displayName"):username);
       int total=0;
-      for(Entry<String, Integer> s:e.getValue().entrySet()){
-        row.put(s.getKey().replaceAll("\\.", " "), s.getValue());
-        total+=s.getValue();
-        fields.add(s.getKey().replaceAll("\\.", " "));
+      if (null!=scorecard){
+      	for(Entry<String, Integer> s:scorecard.entrySet()){
+      		row.put(s.getKey().replaceAll("\\.", " "), s.getValue());
+      		total+=s.getValue();
+      		fields.add(s.getKey().replaceAll("\\.", " "));
+      	}
+      	row.put("total", total);
+      	row.put("level", userInfo.get("level"));
+      }else{
+      	row.put("total", 0);
+      	row.put("level", "ZERO");
       }
-      row.put("total", total);
-      row.put("level", userInfo.get("level"));
       
       // points to next level
       Integer pointsToNextLevel=LevelsUtil.get().getNextLevel(userInfo.get("level")).getLeft()-total;

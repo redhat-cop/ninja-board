@@ -178,13 +178,10 @@ public class Database2{
   @JsonIgnore
   private Map<String, Map<String, Integer>> leaderboard=new HashMap<String, Map<String, Integer>>();
   public Map<String, Map<String, Integer>> getLeaderboard(){
-//    leaderboard.putAll(users);
     for(Entry<String, Map<String, String>> e:users.entrySet()){
       leaderboard.put(e.getKey(), new HashMap<String, Integer>());
     }
-    
     for(Entry<String, Map<String, Integer>> e:scorecards.entrySet()){
-//      leaderboard.get(e.getKey()).setScorecard(e.getValue());
       leaderboard.get(e.getKey()).putAll(e.getValue());
     }
     return leaderboard;
@@ -196,12 +193,15 @@ public class Database2{
   }
   
   public synchronized void save(){
+    save(new File(STORAGE));
+  }
+  public synchronized void save(File storeHere){
     try{
       long s=System.currentTimeMillis();
-      if (!new File(STORAGE).getParentFile().exists())
-        new File(STORAGE).getParentFile().mkdirs();
-      IOUtils2.writeAndClose(Json.newObjectMapper(true).writeValueAsBytes(this), new FileOutputStream(new File(STORAGE)));
-      log.info("Database saved ("+(System.currentTimeMillis()-s)+"ms, size="+new File(STORAGE).length()+")");
+      if (!storeHere.getParentFile().exists())
+        storeHere.getParentFile().mkdirs();
+      IOUtils2.writeAndClose(Json.newObjectMapper(true).writeValueAsBytes(this), new FileOutputStream(storeHere));
+      log.info("Database saved ("+(System.currentTimeMillis()-s)+"ms, size="+storeHere.length()+")");
     }catch (JsonGenerationException e){
       e.printStackTrace();
     }catch (JsonMappingException e){
@@ -232,8 +232,10 @@ public class Database2{
   
   private static Database2 instance=null;
   public static Database2 get(){
-  	if (instance!=null) return instance;
-  	
+    return get(new File(STORAGE));
+  }
+  public static Database2 get(File storage){
+    if (instance!=null) return instance;
     if (!new File(STORAGE).exists()){
     	log.warn("No database file found, creating new/blank/default one...");
     	new Database2().save();

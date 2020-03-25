@@ -1,6 +1,7 @@
 package com.redhat.sso.ninja;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -42,6 +43,7 @@ import com.redhat.sso.ninja.utils.DownloadFile;
 import com.redhat.sso.ninja.utils.FluentCalendar;
 import com.redhat.sso.ninja.utils.Http;
 import com.redhat.sso.ninja.utils.LevelsUtil;
+import com.redhat.sso.ninja.utils.MapBuilder;
 import com.redhat.sso.ninja.utils.ParamParser;
 import com.redhat.sso.ninja.utils.RegExHelper;
 import com.redhat.sso.ninja.utils.Tuple;
@@ -54,7 +56,29 @@ public class Heartbeat2 {
 
   public static void main(String[] asd){
     try{
-    	Heartbeat2.runOnceAsync();
+//      Heartbeat2.runOnceAsync();
+      
+      Database2 db=Database2.get(new File("target/database-test1.json"));
+      String testScript="=== Statistics for GitHub Organization 'redhat-cop' ====\n" + 
+          "\n" + 
+          "== General PR's ==\n" + 
+          "\n" + 
+          "== Reviewed PR's ==\n" + 
+          "\n" + 
+          "Reviewed Pull Requests/GH1234567/fredbloggs/1 [org=redhat-cop, board=testing, linkId=1234]\n" + 
+          "\n" + 
+          "== Closed Issues ==\n" + 
+          "";
+      Map<String,Object> script=new MapBuilder<String,Object>()
+          .put("name", "Github")
+          .put("source", "https://raw.githubusercontent.com/redhat-cop/ninja-points/v1.5/trello-stats.py -s ${LAST_RUN:yyyy-MM-dd} -o redhatcop")
+          .put("type", "python")
+          .build();
+      File scriptFolder=new File("target/test");
+      HeartbeatRunnable hbr=new HeartbeatRunnable(null);
+      Map<String, String> poolToUserIdMapper=hbr.getUsersByPool(db, ((String)script.get("name")).split("\\.")[0].toLowerCase()+"Id");;
+      hbr.allocatePoints(db, (InputStream)new ByteArrayInputStream(testScript.getBytes()), script, scriptFolder, poolToUserIdMapper);
+      
 //      new HeartbeatRunnable().levelUpChecks(Database2.get());
     }catch(Exception e){
       e.printStackTrace();
@@ -414,8 +438,9 @@ public class Heartbeat2 {
       
       File scripts=new File("target/scripts");
       if (!scripts.exists()) scripts.mkdirs();
-      
+      int i=0;
       for(Map<String,Object> script:config.getScripts()){
+        i+=1;
         final Map<String, String> poolToUserIdMapper=getUsersByPool(db, ((String)script.get("name")).split("\\.")[0].toLowerCase()+"Id");
         long start=System.currentTimeMillis();
         
@@ -453,6 +478,7 @@ public class Heartbeat2 {
             
             String command=(String)script.get("source");
             String version=RegExHelper.extract(command, "/(v.+)/");
+            // enhancement: if version is null, split by / and take the penultimate item as version - this will support "master", or non v??? versions
             String name=(String)script.get("name");
             File scriptFolder=new File(scripts, name+"/"+version);
             scriptFolder.mkdirs(); // ensure the parent folders exist if they dont already
@@ -534,49 +560,7 @@ public class Heartbeat2 {
           
           // notify the graphs proxy service if configured
           // store summary, breakdown & nextLevel for each user
-          String graphsProxyUrl=config.getOptions().get("graphs-proxy");
-          if (null==graphsProxyUrl) graphsProxyUrl=System.getenv("GRAPHS_PROXY");
-          
-          if (!StringUtils.isEmpty(graphsProxyUrl)){
-            String url=graphsProxyUrl+"/api/proxy";
-            log.warn("graphsProxyUrl is null == "+(null==graphsProxyUrl));
-            log.warn("roxy configured at: "+url);
-            ChartsController cc=new ChartsController();
-            ManagementController mc=new ManagementController();
-            for(String user:db.getUsers().keySet()){
-              try{
-                if (200!=Http.post(url+"/nextLevel_"+user, (String)cc.getUserNextLevel(user).getEntity()).responseCode)
-                  log.error("Error pushing 'nextLevel' info for '"+user+"' to roxy");
-                if (200!=Http.post(url+"/summary_"+user, (String)mc.getScorecardSummary(user).getEntity()).responseCode)
-                  log.error("Error pushing 'summary' info for '"+user+"' to roxy");
-                if (200!=Http.post(url+"/breakdown_"+user, (String)mc.getUserBreakdown(user).getEntity()).responseCode)
-                  log.error("Error pushing 'breakdown' info for '"+user+"' to roxy");
-              }catch (IOException e){
-                e.printStackTrace();
-              }
-              
-            }
-            
-            // add the top 10 to the graphs too so they're available externally
-            try{
-              if (200!=Http.post(url+"/leaderboard_10", (String)cc.getLeaderboard2(10).getEntity()).responseCode)
-                log.error("Error pushing 'leaderboard' info to proxy");
-            }catch (IOException e){
-              e.printStackTrace();
-            }
-            
-            // add the Ninjas to the graphs too so they're available externally
-            try{
-              if (200!=Http.post(url+"/ninjas", (String)cc.getNinjas().getEntity()).responseCode)
-                log.error("Error pushing 'ninjas' info to proxy");
-            }catch (IOException e){
-              e.printStackTrace();
-            }
-            
-            
-          }else{
-            log.warn("not pushing to graphs proxy - url was: "+graphsProxyUrl);
-          }
+          publishGraphsData(db, config);
           
         }else{
           log.info("NOT Updating the \"lastRun\" date due to a script failure. It will re-run the same period next time and dupe prevention will keep the data correct");
@@ -589,6 +573,52 @@ public class Heartbeat2 {
       
       if (t!=null) t.cancel();
     }
+    
+    protected void publishGraphsData(Database2 db, Config config){
+      String graphsProxyUrl=config.getOptions().get("graphs-proxy");
+      if (null==graphsProxyUrl) graphsProxyUrl=System.getenv("GRAPHS_PROXY");
+      
+      if (!StringUtils.isEmpty(graphsProxyUrl)){
+        String url=graphsProxyUrl+"/api/proxy";
+        log.warn("graphsProxyUrl is null == "+(null==graphsProxyUrl));
+        log.warn("roxy configured at: "+url);
+        ChartsController cc=new ChartsController();
+        ManagementController mc=new ManagementController();
+        for(String user:db.getUsers().keySet()){
+          try{
+            if (200!=Http.post(url+"/nextLevel_"+user, (String)cc.getUserNextLevel(user).getEntity()).responseCode)
+              log.error("Error pushing 'nextLevel' info for '"+user+"' to roxy");
+            if (200!=Http.post(url+"/summary_"+user, (String)mc.getScorecardSummary(user).getEntity()).responseCode)
+              log.error("Error pushing 'summary' info for '"+user+"' to roxy");
+            if (200!=Http.post(url+"/breakdown_"+user, (String)mc.getUserBreakdown(user).getEntity()).responseCode)
+              log.error("Error pushing 'breakdown' info for '"+user+"' to roxy");
+          }catch (IOException e){
+            e.printStackTrace();
+          }
+          
+        }
+        
+        // add the top 10 to the graphs too so they're available externally
+        try{
+          if (200!=Http.post(url+"/leaderboard_10", (String)cc.getLeaderboard2(10).getEntity()).responseCode)
+            log.error("Error pushing 'leaderboard' info to proxy");
+        }catch (IOException e){
+          e.printStackTrace();
+        }
+        
+        // add the Ninjas to the graphs too so they're available externally
+        try{
+          if (200!=Http.post(url+"/ninjas", (String)cc.getNinjas().getEntity()).responseCode)
+            log.error("Error pushing 'ninjas' info to proxy");
+        }catch (IOException e){
+          e.printStackTrace();
+        }
+        
+      }else{
+        log.warn("not pushing to graphs proxy - url was: "+graphsProxyUrl);
+      }
+    }
+    
     
     public void levelUpChecks(Database2 db){
     	log.info("Level-up checks...");
@@ -633,7 +663,7 @@ public class Heartbeat2 {
     public void allocatePoints(Database2 db, InputStream is, Map<String,Object> script, File scriptFolder, Map<String, String> poolToUserIdMapper) throws NumberFormatException, UnsupportedEncodingException, IOException{
     	BufferedReader stdInput=new BufferedReader(new InputStreamReader(is));
     	Pattern paramsPattern=Pattern.compile(".*(\\[.*\\]).*");
-    			
+    	
     	StringBuffer scriptLog=new StringBuffer();
     	String s;
     	while ((s=stdInput.readLine()) != null){

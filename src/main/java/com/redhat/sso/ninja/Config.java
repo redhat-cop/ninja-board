@@ -110,7 +110,7 @@ public class Config {
         }
 //          instance=new Config();
 //        }else{
-          log.info("Config loading (size="+Config.STORAGE.length()+")");
+          log.info("Config loading (location="+Config.STORAGE.getAbsolutePath()+", size="+Config.STORAGE.length()+")");
           String toLoad=IOUtils2.toStringAndClose(new FileInputStream(Config.STORAGE));
           instance=Json.newObjectMapper(true).readValue(new ByteArrayInputStream(toLoad.getBytes()), Config.class);
 //        }
