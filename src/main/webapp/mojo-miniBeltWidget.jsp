@@ -1,4 +1,3 @@
-<html>
 <center>
 <style>
 table{
@@ -18,7 +17,7 @@ a:hover, a:active{
 }
 </style>
 <table id="mini-dashboard">
-<tr><td class="text"><span id="_name"></span>, <span id="_wrapText">you're a</span></td></tr>
+<tr><td class="text"><span id="_name"></span>, <span id="_wrapText"></span></td></tr>
 <tr><td class="text"><!--a class="jivecontainerTT-hover-container jive-link-community-small" href="/community/communities-at-red-hat/communities-of-practice-operations/communities-of-practice-ninja-program"--><img class="ninjaIcon" id="_level"><!--/a--></td></tr>
 <tr><td class="text"><!--a class="jivecontainerTT-hover-container jive-link-community-small" href="/community/communities-at-red-hat/communities-of-practice-operations/communities-of-practice-ninja-program">My Dashboard</a--></td></tr>
 </table>
@@ -29,29 +28,40 @@ a:hover, a:active{
   
   var ctx = "https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs";
   
-  var xhr = new XMLHttpRequest();
-  xhr.open("GET", ctx+"/api/proxy/summary_"+getUsername(), true);
-  xhr.send();
-  xhr.onloadend = function () {
-    var json=JSON.parse(xhr.responseText);
-    document.getElementById("_name").innerHTML=json.displayName;
-    if (json.level.toUpperCase() == "ZERO"){
-      document.getElementById("_wrapText").innerHTML="you have";
-    }else{
-      document.getElementById("_wrapText").innerHTML="you're a";
-    }
-    
-    document.getElementById("_level").src=ctx+"/images/"+json.level.toLowerCase()+"_belt_icon.png";
-    
-    setTimeout(function(){ resizeParent(); }, 500);
+  setTimeout(function(){ displ(); }, 200);
+  
+  function displ(){
+	  username=getUsername();
+	  if (username==undefined){
+		  setTimeout(function(){ displ(); }, 200);
+		  return;
+	  }
+	  
+	  var xhr = new XMLHttpRequest();
+	  xhr.open("GET", ctx+"/api/proxy/summary_"+username, true);
+	  xhr.send();
+	  xhr.onloadend = function () {
+	    var json=JSON.parse(xhr.responseText);
+	    document.getElementById("_name").innerHTML=json.displayName;
+	    if (json.level.toUpperCase() == "ZERO"){
+	      document.getElementById("_wrapText").innerHTML="you have<br/>No Belt";
+	    }else{
+	      document.getElementById("_wrapText").innerHTML="you're a";
+	    }
+	    
+	    document.getElementById("_level").src=ctx+"/images/"+json.level.toLowerCase()+"_belt_icon.png";
+	    
+	    setTimeout(function(){ resizeParent(); }, 500);
+	  }
   }
-
+  
   function getUsername(){
-    if(undefined!=window.parent._jive_current_user){
-      var username=window.parent._jive_current_user.username;
-      var displayName=window.parent._jive_current_user.displayName;
-    }
-    return username;
+	  var username;
+	  if (undefined!=window.parent._jive_current_user)
+		  username=window.parent._jive_current_user.username;
+	  if (undefined!=window._jive_current_user)
+		  username=window._jive_current_user.username;
+	  return username;
   }
   
   function resizeParent() {
@@ -69,4 +79,3 @@ a:hover, a:active{
 	}
   
 </script>
-</html>
