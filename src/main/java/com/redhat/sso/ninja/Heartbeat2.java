@@ -714,8 +714,8 @@ public class Heartbeat2 {
 //    						log.info("Incrementing registered user "+poolUserId+" by "+inc);
     						db.increment(pool, userId, inc, params);//.save();
     					}else{
-    						log.info("Unable to find '"+poolUserId+"' "+script.get("name")+" user - not registered? ("+params.get("id")+") "+Database2.buildLink(params));
-    						db.addEvent("Lost Points", poolUserId +"("+script.get("name")+")", script.get("name")+" user '"+poolUserId+"' was not found - not registered? ("+params.get("id")+") "+Database2.buildLink(params));
+    						log.info("Unable to find '"+poolUserId+"' "+script.get("name")+" user - not registered? "+Database2.buildLink(params));
+    						db.addEvent("Lost Points", poolUserId +"("+script.get("name")+")", script.get("name")+" user '"+poolUserId+"' was not found - not registered? "+Database2.buildLink(params));
     					}
     				}else{
     					// it's a duplicate increment for that actionId & user, so ignore it
