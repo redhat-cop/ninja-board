@@ -52,39 +52,38 @@ public class Heartbeat2 {
   private static final Logger log = Logger.getLogger(Heartbeat2.class);
   private static Timer t;
   private static Timer tRunOnce;
-//  private static final long delay=30000l;
 
-  public static void main(String[] asd){
-    try{
-//      Heartbeat2.runOnceAsync();
-      
-      Database2 db=Database2.get(new File("target/database-test1.json"));
-      String testScript="=== Statistics for GitHub Organization 'redhat-cop' ====\n" + 
-          "\n" + 
-          "== General PR's ==\n" + 
-          "\n" + 
-          "== Reviewed PR's ==\n" + 
-          "\n" + 
-          "Reviewed Pull Requests/GH1234567/fredbloggs/1 [org=redhat-cop, board=testing, linkId=1234]\n" + 
-          "\n" + 
-          "== Closed Issues ==\n" + 
-          "Closed Issues/GH392748392/someoneelse/1 [org=redhat-cop, board=cert-utils-operator, linkId=35]\n"+
-          "";
-      Map<String,Object> script=new MapBuilder<String,Object>()
-          .put("name", "Github")
-          .put("source", "https://raw.githubusercontent.com/redhat-cop/ninja-points/v1.5/trello-stats.py -s ${LAST_RUN:yyyy-MM-dd} -o redhatcop")
-          .put("type", "python")
-          .build();
-      File scriptFolder=new File("target/test");
-      HeartbeatRunnable hbr=new HeartbeatRunnable(null);
-      Map<String, String> poolToUserIdMapper=hbr.getUsersByPool(db, ((String)script.get("name")).split("\\.")[0].toLowerCase()+"Id");;
-      hbr.allocatePoints(db, (InputStream)new ByteArrayInputStream(testScript.getBytes()), script, scriptFolder, poolToUserIdMapper);
-      
-//      new HeartbeatRunnable().levelUpChecks(Database2.get());
-    }catch(Exception e){
-      e.printStackTrace();
-    }
-  }
+//  public static void main(String[] asd){
+//    try{
+////      Heartbeat2.runOnceAsync();
+//      
+//      Database2 db=Database2.get(new File("target/database-test1.json"));
+//      String testScript="=== Statistics for GitHub Organization 'redhat-cop' ====\n" + 
+//          "\n" + 
+//          "== General PR's ==\n" + 
+//          "\n" + 
+//          "== Reviewed PR's ==\n" + 
+//          "\n" + 
+//          "Reviewed Pull Requests/GH1234567/fredbloggs/1 [org=redhat-cop, board=testing, linkId=1234]\n" + 
+//          "\n" + 
+//          "== Closed Issues ==\n" + 
+//          "Closed Issues/GH392748392/someoneelse/1 [org=redhat-cop, board=cert-utils-operator, linkId=35]\n"+
+//          "";
+//      Map<String,Object> script=new MapBuilder<String,Object>()
+//          .put("name", "Github")
+//          .put("source", "https://raw.githubusercontent.com/redhat-cop/ninja-points/v1.5/trello-stats.py -s ${LAST_RUN:yyyy-MM-dd} -o redhatcop")
+//          .put("type", "python")
+//          .build();
+//      File scriptFolder=new File("target/test");
+//      HeartbeatRunnable hbr=new HeartbeatRunnable(null);
+//      Map<String, String> poolToUserIdMapper=hbr.getUsersByPool(db, ((String)script.get("name")).split("\\.")[0].toLowerCase()+"Id");;
+//      hbr.allocatePoints(db, (InputStream)new ByteArrayInputStream(testScript.getBytes()), script, scriptFolder, poolToUserIdMapper);
+//      
+////      new HeartbeatRunnable().levelUpChecks(Database2.get());
+//    }catch(Exception e){
+//      e.printStackTrace();
+//    }
+//  }
   
   public static String convertLastRun(String command, Date lastRunDate) throws ParseException {
     Matcher m=Pattern.compile("(\\$\\{([^}]+)\\})").matcher(command);
@@ -210,7 +209,6 @@ public class Heartbeat2 {
     }
     
     public Map<String, String> getUsersByPool(Database2 db, String key){
-//      System.out.println("getting pool by id: "+key);
       Map<String, String> result=new HashMap<String, String>();
       for(Entry<String, Map<String, String>> e:db.getUsers().entrySet()){
         // support a default of your key id when no pool id is found
@@ -270,24 +268,18 @@ public class Heartbeat2 {
       return result;
     }
 
-//    public void getUsersFromRegistrationSheet(Config cfg){
-////    public Map<String, Map<String, String>> getUsersFromRegistrationSheet(Config cfg) throws IOException, InterruptedException{
-//    }
-    
     public boolean addOrUpdateRegisteredUsers(Database2 db, Config cfg){
       Map<String, Map<String, String>> dbUsers=db.getUsers();
       UserService userService=new UserService();
       boolean userServiceDown=false;
       try{
       	
-//        GoogleDrive2 drive=new GoogleDrive2();
       	GoogleDrive3 drive=new GoogleDrive3();
       	File file=drive.downloadFile(cfg.getOptions().get("googlesheets.registration.id"));
       	List<Map<String, String>> rows=drive.parseExcelDocument(file, new GoogleDrive3.HeaderRowFinder(){
             public int getHeaderRow(XSSFSheet s){
               return 0;
             }}, new SimpleDateFormat("yyyy/MM/dd"));
-//        List<Map<String, String>> rows=drive.parseExcelDocument(file);
         for(Map<String,String> r:rows){
           Map<String, String> userInfo=new HashMap<String, String>();
           for(Entry<String, String> c:r.entrySet()){
@@ -344,8 +336,6 @@ public class Heartbeat2 {
             String displayName=userInfo.containsKey("displayName")?userInfo.get("displayName"):userInfo.get("username");
             new ChatNotification().send(ChatEvent.onRegistration, "New User Registered: <https://mojo.redhat.com/people/"+userInfo.get("username")+"|"+displayName+">");
             
-//            }// /newUser
-          
             
           }else if (dbUsers.containsKey(userInfo.get("username"))){
             log.debug("User already registered: "+userInfo.get("username"));
@@ -420,7 +410,6 @@ public class Heartbeat2 {
         Matcher m=Pattern.compile("(\\+|\\-)(\\d+)(\\w+)").matcher(lastRun);
         if (m.find()){
           Long numberOfDays=Long.parseLong(m.group(2));
-//          TimeUnit unit=TimeUnit.valueOf(units.toUpperCase());
           ChronoUnit unit=ChronoUnit.valueOf(m.group(3).toUpperCase());
           lastRun2=java.sql.Date.valueOf(LocalDate.now().minus(numberOfDays, unit));
         }
@@ -439,38 +428,12 @@ public class Heartbeat2 {
       
       File scripts=new File("target/scripts");
       if (!scripts.exists()) scripts.mkdirs();
-      int i=0;
       for(Map<String,Object> script:config.getScripts()){
-        i+=1;
         final Map<String, String> poolToUserIdMapper=getUsersByPool(db, ((String)script.get("name")).split("\\.")[0].toLowerCase()+"Id");
         long start=System.currentTimeMillis();
         
         
-        if (Arrays.asList(new String[]{"java","class","javaclass"}).contains(((String)script.get("type")).toLowerCase())){
-//          log.info("Executing script: "+script.get("source"));
-          try{
-            
-            ScriptBase obj=(ScriptBase)Class.forName((String)script.get("source")).newInstance();
-            obj.execute((String)script.get("name"), (Map<String,String>)script.get("options"), daysFromLastRun, new PointsAdder(){
-              public void addPoints(String user, String pool, Integer increment, Map<String, String> params){
-                if (user!=null && pool!=null){
-                  try{
-                    String userId=poolToUserIdMapper.get(user);
-                    if (null!=userId){
-                      log.debug("addPoints:: Incrementing Points:: ["+pool+"/"+userId+"] = "+increment);
-                      db.increment(pool, userId, increment, params);
-                    }//else //its most likely an unregistered user
-                      
-                  }catch(Exception e){
-                    e.printStackTrace();
-                  }
-                }
-              }
-            });
-          }catch(Exception sinkSinceTheresNothingWeCanDo){
-            sinkSinceTheresNothingWeCanDo.printStackTrace();
-          }
-        }else if ("sh".equalsIgnoreCase((String)script.get("type"))
+        if ("sh".equalsIgnoreCase((String)script.get("type"))
                || "bash".equalsIgnoreCase((String)script.get("type"))
                || "python".equalsIgnoreCase((String)script.get("type"))
                || "script".equalsIgnoreCase((String)script.get("type"))
@@ -494,9 +457,6 @@ public class Heartbeat2 {
                 PosixFilePermission.GROUP_READ, 
                 PosixFilePermission.GROUP_WRITE, 
                 PosixFilePermission.GROUP_EXECUTE);
-            
-//            ${LAST_RUN:yyyy-MM-dd}
-//            System.setProperty("server", "http://localhost:8082/community-ninja-board");
             
             if (command.contains("${LAST_RUN") || command.contains("${DAYS_FROM_LAST_RUN")){
             	Date lastRun=FluentCalendar.get(lastRun2).add(Calendar.DAY_OF_MONTH, -1).build().getTime();
@@ -549,8 +509,7 @@ public class Heartbeat2 {
       } // end of scripts loop
       
       
-//      // do any users need levelling up?
-      levelUpChecks(db);
+      levelUpChecks(db); // aka. do any users need belt promotions/levelling-up?
       db.save();
       
       if (!((String)config.getValues().get("lastRun2")).startsWith("-")){
@@ -582,17 +541,17 @@ public class Heartbeat2 {
       if (!StringUtils.isEmpty(graphsProxyUrl)){
         String url=graphsProxyUrl+"/api/proxy";
         log.warn("graphsProxyUrl is null == "+(null==graphsProxyUrl));
-        log.warn("roxy configured at: "+url);
+        log.warn("graphsProxy configured at: "+url);
         ChartsController cc=new ChartsController();
         ManagementController mc=new ManagementController();
         for(String user:db.getUsers().keySet()){
           try{
             if (200!=Http.post(url+"/nextLevel_"+user, (String)cc.getUserNextLevel(user).getEntity()).responseCode)
-              log.error("Error pushing 'nextLevel' info for '"+user+"' to roxy");
+              log.error("Error pushing 'nextLevel' info for '"+user+"' to graphsProxy");
             if (200!=Http.post(url+"/summary_"+user, (String)mc.getScorecardSummary(user).getEntity()).responseCode)
-              log.error("Error pushing 'summary' info for '"+user+"' to roxy");
+              log.error("Error pushing 'summary' info for '"+user+"' to graphsProxy");
             if (200!=Http.post(url+"/breakdown_"+user, (String)mc.getUserBreakdown(user).getEntity()).responseCode)
-              log.error("Error pushing 'breakdown' info for '"+user+"' to roxy");
+              log.error("Error pushing 'breakdown' info for '"+user+"' to graphsProxy");
           }catch (IOException e){
             e.printStackTrace();
           }
@@ -602,7 +561,7 @@ public class Heartbeat2 {
         // add the top 10 to the graphs too so they're available externally
         try{
           if (200!=Http.post(url+"/leaderboard_10", (String)cc.getLeaderboard2(10).getEntity()).responseCode)
-            log.error("Error pushing 'leaderboard' info to proxy");
+            log.error("Error pushing 'leaderboard' info to graphsProxy");
         }catch (IOException e){
           e.printStackTrace();
         }
@@ -610,7 +569,7 @@ public class Heartbeat2 {
         // add the Ninjas to the graphs too so they're available externally
         try{
           if (200!=Http.post(url+"/ninjas", (String)cc.getNinjas().getEntity()).responseCode)
-            log.error("Error pushing 'ninjas' info to proxy");
+            log.error("Error pushing 'ninjas' info to graphsProxy");
         }catch (IOException e){
           e.printStackTrace();
         }

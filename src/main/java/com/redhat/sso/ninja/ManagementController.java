@@ -41,8 +41,8 @@ import org.codehaus.jackson.type.TypeReference;
 
 import com.google.common.base.Splitter;
 import com.redhat.sso.ninja.Database2.EVENT_FIELDS;
-import com.redhat.sso.ninja.chart.Chart2Json;
-import com.redhat.sso.ninja.chart.DataSet2;
+import com.redhat.sso.ninja.chart.ChartJson;
+import com.redhat.sso.ninja.chart.DataSet;
 import com.redhat.sso.ninja.utils.Http;
 import com.redhat.sso.ninja.utils.IOUtils2;
 import com.redhat.sso.ninja.utils.Json;
@@ -53,20 +53,21 @@ import com.redhat.sso.ninja.utils.MapBuilder;
 public class ManagementController {
   private static final Logger log=Logger.getLogger(ManagementController.class);
   
-  public static void main(String[] asd) throws JsonGenerationException, JsonMappingException, IOException, URISyntaxException{
-    System.out.println(java.sql.Date.valueOf(LocalDate.now()));
-    System.out.println(java.sql.Date.valueOf(LocalDate.now().minus(365, ChronoUnit.DAYS)));
-    System.out.println((1000 * 60 * 60 * 24));
-    System.out.println(TimeUnit.DAYS.toMillis(1));
-//    System.out.println(new ManagementController().toNextLevel("BLUE", 7).toString());
-    
-    new ManagementController().yearEnd(null,  null,  "FY20");
-  }
+//  public static void main(String[] asd) throws JsonGenerationException, JsonMappingException, IOException, URISyntaxException{
+//    System.out.println(java.sql.Date.valueOf(LocalDate.now()));
+//    System.out.println(java.sql.Date.valueOf(LocalDate.now().minus(365, ChronoUnit.DAYS)));
+//    System.out.println((1000 * 60 * 60 * 24));
+//    System.out.println(TimeUnit.DAYS.toMillis(1));
+////    System.out.println(new ManagementController().toNextLevel("BLUE", 7).toString());
+//    
+//    new ManagementController().yearEnd(null,  null,  "FY20");
+//  }
   
   public static boolean isLoginEnabled(){
     return "true".equalsIgnoreCase(Config.get().getOptions().get("login.enabled"));
   }
   
+  // common response created because post v79'ish of Chrome they introduced a SIGNED_EXCHANGE error without the following headers on every response
   private ResponseBuilder newResponse(int status){
     return Response.status(status)
      .header("Access-Control-Allow-Origin",  "*")
@@ -138,6 +139,8 @@ public class ManagementController {
     return defaultValue;
   }
   
+  
+  // support function api - it checks all users trello ids to see if they exist
   @GET
   @Path("/checkTrelloIDs")
   public Response checkTrelloIds(@Context HttpServletRequest request) throws JsonGenerationException, JsonMappingException, IOException, InterruptedException{
@@ -219,16 +222,16 @@ public class ManagementController {
     request.getSession().invalidate();
     return Response.status(302).location(new URI("../index.jsp")).build();
   }
+//  
+//  // This doenst work but would be a nice feature
+//  @GET
+//  @Path("/loglevel/{level}")
+//  public Response setLogLevel(@Context HttpServletRequest request,@Context HttpServletResponse response,@Context ServletContext servletContext, @PathParam("level") String level) throws JsonGenerationException, JsonMappingException, IOException{
+//    LogManager.getRootLogger().setLevel(org.apache.log4j.Level.toLevel(level));
+//    return Response.status(200).entity("{\"status\":\"DONE\", \"Message\":\"Changed Log level to: "+LogManager.getRootLogger().getLevel().toString()+"\"}").build();
+//  }
   
-  // This doenst work but would be a nice feature
-  @GET
-  @Path("/loglevel/{level}")
-  public Response setLogLevel(@Context HttpServletRequest request,@Context HttpServletResponse response,@Context ServletContext servletContext, @PathParam("level") String level) throws JsonGenerationException, JsonMappingException, IOException{
-    LogManager.getRootLogger().setLevel(org.apache.log4j.Level.toLevel(level));
-    return Response.status(200).entity("{\"status\":\"DONE\", \"Message\":\"Changed Log level to: "+LogManager.getRootLogger().getLevel().toString()+"\"}").build();
-  }
-  
-  // returns the config file contents (and yes, I shouldnt put the http method in the url, but that's a fix for later)
+  // returns the config file contents - used in admin UI & backup purposes
   @GET
   @Path("/config/get")
   public Response configGet(@Context HttpServletRequest request,@Context HttpServletResponse response,@Context ServletContext servletContext) throws JsonGenerationException, JsonMappingException, IOException{
@@ -268,6 +271,7 @@ public class ManagementController {
     return newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(Config.get())).build();
   }
 
+  // Runs the scripts immediately - critical feature for supporting the system
   @GET
   @Path("/scripts/runNow")
   public Response runScriptsNow(@Context HttpServletRequest request, @Context HttpServletResponse response, @Context ServletContext servletContext){
@@ -277,7 +281,8 @@ public class ManagementController {
     log.debug("Scripts run started - check logs for results");
     return newResponse(200).entity("RUNNING").build();
   }
-  
+
+  // Pushes the current database graph data to the external cache to be accessible by end users mojo dashboard - critical for support
   @GET
   @Path("/scripts/publishGraphs")
   public Response pushGraphDataOnly(@Context HttpServletRequest request, @Context HttpServletResponse response, @Context ServletContext servletContext){
@@ -287,72 +292,75 @@ public class ManagementController {
     return newResponse(200).entity("RUNNING").build();
   }
   
-  // manually (via rest) to register new users via a rest/json payload
-  @POST
-  @Path("/users/register")
-  public Response register(
-      @Context HttpServletRequest request 
-      ,@Context HttpServletResponse response
-      ,@Context ServletContext servletContext
-      ,String raw
-      ){
-    try{
-      log.debug("/register called");
-//      String raw=IOUtils.toString(request.getInputStream());
-      mjson.Json x=mjson.Json.read(raw);
-      
-      Database2 db=Database2.get();
-      for (mjson.Json user:x.asJsonList()){
-        String username=user.at("username").asString();
-        
-        if (db.getUsers().containsKey(username))
-          db.getUsers().remove(username); // remove so we can overwrite the user details
-        
-        Map<String, String> userInfo=new HashMap<String, String>();
-        for(Entry<String, Object> e:user.asMap().entrySet())
-          userInfo.put(e.getKey(), (String)e.getValue());
-        
-        userInfo.put("level", LevelsUtil.get().getBaseLevel().getRight());
-        userInfo.put("levelChanged", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));// nextLevel.getRight());
-        
-        db.getUsers().put(username, userInfo);
-        log.debug("New User Registered (via API): "+Json.newObjectMapper(true).writeValueAsString(userInfo));
-        db.getScoreCards().put(username, new HashMap<String, Integer>());
-        
-        db.addEvent("New User Registered (via API)", username, "");
-      }
-      
-      db.save();
-      return Response.status(200).entity("{\"status\":\"DONE\"}").build();
-    }catch(IOException e){
-      e.printStackTrace();
-      return Response.status(500).entity("{\"status\":\"ERROR\",\"message\":\""+e.getMessage()+"\"}").build();  
-    }
-    
-  }
+//  // manually (via rest) to register new users via a rest/json payload
+//  // this is how you current add users to the system
+//  // not used
+//  @POST
+//  @Path("/users/register")
+//  public Response register(
+//      @Context HttpServletRequest request 
+//      ,@Context HttpServletResponse response
+//      ,@Context ServletContext servletContext
+//      ,String raw
+//      ){
+//    try{
+//      log.debug("/register called");
+////      String raw=IOUtils.toString(request.getInputStream());
+//      mjson.Json x=mjson.Json.read(raw);
+//      
+//      Database2 db=Database2.get();
+//      for (mjson.Json user:x.asJsonList()){
+//        String username=user.at("username").asString();
+//        
+//        if (db.getUsers().containsKey(username))
+//          db.getUsers().remove(username); // remove so we can overwrite the user details
+//        
+//        Map<String, String> userInfo=new HashMap<String, String>();
+//        for(Entry<String, Object> e:user.asMap().entrySet())
+//          userInfo.put(e.getKey(), (String)e.getValue());
+//        
+//        userInfo.put("level", LevelsUtil.get().getBaseLevel().getRight());
+//        userInfo.put("levelChanged", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));// nextLevel.getRight());
+//        
+//        db.getUsers().put(username, userInfo);
+//        log.debug("New User Registered (via API): "+Json.newObjectMapper(true).writeValueAsString(userInfo));
+//        db.getScoreCards().put(username, new HashMap<String, Integer>());
+//        
+//        db.addEvent("New User Registered (via API)", username, "");
+//      }
+//      
+//      db.save();
+//      return Response.status(200).entity("{\"status\":\"DONE\"}").build();
+//    }catch(IOException e){
+//      e.printStackTrace();
+//      return Response.status(500).entity("{\"status\":\"ERROR\",\"message\":\""+e.getMessage()+"\"}").build();  
+//    }
+//  }
   
-  // manually (via rest) to increment the points for a specific user and pool id
-  @GET
-  @Path("/points/{user}/{pool}/{increment}")
-  public Response incrementPool(
-      @Context HttpServletRequest request 
-      ,@Context HttpServletResponse response
-      ,@Context ServletContext servletContext
-      ,@PathParam("user") String user
-      ,@PathParam("pool") String pool
-      ,@PathParam("increment") String increment
-      ){
-    try{
-      Database2 db=Database2.get();
-      db.increment(pool, user, Integer.valueOf(increment), null).save();
-      db.save();
-      return Response.status(200).entity("{\"status\":\"DONE\"}").build();
-    }catch(Exception e){
-      return Response.status(500).entity("{\"status\":\"ERROR\",\"message\":\""+e.getMessage()+"\"}").build();  
-    }
-  }
+//  // manually (via rest) to increment the points for a specific user and pool id
+//  // intended for external scripts to update points, however there would be no event logging so lets deprecate for now
+//  // not used
+//  @GET
+//  @Path("/points/{user}/{pool}/{increment}")
+//  public Response incrementPool(
+//      @Context HttpServletRequest request 
+//      ,@Context HttpServletResponse response
+//      ,@Context ServletContext servletContext
+//      ,@PathParam("user") String user
+//      ,@PathParam("pool") String pool
+//      ,@PathParam("increment") String increment
+//      ){
+//    try{
+//      Database2 db=Database2.get();
+//      db.increment(pool, user, Integer.valueOf(increment), null).save();
+//      db.save();
+//      return Response.status(200).entity("{\"status\":\"DONE\"}").build();
+//    }catch(Exception e){
+//      return Response.status(500).entity("{\"status\":\"ERROR\",\"message\":\""+e.getMessage()+"\"}").build();  
+//    }
+//  }
   
-  // returns the database content
+  // returns the database content - used in admin UI & backup purposes
   @GET
   @Path("/database/get")
   public Response getDatabase() throws JsonGenerationException, JsonMappingException, IOException{
@@ -377,7 +385,7 @@ public class ManagementController {
   }
 
   
-  // UI call (edit user) - returns the scorecard and userInfo data for be able to display and edit one specific user
+  // Admin UI call (to edit the user) - returns the scorecard and userInfo data for be able to display and edit one specific user
   @GET
   @Path("/scorecard/{user}")
   public Response getScorecard(@PathParam("user") String user) throws JsonGenerationException, JsonMappingException, IOException{
@@ -404,15 +412,15 @@ public class ManagementController {
   }
   
   
-  // UI call (user dashboard) - returns the payload to render a chart displaying the breakdown of how many points came from which pool (trello, github PR, github reviewed PR's etc..)
+  // User Dashboard UI call - returns the payload to render a chart displaying the breakdown of how many points came from which pool (trello, github PR, github reviewed PR's etc..)
   @GET
   @Path("/scorecard/breakdown/{user}")
   public Response getUserBreakdown(@PathParam("user") String user) throws JsonGenerationException, JsonMappingException, IOException{
     Database2 db=Database2.get();
     Map<String, Integer> scorecard=db.getScoreCards().get(user);
     
-    Chart2Json chart=new Chart2Json();
-    chart.getDatasets().add(new DataSet2());
+    ChartJson chart=new ChartJson();
+    chart.getDatasets().add(new DataSet());
     chart.getDatasets().get(0).setBorderWidth(1);
     if (null!=scorecard){
       for(Entry<String, Integer> s:scorecard.entrySet()){
@@ -426,7 +434,7 @@ public class ManagementController {
     return newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(chart)).build();
   }
   
-  // UI call (user dashboard) - returns user scorecard data to display the user dashboard
+  // User Dashboard UI call - returns user scorecard data to display the user dashboard (mojo)
   @GET
   @Path("/scorecard/summary/{user}")
   public Response getScorecardSummary(@PathParam("user") String user) throws JsonGenerationException, JsonMappingException, IOException{
@@ -465,7 +473,7 @@ public class ManagementController {
     return newResponse(200).entity(payload).build();
   }
 
-  // UI call (edit/update user) - updates an existing user with new values & points
+  // Admin UI call (edit/update user) - updates an existing user with new values & points
   @POST
   @Path("/scorecard/{user}")
   public Response saveScorecard(
@@ -508,10 +516,11 @@ public class ManagementController {
     return newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString("OK")).build();
   }
   
+  // Admin/Support UI call to display all events, user events or specific types of events
   @GET
   @Path("/events")
   public Response getEvents(@Context HttpServletRequest request) throws JsonGenerationException, JsonMappingException, IOException{
-    return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(getEvents(request.getParameter("user"), request.getParameter("event")))).build();
+    return newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(getEvents(request.getParameter("user"), request.getParameter("event")))).build();
   }
   public List<Map<String, String>> getAllEvents() throws JsonGenerationException, JsonMappingException, IOException{
     return getEvents(null, null);
@@ -531,7 +540,7 @@ public class ManagementController {
     return result;
   }
   
-  
+  // Admin/Support UI call to list all users and their scorecards
   @GET
   @Path("/scorecards")
   public Response getScorecards() throws JsonGenerationException, JsonMappingException, IOException{

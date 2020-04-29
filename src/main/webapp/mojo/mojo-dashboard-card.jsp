@@ -19,7 +19,9 @@
 	
 
 		<script>
-			var ctx = "https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs/api/proxy";
+			var ctx="https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs/api/proxy";
+			if (window.location.href.includes("localhost"))
+				ctx="http://localhost:8082/community-ninja-board/api/scorecard";
 			//var ctx = "http://localhost:8082/community-ninja-board/api/scorecard";
 			//var ctx = "${pageContext.request.contextPath}";
 		</script>
