@@ -3,7 +3,7 @@ package com.redhat.sso.ninja.chart;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DataSetLine2 {
+public class DataSetLine {
 //  private String fillColor; //ie "rgba(220,220,220,0.2)"
 //  private String strokeColor; //ie "rgba(220,220,220,1)"
   

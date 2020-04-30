@@ -24,8 +24,8 @@ import org.codehaus.jackson.map.JsonMappingException;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.gdata.util.common.base.Pair;
-import com.redhat.sso.ninja.chart.Chart2Json;
-import com.redhat.sso.ninja.chart.DataSet2;
+import com.redhat.sso.ninja.chart.ChartJson;
+import com.redhat.sso.ninja.chart.DataSet;
 import com.redhat.sso.ninja.utils.Json;
 import com.redhat.sso.ninja.utils.LevelsUtil;
 import com.redhat.sso.ninja.utils.MapBuilder;
@@ -33,6 +33,8 @@ import com.redhat.sso.ninja.utils.MapBuilder;
 @Path("/")
 public class ChartsController{
 	
+	
+	// Mojo UI: https://mojo.redhat.com/community/communities-at-red-hat/communities-of-practice-operations/giveback-ninja-program/ninja-wall/overview
   @GET
   @Path("/ninjas")
   public Response getNinjas() throws JsonGenerationException, JsonMappingException, IOException{
@@ -45,6 +47,7 @@ public class ChartsController{
         .build();
   }
   
+  // Mojo UI: "race to black belt" here: https://mojo.redhat.com/community/communities-at-red-hat/communities-of-practice-operations/giveback-ninja-program
   @GET
   @Path("/leaderboard/{max}")
   public Response getLeaderboard2(@PathParam("max") Integer max) throws JsonGenerationException, JsonMappingException, IOException{
@@ -64,7 +67,7 @@ public class ChartsController{
   	}
   	return t;
   }
-  public Chart2Json getParticipants(Integer max) throws JsonGenerationException, JsonMappingException, IOException{
+  public ChartJson getParticipants(Integer max) throws JsonGenerationException, JsonMappingException, IOException{
     Database2 db=Database2.get();
     Map<String, Map<String, Integer>> leaderboard=db.getLeaderboard();
     Map<String, Integer> totals=new HashMap<String, Integer>();
@@ -89,8 +92,8 @@ public class ChartsController{
       sortedTotals.put(e.getKey(), e.getValue());
     
     // Build Chart data structure
-    Chart2Json c=new Chart2Json();
-    c.setDatasets(new ArrayList<DataSet2>());
+    ChartJson c=new ChartJson();
+    c.setDatasets(new ArrayList<DataSet>());
     int count=0;
     for(Entry<String, Integer> e:sortedTotals.entrySet()){
       Map<String, String> userInfo=db.getUsers().get(e.getKey());
@@ -115,7 +118,7 @@ public class ChartsController{
       }
       c.getCustom2().add(Joiner.on(",").join(pastYearBadges));
       
-      if (c.getDatasets().size()<=0) c.getDatasets().add(new DataSet2());
+      if (c.getDatasets().size()<=0) c.getDatasets().add(new DataSet());
       c.getDatasets().get(0).getData().add(e.getValue());
       c.getDatasets().get(0).setBorderWidth(1);
       
@@ -132,13 +135,14 @@ public class ChartsController{
       c.getDatasets().get(0).getBorderColor().add(colors.get(userInfo.get("level").toUpperCase()).getSecond());
       
       count=count+1;
-      if (null!=max && count>=max) break; // hard maximum suppled as param
+      if (null!=max && count>=max) break; // hard maximum supplied as param
     }
     
     return c;
   }
   
   // UI call (user dashboard) - returns the payload to render a chart displaying the current points and points to the next level
+  // here: https://mojo.redhat.com/community/communities-at-red-hat/communities-of-practice-operations/giveback-ninja-program/dashboard/overview
   @GET
   @Path("/scorecard/nextlevel/{user}")
   public Response getUserNextLevel(@PathParam("user") String user) throws JsonGenerationException, JsonMappingException, IOException{
@@ -146,10 +150,10 @@ public class ChartsController{
     Database2 db=Database2.get();
     boolean userExists=db.getScoreCards().containsKey(user);
     
-    Chart2Json chart=new Chart2Json();
+    ChartJson chart=new ChartJson();
     chart.getLabels().add("Earned");
     chart.getLabels().add("To Next Level");
-    chart.getDatasets().add(new DataSet2());
+    chart.getDatasets().add(new DataSet());
     chart.getDatasets().get(0).setBorderWidth(1);
     
     if (userExists){

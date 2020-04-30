@@ -29,6 +29,11 @@
 			"name": "Gitlab.ServicesSupport",
 			"source": "https://raw.githubusercontent.com/matallen/ninja-points/master/gitlab-stats.py -s ${LAST_RUN:yyyy-MM-dd} -p Merges -o kmo-consulting-engagment-reports -m .+-template$",
 			"type": "python"
+		},
+		{
+			"name": "Github.SAP.Github",
+			"source": "https://raw.githubusercontent.com/redhat-cop/ninja-points/v1.6/github-stats.py -s ${LAST_RUN:yyyy-MM-dd} -o redhat-sap -m '^sap\\-(s4hana-deployment|rhsm|hostagent|hana-control|netweaver-control|hana-deployment|hana-hsr|monitoring)$'",
+			"type": "python"
 		}
 	],
 	"options": {
