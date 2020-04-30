@@ -162,6 +162,9 @@ $(document).ready(function() {
     			}
     			
     			document.getElementById("trelloCard").innerHTML=`<a href="https://trello.com/b/`+boardShortId+`?menu=filter&filter=member:`+trelloUsername+`">`+boardName+`</a>/`+data[key]['listName']+`/<a href="https://trello.com/c/`+cardShortId+`">`+data[key]['name']+`</a>`;
+    			document.getElementById("trelloCardLongId").innerHTML=data[key]['id'];
+    			document.getElementById("trelloCardShortId").innerHTML=cardShortId;
+    			
     			document.getElementById("trelloCardPointsExpected").innerHTML=pointsFromCardTitle;
     			document.getElementById("trelloCardMembers").innerHTML=members;
     			document.getElementById("trelloCardDateMovedToDone").innerHTML=(undefined!=dateMovedToDone?dateMovedToDone:"Never");
@@ -339,6 +342,8 @@ $(document).ready(function() {
 		    	<h3>Trello Card Information</h3>
 		    	<table border=1 style="width: 100%">
 		    		<tr><td class="title" style="width: 20%">Trello Card (Board/List/Card Title)</td><td><span id="trelloCard"></span></td></tr>
+		    		<tr><td class="title">Trello Long ID</td><td><span id="trelloCardLongId"></span></td></tr>
+		    		<tr><td class="title">Trello Short ID</td><td><span id="trelloCardShortId"></span></td></tr>
 		    		<tr><td class="title">Point Expected</td><td><span id="trelloCardPointsExpected"></span></td></tr>
 		    		<tr><td class="title">Members</td><td><span id="trelloCardMembers"></span></td></tr>
 		    		<tr><td class="title"><span title="Using Trello Activity logs, this is the date this card moved to (or passed) Done. It doesnt mean it's in the Done column now, it means it has been in the past">Date moved to Done</span></td><td><span id="trelloCardDateMovedToDone"></span></td></tr>
