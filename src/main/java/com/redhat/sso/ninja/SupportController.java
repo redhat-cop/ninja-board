@@ -33,28 +33,36 @@ import com.redhat.sso.ninja.utils.Json;
 import com.redhat.sso.ninja.utils.MapBuilder;
 import com.redhat.sso.ninja.utils.RegExHelper;
 
+/**
+ * Controller that provides features to triage support calls from end users
+ * @author mallen
+ */
 @Path("/support")
 public class SupportController {
   private static final Logger log=Logger.getLogger(SupportController.class);
   
-  public static void main(String[] asd) throws JsonGenerationException, JsonMappingException, IOException, ParseException, URISyntaxException{
-  	
-  	
-//  	System.out.println(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.getDefault()).parse("2019-09-17T20:11:17.091Z"));
-//  	if (true) System.exit(0);
-  	
-  	SupportController test=new SupportController(){
-  		public String getTrelloApiKey(){return "xxx";}
-  		public String getTrelloApiToken(){return "xxxx";}
-  	};
-  	
-  	
-//	test.trelloCard("mallen", "6ORZzITs", null, null);
-  	System.out.println(test.trelloCards("mallen", "redhatcop", "Done", 281));
-  	
-  }
+//  public static void main(String[] asd) throws JsonGenerationException, JsonMappingException, IOException, ParseException, URISyntaxException{
+//  	
+//  	
+////  	System.out.println(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.getDefault()).parse("2019-09-17T20:11:17.091Z"));
+////  	if (true) System.exit(0);
+//  	
+//  	SupportController test=new SupportController(){
+//  		public String getTrelloApiKey(){return "xxx";}
+//  		public String getTrelloApiToken(){return "xxxx";}
+//  	};
+//  	
+//  	
+////	test.trelloCard("mallen", "6ORZzITs", null, null);
+//  	System.out.println(test.trelloCards("mallen", "redhatcop", "Done", 281));
+//  	
+//  }
   
-  
+  /**
+   * Handy java client for accessing the trello api's we use
+   * 
+   * @author mallen
+   */
   class TrelloAPI{
   	private String key,token;
   	private String _organizationId;
@@ -249,19 +257,21 @@ public class SupportController {
   	}
   }
   
+  /** Representation of a Trello Activity, such as cards moved and when */
   class Activity{
   	private boolean isDone;
   	private String whenDone;
   	public Boolean isDone(){ return isDone; }
   	public String getWhenDone(){ return whenDone; }
-  	
   }
+  /** Representation of a Trello Board */
   class Board{
   	private String id;
   	private String name;
   	private String shortUrl;
   	
   }
+  /** Representation of a Trello Card*/
   class Card{
 //  	public Card(String id, String name, String shortLink){
 //  		this.id=id; this.name=name; this.shortLink=shortLink;
@@ -491,14 +501,6 @@ public class SupportController {
 			
 		}
 		
-	}
-	@GET
-	@Path("/logout")
-	public Response logout(@Context HttpServletRequest request,@Context HttpServletResponse response) throws JsonGenerationException, JsonMappingException, IOException, URISyntaxException{
-		log.info("/logout");
-		request.getSession().setAttribute("x-access-token", null);
-		request.getSession().invalidate();
-		return Response.status(302).location(new URI("../index.jsp")).build();
 	}
 	
 }

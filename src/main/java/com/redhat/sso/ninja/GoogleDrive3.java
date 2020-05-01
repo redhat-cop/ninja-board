@@ -38,7 +38,10 @@ import com.redhat.sso.ninja.utils.DownloadFile;
 import com.redhat.sso.ninja.utils.Json;
 import com.redhat.sso.ninja.utils.RegExHelper;
 
-
+/**
+ * Provides an API to download and parse (spreadsheets) from google drive, and manages the command line tools that provide this functionality (https://github.com/gdrive-org/gdrive) 
+ * @author mallen
+ */
 public class GoogleDrive3 {
   private static Logger log=Logger.getLogger(GoogleDrive3.class);
   
@@ -62,38 +65,33 @@ public class GoogleDrive3 {
     this.cacheExpiryInMs=cacheExpiryInMs;
   }
   
-//  private SimpleDateFormat dateFormatter;
-//	public void setDateFormatter(SimpleDateFormat dateFormatter){
-//		this.dateFormatter=dateFormatter;
-//	}
-  
   interface HeaderRowFinder{
   	public int getHeaderRow(XSSFSheet s);
   }
   
   enum DriverType{drive,gdrive}
   
-  public static void main(String[] args) throws Exception{
-  	String PortfolioDatabase="1aPR0_uNRJCVLT9c8mqfEpNvQ2FZBdcD9pL0u6mksu2U";
-  	String FeedbackResponsesTeamDrive="1cyVtpYUMW26JBoqbVJJTD79ay--6F7EMAllEVKesn1Q";
-  	
-  	
-  	// Test using odeke's drive (no team drive capability)
-//  	GoogleDrive3.initialise("/home/%s/drive_linux_odeke", DriverType.drive, "v0.3.9");
-  	
-  	// Test using gdrive (with team drive capability)
-  	GoogleDrive3.initialise("/home/%s/google_drive", DriverType.gdrive, "v2.1.1PreRelease");
-  	
-  	GoogleDrive3 gd=new GoogleDrive3();
-  	File file=gd.downloadFile(FeedbackResponsesTeamDrive);
-  	System.out.println("file exists="+(file!=null?file.exists():"Nope!"));
-  	List<Map<String, String>> test=gd.parseExcelDocument(file, new HeaderRowFinder(){
-			public int getHeaderRow(XSSFSheet s){
-				return 0;
-			}
-		}, new SimpleDateFormat("dd-MM-yyyy"));
-  	System.out.println(test);
-  }
+//  public static void main(String[] args) throws Exception{
+//  	String PortfolioDatabase="1aPR0_uNRJCVLT9c8mqfEpNvQ2FZBdcD9pL0u6mksu2U";
+//  	String FeedbackResponsesTeamDrive="1cyVtpYUMW26JBoqbVJJTD79ay--6F7EMAllEVKesn1Q";
+//  	
+//  	
+//  	// Test using odeke's drive (no team drive capability)
+////  	GoogleDrive3.initialise("/home/%s/drive_linux_odeke", DriverType.drive, "v0.3.9");
+//  	
+//  	// Test using gdrive (with team drive capability)
+//  	GoogleDrive3.initialise("/home/%s/google_drive", DriverType.gdrive, "v2.1.1PreRelease");
+//  	
+//  	GoogleDrive3 gd=new GoogleDrive3();
+//  	File file=gd.downloadFile(FeedbackResponsesTeamDrive);
+//  	System.out.println("file exists="+(file!=null?file.exists():"Nope!"));
+//  	List<Map<String, String>> test=gd.parseExcelDocument(file, new HeaderRowFinder(){
+//			public int getHeaderRow(XSSFSheet s){
+//				return 0;
+//			}
+//		}, new SimpleDateFormat("dd-MM-yyyy"));
+//  	System.out.println(test);
+//  }
   
   public static void initialise(String workingFolder, DriverType type, String version) {
   	try{
@@ -235,7 +233,6 @@ public class GoogleDrive3 {
     
     
     return null;
-    // System.out.println(exec.exitValue());
   }
   
   private static String getOS(){

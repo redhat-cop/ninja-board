@@ -34,19 +34,23 @@ import com.google.common.collect.Lists;
 import com.redhat.sso.ninja.utils.Json;
 import com.redhat.sso.ninja.utils.MapBuilder;
 
+/**
+ * Rest controller that exposes methods to export data from the system (events, scorecards etc..) in various formats (csv, json etc...)
+ * @author mallen
+ */
+
 @Path("/")
 public class ExportController{
-
   enum Format{
     csv,json,xls
   };
   
-  public static void main(String[] asd) throws IOException{
-    System.out.println(
-        new ExportController().exportScorecards(null, "xls").getEntity()
-//        new ExportController().exportEvents(null,  "csv").getEntity()
-    );
-  }
+//  public static void main(String[] asd) throws IOException{
+//    System.out.println(
+//        new ExportController().exportScorecards(null, "xls").getEntity()
+////        new ExportController().exportEvents(null,  "csv").getEntity()
+//    );
+//  }
   
   /* Comparator to order the header and fields of the exported data */
   class HeaderComparator implements Comparator<String>{
@@ -69,10 +73,10 @@ public class ExportController{
   }
   
   
+  // Admin UI: Used to export the list of events for support purposes
   @GET
   @Path("/events/export/{format}")
   public Response exportEvents(@Context HttpServletRequest request, @PathParam("format") String format) throws IOException{
-    
     List<Map<String, String>> data=new ManagementController().getAllEvents();
     
     Set<String> headerset=new HashSet<String>();
@@ -91,6 +95,7 @@ public class ExportController{
   }
   
   
+  // Admin UI: Used to export the list of user/scorecards support or reporting purposes
   @GET
   @Path("/scorecards/export/{format}")
   public Response exportScorecards(@Context HttpServletRequest request, @PathParam("format") String format) throws IOException{
