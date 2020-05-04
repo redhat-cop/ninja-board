@@ -7,7 +7,8 @@ import {
   NavItemSeparator,
   NavList,
   NavGroup,
-  NavVariants
+  NavVariants,
+  PageHeader
 } from "@patternfly/react-core";
 import { navBarLinks } from "../data/NavBarLinks";
 
@@ -39,9 +40,9 @@ class NavBar extends Component {
 
   render() {
     const { navBarLinks, activeGroup, activeItem } = this.state;
-    return (
+    const nav = (
       <Nav onSelect={this.onSelect} theme="dark">
-        <NavList>
+        <NavList variant={NavVariants.horizontal}>
           {navBarLinks.map(expandable => (
             <NavExpandable
               title={expandable.expandableName}
@@ -65,6 +66,9 @@ class NavBar extends Component {
           ))}
         </NavList>
       </Nav>
+    )
+    return (
+      <PageHeader topNav={nav} style={{ backgroundColor: 'rgb(21, 21, 21)' }} />
     );
   }
 }
