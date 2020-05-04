@@ -20,12 +20,21 @@ class NavBar extends Component {
       activeGroup: "grp-2",
       activeItem: "grp-2_itm-1"
     };
+
     this.onSelect = result => {
       this.setState({
         activeGroup: result.groupId,
         activeItem: result.itemId
       });
+      console.log(this.state);
     };
+  }
+
+  //TODO: need to implement a handler to both toggle and style a selected expandable. default behavior is just to toggle the expandable, but still white background
+  onExpandHandler = (groupId) => {
+    this.setState({
+      activeGroup: groupId
+    })
   }
 
   render() {
@@ -36,18 +45,18 @@ class NavBar extends Component {
           {navBarLinks.map(expandable => (
             <NavExpandable
               title={expandable.expandableName}
-              srText="not sure what this is yet"
+              srText={expandable.expandableName}
               groupId={expandable.groupId}
               isActive={activeGroup === expandable.groupId}
-              isExpanded
+              // onExpand={()=>this.onExpandHandler(expandable.groupId)}
             >
               {expandable.links.map(link => (
                 <NavItem
                   preventDefault
                   to={link.target}
-                  groupId="ninja"
-                  itemId={"ninja-" + link.id}
-                  isActive={activeItem === "ninja-" + link.id}
+                  groupId={expandable.groupId}
+                  itemId={expandable.groupId + '-' + link.linkName + '-' + link.id}
+                  isActive={activeItem === expandable.groupId + '-' + link.linkName + '-' + link.id}
                 >
                   {link.linkName}
                 </NavItem>
