@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { NavLink } from 'react-router-dom';
+import { NavLink } from "react-router-dom";
 import {
   Nav,
   NavExpandable,
@@ -11,6 +11,7 @@ import {
   PageHeader
 } from "@patternfly/react-core";
 import { navBarLinks } from "../data/NavBarLinks";
+import RedHatLogo from "../assets/media/logo.svg";
 
 class NavBar extends Component {
   constructor(props) {
@@ -31,17 +32,12 @@ class NavBar extends Component {
     };
   }
 
-  //TODO: need to implement a handler to both toggle and style a selected expandable. default behavior is just to toggle the expandable, but still white background
-  onExpandHandler = (groupId) => {
-    this.setState({
-      activeGroup: groupId
-    })
-  }
-
   render() {
     const { navBarLinks, activeGroup, activeItem } = this.state;
+    // NavList uses the map function twice to populate NavExpandables and NavItems; see src/data/NavBarLinks.js for content
+    //TODO: vertical alignment is off compared to the logo. verticalAlign CSS property doesn't seem to affect anything
     const nav = (
-      <Nav onSelect={this.onSelect} theme="dark">
+      <Nav style={{marginLeft: '20px', fontSize: '20px'}} onSelect={this.onSelect} theme="dark">
         <NavList variant={NavVariants.horizontal}>
           {navBarLinks.map(expandable => (
             <NavExpandable
@@ -49,7 +45,6 @@ class NavBar extends Component {
               srText={expandable.expandableName}
               groupId={expandable.groupId}
               isActive={activeGroup === expandable.groupId}
-              // onExpand={()=>this.onExpandHandler(expandable.groupId)}
             >
               {expandable.links.map(link => (
                 <NavItem
@@ -66,9 +61,18 @@ class NavBar extends Component {
           ))}
         </NavList>
       </Nav>
-    )
+    );
+
+    const logoProps = {
+      href: 'https://redhat.com',
+      onClick: () => console.log('clicked logo'),
+      target: '_blank'
+    };
+
+    const logo = <img style={{width: '150px', marginLeft: '20px'}} src={RedHatLogo} alt="Red Hat" />;
+
     return (
-      <PageHeader topNav={nav} style={{ backgroundColor: 'rgb(21, 21, 21)' }} />
+        <PageHeader logo={logo} logoProps={logoProps} topNav={nav} style={{ backgroundColor: 'rgb(21, 21, 21)' }} />
     );
   }
 }
