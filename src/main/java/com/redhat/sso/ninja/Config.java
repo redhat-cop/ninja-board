@@ -56,15 +56,6 @@ public class Config {
     }
   }
   
-  // Config options to be able to configure
-  // - cycle/zero points every X weeks (or would you want a rolling total?)
-  // - multiple pools per user
-  // - each pool much have a configurable way of pulling the info (groovy?)
-  // - each pool points must have a configurable way of calculating the multiple pool values into a consolidated perception of score
-  // - Heartbeat to pull data from last time it was run - must be persistent and survive server restarts
-  
-  
-  
   
   public Map<String,String> getOptions() {if (options==null) options=new HashMap<String, String>(); return options;}
   public List<Map<String,Object>> getScripts() {if (scripts==null) scripts=new ArrayList<Map<String, Object>>(); return scripts;}
@@ -106,37 +97,10 @@ public class Config {
           if (!Config.STORAGE.getParentFile().exists()) Config.STORAGE.getParentFile().mkdirs();
           // copy the default config over
           IOUtils.copy(Config.class.getClassLoader().getResourceAsStream(STORAGE.getName()), new FileOutputStream(STORAGE));
-          
         }
-//          instance=new Config();
-//        }else{
-          log.info("Config loading (location="+Config.STORAGE.getAbsolutePath()+", size="+Config.STORAGE.length()+")");
-          String toLoad=IOUtils2.toStringAndClose(new FileInputStream(Config.STORAGE));
-          instance=Json.newObjectMapper(true).readValue(new ByteArrayInputStream(toLoad.getBytes()), Config.class);
-//        }
-//        UserController uc=new UserController();
-//        GoogleAddressResolution gar=new CachedGoogleAddressResolution(false);
-//        boolean changed=false;
-//        for(Architect a:instance.getArchitects().values()){
-//          if (a.getHome()==null || a.getHome().length()<=0){
-//            changed=true;
-//            List<User> userList=uc.search("uid", a.getUid());
-//            if (userList.size()!=1) continue; // uncertain? dont do anything
-//            User user=userList.get(0);
-//            a.setName(user.getName());
-//            String country=instance.countryCodeToName.get(user.getCountry());
-//            if (country==null){
-//              System.err.println("Unknown country code ["+user.getCountry()+"]");
-//              continue;
-//            }
-//            Map<String, String> formattedAddress=gar.getFormattedAddress(country);
-//            a.setHome(formattedAddress.get("longitude")+","+formattedAddress.get("latitude"));
-//          }
-//        }
-//        if (changed){
-//          String str=Json.newObjectMapper(false).writeValueAsString(instance);
-//          IOUtils2.writeAndClose(str.getBytes(), new FileOutputStream(new File("config2.json")));
-//        }
+        log.info("Config loading (location="+Config.STORAGE.getAbsolutePath()+", size="+Config.STORAGE.length()+")");
+        String toLoad=IOUtils2.toStringAndClose(new FileInputStream(Config.STORAGE));
+        instance=Json.newObjectMapper(true).readValue(new ByteArrayInputStream(toLoad.getBytes()), Config.class);
         
       }catch(Exception e){
         e.printStackTrace();
@@ -152,8 +116,6 @@ public class Config {
   
   @JsonIgnore
   public String getNextTaskNum(){
-//  	Config cfg=Config.get();
-  	
   	if (!getValues().containsKey("lastTaskNum")){
   		getValues().put("lastTaskNum", 0);
   	}

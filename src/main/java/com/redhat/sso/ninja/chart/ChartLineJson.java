@@ -5,9 +5,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public class Chart2LineJson {
+public class ChartLineJson {
   private Set<String> labels=new LinkedHashSet<String>();
-  private List<DataSetLine2> datasets=new ArrayList<DataSetLine2>();
+  private List<DataSetLine> datasets=new ArrayList<DataSetLine>();
   
   public Set<String> getLabels() {
     return labels;
@@ -15,10 +15,10 @@ public class Chart2LineJson {
   public void setLabels(Set<String> labels) {
     this.labels=labels;
   }
-  public List<DataSetLine2> getDatasets() {
+  public List<DataSetLine> getDatasets() {
     return datasets;
   }
-  public void setDatasets(List<DataSetLine2> datasets) {
+  public void setDatasets(List<DataSetLine> datasets) {
     this.datasets=datasets;
   }
   

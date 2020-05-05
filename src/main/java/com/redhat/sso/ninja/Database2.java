@@ -59,9 +59,9 @@ public class Database2{
   		return "([Trello card: "+params.get("linkId")+"|https://trello.com/c/"+params.get("linkId")+"] / "+params.get("id")+")";
   	}else if (params.get("id").startsWith("GH")){
   		if (params.get("pool").toLowerCase().contains("pull")){
-  			return "([Github card: "+params.get("linkId")+"|https://github.com/"+params.get("org")+"/"+params.get("board")+"/pull/"+params.get("linkId")+"])";
+  			return "([Github card: "+params.get("linkId")+"|https://github.com/"+params.get("org")+"/"+params.get("board")+"/pull/"+params.get("linkId")+"] / "+params.get("id")+")";
   		}else{ // assume "issues"
-  			return "([Github card: "+params.get("linkId")+"|https://github.com/"+params.get("org")+"/"+params.get("board")+"/issues/"+params.get("linkId")+"])";
+  			return "([Github card: "+params.get("linkId")+"|https://github.com/"+params.get("org")+"/"+params.get("board")+"/issues/"+params.get("linkId")+"] / "+params.get("id")+")";
   		}
   	//}else if (params.get("id").startsWith("GL")){
   	//	return "([Gitlab card: "+params.get("linkId")+"|"+params.get("linkId")+"])";
@@ -91,10 +91,10 @@ public class Database2{
       scorecards.get(userId).put(poolId, scorecards.get(userId).get(poolId)+increment);
       
       if (params!=null && params.size()>1){ //because "id" is always added
-      	addEvent("Points Increment", userId, increment+" point"+(increment<=1?"":"s")+" added to "+poolId+"("+params.get("id")+") "+buildLink(params));
+      	addEvent("Points Increment", userId, increment+" point"+(increment<=1?"":"s")+" added to "+poolId+" "+buildLink(params));
       }else{
       	// no params & therefore no link
-      	addEvent("Points Increment", userId, increment+" point"+(increment<=1?"":"s")+" added to "+poolId+"("+params.get("id")+")");
+      	addEvent("Points Increment", userId, increment+" point"+(increment<=1?"":"s")+" added to "+poolId+"");
       }
       
     }else{

@@ -31,12 +31,13 @@ import com.google.common.base.Splitter;
 import com.redhat.sso.ninja.Database2.TASK_FIELDS;
 import com.redhat.sso.ninja.utils.Json;
 
+/**
+ * Task management isnt being used so we can shelve this
+ * @author mallen
+ */
 @Path("/")
 public class TasksController {
   private static final Logger log=Logger.getLogger(TasksController.class);
-  
-
-  
   
 	@POST
 	@Path("/tasks")
