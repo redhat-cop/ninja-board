@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 import NavBar from "./NavBar";
-import "../assets/css/admin.css"
+import "../assets/css/admin.css";
 
 // component that just returns a textarea and a button to save info.
 // pass in the appropriate API to set the correct data
@@ -21,9 +21,11 @@ class AdminConfigurable extends Component {
         <NavBar />
         <h1>{this.state.adminPage}</h1>
         <textarea class="admin-input"></textarea>
-        <button class="admin-submit" type="submit" name="save">
-          Save
-        </button>
+        <div class="admin-submit">
+          <button type="submit" name="save">
+            Save
+          </button>
+        </div>
       </Fragment>
     );
   }
