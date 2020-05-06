@@ -9,49 +9,57 @@ export const navBarLinks = [
     links: [
       {
         id: 1,
-        linkName: "Scorecards",
+        routeName: "Scorecards",
+        routePath: "scorecards",
         target:
           "https://community-ninja-board-ninja-board.int.open.paas.redhat.com/community-ninja-board/scorecards.jsp"
       },
       {
         id: 2,
-        linkName: "Leaderboard",
+        routeName: "Leaderboard",
+        routePath: "leaderboard",
         target:
           "https://community-ninja-board-ninja-board.int.open.paas.redhat.com/community-ninja-board/leaderboard.jsp"
       },
       {
         id: 3,
-        linkName: "Events",
+        routeName: "Events",
+        routePath: "events",
         target:
           "https://community-ninja-board-ninja-board.int.open.paas.redhat.com/community-ninja-board/events.jsp"
       },
       {
         id: 4,
-        linkName: "Tasks",
+        routeName: "Tasks",
+        routePath: "tasks",
         target:
           "https://community-ninja-board-ninja-board.int.open.paas.redhat.com/community-ninja-board/tasks.jsp"
       },
       {
         id: 5,
-        linkName: "Registration Form",
+        routeName: "Registration Form",
+        routePath: "registration-form",
         target:
           "https://docs.google.com/a/redhat.com/forms/d/e/1FAIpQLSdWGcCks2zKKnVoZFQz3CieLQDc1lsSex_Knwh_-eyRm0ZQTg/viewform"
       },
       {
         id: 6,
-        linkName: "Responses Spreadsheet",
+        routeName: "Responses Spreadsheet",
+        routePath: "responses-spreadsheets",
         target:
           "https://docs.google.com/spreadsheets/d/1E91hT_ZpySyvhnANxqZ7hcBSM2EEd9TqfQF-cavB8hQ"
       },
       {
         id: 7,
-        linkName: "Support - Trello Query",
+        routeName: "Support - Trello Query",
+        routePath: "support/trello-query",
         target:
           "https://community-ninja-board-ninja-board.int.open.paas.redhat.com/community-ninja-board/support-trello-card.jsp"
       },
       {
         id: 8,
-        linkName: "Support - Trello Reconciliation",
+        routeName: "Support - Trello Reconciliation",
+        routePath: "support/trello-reconciliation",
         target:
           "https://community-ninja-board-ninja-board.int.open.paas.redhat.com/community-ninja-board/support-trello-all.jsp"
       }
@@ -64,13 +72,15 @@ export const navBarLinks = [
     links: [
       {
         id: 1,
-        linkName: "Config (Here be dragons!)",
+        routeName: "Config",
+        routePath: "config",
         target:
           "https://community-ninja-board-ninja-board.int.open.paas.redhat.com/community-ninja-board/config.jsp"
       },
       {
         id: 2,
-        linkName: "Database (Here be dragons!)",
+        routeName: "Database",
+        routePath: "database",
         target:
           "https://community-ninja-board-ninja-board.int.open.paas.redhat.com/community-ninja-board/database.jsp"
       }
