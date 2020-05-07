@@ -1,13 +1,9 @@
-import React from 'react';
-import '@patternfly/react-core/dist/styles/base.css';
-import NavBar from './components/NavBar';
+import React from "react";
+import "@patternfly/react-core/dist/styles/base.css";
+import AppLayout from "./AppLayout";
 
 function App() {
-  return (
-
-    <NavBar />
-
-  );
+  return <AppLayout />;
 }
 
 export default App;

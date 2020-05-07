@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { NavLink } from "react-router-dom";
 import {
   Nav,
   NavExpandable,
@@ -7,11 +6,9 @@ import {
   NavItemSeparator,
   NavList,
   NavGroup,
-  NavVariants,
-  PageHeader
+  NavVariants
 } from "@patternfly/react-core";
 import { navBarLinks } from "../data/NavBarLinks";
-import RedHatLogo from "../assets/media/logo.svg";
 
 class NavBar extends Component {
   constructor(props) {
@@ -36,8 +33,13 @@ class NavBar extends Component {
     const { navBarLinks, activeGroup, activeItem } = this.state;
     // NavList uses the map function twice to populate NavExpandables and NavItems; see src/data/NavBarLinks.js for content
     //TODO: vertical alignment is off compared to the logo. verticalAlign CSS property doesn't seem to affect anything
-    const nav = (
-      <Nav style={{marginLeft: '20px', fontSize: '20px'}} onSelect={this.onSelect} theme="dark">
+    //TODO: Nav bar comes out of the page header when the window shrinks horizontally, and there is an obvious style change
+    return (
+      <Nav
+        style={{ marginLeft: "20px", fontSize: "20px" }}
+        onSelect={this.onSelect}
+
+      >
         <NavList variant={NavVariants.horizontal}>
           {navBarLinks.map(expandable => (
             <NavExpandable
@@ -51,8 +53,13 @@ class NavBar extends Component {
                   preventDefault
                   to={link.target}
                   groupId={expandable.groupId}
-                  itemId={expandable.groupId + '-' + link.linkName + '-' + link.id}
-                  isActive={activeItem === expandable.groupId + '-' + link.linkName + '-' + link.id}
+                  itemId={
+                    expandable.groupId + "-" + link.linkName + "-" + link.id
+                  }
+                  isActive={
+                    activeItem ===
+                    expandable.groupId + "-" + link.linkName + "-" + link.id
+                  }
                 >
                   {link.linkName}
                 </NavItem>
@@ -61,18 +68,6 @@ class NavBar extends Component {
           ))}
         </NavList>
       </Nav>
-    );
-
-    const logoProps = {
-      href: 'https://redhat.com',
-      onClick: () => console.log('clicked logo'),
-      target: '_blank'
-    };
-
-    const logo = <img style={{width: '150px', marginLeft: '20px'}} src={RedHatLogo} alt="Red Hat" />;
-
-    return (
-        <PageHeader logo={logo} logoProps={logoProps} topNav={nav} style={{ backgroundColor: 'rgb(21, 21, 21)' }} />
     );
   }
 }
