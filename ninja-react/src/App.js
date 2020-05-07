@@ -1,11 +1,11 @@
 import React from 'react';
 import '@patternfly/react-core/dist/styles/base.css';
-import NavBar from './components/NavBar';
+import AdminConfigurable from './components/AdminConfigurable';
 
 function App() {
   return (
 
-    <NavBar />
+    <AdminConfigurable adminPage="Config" />
 
   );
 }
