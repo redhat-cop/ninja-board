@@ -3,9 +3,7 @@ import {
   Nav,
   NavExpandable,
   NavItem,
-  NavItemSeparator,
   NavList,
-  NavGroup,
   NavVariants
 } from "@patternfly/react-core";
 import { navBarLinks } from "../data/NavBarLinks";

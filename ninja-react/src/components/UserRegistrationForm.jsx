@@ -1,54 +1,46 @@
-import React from 'react';
+import React from "react";
 import {
   Form,
   FormGroup,
   TextInput,
   TextArea,
-  FormSelect,
-  FormSelectOption,
-  Checkbox,
   ActionGroup,
-  Button,
-  Radio
-} from '@patternfly/react-core';
+  Button
+} from "@patternfly/react-core";
 
 export default class UserRegistrationForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: 'please choose',
-      value1: '',
-      value2: '',
-      value3: ''
+      name: "",
+      email: "",
+      trello: "",
+      github: "",
+      other: ""
     };
-    this.onChange = (value, event) => {
-      this.setState({ value });
+
+    this.handleInputChangeName = name => {
+      this.setState({ name });
     };
-    this.handleTextInputChange1 = value1 => {
-      this.setState({ value1 });
+    this.handleInputChangeEmail = email => {
+      this.setState({ email });
     };
-    this.handleTextInputChange2 = value2 => {
-      this.setState({ value2 });
+    this.handleInputChangeTrello = trello => {
+      this.setState({ trello });
     };
-    this.handleTextInputChange3 = value3 => {
-      this.setState({ value3 });
+    this.handleInputChangeGithub = github => {
+      this.setState({ github });
     };
-    this.options = [
-      { value: 'please choose', label: 'Please Choose', disabled: false },
-      { value: 'mr', label: 'Mr', disabled: false },
-      { value: 'miss', label: 'Miss', disabled: false },
-      { value: 'mrs', label: 'Mrs', disabled: false },
-      { value: 'ms', label: 'Ms', disabled: false },
-      { value: 'dr', label: 'Dr', disabled: false },
-      { value: 'other', label: 'Other', disabled: false }
-    ];
+    this.handleInputChangeOther = other => {
+      this.setState({ other });
+    };
   }
 
   render() {
-    const { value1, value2, value3 } = this.state;
+    const { name, email, trello, github, other } = this.state;
 
     return (
-      <Form isHorizontal>
+      <Form>
         <FormGroup
           label="Name"
           isRequired
@@ -56,51 +48,55 @@ export default class UserRegistrationForm extends React.Component {
           helperText="Please provide your full name"
         >
           <TextInput
-            value={value1}
+            value={name}
             isRequired
             type="text"
             id="horizontal-form-name"
             aria-describedby="horizontal-form-name-helper"
             name="horizontal-form-name"
-            onChange={this.handleTextInputChange1}
+            onChange={this.handleInputChangeName}
           />
         </FormGroup>
         <FormGroup label="Email" isRequired fieldId="horizontal-form-email">
           <TextInput
-            value={value2}
-            onChange={this.handleTextInputChange2}
+            value={email}
+            onChange={this.handleInputChangeEmail}
             isRequired
             type="email"
             id="horizontal-form-email"
             name="horizontal-form-email"
           />
         </FormGroup>
-        <FormGroup label="Your title" fieldId="horizontal-form-title">
-          <FormSelect
-            value={this.state.value}
-            onChange={this.onChange}
-            id="horzontal-form-title"
-            name="horizontal-form-title"
-            aria-label="Your title"
-          >
-            {this.options.map((option, index) => (
-              <FormSelectOption isDisabled={option.disabled} key={index} value={option.value} label={option.label} />
-            ))}
-          </FormSelect>
+        <FormGroup label="Trello" isRequired fieldId="horizontal-form-trello">
+          <TextInput
+            value={trello}
+            onChange={this.handleInputChangeTrello}
+            isRequired
+            type="text"
+            id="horizontal-form-trello"
+            name="horizontal-form-trello"
+          />
         </FormGroup>
-        <FormGroup label="Your experience" fieldId="horizontal-form-exp">
+        <FormGroup label="GitHub" isRequired fieldId="horizontal-form-github">
+          <TextInput
+            value={github}
+            onChange={this.handleInputChangeGithub}
+            isRequired
+            type="text"
+            id="horizontal-form-github"
+            name="horizontal-form-github"
+          />
+        </FormGroup>
+        <FormGroup
+          label="Please provide links to any other qualifying CoP Contributions that do not show up in GitHub or Trello"
+          fieldId="horizontal-form-exp"
+        >
           <TextArea
-            value={value3}
-            onChange={this.handleTextInputChange3}
+            value={other}
+            onChange={this.handleInputChangeOther}
             name="horizontal-form-exp"
             id="horizontal-form-exp"
           />
-        </FormGroup>
-        <FormGroup>
-          <Checkbox label="Follow up via email" id="alt-form-checkbox-1" name="alt-form-checkbox-1" />
-        </FormGroup>
-        <FormGroup>
-          <Checkbox label="Remember my password for 30 days" id="alt-form-checkbox-2" name="alt-form-checkbox-2" />
         </FormGroup>
         <ActionGroup>
           <Button variant="primary">Submit form</Button>
