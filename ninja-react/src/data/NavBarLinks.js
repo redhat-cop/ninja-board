@@ -10,58 +10,42 @@ export const navBarLinks = [
       {
         id: 1,
         routeName: "Scorecards",
-        routePath: "scorecards",
-        target:
-          "https://community-ninja-board-ninja-board.int.open.paas.redhat.com/community-ninja-board/scorecards.jsp"
+        routePath: "scorecards"
       },
       {
         id: 2,
         routeName: "Leaderboard",
-        routePath: "leaderboard",
-        target:
-          "https://community-ninja-board-ninja-board.int.open.paas.redhat.com/community-ninja-board/leaderboard.jsp"
+        routePath: "leaderboard"
       },
       {
         id: 3,
         routeName: "Events",
-        routePath: "events",
-        target:
-          "https://community-ninja-board-ninja-board.int.open.paas.redhat.com/community-ninja-board/events.jsp"
+        routePath: "events"
       },
       {
         id: 4,
         routeName: "Tasks",
-        routePath: "tasks",
-        target:
-          "https://community-ninja-board-ninja-board.int.open.paas.redhat.com/community-ninja-board/tasks.jsp"
+        routePath: "tasks"
       },
       {
         id: 5,
         routeName: "Registration Form",
-        routePath: "registration-form",
-        target:
-          "https://docs.google.com/a/redhat.com/forms/d/e/1FAIpQLSdWGcCks2zKKnVoZFQz3CieLQDc1lsSex_Knwh_-eyRm0ZQTg/viewform"
+        routePath: "registration-form"
       },
       {
         id: 6,
         routeName: "Responses Spreadsheet",
-        routePath: "responses-spreadsheets",
-        target:
-          "https://docs.google.com/spreadsheets/d/1E91hT_ZpySyvhnANxqZ7hcBSM2EEd9TqfQF-cavB8hQ"
+        routePath: "responses-spreadsheets"
       },
       {
         id: 7,
         routeName: "Support - Trello Query",
-        routePath: "support/trello-query",
-        target:
-          "https://community-ninja-board-ninja-board.int.open.paas.redhat.com/community-ninja-board/support-trello-card.jsp"
+        routePath: "support/trello-query"
       },
       {
         id: 8,
         routeName: "Support - Trello Reconciliation",
-        routePath: "support/trello-reconciliation",
-        target:
-          "https://community-ninja-board-ninja-board.int.open.paas.redhat.com/community-ninja-board/support-trello-all.jsp"
+        routePath: "support/trello-reconciliation"
       }
     ]
   },
@@ -73,16 +57,12 @@ export const navBarLinks = [
       {
         id: 1,
         routeName: "Config",
-        routePath: "config",
-        target:
-          "https://community-ninja-board-ninja-board.int.open.paas.redhat.com/community-ninja-board/config.jsp"
+        routePath: "config"
       },
       {
         id: 2,
         routeName: "Database",
-        routePath: "database",
-        target:
-          "https://community-ninja-board-ninja-board.int.open.paas.redhat.com/community-ninja-board/database.jsp"
+        routePath: "database"
       }
     ]
   }
