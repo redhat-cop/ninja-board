@@ -2,6 +2,9 @@ import React, { Component, Fragment } from "react";
 import { PageSection } from "@patternfly/react-core";
 import "../assets/css/admin.css";
 
+/**
+ * @author fostimus
+ */ 
 export default class AdminSection extends React.Component {
   render() {
     return (

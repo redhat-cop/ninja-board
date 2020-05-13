@@ -1,3 +1,7 @@
+/**
+ * @author fostimus
+ */ 
+
 //update the data here to make any content updates to the NavBar.
 //top level objects, currently only 2, are for the expandable portion of the NavBar.
 //the lower level objects under the "links" key are the actual links within that expandable.

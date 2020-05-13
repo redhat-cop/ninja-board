@@ -4,6 +4,9 @@ import FormSection from "./components/UserRegistrationForm";
 import AdminSection from "./components/AdminConfigurable";
 import HomeSection from "./components/Home";
 
+/**
+ * @author fostimus
+ */ 
 const AppRoutes = () => {
   return (
     <Fragment>

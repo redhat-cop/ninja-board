@@ -3,6 +3,10 @@ import { PageHeader, Page } from "@patternfly/react-core";
 import NavBar from "./components/NavBar";
 import RedHatLogo from "./assets/media/logo.svg";
 
+/**
+ * @author fostimus
+ */
+
 const AppLayout = ({ children }) => {
   const logoProps = {
     href: "https://redhat.com",
@@ -18,12 +22,12 @@ const AppLayout = ({ children }) => {
     />
   );
 
+// this Header construct is a PatternFly design
   const Header = (
     <PageHeader
       logo={logo}
       logoProps={logoProps}
       topNav={<NavBar />}
-      style={{ backgroundColor: "rgb(21, 21, 21)" }}
     />
   );
 
