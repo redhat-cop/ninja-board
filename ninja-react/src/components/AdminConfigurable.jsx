@@ -1,6 +1,5 @@
 import React, { Component, Fragment } from "react";
 import { PageSection } from "@patternfly/react-core";
-import NavBar from "./NavBar";
 import "../assets/css/admin.css";
 
 export default class AdminSection extends React.Component {
@@ -29,7 +28,6 @@ export class AdminConfigurable extends Component {
   render() {
     return (
       <Fragment>
-        <NavBar />
         <h1>{this.state.adminPage}</h1>
         <textarea class="admin-input"></textarea>
         <div class="admin-submit">

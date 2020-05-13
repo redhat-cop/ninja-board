@@ -59,7 +59,7 @@ class NavBar extends Component {
                     expandable.groupId + "-" + link.routeName + "-" + link.id
                   }
                 >
-                  <NavLink exact to={link.routePath}>
+                  <NavLink exact to={link.routePath} activeClassName="pf-m-current">
                     {link.routeName}
                   </NavLink>
                 </NavItem>
