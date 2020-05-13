@@ -48,8 +48,6 @@ class NavBar extends Component {
             >
               {expandable.links.map(link => (
                 <NavItem
-                  preventDefault
-                  to={link.target}
                   groupId={expandable.groupId}
                   itemId={
                     expandable.groupId + "-" + link.routeName + "-" + link.id
@@ -59,7 +57,7 @@ class NavBar extends Component {
                     expandable.groupId + "-" + link.routeName + "-" + link.id
                   }
                 >
-                  <NavLink exact to={link.routePath} activeClassName="pf-m-current">
+                  <NavLink exact to={link.routePath} >
                     {link.routeName}
                   </NavLink>
                 </NavItem>

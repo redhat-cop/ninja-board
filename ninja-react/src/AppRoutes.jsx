@@ -12,7 +12,10 @@ const AppRoutes = () => {
           <FormSection />
         </Route>
         <Route path="/config">
-          <AdminSection />
+          <AdminSection adminPage="Config" />
+        </Route>
+        <Route path="/database">
+          <AdminSection adminPage="Database" />
         </Route>
         <Route exact path="/">
           <HomeSection />
