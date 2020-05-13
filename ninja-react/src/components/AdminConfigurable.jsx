@@ -1,11 +1,22 @@
 import React, { Component, Fragment } from "react";
+import { PageSection } from "@patternfly/react-core";
 import NavBar from "./NavBar";
 import "../assets/css/admin.css";
+
+export default class AdminSection extends React.Component {
+  render() {
+    return (
+      <PageSection>
+        <AdminConfigurable adminPage={this.props.adminPage} />
+      </PageSection>
+    )
+  }
+}
 
 // component that just returns a textarea and a button to save info.
 // pass in the appropriate API to set the correct data
 // TODO: implement the above via API call to new quarkus app
-class AdminConfigurable extends Component {
+export class AdminConfigurable extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -30,5 +41,3 @@ class AdminConfigurable extends Component {
     );
   }
 }
-
-export default AdminConfigurable;

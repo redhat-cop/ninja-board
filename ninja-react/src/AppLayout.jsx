@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { PageHeader, PageSection, Page } from "@patternfly/react-core";
+import { PageHeader, Page } from "@patternfly/react-core";
 import NavBar from "./components/NavBar";
-import UserRegistrationForm from "./components/UserRegistrationForm";
+import FormSection from "./components/UserRegistrationForm";
 import RedHatLogo from "./assets/media/logo.svg";
 
 class AppLayout extends Component {
@@ -31,9 +31,7 @@ class AppLayout extends Component {
 
     return (
       <Page mainContainerId="primary-app-container" header={Header}>
-        <PageSection>
-          <UserRegistrationForm />
-        </PageSection>
+        <FormSection />
       </Page>
     );
   }

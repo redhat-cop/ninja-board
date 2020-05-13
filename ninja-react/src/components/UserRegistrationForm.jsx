@@ -1,4 +1,5 @@
 import React from "react";
+import { PageSection } from "@patternfly/react-core";
 import {
   Form,
   FormGroup,
@@ -8,7 +9,17 @@ import {
   Button
 } from "@patternfly/react-core";
 
-export default class UserRegistrationForm extends React.Component {
+export default class FormSection extends React.Component {
+  render() {
+    return (
+      <PageSection>
+        <UserRegistrationForm />
+      </PageSection>
+    )
+  }
+}
+
+export class UserRegistrationForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

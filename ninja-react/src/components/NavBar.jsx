@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { NavLink } from "react-router-dom";
 import {
   Nav,
   NavExpandable,
@@ -36,7 +37,6 @@ class NavBar extends Component {
       <Nav
         style={{ marginLeft: "20px", fontSize: "20px" }}
         onSelect={this.onSelect}
-
       >
         <NavList variant={NavVariants.horizontal}>
           {navBarLinks.map(expandable => (
@@ -52,14 +52,16 @@ class NavBar extends Component {
                   to={link.target}
                   groupId={expandable.groupId}
                   itemId={
-                    expandable.groupId + "-" + link.linkName + "-" + link.id
+                    expandable.groupId + "-" + link.routeName + "-" + link.id
                   }
                   isActive={
                     activeItem ===
-                    expandable.groupId + "-" + link.linkName + "-" + link.id
+                    expandable.groupId + "-" + link.routeName + "-" + link.id
                   }
                 >
-                  {link.linkName}
+                  <NavLink exact to={link.routePath}>
+                    {link.routeName}
+                  </NavLink>
                 </NavItem>
               ))}
             </NavExpandable>
