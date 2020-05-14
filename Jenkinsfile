@@ -5,7 +5,7 @@ openshift.withCluster() {
   env.NAMESPACE = openshift.project()
 }
 
-ipeline {
+pipeline {
   agent {
     label 'maven'
   }
