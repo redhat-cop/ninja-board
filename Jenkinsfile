@@ -9,17 +9,17 @@ pipeline {
   agent {
     label 'maven'
   }
-  
+
   stages {
     stage ('Fetch Source Code') {
       steps {
           git url: "${SOURCE_REPOSITORY_URL}", branch: "${SOURCE_REPOSITORY_REF}"
       }
     }
-    
+
     stage('Build Application'){
       steps {
-        sh "mvn clean install -DskipTests=true"   
+        sh "mvn clean install -DskipTests=true"
       }
     }
 
@@ -28,10 +28,10 @@ pipeline {
         sh """
         rm -rf oc-build && mkdir -p oc-build/deployments
         cp -v target/*.war oc-build/deployments/
-        """   
+        """
         script {
           openshift.withCluster() {
-            openshift.withProject() {
+            openshift.withProject("${DEV_NAMESPACE}") {
               openshift.selector("bc", "${APPLICATION_NAME}").startBuild("--from-dir=oc-build").logs("-f")
             }
           }
@@ -39,7 +39,7 @@ pipeline {
 
       }
     }
-    
+
     stage ('Verify Deployment to Dev') {
       steps {
         rollout([projectName: "${DEV_NAMESPACE}", resourceKindAndName: "dc/${APPLICATION_NAME}", latest: false])
@@ -48,6 +48,9 @@ pipeline {
 
     stage ('Promote to Prod') {
       agent none
+      when {
+        expression{ "${SOURCE_REPOSITORY_REF}" == 'master'}
+      }
       steps {
         script {
           input message: "Promote Ninja Board to Prod?"
@@ -56,6 +59,9 @@ pipeline {
     }
 
     stage ('Tag Image to Prod'){
+      when {
+        expression{ "${SOURCE_REPOSITORY_REF}" == 'master'}
+      }
       steps {
         script {
           openshift.withCluster() {
@@ -69,9 +75,12 @@ pipeline {
     }
 
     stage ('Verify Deployment to Prod') {
+      when {
+        expression{ "${SOURCE_REPOSITORY_REF}" == 'master'}
+      }
       steps {
         rollout([projectName: "${PROD_NAMESPACE}", resourceKindAndName: "dc/${APPLICATION_NAME}", latest: false])
       }
     }
-  } 
+  }
 }
