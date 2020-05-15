@@ -19,6 +19,7 @@ public class DataSet {
   public void setLabel(String label) {
     this.label = label;
   }
+
   public String getFillColor() {
     return fillColor;
   }
@@ -31,6 +32,7 @@ public class DataSet {
   public void setStrokeColor(String strokeColor) {
     this.strokeColor=strokeColor;
   }
+
   public List<Integer> getData() {
     if (data==null) data=new ArrayList<Integer>();
     return data;

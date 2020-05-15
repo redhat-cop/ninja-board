@@ -222,6 +222,14 @@ public class ManagementController {
     request.getSession().invalidate();
     return Response.status(302).location(new URI("../index.jsp")).build();
   }
+//  
+//  // This doenst work but would be a nice feature
+//  @GET
+//  @Path("/loglevel/{level}")
+//  public Response setLogLevel(@Context HttpServletRequest request,@Context HttpServletResponse response,@Context ServletContext servletContext, @PathParam("level") String level) throws JsonGenerationException, JsonMappingException, IOException{
+//    LogManager.getRootLogger().setLevel(org.apache.log4j.Level.toLevel(level));
+//    return Response.status(200).entity("{\"status\":\"DONE\", \"Message\":\"Changed Log level to: "+LogManager.getRootLogger().getLevel().toString()+"\"}").build();
+//  }
   
   // returns the config file contents - used in admin UI & backup purposes
   @GET
