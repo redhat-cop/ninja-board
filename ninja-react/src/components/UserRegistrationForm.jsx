@@ -8,17 +8,19 @@ import {
   ActionGroup,
   Button
 } from "@patternfly/react-core";
+import axios from "axios";
 
 /**
  * @author fostimus
- */ 
+ */
+
 export default class FormSection extends React.Component {
   render() {
     return (
       <PageSection>
         <UserRegistrationForm />
       </PageSection>
-    )
+    );
   }
 }
 
@@ -26,15 +28,19 @@ export class UserRegistrationForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: "",
+      displyName: "",
+      username: "",
       email: "",
       trello: "",
       github: "",
       other: ""
     };
 
-    this.handleInputChangeName = name => {
-      this.setState({ name });
+    this.handleInputChangeDisplayName = displayName => {
+      this.setState({ displayName });
+    };
+    this.handleInputChangeUsername = username => {
+      this.setState({ username });
     };
     this.handleInputChangeEmail = email => {
       this.setState({ email });
@@ -50,25 +56,62 @@ export class UserRegistrationForm extends React.Component {
     };
   }
 
+  handleSubmit = event => {
+    event.preventDefault();
+
+    const user = {
+      displyName: this.state.displayName,
+      username: this.state.username,
+      email: this.state.email,
+      trelloUsername: this.state.trello,
+      githubUsername: this.state.github
+    };
+
+    // update this with Quarkus app url
+    // TODO: config this.
+    axios
+      .post(`https://jsonplaceholder.typicode.com/users`, { user })
+      .then(res => {
+        console.log(res);
+        console.log(res.data);
+      });
+  };
+
   render() {
-    const { name, email, trello, github, other } = this.state;
+    const { displayName, username, email, trello, github, other } = this.state;
 
     return (
       <Form>
         <FormGroup
-          label="Name"
+          label="Display Name"
           isRequired
           fieldId="horizontal-form-name"
           helperText="Please provide your full name"
         >
           <TextInput
-            value={name}
+            value={displayName}
             isRequired
             type="text"
-            id="horizontal-form-name"
-            aria-describedby="horizontal-form-name-helper"
-            name="horizontal-form-name"
-            onChange={this.handleInputChangeName}
+            id="horizontal-form-display-name"
+            aria-describedby="horizontal-form-display-name-helper"
+            name="horizontal-form-display-name"
+            onChange={this.handleInputChangeDisplayName}
+          />
+        </FormGroup>
+        <FormGroup
+          label="Username"
+          isRequired
+          fieldId="horizontal-form-username"
+          helperText="User your Kerberos ID"
+        >
+          <TextInput
+            value={username}
+            isRequired
+            type="text"
+            id="horizontal-form-username"
+            aria-describedby="horizontal-form-username-helper"
+            name="horizontal-form-username"
+            onChange={this.handleInputChangeUsername}
           />
         </FormGroup>
         <FormGroup label="Email" isRequired fieldId="horizontal-form-email">
