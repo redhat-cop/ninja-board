@@ -6,23 +6,15 @@ import HomeSection from "./components/Home";
 
 /**
  * @author fostimus
- */ 
+ */
 const AppRoutes = () => {
   return (
     <Fragment>
       <Switch>
-        <Route path="/registration-form">
-          <FormSection />
-        </Route>
-        <Route path="/config">
-          <AdminSection adminPage="Config" />
-        </Route>
-        <Route path="/database">
-          <AdminSection adminPage="Database" />
-        </Route>
-        <Route exact path="/">
-          <HomeSection />
-        </Route>
+        <Route key="user-registration-page" path="/registration-form" render={() => <FormSection />} />
+        <Route key="config-page" path="/config" render={() => <AdminSection adminPage="Config" />} />
+        <Route key="database-page" path="/database" render={() => <AdminSection adminPage="Database" />} />
+        <Route key="home-page" exact path="/" render={() => <HomeSection />} />
       </Switch>
     </Fragment>
   );
