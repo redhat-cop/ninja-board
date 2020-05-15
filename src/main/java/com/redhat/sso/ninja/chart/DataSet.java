@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DataSet {
-//  private String fillColor; //ie "rgba(220,220,220,0.2)"
-//  private String strokeColor; //ie "rgba(220,220,220,1)"
+  private String fillColor; //ie "rgba(220,220,220,0.2)"
+  private String strokeColor; //ie "rgba(220,220,220,1)"
   
   private List<Integer> data;
   private Integer borderWidth;
@@ -19,18 +19,18 @@ public class DataSet {
   public void setLabel(String label) {
     this.label = label;
   }
-  //  public String getFillColor() {
-//    return fillColor;
-//  }
-//  public void setFillColor(String fillColor) {
-//    this.fillColor=fillColor;
-//  }
-//  public String getStrokeColor() {
-//    return strokeColor;
-//  }
-//  public void setStrokeColor(String strokeColor) {
-//    this.strokeColor=strokeColor;
-//  }
+  public String getFillColor() {
+    return fillColor;
+  }
+  public void setFillColor(String fillColor) {
+    this.fillColor=fillColor;
+  }
+  public String getStrokeColor() {
+    return strokeColor;
+  }
+  public void setStrokeColor(String strokeColor) {
+    this.strokeColor=strokeColor;
+  }
   public List<Integer> getData() {
     if (data==null) data=new ArrayList<Integer>();
     return data;
