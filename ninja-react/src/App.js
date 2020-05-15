@@ -1,13 +1,10 @@
-import React from 'react';
-import '@patternfly/react-core/dist/styles/base.css';
-import AdminConfigurable from './components/AdminConfigurable';
+import React from "react";
+import "@patternfly/react-core/dist/styles/base.css";
+import AppLayout from "./AppLayout";
 
 function App() {
-  return (
+  return <AppLayout />;
 
-    <AdminConfigurable adminPage="Config" />
-
-  );
 }
 
 export default App;
