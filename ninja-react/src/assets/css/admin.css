@@ -1,0 +1,17 @@
+html, body, #root {
+  height: 100%;
+}
+.admin-input {
+  width: 99%;
+  height: 75%;
+  margin-left: 7px;
+}
+.admin-submit {
+  text-align: center;
+}
+h1 {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 10px 0 10px 0;
+}
