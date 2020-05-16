@@ -642,7 +642,11 @@ public class Heartbeat2 {
     			}
     		}
     		
-    		if (s.contains("/")){ // ignore the line if it doesn't contain a slash
+    		if (s.startsWith("#")){ // Informational lines only, some may need to be added to event logging as reasons points were not awarded
+    			
+    			
+    			
+    		}else if (s.contains("/")){ // ignore the line if it doesn't contain a slash
     			String[] split=s.split("/");
     			
     			// take the last section of the script name as the pool id. so "trello" stays as "trello", but "trello.thoughtleadership" becomes "thoughtleadership" where the "trello" part is the source type/context
