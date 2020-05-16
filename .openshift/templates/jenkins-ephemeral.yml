@@ -22,12 +22,7 @@ metadata:
     openshift.io/provider-display-name: Red Hat, Inc.
     openshift.io/support-url: https://access.redhat.com
     tags: instant-app,jenkins
-  creationTimestamp: 2020-01-10T21:32:10Z
   name: jenkins-ephemeral
-  namespace: openshift
-  resourceVersion: "2355"
-  selfLink: /apis/template.openshift.io/v1/namespaces/openshift/templates/jenkins-ephemeral
-  uid: a884d3b4-33f0-11ea-a88e-fa163eff47a8
 objects:
 - apiVersion: v1
   kind: Route

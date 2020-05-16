@@ -31,8 +31,8 @@ pipeline {
         """
         script {
           openshift.withCluster() {
-            openshift.withProject("${DEV_NAMESPACE}") {
-              openshift.selector("bc", "${APPLICATION_NAME}").startBuild("--from-dir=oc-build").logs("-f")
+            openshift.withProject("${env.DEV_NAMESPACE}") {
+              openshift.selector("bc", "${APPLICATION_NAME}").startBuild("--from-dir=oc-build", "--wait").logs("-f")
             }
           }
         }
@@ -65,7 +65,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.withProject() {
+            openshift.withProject("${env.DEV_NAMESPACE}") {
               echo "Promoting via tag from ${DEV_NAMESPACE} to ${PROD_NAMESPACE}/${APPLICATION_NAME}"
               tagImage(sourceImagePath: "${DEV_NAMESPACE}", sourceImageName: "${APPLICATION_NAME}", toImagePath: "${PROD_NAMESPACE}", toImageName: "${APPLICATION_NAME}", toImageTag: "latest")
             }

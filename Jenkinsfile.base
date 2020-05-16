@@ -13,8 +13,8 @@ pipeline {
           steps {
             script {
               openshift.withCluster() {
-                openshift.withProject("${DEV_NAMESPACE}") {
-                  openshift.selector("bc", "${APPLICATION_NAME}").startBuild().logs("-f")
+                openshift.withProject("${env.DEV_NAMESPACE}") {
+                  openshift.selector("bc", "${APPLICATION_NAME}").startBuild("--wait=true").logs("-f")
                 }
               }
             }
