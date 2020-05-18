@@ -28,12 +28,12 @@ export class UserRegistrationForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      displyName: "",
-      username: "",
-      email: "",
-      trello: "",
-      github: "",
-      other: ""
+      displayName: '',
+      username: '',
+      email: '',
+      trello: '',
+      github: '',
+      other: ''
     };
 
     this.handleInputChangeDisplayName = displayName => {
@@ -85,7 +85,7 @@ export class UserRegistrationForm extends React.Component {
         <FormGroup
           label="Display Name"
           isRequired
-          fieldId="horizontal-form-name"
+          fieldId="horizontal-form-display-name"
           helperText="Please provide your full name"
         >
           <TextInput
