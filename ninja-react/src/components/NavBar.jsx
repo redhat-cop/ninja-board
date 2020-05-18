@@ -11,7 +11,7 @@ import { navBarLinks } from "../data/NavBarLinks";
 
 /**
  * @author fostimus
- */ 
+ */
 class NavBar extends Component {
   constructor(props) {
     super(props);

@@ -4,7 +4,7 @@ import "../assets/css/admin.css";
 
 /**
  * @author fostimus
- */ 
+ */
 export default class AdminSection extends React.Component {
   render() {
     return (
