@@ -44,6 +44,7 @@ class NavBar extends Component {
         <NavList variant={NavVariants.horizontal}>
           {navBarLinks.map(expandable => (
             <NavExpandable
+              key={expandable.groupId}
               title={expandable.expandableName}
               srText={expandable.expandableName}
               groupId={expandable.groupId}
@@ -51,6 +52,9 @@ class NavBar extends Component {
             >
               {expandable.links.map(link => (
                 <NavItem
+                  key={
+                    expandable.groupId + "-" + link.routeName + "-" + link.id
+                  }
                   groupId={expandable.groupId}
                   itemId={
                     expandable.groupId + "-" + link.routeName + "-" + link.id
