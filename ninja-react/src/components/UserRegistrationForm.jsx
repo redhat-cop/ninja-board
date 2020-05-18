@@ -54,6 +54,16 @@ export class UserRegistrationForm extends React.Component {
     this.handleInputChangeOther = other => {
       this.setState({ other });
     };
+    this.clearForm = () => {
+      this.setState({
+        displayName: '',
+        username: '',
+        email: '',
+        trello: '',
+        github: '',
+        other: ''
+      })
+    }
   }
 
   handleSubmit = event => {
@@ -67,14 +77,15 @@ export class UserRegistrationForm extends React.Component {
       githubUsername: this.state.github
     };
 
+    console.log(user);
+
     // update this with Quarkus app url
     // TODO: config this.
-    axios
-      .post(`https://jsonplaceholder.typicode.com/users`, { user })
-      .then(res => {
-        console.log(res);
-        console.log(res.data);
-      });
+    axios.post(`http://localhost:8080`, { user }).then(res => {
+      console.log(res);
+      console.log(res.data);
+    });
+
   };
 
   render() {
@@ -156,8 +167,12 @@ export class UserRegistrationForm extends React.Component {
           />
         </FormGroup>
         <ActionGroup>
-          <Button variant="primary">Submit form</Button>
-          <Button variant="secondary">Cancel</Button>
+          <Button onClick={this.handleSubmit} type='submit' variant="primary">
+            Submit Form
+          </Button>
+          <Button onClick={this.clearForm} type="reset" variant="secondary">
+            Cancel
+          </Button>
         </ActionGroup>
       </Form>
     );

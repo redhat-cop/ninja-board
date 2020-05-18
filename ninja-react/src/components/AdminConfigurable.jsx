@@ -32,8 +32,8 @@ export class AdminConfigurable extends Component {
     return (
       <Fragment>
         <h1>{this.state.adminPage}</h1>
-        <textarea class="admin-input"></textarea>
-        <div class="admin-submit">
+        <textarea className="admin-input"></textarea>
+        <div className="admin-submit">
           <button type="submit" name="save">
             Save
           </button>
