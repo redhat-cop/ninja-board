@@ -9,6 +9,7 @@ import {
   Button
 } from "@patternfly/react-core";
 import axios from "axios";
+import { redHatEmailRegex, usernameRegex } from "../data/Validation";
 
 /**
  * @author fostimus
@@ -27,66 +28,159 @@ export default class FormSection extends React.Component {
 export class UserRegistrationForm extends React.Component {
   constructor(props) {
     super(props);
+
+    //TODO: use redux or find a different way to manage state better
     this.state = {
-      displayName: '',
-      username: '',
-      email: '',
-      trello: '',
-      github: '',
-      other: ''
+      displayName: "",
+      username: {
+        value: "",
+        invalidText: "",
+        helperText: "",
+        isValid: true,
+        validated: "default"
+      },
+      email: {
+        value: "",
+        invalidText: "",
+        helperText: "",
+        isValid: true,
+        validated: "default"
+      },
+      trello: {
+        value: "",
+        invalidText: "",
+        helperText: "",
+        isValid: true,
+        validated: "default"
+      },
+      github: {
+        value: "",
+        invalidText: "",
+        helperText: "",
+        isValid: true,
+        validated: "default"
+      },
+      other: ""
     };
 
+    /**
+     * input change handlers
+     */
     this.handleInputChangeDisplayName = displayName => {
       this.setState({ displayName });
     };
+
     this.handleInputChangeUsername = username => {
-      this.setState({ username });
+      // ... is the spread operator
+      let newState = {
+        username: {
+          value: username,
+          ...this.usernameValidation(username)
+        }
+      };
+      this.setState(newState);
     };
+
     this.handleInputChangeEmail = email => {
-      this.setState({ email });
+      const isValid = redHatEmailRegex.test(email);
+      if (isValid) {
+        this.setState({
+          email: {
+            value: email,
+            isValid: isValid,
+            helperText: "Email is valid",
+            validated: "success"
+          }
+        });
+      } else {
+        this.setState({
+          email: {
+            value: email,
+            isValid: isValid,
+            invalidText: "Please follow the format: email@redhat.com",
+            helperText: "Validating...",
+            validated: "error"
+          }
+        });
+      }
     };
+
     this.handleInputChangeTrello = trello => {
-      this.setState({ trello });
+      let newState = {
+        trello: {
+          value: trello,
+          ...this.usernameValidation(trello)
+        }
+      };
+      this.setState(newState);
     };
+
     this.handleInputChangeGithub = github => {
-      this.setState({ github });
+      let newState = {
+        github: {
+          value: github,
+          ...this.usernameValidation(github)
+        }
+      };
+      this.setState(newState);
     };
+
     this.handleInputChangeOther = other => {
       this.setState({ other });
     };
-    this.clearForm = () => {
-      this.setState({
-        displayName: '',
-        username: '',
-        email: '',
-        trello: '',
-        github: '',
-        other: ''
-      })
-    }
-  }
 
-  handleSubmit = event => {
-    event.preventDefault();
-
-    const user = {
-      displyName: this.state.displayName,
-      username: this.state.username,
-      email: this.state.email,
-      trelloUsername: this.state.trello,
-      githubUsername: this.state.github
+    this.usernameValidation = value => {
+      const isValid = usernameRegex.test(value);
+      if (isValid) {
+        return {
+          isValid: isValid,
+          validated: "success"
+        };
+      } else {
+        return {
+          isValid: isValid,
+          invalidText: "Usernames cannot have spaces",
+          helperText: "Validating...",
+          validated: "error"
+        };
+      }
     };
 
-    console.log(user);
+    /**
+     * Form Actions (submit, cancel)
+     */
+    this.clearForm = () => {
+      this.setState({
+        displayName: "",
+        username: "",
+        email: "",
+        trello: "",
+        github: "",
+        other: ""
+      });
+    };
 
-    // update this with Quarkus app url
-    // TODO: config this.
-    axios.post(`http://localhost:8080`, { user }).then(res => {
-      console.log(res);
-      console.log(res.data);
-    });
+    this.handleSubmit = event => {
+      event.preventDefault();
 
-  };
+      const user = {
+        displyName: this.state.displayName,
+        username: this.state.username,
+        email: this.state.email,
+        trelloUsername: this.state.trello,
+        githubUsername: this.state.github
+      };
+
+      console.log(user);
+
+      // update this with Quarkus app url
+      // TODO: config this.
+      axios.post(`http://localhost:8080`, { user }).then(res => {
+        console.log(res);
+        console.log(res.data);
+      });
+    };
+  }
 
   render() {
     const { displayName, username, email, trello, github, other } = this.state;
@@ -113,10 +207,14 @@ export class UserRegistrationForm extends React.Component {
           label="Username"
           isRequired
           fieldId="horizontal-form-username"
+          helperTextInvalid={username.invalidText}
+          validated={username.validated}
           helperText="User your Kerberos ID"
         >
           <TextInput
-            value={username}
+            value={username.value}
+            validated={username.validated}
+            value={username.value}
             isRequired
             type="text"
             id="horizontal-form-username"
@@ -125,9 +223,17 @@ export class UserRegistrationForm extends React.Component {
             onChange={this.handleInputChangeUsername}
           />
         </FormGroup>
-        <FormGroup label="Email" isRequired fieldId="horizontal-form-email">
+        <FormGroup
+          label="Email"
+          isRequired
+          helperText={email.helperText}
+          helperTextInvalid={email.invalidText}
+          fieldId="horizontal-form-email"
+          validated={email.validated}
+        >
           <TextInput
-            value={email}
+            validated={email.validated}
+            value={email.value}
             onChange={this.handleInputChangeEmail}
             isRequired
             type="email"
@@ -135,9 +241,18 @@ export class UserRegistrationForm extends React.Component {
             name="horizontal-form-email"
           />
         </FormGroup>
-        <FormGroup label="Trello" isRequired fieldId="horizontal-form-trello">
+        <FormGroup
+          label="Trello"
+          isRequired
+          helperText={trello.helperText}
+          helperTextInvalid={trello.invalidText}
+          validated={trello.validated}
+          fieldId="horizontal-form-trello"
+        >
           <TextInput
-            value={trello}
+            value={trello.value}
+            validated={trello.validated}
+            value={trello.value}
             onChange={this.handleInputChangeTrello}
             isRequired
             type="text"
@@ -145,9 +260,18 @@ export class UserRegistrationForm extends React.Component {
             name="horizontal-form-trello"
           />
         </FormGroup>
-        <FormGroup label="GitHub" isRequired fieldId="horizontal-form-github">
+        <FormGroup
+          label="GitHub"
+          isRequired
+          helperText={github.helperText}
+          helperTextInvalid={github.invalidText}
+          validated={github.validated}
+          fieldId="horizontal-form-github"
+        >
           <TextInput
-            value={github}
+            value={github.value}
+            validated={github.validated}
+            value={github.value}
             onChange={this.handleInputChangeGithub}
             isRequired
             type="text"
@@ -167,7 +291,7 @@ export class UserRegistrationForm extends React.Component {
           />
         </FormGroup>
         <ActionGroup>
-          <Button onClick={this.handleSubmit} type='submit' variant="primary">
+          <Button onClick={this.handleSubmit} type="submit" variant="primary">
             Submit Form
           </Button>
           <Button onClick={this.clearForm} type="reset" variant="secondary">
