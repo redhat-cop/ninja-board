@@ -88,6 +88,8 @@ objects:
         env:
           - name: APPLICATION_NAME
             value: ${BASE_IMAGE_NAME}
+          - name: DEV_NAMESPACE
+            value: ${DEV_NAMESPACE}
     triggers:
       - type: ConfigChange
 - kind: "BuildConfig"
