@@ -8,8 +8,8 @@ import {
   ActionGroup,
   Button
 } from "@patternfly/react-core";
-import axios from "axios";
-import { redHatEmailRegex, usernameRegex } from "../data/Validation";
+import { redHatEmailRegex, usernameRegex } from "../config/Validation";
+import API from "../config/ServerUrls"
 
 /**
  * @author fostimus
@@ -173,9 +173,7 @@ export class UserRegistrationForm extends React.Component {
 
       console.log(user);
 
-      // update this with Quarkus app url
-      // TODO: config this.
-      axios.post(`http://localhost:8080`, { user }).then(res => {
+      API.post(`/user`, { user }).then(res => {
         console.log(res);
         console.log(res.data);
       });

@@ -7,7 +7,7 @@ import {
   NavList,
   NavVariants
 } from "@patternfly/react-core";
-import { navBarLinks } from "../data/NavBarLinks";
+import { navBarLinks } from "../config/NavBarLinks";
 
 /**
  * @author fostimus
