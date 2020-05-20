@@ -1,8 +1,4 @@
-package com.redhat.services.ninja.data;
-
-import com.redhat.services.ninja.entity.Event;
-import com.redhat.services.ninja.entity.Scorecard;
-import com.redhat.services.ninja.entity.User;
+package com.redhat.services.ninja.entity;
 
 import java.time.LocalDateTime;
 import java.util.List;

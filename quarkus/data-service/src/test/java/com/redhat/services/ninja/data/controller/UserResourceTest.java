@@ -1,5 +1,6 @@
 package com.redhat.services.ninja.data.controller;
 
+import com.data.services.ninja.test.AbstractResourceTest;
 import com.redhat.services.ninja.entity.User;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.common.mapper.TypeRef;
@@ -16,8 +17,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
-class UserResourceTest extends AbstractResourceTest{
-    
+class UserResourceTest extends AbstractResourceTest {
+
     @Test
     void create() {
         User newUser = new User();
@@ -93,8 +94,8 @@ class UserResourceTest extends AbstractResourceTest{
 
         assertEquals(retiredNinja, user);
     }
-    
-    public Map<String, User> getUsers(){
+
+    public Map<String, User> getUsers() {
         return ninjaDatabase.getUsers().stream().collect(Collectors.toMap(User::getUsername, Function.identity()));
     }
 }

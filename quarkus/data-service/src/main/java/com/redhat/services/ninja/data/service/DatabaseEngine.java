@@ -1,8 +1,8 @@
 package com.redhat.services.ninja.data.service;
 
-import com.redhat.services.ninja.data.*;
 import com.redhat.services.ninja.data.operation.BasicDatabaseOperations;
 import com.redhat.services.ninja.data.operation.IdentifiableDatabaseOperations;
+import com.redhat.services.ninja.entity.Database;
 import com.redhat.services.ninja.entity.Event;
 import com.redhat.services.ninja.entity.Scorecard;
 import com.redhat.services.ninja.entity.User;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class DatabaseEngine {
-    static private Logger LOGGER = Logger.getLogger(DatabaseEngine.class.getSimpleName());
+    static private final Logger LOGGER = Logger.getLogger(DatabaseEngine.class.getSimpleName());
     @ConfigProperty(name = "database.file", defaultValue = "database.json")
     String databaseLocation;
     @ConfigProperty(name = "events.max", defaultValue = "5000")

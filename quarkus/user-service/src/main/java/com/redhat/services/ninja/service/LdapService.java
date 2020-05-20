@@ -18,10 +18,14 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class LdapService {
+    private static final Logger LOGGER = Logger.getLogger(LdapService.class.getSimpleName());
+
     @ConfigProperty(name = "users.ldap.provider")
     String ldapProvider;
     @ConfigProperty(name = "users.ldap.baseDN")
@@ -34,7 +38,7 @@ public class LdapService {
     private final SearchControls searchControls = new SearchControls();
 
     @PostConstruct
-    void init() throws NamingException {
+    protected void init() throws NamingException {
         var env = new Hashtable<String, String>(3);
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
         env.put(Context.PROVIDER_URL, ldapProvider);
@@ -55,16 +59,16 @@ public class LdapService {
                 .map(RedHatUser.newMapper())
                 .collect(Collectors.toList());
     }
-    
-    private static final Function<Attributes, Map<String, String>> ATTRIBUTES_TO_MAP = attributes -> 
+
+    private static final Function<Attributes, Map<String, String>> ATTRIBUTES_TO_MAP = attributes ->
             Collections.list(attributes.getAll()).stream()
-            .map(Attribute.class::cast)
-            .collect(Collectors.toMap(Attribute::getID, attribute -> {
-                try {
-                    return attribute.get().toString();
-                } catch (NamingException e) {
-                    e.printStackTrace();
-                    return "";
-                }
-            }));
+                    .map(Attribute.class::cast)
+                    .collect(Collectors.toMap(Attribute::getID, attribute -> {
+                        try {
+                            return attribute.get().toString();
+                        } catch (NamingException e) {
+                            LOGGER.log(Level.WARNING, e.getMessage());
+                            return "";
+                        }
+                    }));
 }
