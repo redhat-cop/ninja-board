@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { NavLink } from "react-router-dom";
 import {
   Nav,
   NavExpandable,
@@ -6,8 +7,11 @@ import {
   NavList,
   NavVariants
 } from "@patternfly/react-core";
-import { navBarLinks } from "../data/NavBarLinks";
+import { navBarLinks } from "../config/NavBarLinks";
 
+/**
+ * @author fostimus
+ */
 class NavBar extends Component {
   constructor(props) {
     super(props);
@@ -36,11 +40,11 @@ class NavBar extends Component {
       <Nav
         style={{ marginLeft: "20px", fontSize: "20px" }}
         onSelect={this.onSelect}
-
       >
         <NavList variant={NavVariants.horizontal}>
           {navBarLinks.map(expandable => (
             <NavExpandable
+              key={expandable.groupId}
               title={expandable.expandableName}
               srText={expandable.expandableName}
               groupId={expandable.groupId}
@@ -48,18 +52,21 @@ class NavBar extends Component {
             >
               {expandable.links.map(link => (
                 <NavItem
-                  preventDefault
-                  to={link.target}
+                  key={
+                    expandable.groupId + "-" + link.routeName + "-" + link.id
+                  }
                   groupId={expandable.groupId}
                   itemId={
-                    expandable.groupId + "-" + link.linkName + "-" + link.id
+                    expandable.groupId + "-" + link.routeName + "-" + link.id
                   }
                   isActive={
                     activeItem ===
-                    expandable.groupId + "-" + link.linkName + "-" + link.id
+                    expandable.groupId + "-" + link.routeName + "-" + link.id
                   }
                 >
-                  {link.linkName}
+                  <NavLink exact to={link.routePath} >
+                    {link.routeName}
+                  </NavLink>
                 </NavItem>
               ))}
             </NavExpandable>

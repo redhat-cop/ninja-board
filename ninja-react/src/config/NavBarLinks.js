@@ -1,3 +1,7 @@
+/**
+ * @author fostimus
+ */ 
+
 //update the data here to make any content updates to the NavBar.
 //top level objects, currently only 2, are for the expandable portion of the NavBar.
 //the lower level objects under the "links" key are the actual links within that expandable.
@@ -9,51 +13,43 @@ export const navBarLinks = [
     links: [
       {
         id: 1,
-        linkName: "Scorecards",
-        target:
-          ""
+        routeName: "Scorecards",
+        routePath: "scorecards"
       },
       {
         id: 2,
-        linkName: "Leaderboard",
-        target:
-          ""
+        routeName: "Leaderboard",
+        routePath: "leaderboard"
       },
       {
         id: 3,
-        linkName: "Events",
-        target:
-          ""
+        routeName: "Events",
+        routePath: "events"
       },
       {
         id: 4,
-        linkName: "Tasks",
-        target:
-          ""
+        routeName: "Tasks",
+        routePath: "tasks"
       },
       {
         id: 5,
-        linkName: "Registration Form",
-        target:
-          ""
+        routeName: "Registration Form",
+        routePath: "registration-form"
       },
       {
         id: 6,
-        linkName: "Responses Spreadsheet",
-        target:
-          ""
+        routeName: "Responses Spreadsheet",
+        routePath: "responses-spreadsheets"
       },
       {
         id: 7,
-        linkName: "Support - Trello Query",
-        target:
-          ""
+        routeName: "Support - Trello Query",
+        routePath: "support/trello-query"
       },
       {
         id: 8,
-        linkName: "Support - Trello Reconciliation",
-        target:
-          ""
+        routeName: "Support - Trello Reconciliation",
+        routePath: "support/trello-reconciliation"
       }
     ]
   },
@@ -64,15 +60,13 @@ export const navBarLinks = [
     links: [
       {
         id: 1,
-        linkName: "Config (Here be dragons!)",
-        target:
-          ""
+        routeName: "Config",
+        routePath: "config"
       },
       {
         id: 2,
-        linkName: "Database (Here be dragons!)",
-        target:
-          ""
+        routeName: "Database",
+        routePath: "database"
       }
     ]
   }

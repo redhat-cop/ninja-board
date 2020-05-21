@@ -5,6 +5,11 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 1.  `npm install`
 2.  `npm start`
 
+# Known issues & improvements
+
+1.  When page shrinks, NavBar pops out of Header and has different styling
+2.  Routing between "Config" and "Database" page doesn't render properly, as the title doesn't change
+
 # create-react-app Generated README
 
 Below is information automatically set up by [Create React App](https://github.com/facebook/create-react-app).
