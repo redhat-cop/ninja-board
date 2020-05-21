@@ -1,6 +1,7 @@
-package com.redhat.services.ninja.data.controller;
+package com.data.services.ninja.test;
 
-import com.redhat.services.ninja.data.Database;
+import com.redhat.services.ninja.entity.Database;
+import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.parsing.Parser;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -17,6 +18,7 @@ import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@QuarkusTest
 public abstract class AbstractResourceTest {
 
     @ConfigProperty(name = "database.file", defaultValue = "database.json")
@@ -39,6 +41,6 @@ public abstract class AbstractResourceTest {
     }
     
     protected InputStream getDatabaseStream(){
-        return AbstractResourceTest.class.getResourceAsStream("database.json");
+        return AbstractResourceTest.class.getClassLoader().getResourceAsStream("/com/redhat/services/ninja/test/database.json");
     }
 }

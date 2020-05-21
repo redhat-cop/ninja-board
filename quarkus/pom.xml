@@ -7,6 +7,7 @@
     <artifactId>community-ninja-board</artifactId>
     <version>2.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
+
     <properties>
         <quarkus-plugin.version>1.4.2.Final</quarkus-plugin.version>
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
@@ -29,8 +30,6 @@
         </dependencies>
     </dependencyManagement>
 
-    <dependencies>
-    </dependencies>
     <build>
         <plugins>
             <plugin>
@@ -41,23 +40,11 @@
                     <release>11</release>
                 </configuration>
             </plugin>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefire-plugin.version}</version>
-                <configuration>
-                    <systemProperties>
-                        <quarkus.test.profile>maven</quarkus.test.profile>
-                        <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                    </systemProperties>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
-
     <modules>
+        <module>test-helper</module>
         <module>entities</module>
-        <module>user-service</module>
-        <module>data-service</module>
-        <module>all-service</module>
+        <module>quarkus-pom</module>
     </modules>
 </project>
