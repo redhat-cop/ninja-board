@@ -1,0 +1,173 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "Giveback Ninja",
+        "version": "1.0.0",
+        "license": {
+            "name": "MIT License",
+            "url": "https://opensource.org/licenses/MIT"
+        }
+    },
+    "paths": {
+        "/user": {
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        },
+                        "description": "Creates a user within the system."
+                    }
+                },
+                "summary": "Registers a new user in the system."
+            }
+        },
+        "/scorecards": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/UserScorecard"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Returns a list of all user scorecards."
+                    }
+                },
+                "summary": "Get all user scorecards."
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "User": {
+                "title": "Root Type for User",
+                "description": "",
+                "type": "object",
+                "properties": {
+                    "displayName": {
+                        "description": "The name displayed to all users of the system. Typically the users first and last name.",
+                        "type": "string"
+                    },
+                    "username": {
+                        "description": "The user's Red Hat Kerberos ID.",
+                        "type": "string"
+                    },
+                    "githubUsername": {
+                        "description": "The user's Github username.",
+                        "type": "string"
+                    },
+                    "trelloUsername": {
+                        "description": "The user's Trello username.",
+                        "type": "string"
+                    },
+                    "email": {
+                        "description": "The Red Hat email associated with the user.",
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "displayName": "Super Ninja",
+                    "username": "super_ninja",
+                    "githubUsername": "super_ninja",
+                    "trelloUsername": "super_ninja",
+                    "email": "super_ninja@redhat.com"
+                }
+            },
+            "UserScorecard": {
+                "title": "Root Type for UserScorecard",
+                "description": "All stats around a user that are used to calculate Ninja Belt level.",
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "type": "string"
+                    },
+                    "total": {
+                        "format": "int32",
+                        "type": "integer"
+                    },
+                    "beltColor": {
+                        "type": "string"
+                    },
+                    "pointsToNextLevel": {
+                        "format": "int32",
+                        "type": "integer"
+                    },
+                    "githubReviewedPullRequests": {
+                        "format": "int32",
+                        "type": "integer"
+                    },
+                    "githubClosedIssues": {
+                        "format": "int32",
+                        "type": "integer"
+                    },
+                    "servicesSupportMergeRequests": {
+                        "format": "int32",
+                        "type": "integer"
+                    },
+                    "servicesSupportClosedIssues": {
+                        "format": "int32",
+                        "type": "integer"
+                    },
+                    "servicesSupportReviewedMergeRequests": {
+                        "format": "int32",
+                        "type": "integer"
+                    },
+                    "githubPullRequests": {
+                        "format": "int32",
+                        "type": "integer"
+                    },
+                    "gitlabMergeRequests": {
+                        "format": "int32",
+                        "type": "integer"
+                    },
+                    "trelloCardsClosed": {
+                        "format": "int32",
+                        "type": "integer"
+                    },
+                    "thoughtLeadershipCardsClosed": {
+                        "format": "int32",
+                        "type": "integer"
+                    },
+                    "servicesSupportCardsClosed": {
+                        "format": "int32",
+                        "type": "integer"
+                    }
+                },
+                "example": {
+                    "username": "super_ninja",
+                    "total": 248,
+                    "beltColor": "black",
+                    "pointsToNextLevel": 0,
+                    "githubReviewedPullRequests": 24,
+                    "githubClosedIssues": 0,
+                    "servicesSupportMergeRequests": 0,
+                    "servicesSupportClosedIssues": 0,
+                    "servicesSupportReviewedMergeRequests": 0,
+                    "githubPullRequests": 34,
+                    "gitlabMergeRequests": 43,
+                    "trelloCardsClosed": 23,
+                    "thoughtLeadershipCardsClosed": 1,
+                    "servicesSupportCardsClosed": 10
+                }
+            }
+        }
+    }
+}
