@@ -53,6 +53,54 @@
                 },
                 "summary": "Get all user scorecards."
             }
+        },
+        "/scorecards/{id}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserScorecard"
+                                },
+                                "examples": {
+                                    "super_ninja": {
+                                        "value": {
+                                            "id": 1,
+                                            "username": "super_ninja",
+                                            "total": 248,
+                                            "beltColor": "black",
+                                            "pointsToNextLevel": 0,
+                                            "githubReviewedPullRequests": 24,
+                                            "githubClosedIssues": 0,
+                                            "servicesSupportMergeRequests": 0,
+                                            "servicesSupportClosedIssues": 0,
+                                            "servicesSupportReviewedMergeRequests": 0,
+                                            "githubPullRequests": 34,
+                                            "gitlabMergeRequests": 43,
+                                            "trelloCardsClosed": 23,
+                                            "thoughtLeadershipCardsClosed": 1,
+                                            "servicesSupportCardsClosed": 10
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "Get UserScorecard info for a specific user."
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "description": "The unique identifier of a specific user.",
+                    "schema": {
+                        "type": "integer"
+                    },
+                    "in": "path",
+                    "required": true
+                }
+            ]
         }
     },
     "components": {
@@ -94,60 +142,71 @@
             "UserScorecard": {
                 "title": "Root Type for UserScorecard",
                 "description": "All stats around a user that are used to calculate Ninja Belt level.",
+                "required": [
+                    "id",
+                    "username",
+                    "pointsToNextLevel",
+                    "beltColor"
+                ],
                 "type": "object",
                 "properties": {
                     "username": {
+                        "description": "Kerberos ID.",
                         "type": "string"
                     },
                     "total": {
-                        "format": "int32",
                         "type": "integer"
                     },
                     "beltColor": {
+                        "description": "The current belt level (color) of the user.",
                         "type": "string"
                     },
                     "pointsToNextLevel": {
-                        "format": "int32",
+                        "description": "The amount of points the user needs to reach the next belt level.",
                         "type": "integer"
                     },
                     "githubReviewedPullRequests": {
-                        "format": "int32",
+                        "description": "The amount of GitHub pull requests the user has reviewed.",
                         "type": "integer"
                     },
                     "githubClosedIssues": {
-                        "format": "int32",
+                        "description": "The amount of GitHub issues the user has closed.",
                         "type": "integer"
                     },
                     "servicesSupportMergeRequests": {
-                        "format": "int32",
+                        "description": "The amount of Services Support merge requests the user has submitted.",
                         "type": "integer"
                     },
                     "servicesSupportClosedIssues": {
-                        "format": "int32",
+                        "description": "The amount of Services Support issues the user has closed.",
                         "type": "integer"
                     },
                     "servicesSupportReviewedMergeRequests": {
-                        "format": "int32",
+                        "description": "The amount of Services Support merge requests the user has reviewed.",
                         "type": "integer"
                     },
                     "githubPullRequests": {
-                        "format": "int32",
+                        "description": "The amount of GitHub pull requests the user has submitted.",
                         "type": "integer"
                     },
                     "gitlabMergeRequests": {
-                        "format": "int32",
+                        "description": "The amount of GitLab merge requests the user has submitted.",
                         "type": "integer"
                     },
                     "trelloCardsClosed": {
-                        "format": "int32",
+                        "description": "The amount of Trello cards the user has closed.",
                         "type": "integer"
                     },
                     "thoughtLeadershipCardsClosed": {
-                        "format": "int32",
+                        "description": "The amount of Thought Leadership cards the user has closed.",
                         "type": "integer"
                     },
                     "servicesSupportCardsClosed": {
-                        "format": "int32",
+                        "description": "The amount of Services Support cards the user has closed.",
+                        "type": "integer"
+                    },
+                    "id": {
+                        "description": "Unique, numeric identifier of a UserScorecard resource.",
                         "type": "integer"
                     }
                 },
