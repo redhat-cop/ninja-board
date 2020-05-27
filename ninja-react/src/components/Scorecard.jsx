@@ -7,6 +7,8 @@ import {
   SortByDirection
 } from "@patternfly/react-table";
 import { PageSection } from "@patternfly/react-core";
+import API from "../config/ServerUrls";
+import { tempScorecardData } from "../config/TempScorecardData";
 
 /**
  * @author fostimus
@@ -22,7 +24,9 @@ export default function ScorecardSection() {
 class SortableTable extends React.Component {
   constructor(props) {
     super(props);
+    //TODO: populate rows and columns dynamically based on serverData
     this.state = {
+      serverData: tempScorecardData,
       columns: [
         { title: "Repositories", transforms: [sortable] },
         "Branches",
@@ -38,6 +42,19 @@ class SortableTable extends React.Component {
       sortBy: {}
     };
     this.onSort = this.onSort.bind(this);
+
+    this.getScorecardData = event => {
+      event.preventDefault();
+
+      //TODO: ensure this actually syncs to the backend API
+      API.get(`/scorecard`).then(res => {
+        console.log(res);
+        console.log(res.data);
+        this.setState({
+          serverData: res.data
+        });
+      });
+    };
   }
 
   onSort(_event, index, direction) {
