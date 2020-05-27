@@ -212,7 +212,6 @@ export class UserRegistrationForm extends React.Component {
           <TextInput
             value={username.value}
             validated={username.validated}
-            value={username.value}
             isRequired
             type="text"
             id="horizontal-form-username"
@@ -250,7 +249,6 @@ export class UserRegistrationForm extends React.Component {
           <TextInput
             value={trello.value}
             validated={trello.validated}
-            value={trello.value}
             onChange={this.handleInputChangeTrello}
             isRequired
             type="text"
@@ -269,7 +267,6 @@ export class UserRegistrationForm extends React.Component {
           <TextInput
             value={github.value}
             validated={github.validated}
-            value={github.value}
             onChange={this.handleInputChangeGithub}
             isRequired
             type="text"
