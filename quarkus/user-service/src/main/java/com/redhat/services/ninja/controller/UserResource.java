@@ -1,6 +1,8 @@
 package com.redhat.services.ninja.controller;
 
+import com.redhat.services.ninja.client.ScorecardClient;
 import com.redhat.services.ninja.client.UserClient;
+import com.redhat.services.ninja.entity.Scorecard;
 import com.redhat.services.ninja.entity.User;
 import com.redhat.services.ninja.service.LdapService;
 import com.redhat.services.ninja.user.RedHatUser;
@@ -26,6 +28,10 @@ public class UserResource {
     @RestClient
     UserClient userClient;
 
+    @Inject
+    @RestClient
+    ScorecardClient scorecardClient;
+
     @GET
     @Path("/{uid}")
     public RedHatUser findByUid(@PathParam("uid") String uid) {
@@ -37,7 +43,11 @@ public class UserResource {
         Optional.ofNullable(user).orElseThrow(() -> new WebApplicationException(Response.Status.BAD_REQUEST));
         RedHatUser redHatUser = searchById(user.getUsername()).orElseThrow(() -> new WebApplicationException(Response.Status.NOT_FOUND));
         user.setRegion(redHatUser.getLocation());
-        return userClient.create(user);
+        User createdUser = userClient.create(user);
+        Scorecard scorecard = new Scorecard();
+        scorecard.setUsername(createdUser.getUsername());
+        scorecardClient.create(scorecard);
+        return createdUser;
     }
 
     @GET

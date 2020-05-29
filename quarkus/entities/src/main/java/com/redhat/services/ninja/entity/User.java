@@ -11,7 +11,6 @@ public class User implements Identifiable<String>{
     private String githubUsername;
     private String trelloUsername;
     private String region;
-    private String level = "ZERO";
 
     @Override
     @JsonbTransient
@@ -86,13 +85,5 @@ public class User implements Identifiable<String>{
     @Override
     public int hashCode() {
         return Objects.hash(username);
-    }
-
-    public void setLevel(String level) {
-        this.level = level;
-    }
-
-    public String getLevel() {
-        return level;
     }
 }

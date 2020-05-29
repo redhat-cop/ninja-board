@@ -41,6 +41,7 @@ public class DatabaseEngine {
     private IdentifiableDatabaseOperationsImpl<String, User> userOperations;
     private IdentifiableDatabaseOperationsImpl<String, Scorecard> scorecardOperations;
     private BasicDatabaseOperationsImpl<Event> eventOperations;
+    private SortedSet<com.redhat.services.ninja.entity.Level> levels;
 
     @PostConstruct
     void init() throws IOException {
@@ -59,9 +60,32 @@ public class DatabaseEngine {
         Database database = jsonb.fromJson(databaseFile, Database.class);
         users = database.getUsers().parallelStream().collect(Collectors.toMap(User::getUsername, Function.identity()));
         scorecards = database.getScorecards().parallelStream().collect(Collectors.toMap(Scorecard::getUsername, Function.identity()));
+        levels = database.getLevels();
         events = new LinkedBlockingQueue<>(maxEvents);
         userOperations = new IdentifiableDatabaseOperationsImpl<>(users);
-        scorecardOperations = new IdentifiableDatabaseOperationsImpl<>(scorecards);
+        scorecardOperations = new IdentifiableDatabaseOperationsImpl<>(scorecards){
+            @Override
+            public Scorecard create(Scorecard entity) {
+                Scorecard scorecard = super.create(entity);
+                scorecard.computeLevel(levels);
+                return scorecard;
+            }
+
+            @Override
+            public List<Scorecard> getAll() {
+                List<Scorecard> scorecards = super.getAll();
+                scorecards.forEach(s->s.computeLevel(levels));
+                return scorecards;
+            }
+
+            @Override
+            public Scorecard get(String identifier) {
+                Scorecard scorecard = super.get(identifier);
+                Optional.ofNullable(scorecard).ifPresent(s->s.computeLevel(levels));
+                return scorecard;
+            }
+        };
+        
         eventOperations = new BasicDatabaseOperationsImpl<>(events){
             @Override
             public Event create(Event entity) {
@@ -72,6 +96,7 @@ public class DatabaseEngine {
                 return super.create(entity);
             }
         };
+        
         database.getEvents().forEach(eventOperations::create);
     }
 
@@ -80,6 +105,7 @@ public class DatabaseEngine {
 
         database.setUsers(Set.copyOf(users.values()));
         database.setScorecards(Set.copyOf(scorecards.values()));
+        database.setLevels(levels);
         database.setEvents(List.copyOf(events));
 
         writeFile(database);

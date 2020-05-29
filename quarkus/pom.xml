@@ -9,10 +9,10 @@
     <packaging>pom</packaging>
 
     <properties>
-        <quarkus-plugin.version>1.4.2.Final</quarkus-plugin.version>
+        <quarkus-plugin.version>1.5.0.Final</quarkus-plugin.version>
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
-        <quarkus.platform.version>1.4.2.Final</quarkus.platform.version>
+        <quarkus.platform.version>1.5.0.Final</quarkus.platform.version>
         <surefire-plugin.version>2.22.2</surefire-plugin.version>
         <failsafe-plugin.version>2.22.2</failsafe-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -45,6 +45,7 @@
     <modules>
         <module>test-helper</module>
         <module>entities</module>
+        <module>data-client</module>
         <module>quarkus-pom</module>
     </modules>
 </project>
