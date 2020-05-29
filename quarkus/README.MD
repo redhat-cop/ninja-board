@@ -38,6 +38,17 @@ java -jar all-service/target/all-service-2.0.0-SNAPSHOT-runner.jar
 ```
 
 ## Testing
+
+### Important Note
+* Endpoint start with /data are for internal use only.
+* A scorecard cannot be created directly, creating a user creates its scorecard
+* The only way to modify a scorecard is by incrementing
+
+### Operations
+
+Refer to [OpenAPI Spec](openapi.yaml).
+
+
 ### Linux
 ```shell script
 curl localhost:8080/user/some-user-id-that-do-exist

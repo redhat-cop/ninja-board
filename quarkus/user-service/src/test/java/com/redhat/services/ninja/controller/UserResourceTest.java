@@ -1,7 +1,9 @@
 package com.redhat.services.ninja.controller;
 
 import com.data.services.ninja.test.AbstractResourceTest;
+import com.redhat.services.ninja.client.ScorecardClient;
 import com.redhat.services.ninja.client.UserClient;
+import com.redhat.services.ninja.entity.Scorecard;
 import com.redhat.services.ninja.entity.User;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
@@ -23,25 +25,28 @@ class UserResourceTest extends AbstractResourceTest {
 
     @InjectMock
     @RestClient
-    UserClient client;
+    UserClient userClient;
+
+    @InjectMock
+    @RestClient
+    ScorecardClient scorecardClient;
     
     @BeforeEach
     void initTest() {
-        when(client.create(any(User.class)))
+        when(userClient.create(any(User.class)))
+                .thenAnswer(a -> a.getArgument(0));
+
+        when(scorecardClient.create(any(Scorecard.class)))
                 .thenAnswer(a -> a.getArgument(0));
     }
 
     @Test
     void existingUserRegistration() {
-        when(client.create(any(User.class)))
-                .thenAnswer(a -> a.getArgument(0));
-
         User newUser = new User();
         newUser.setUsername("new_ninja");
         newUser.setDisplayName("New Ninja");
         newUser.setGithubUsername("new_ninja");
-
-
+        
         User createdUser = given()
                 .contentType(ContentType.JSON)
                 .body(newUser)
