@@ -23,7 +23,7 @@ public class UserResource {
 
     @Inject
     LdapService ldapService;
-    
+
     @Inject
     @RestClient
     UserClient userClient;
@@ -39,7 +39,7 @@ public class UserResource {
     }
 
     @POST
-    public User register(User user){
+    public Response register(User user) {
         Optional.ofNullable(user).orElseThrow(() -> new WebApplicationException(Response.Status.BAD_REQUEST));
         RedHatUser redHatUser = searchById(user.getUsername()).orElseThrow(() -> new WebApplicationException(Response.Status.NOT_FOUND));
         user.setRegion(redHatUser.getLocation());
@@ -47,7 +47,8 @@ public class UserResource {
         Scorecard scorecard = new Scorecard();
         scorecard.setUsername(createdUser.getUsername());
         scorecardClient.create(scorecard);
-        return createdUser;
+        
+        return Response.status(Response.Status.CREATED).entity(createdUser).build();
     }
 
     @GET
@@ -55,8 +56,8 @@ public class UserResource {
     public List<RedHatUser> find(@PathParam("key") String key, @PathParam("value") String value) {
         return search(key, value);
     }
-    
-    private Optional<RedHatUser> searchById(String uid){
+
+    private Optional<RedHatUser> searchById(String uid) {
         return search("uid", uid).stream().findFirst();
     }
 
