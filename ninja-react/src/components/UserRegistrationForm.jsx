@@ -172,9 +172,7 @@ export class UserRegistrationForm extends React.Component {
         githubUsername: this.state.github.value
       };
 
-      console.log(user);
-
-      API.post(`/user`, { user }).then(res => {
+      API.post(`/user`,  user ).then(res => {
         console.log(res);
         console.log(res.data);
       });
@@ -186,11 +184,11 @@ export class UserRegistrationForm extends React.Component {
 
     const submitEnabled =
       // not empty
-      this.state.displayName != "" &&
-      this.state.username.value != "" &&
-      this.state.email.value != "" &&
-      this.state.trello.value != "" &&
-      this.state.github.value != "" &&
+      this.state.displayName !== "" &&
+      this.state.username.value !== "" &&
+      this.state.email.value !== "" &&
+      this.state.trello.value !== "" &&
+      this.state.github.value !== "" &&
       // validation passes
       this.state.username.isValid &&
       this.state.email.isValid &&
@@ -226,7 +224,6 @@ export class UserRegistrationForm extends React.Component {
           <TextInput
             value={username.value}
             validated={username.validated}
-            value={username.value}
             isRequired
             type="text"
             id="horizontal-form-username"
@@ -264,7 +261,6 @@ export class UserRegistrationForm extends React.Component {
           <TextInput
             value={trello.value}
             validated={trello.validated}
-            value={trello.value}
             onChange={this.handleInputChangeTrello}
             isRequired
             type="text"
@@ -283,7 +279,6 @@ export class UserRegistrationForm extends React.Component {
           <TextInput
             value={github.value}
             validated={github.validated}
-            value={github.value}
             onChange={this.handleInputChangeGithub}
             isRequired
             type="text"
