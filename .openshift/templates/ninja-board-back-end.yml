@@ -40,6 +40,15 @@ objects:
       type: Git
     strategy:
       sourceStrategy:
+        env:
+          - name: ARTIFACT_DIR
+            value: "all-service/target"
+          - name: ARTIFACT_COPY_ARGS
+            value: "-p -r lib/ *-runner.jar"
+          - name: USERS_LDAP_PROVIDER
+            value: ${USERS_LDAP_PROVIDER}
+          - name: USERS_LDAP_BASEDN
+            value: ${USERS_LDAP_BASEDN}
         from:
           kind: ImageStreamTag
           name: openjdk-11-rhel7:latest
@@ -177,7 +186,7 @@ parameters:
   - name: SOURCE_REPOSITORY_URL
     description: The source URL for the application
     displayName: Source URL
-    value: https://github.com/Arman084/ninja-board
+    value: https://github.com/redhat-cop/ninja-board
     required: true
   - name: SOURCE_REPOSITORY_REF
     description: The branch name for the application
@@ -189,8 +198,15 @@ parameters:
     displayName: Source Directory
     value: quarkus
     required: true
-  - description: Name of the Development Namespace
-    name: DEV_NAMESPACE
+  - name: DEV_NAMESPACE
+    description: Name of the Development Namespace
     required: true
     value: ninja-board-dev
-
+  - name: USERS_LDAP_BASEDN
+    description: Ldap basedn
+    required: true
+    value: ou=users,dc=redhat,dc=com
+  - name: USERS_LDAP_PROVIDER
+    description: Ldap provider
+    required: true
+    value: ldap://ldap.corp.redhat.com:389

@@ -1,5 +1,0 @@
-ARTIFACT_DIR=all-service/target
-ARTIFACT_COPY_ARGS=-p -r lib/ *-runner.jar
-USERS_LDAP_PROVIDER=i-wont-tell-you-the-real-value
-USERS_LDAP_BASEDN=i-really-wont-tell-you-the-real-value
-
