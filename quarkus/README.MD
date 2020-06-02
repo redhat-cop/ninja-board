@@ -46,8 +46,7 @@ java -jar all-service/target/all-service-2.0.0-SNAPSHOT-runner.jar
 
 ### Operations
 
-Refer to [OpenAPI Spec](openapi.yaml).
-
+Refer to [OpenAPI Spec](all-service/src/test/resources/META-INF/openapi.yaml).
 
 ### Linux
 ```shell script
