@@ -4,6 +4,7 @@ import com.redhat.services.ninja.entity.Identifiable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 class IdentifiableDatabaseOperationsImpl<I, T extends Identifiable<I>> implements com.redhat.services.ninja.data.operation.IdentifiableDatabaseOperations<I,T> {
     private final Map<I, T> entities;
@@ -24,8 +25,8 @@ class IdentifiableDatabaseOperationsImpl<I, T extends Identifiable<I>> implement
     }
 
     @Override
-    public T get(I identifier) {
-        return entities.get(identifier);
+    public Optional<T> get(I identifier) {
+        return Optional.ofNullable(entities.get(identifier));
     }
 
     @Override

@@ -36,12 +36,13 @@ public class DatabaseEngine {
 
     private Map<String, User> users;
     private Map<String, Scorecard> scorecards;
+    private Map<String, com.redhat.services.ninja.entity.Level> levels;
     private Queue<Event> events;
     private Jsonb jsonb;
-    private IdentifiableDatabaseOperationsImpl<String, User> userOperations;
-    private IdentifiableDatabaseOperationsImpl<String, Scorecard> scorecardOperations;
+    private IdentifiableDatabaseOperations<String, User> userOperations;
+    private IdentifiableDatabaseOperations<String, Scorecard> scorecardOperations;
+    private IdentifiableDatabaseOperations<String, com.redhat.services.ninja.entity.Level> levelOperations;
     private BasicDatabaseOperationsImpl<Event> eventOperations;
-    private SortedSet<com.redhat.services.ninja.entity.Level> levels;
 
     @PostConstruct
     void init() throws IOException {
@@ -50,7 +51,7 @@ public class DatabaseEngine {
 
         Path databasePath = Paths.get(databaseLocation);
 
-        if(!Files.exists(databasePath)){
+        if (!Files.exists(databasePath)) {
             LOGGER.log(Level.INFO, "Database file does not yet exist : " + databaseLocation + ". Creating new database.");
             writeFile(new Database());
         }
@@ -60,33 +61,34 @@ public class DatabaseEngine {
         Database database = jsonb.fromJson(databaseFile, Database.class);
         users = database.getUsers().parallelStream().collect(Collectors.toMap(User::getUsername, Function.identity()));
         scorecards = database.getScorecards().parallelStream().collect(Collectors.toMap(Scorecard::getUsername, Function.identity()));
-        levels = database.getLevels();
+        levels = database.getLevels().stream().collect(Collectors.toMap(com.redhat.services.ninja.entity.Level::getIdentifier, Function.identity()));
         events = new LinkedBlockingQueue<>(maxEvents);
         userOperations = new IdentifiableDatabaseOperationsImpl<>(users);
-        scorecardOperations = new IdentifiableDatabaseOperationsImpl<>(scorecards){
+        levelOperations = new IdentifiableDatabaseOperationsImpl<>(levels);
+        scorecardOperations = new IdentifiableDatabaseOperationsImpl<>(scorecards) {
             @Override
             public Scorecard create(Scorecard entity) {
                 Scorecard scorecard = super.create(entity);
-                scorecard.computeLevel(levels);
+                scorecard.computeLevel(new TreeSet<>(levels.values()));
                 return scorecard;
             }
 
             @Override
             public List<Scorecard> getAll() {
                 List<Scorecard> scorecards = super.getAll();
-                scorecards.forEach(s->s.computeLevel(levels));
+                scorecards.forEach(s -> s.computeLevel(new TreeSet<>(levels.values())));
                 return scorecards;
             }
 
             @Override
-            public Scorecard get(String identifier) {
-                Scorecard scorecard = super.get(identifier);
-                Optional.ofNullable(scorecard).ifPresent(s->s.computeLevel(levels));
+            public Optional<Scorecard> get(String identifier) {
+                Optional<Scorecard> scorecard = super.get(identifier);
+                scorecard.ifPresent(s -> s.computeLevel(new TreeSet<>(levels.values())));
                 return scorecard;
             }
         };
-        
-        eventOperations = new BasicDatabaseOperationsImpl<>(events){
+
+        eventOperations = new BasicDatabaseOperationsImpl<>(events) {
             @Override
             public Event create(Event entity) {
                 if (events.size() >= maxEvents) {
@@ -96,7 +98,7 @@ public class DatabaseEngine {
                 return super.create(entity);
             }
         };
-        
+
         database.getEvents().forEach(eventOperations::create);
     }
 
@@ -105,12 +107,12 @@ public class DatabaseEngine {
 
         database.setUsers(Set.copyOf(users.values()));
         database.setScorecards(Set.copyOf(scorecards.values()));
-        database.setLevels(levels);
+        database.setLevels(new TreeSet<>(levels.values()));
         database.setEvents(List.copyOf(events));
 
         writeFile(database);
     }
-    
+
     synchronized private void writeFile(Database database) throws IOException {
         String content = jsonb.toJson(database);
 
@@ -125,7 +127,11 @@ public class DatabaseEngine {
         return scorecardOperations;
     }
 
-    public com.redhat.services.ninja.data.operation.IdentifiableDatabaseOperations<String, User> getUserOperations() {
+    public IdentifiableDatabaseOperations<String, com.redhat.services.ninja.entity.Level> getLevelOperations() {
+        return levelOperations;
+    }
+
+    public IdentifiableDatabaseOperations<String, User> getUserOperations() {
         return userOperations;
     }
 }

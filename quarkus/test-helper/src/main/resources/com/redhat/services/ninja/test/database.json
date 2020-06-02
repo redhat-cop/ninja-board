@@ -1,75 +1,97 @@
 {
-    "createdOn": "2020-05-13T00:26:44.8489978",
-    "events": [
-        {
-            "description": "",
-            "type": "New User Registered",
-            "user": "modest_ninja",
-            "timestamp": "2020-03-03T17:17:00"
-        },
-        {
-            "description": "",
-            "type": "New User Registered",
-            "user": "super_ninja",
-            "timestamp": "2020-03-03T17:17:00"
-        },
-        {
-            "description": "",
-            "type": "New User Registered",
-            "user": "retired_ninja",
-            "timestamp": "2020-03-03T17:17:00"
-        }
-    ],
-    "scorecards": [
-        {
-            "identifier": "super_ninja",
-            "pointMap": {
-                "Github": 2
-            },
-            "total": 2,
-            "username": "super_ninja"
-        },
-        {
-            "identifier": "modest_ninja",
-            "pointMap": {
-                "Github": 2
-            },
-            "total": 2,
-            "username": "modest_ninja"
-        },
-        {
-            "identifier": "retired_ninja",
-            "pointMap": {
-                "Github": 2
-            },
-            "total": 2,
-            "username": "retired_ninja"
-        }
-    ],
-    "users": [
-        {
-            "displayName": "Super Ninja",
-            "githubUsername": "super_ninja",
-            "identifier": "super_ninja",
-            "region": "NA",
-            "trelloUsername": "super_ninja",
-            "username": "super_ninja"
-        },
-        {
-            "displayName": "Modest ninja",
-            "githubUsername": "modest_ninja",
-            "identifier": "modest_ninja",
-            "region": "NA",
-            "trelloUsername": "modest_ninja",
-            "username": "modest_ninja"
-        },
-        {
-            "displayName": "Retired Ninja",
-            "githubUsername": "retired_ninja",
-            "identifier": "retired_ninja",
-            "region": "EMEA",
-            "trelloUsername": "retired_ninja",
-            "username": "retired_ninja"
-        }
-    ]
+  "createdOn": "2020-05-13T00:26:44.8489978",
+  "events": [
+    {
+      "description": "",
+      "type": "New User Registered",
+      "user": "modest_ninja",
+      "timestamp": "2020-03-03T17:17:00"
+    },
+    {
+      "description": "",
+      "type": "New User Registered",
+      "user": "super_ninja",
+      "timestamp": "2020-03-03T17:17:00"
+    },
+    {
+      "description": "",
+      "type": "New User Registered",
+      "user": "retired_ninja",
+      "timestamp": "2020-03-03T17:17:00"
+    }
+  ],
+  "scorecards": [
+    {
+      "identifier": "super_ninja",
+      "pointMap": {
+        "Github": 2
+      },
+      "total": 2,
+      "username": "super_ninja"
+    },
+    {
+      "identifier": "modest_ninja",
+      "pointMap": {
+        "Github": 2
+      },
+      "total": 2,
+      "username": "modest_ninja"
+    },
+    {
+      "identifier": "retired_ninja",
+      "pointMap": {
+        "Github": 2
+      },
+      "total": 2,
+      "username": "retired_ninja"
+    }
+  ],
+  "users": [
+    {
+      "displayName": "Super Ninja",
+      "githubUsername": "super_ninja",
+      "identifier": "super_ninja",
+      "region": "NA",
+      "trelloUsername": "super_ninja",
+      "username": "super_ninja"
+    },
+    {
+      "displayName": "Modest ninja",
+      "githubUsername": "modest_ninja",
+      "identifier": "modest_ninja",
+      "region": "NA",
+      "trelloUsername": "modest_ninja",
+      "username": "modest_ninja"
+    },
+    {
+      "displayName": "Retired Ninja",
+      "githubUsername": "retired_ninja",
+      "identifier": "retired_ninja",
+      "region": "EMEA",
+      "trelloUsername": "retired_ninja",
+      "username": "retired_ninja"
+    }
+  ],
+  "levels": [
+    {
+      "minimumPoint": 0,
+      "name": "ZERO"
+    },
+    {
+      "minimumPoint": 5,
+      "name": "BLUE"
+    },
+    {
+      "minimumPoint": 20,
+      "name": "GREY"
+    },
+    {
+      "minimumPoint": 40,
+      "name": "RED"
+    },
+    {
+      "minimumPoint": 75,
+      "name": "BLACK"
+    }
+  ]
 }

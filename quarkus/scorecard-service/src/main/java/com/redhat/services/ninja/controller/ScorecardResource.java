@@ -18,7 +18,6 @@ public class ScorecardResource {
     @Inject
     @RestClient
     ScorecardClient scorecardClient;
-    
 
     @POST
     @Path("/{username}/{category}")
