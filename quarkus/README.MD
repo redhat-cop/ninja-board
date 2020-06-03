@@ -8,6 +8,27 @@
 ## Requirements
 * OpenJDK 11 - [Download from Red Hat](https://developers.redhat.com/products/openjdk/download)
 
+## Structure
+
+This project has multiple components.
+So far they are: 3 Microservices, 3 supporting shared libraries.
+
+* Microservices that can be bundled user the `all-service` module
+    * `user-service` - contains features related to the user such as Registration.
+    * `scorecard-service` - groups features related to scorecard such as "Point Addition".
+    * `data-service` - manages data and offer CRUD operations on entities.
+* Shared Libraries
+    * `entities` - shared data model
+    * `data-client` - interface for accessing the CRUD services of `data-service`
+    * `test-helper` - helper classes for testing
+    
+`all-service` is a special project that bundles all the available microservices. In addition, it includes an Open API
+specification available at `/openapi`. Running it in dev mode (`mvn quarkus:dev -f all-service`) will enable Swagger UI 
+at `/swagger-ui`.
+
+The Shared Libraries are regular java projects indexed with jandex so that they can be Quarkus enhanced later.
+The services are Quarkus Project and inherit from `quarkus-pom`.
+
 ## Create Environment variables before running
 ### Linux
 ```shell script
@@ -46,7 +67,7 @@ java -jar all-service/target/all-service-2.0.0-SNAPSHOT-runner.jar
 
 ### Operations
 
-Refer to [OpenAPI Spec](all-service/src/test/resources/META-INF/openapi.yaml).
+Refer to [OpenAPI Spec](all-service/src/main/resources/META-INF/openapi.yaml).
 
 ### Linux
 ```shell script
