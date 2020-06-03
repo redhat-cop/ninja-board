@@ -16,6 +16,6 @@ export default class HomeSection extends Component {
 
 export class Home extends Component {
   render() {
-    return <div>I am home!</div>;
+    return <div>Home Page!</div>;
   }
 }
