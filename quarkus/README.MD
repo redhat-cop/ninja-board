@@ -37,6 +37,12 @@ mvn install
 java -jar all-service/target/all-service-2.0.0-SNAPSHOT-runner.jar
 ```
 
+for Native Quarkus
+```shell script
+mvn package -Pnative -f all-service
+all-service/target/all-service-2.0.0-SNAPSHOT-runner
+```
+
 ## Testing
 
 ### Important Note

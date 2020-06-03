@@ -61,7 +61,7 @@ public class Event {
         }
 
         public static Optional<Type> fromString(String type) {
-            var normalizedName = NAME_NORMALIZER.apply(type);
+            String normalizedName = NAME_NORMALIZER.apply(type);
 
             return Optional.ofNullable(TYPE_MAP.get(normalizedName));
         }
