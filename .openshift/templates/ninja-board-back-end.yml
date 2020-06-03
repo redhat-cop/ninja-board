@@ -14,6 +14,14 @@ objects:
   metadata:
     labels:
       app: ${APPLICATION_NAME}
+    name: openjdk-11-rhel7
+  spec:
+    dockerImageRepository: "registry.access.redhat.com/openjdk/openjdk-11-rhel7"
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: ${APPLICATION_NAME}
     name: ${APPLICATION_NAME}
   spec:
     lookupPolicy:
