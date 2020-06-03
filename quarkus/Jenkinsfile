@@ -20,6 +20,11 @@ pipeline {
         }
       }
     }
+    stage ('Verify Deployment to Dev') {
+      steps {
+        rollout([projectName: "${DEV_NAMESPACE}", resourceKindAndName: "dc/${APPLICATION_NAME}", latest: false])
+      }
+    }
   }
 }
 
