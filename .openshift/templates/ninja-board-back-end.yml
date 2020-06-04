@@ -16,7 +16,11 @@ objects:
       app: ${APPLICATION_NAME}
     name: openjdk-11-rhel7
   spec:
-    dockerImageRepository: "registry.access.redhat.com/openjdk/openjdk-11-rhel7"
+    tags:
+    - from:
+        kind: DockerImage
+        name: ${DOCKER_IMAGE_REPOSITORY}
+      name: latest
 - apiVersion: image.openshift.io/v1
   kind: ImageStream
   metadata:
@@ -210,6 +214,10 @@ parameters:
     description: Name of the Development Namespace
     required: true
     value: ninja-board-dev
+  - name: DOCKER_IMAGE_REPOSITORY
+    description: The image repository where the application is going to be built.
+    required: true
+    value: registry.access.redhat.com/openjdk/openjdk-11-rhel7
   - name: USERS_LDAP_BASEDN
     description: Ldap basedn
     required: true
