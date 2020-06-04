@@ -217,7 +217,7 @@ parameters:
   - name: DOCKER_IMAGE_REPOSITORY
     description: The image repository where the application is going to be built.
     required: true
-    value: registry.access.redhat.com/openjdk/openjdk-11-rhel7
+    value: registry.access.redhat.com/openjdk/openjdk-11-rhel7:latest
   - name: USERS_LDAP_BASEDN
     description: Ldap basedn
     required: true
