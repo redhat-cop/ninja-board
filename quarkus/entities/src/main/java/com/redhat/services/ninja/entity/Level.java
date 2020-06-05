@@ -1,11 +1,18 @@
 package com.redhat.services.ninja.entity;
 
+import javax.json.bind.annotation.JsonbTransient;
 import java.util.Objects;
 
-public class Level implements Comparable<Level> {
+public class Level implements Identifiable<String>, Comparable<Level> {
 
     private String name;
     private int minimumPoint;
+
+    @Override
+    @JsonbTransient
+    public String getIdentifier() {
+        return getName();
+    }
 
     public String getName() {
         return name;
@@ -43,7 +50,7 @@ public class Level implements Comparable<Level> {
 
     public enum KNOWN_LEVEL {
         RED(40), ZERO(0), GREY(20), BLUE(5), BLACK(75);
-        
+
         private final Level level;
 
         KNOWN_LEVEL(int minimumPoint) {

@@ -1,0 +1,30 @@
+@Library('cop-library') _
+
+openshift.withCluster() {
+  env.localToken = readFile('/var/run/secrets/kubernetes.io/serviceaccount/token').trim()
+  env.NAMESPACE = openshift.project()
+}
+
+pipeline {
+  agent any
+  
+  stages {
+    stage ('Build Image') {
+      steps {
+        script {
+          openshift.withCluster() {
+            openshift.withProject("${DEV_NAMESPACE}") {
+              openshift.selector("bc", "${APPLICATION_NAME}").startBuild().logs("-f")
+            }
+          }
+        }
+      }
+    }
+    stage ('Verify Deployment to Dev') {
+      steps {
+        rollout([projectName: "${DEV_NAMESPACE}", resourceKindAndName: "dc/${APPLICATION_NAME}", latest: false])
+      }
+    }
+  }
+}
+
