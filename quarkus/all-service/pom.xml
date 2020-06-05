@@ -4,54 +4,23 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.redhat.service.ninja</groupId>
-        <artifactId>community-ninja-board</artifactId>
+        <artifactId>quarkus</artifactId>
         <version>2.0.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>../quarkus-pom/pom.xml</relativePath>
     </parent>
     <artifactId>all-service</artifactId>
     <name>Bundled Services</name>
+    <version>2.0.0-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
-            <groupId>com.redhat.service.ninja</groupId>
-            <artifactId>entities</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-resteasy-jsonb</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-junit5</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.rest-assured</groupId>
-            <artifactId>rest-assured</artifactId>
-            <scope>test</scope>
+            <artifactId>quarkus-smallrye-openapi</artifactId>
         </dependency>
     </dependencies>
 
     <build>
         <sourceDirectory>..</sourceDirectory>
-        <resources>
-            <resource>
-                <directory>../user-service/src/main/resources</directory>
-            </resource>
-            <resource>
-                <directory>../data-service/src/main/resources</directory>
-            </resource>
-        </resources>
-        <testSourceDirectory>../data-service/src/test/java</testSourceDirectory>
-        <testResources>
-            <testResource>
-                <directory>../user-service/src/test/resources</directory>
-            </testResource>
-            <testResource>
-                <directory>../data-service/src/test/resources</directory>
-            </testResource>
-        </testResources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -62,74 +31,10 @@
                     <includes>
                         <include>data-service/src/main/java/**</include>
                         <include>user-service/src/main/java/**</include>
+                        <include>scorecard-service/src/main/java/**</include>
                     </includes>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>io.quarkus</groupId>
-                <artifactId>quarkus-maven-plugin</artifactId>
-                <version>${quarkus-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>build</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>native</id>
-            <activation>
-                <property>
-                    <name>native</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>io.quarkus</groupId>
-                        <artifactId>quarkus-maven-plugin</artifactId>
-                        <version>${quarkus-plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>native-image</goal>
-                                </goals>
-                                <configuration>
-                                    <enableHttpUrlHandler>true</enableHttpUrlHandler>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>${failsafe-plugin.version}</version>
-                        <configuration>
-                            <quarkus.test.profile>maven</quarkus.test.profile>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>integration-test</goal>
-                                    <goal>verify</goal>
-                                </goals>
-                                <configuration>
-                                    <systemProperties>
-                                        <native.image.path>
-                                            ${project.build.directory}/${project.build.finalName}-runner
-                                        </native.image.path>
-                                    </systemProperties>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

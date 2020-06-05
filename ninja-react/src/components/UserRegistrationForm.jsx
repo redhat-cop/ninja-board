@@ -9,7 +9,7 @@ import {
   Button
 } from "@patternfly/react-core";
 import { redHatEmailRegex, usernameRegex } from "../config/Validation";
-import API from "../config/ServerUrls"
+import API from "../config/ServerUrls";
 
 /**
  * @author fostimus
@@ -149,6 +149,7 @@ export class UserRegistrationForm extends React.Component {
     /**
      * Form Actions (submit, cancel)
      */
+
     this.clearForm = () => {
       this.setState({
         displayName: "",
@@ -164,16 +165,14 @@ export class UserRegistrationForm extends React.Component {
       event.preventDefault();
 
       const user = {
-        displyName: this.state.displayName,
-        username: this.state.username,
-        email: this.state.email,
-        trelloUsername: this.state.trello,
-        githubUsername: this.state.github
+        displayName: this.state.displayName,
+        username: this.state.username.value,
+        email: this.state.email.value,
+        trelloUsername: this.state.trello.value,
+        githubUsername: this.state.github.value
       };
 
-      console.log(user);
-
-      API.post(`/user`, { user }).then(res => {
+      API.post(`/user`,  user ).then(res => {
         console.log(res);
         console.log(res.data);
       });
@@ -182,6 +181,19 @@ export class UserRegistrationForm extends React.Component {
 
   render() {
     const { displayName, username, email, trello, github, other } = this.state;
+
+    const submitEnabled =
+      // not empty
+      this.state.displayName !== "" &&
+      this.state.username.value !== "" &&
+      this.state.email.value !== "" &&
+      this.state.trello.value !== "" &&
+      this.state.github.value !== "" &&
+      // validation passes
+      this.state.username.isValid &&
+      this.state.email.isValid &&
+      this.state.trello.isValid &&
+      this.state.github.isValid;
 
     return (
       <Form>
@@ -286,7 +298,12 @@ export class UserRegistrationForm extends React.Component {
           />
         </FormGroup>
         <ActionGroup>
-          <Button onClick={this.handleSubmit} type="submit" variant="primary">
+          <Button
+            onClick={this.handleSubmit}
+            isDisabled={!submitEnabled}
+            type="submit"
+            variant="primary"
+          >
             Submit Form
           </Button>
           <Button onClick={this.clearForm} type="reset" variant="secondary">

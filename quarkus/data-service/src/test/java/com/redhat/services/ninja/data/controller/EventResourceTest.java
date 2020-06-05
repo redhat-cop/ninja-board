@@ -1,5 +1,6 @@
 package com.redhat.services.ninja.data.controller;
 
+import com.data.services.ninja.test.AbstractResourceTest;
 import com.redhat.services.ninja.entity.Event;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.common.mapper.TypeRef;

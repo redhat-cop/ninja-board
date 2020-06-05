@@ -7,7 +7,7 @@ import {
   NavList,
   NavVariants
 } from "@patternfly/react-core";
-import { navBarLinks } from "../config/NavBarLinks";
+import { ninjaRoutes, adminRoutes } from "../AppRoutes";
 
 /**
  * @author fostimus
@@ -15,11 +15,20 @@ import { navBarLinks } from "../config/NavBarLinks";
 class NavBar extends Component {
   constructor(props) {
     super(props);
+    this.ninjaExpandbleRef = React.createRef();
+    this.adminExpandbleRef = React.createRef();
     this.state = {
-      navBarLinks: navBarLinks,
       // this controls CSS highlighting when selecting a link
-      activeGroup: "grp-2",
-      activeItem: "grp-2_itm-1"
+      activeGroup: "",
+      activeItem: ""
+    };
+
+    // Since we are using 3rd party components from PatterFly,
+    // we need to use refs to manually change the expandedState
+    // when an item is clicked
+    this.closeExpandables = () => {
+      this.ninjaExpandbleRef.current.state.expandedState = false;
+      this.adminExpandbleRef.current.state.expandedState = false;
     };
 
     this.onSelect = result => {
@@ -27,12 +36,12 @@ class NavBar extends Component {
         activeGroup: result.groupId,
         activeItem: result.itemId
       });
-      console.log(this.state);
     };
   }
 
   render() {
-    const { navBarLinks, activeGroup, activeItem } = this.state;
+    const { activeGroup, activeItem } = this.state;
+
     // NavList uses the map function twice to populate NavExpandables and NavItems; see src/data/NavBarLinks.js for content
     //TODO: vertical alignment is off compared to the logo. verticalAlign CSS property doesn't seem to affect anything
     //TODO: Nav bar comes out of the page header when the window shrinks horizontally, and there is an obvious style change
@@ -42,35 +51,54 @@ class NavBar extends Component {
         onSelect={this.onSelect}
       >
         <NavList variant={NavVariants.horizontal}>
-          {navBarLinks.map(expandable => (
-            <NavExpandable
-              key={expandable.groupId}
-              title={expandable.expandableName}
-              srText={expandable.expandableName}
-              groupId={expandable.groupId}
-              isActive={activeGroup === expandable.groupId}
-            >
-              {expandable.links.map(link => (
-                <NavItem
-                  key={
-                    expandable.groupId + "-" + link.routeName + "-" + link.id
-                  }
-                  groupId={expandable.groupId}
-                  itemId={
-                    expandable.groupId + "-" + link.routeName + "-" + link.id
-                  }
-                  isActive={
-                    activeItem ===
-                    expandable.groupId + "-" + link.routeName + "-" + link.id
-                  }
-                >
-                  <NavLink exact to={link.routePath} >
-                    {link.routeName}
-                  </NavLink>
-                </NavItem>
-              ))}
-            </NavExpandable>
-          ))}
+          <NavExpandable
+            key="ninja"
+            title="Ninja Program"
+            srText="Ninja Program"
+            groupId="ninja"
+            isActive={activeGroup === "ninja"}
+            ref={this.ninjaExpandbleRef}
+          >
+            {ninjaRoutes.map(link => (
+              <NavItem
+                key={"ninja-" + link.routeName + "-" + link.id}
+                groupId="ninja"
+                itemId={"ninja-" + link.routeName + "-" + link.id}
+                isActive={
+                  activeItem === "ninja-" + link.routeName + "-" + link.id
+                }
+                onClick={this.closeExpandables}
+              >
+                <NavLink exact to={link.routePath}>
+                  {link.routeName}
+                </NavLink>
+              </NavItem>
+            ))}
+          </NavExpandable>
+          <NavExpandable
+            key="admin"
+            title="Admin"
+            srText="Admin"
+            groupId="admin"
+            isActive={activeGroup === "admin"}
+            ref={this.adminExpandbleRef}
+          >
+            {adminRoutes.map(link => (
+              <NavItem
+                key={"admin-" + link.routeName + "-" + link.id}
+                groupId="admin"
+                itemId={"admin-" + link.routeName + "-" + link.id}
+                isActive={
+                  activeItem === "admin-" + link.routeName + "-" + link.id
+                }
+                onClick={this.closeExpandables}
+              >
+                <NavLink exact to={link.routePath}>
+                  {link.routeName}
+                </NavLink>
+              </NavItem>
+            ))}
+          </NavExpandable>
         </NavList>
       </Nav>
     );
