@@ -8,7 +8,7 @@ import {
 } from "@patternfly/react-table";
 import { PageSection } from "@patternfly/react-core";
 import API from "../config/ServerUrls";
-import { tempScorecardData } from "../config/TempScorecardData";
+import Scorecard from "giveback_ninja";
 
 /**
  * @author fostimus
@@ -22,11 +22,13 @@ export default function ScorecardSection() {
 }
 
 class SortableTable extends React.Component {
+
+
   constructor(props) {
     super(props);
     //TODO: populate rows and columns dynamically based on serverData
     this.state = {
-      serverData: tempScorecardData,
+      serverData: {},
       columns: [
         { title: "Repositories", transforms: [sortable] },
         "Branches",
