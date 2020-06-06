@@ -5,10 +5,40 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 1.  `npm install`
 2.  `npm start`
 
-# Known issues & improvements
+# Background
 
-1.  When page shrinks, NavBar pops out of Header and has different styling
-2.  Routing between "Config" and "Database" page doesn't render properly, as the title doesn't change
+This project is set up with React.js, leveraging components from [PatternFly](https://www.patternfly.org). PatternFly is a library of reusable, familiar components on any webpage, e.g. Navigation Bar, Table, Buttons, Forms, etc. It includes CSS, so you don't have to worry about styling if you don't want to. It is recommended to use their CSS, as it is inline with the branding of PatternFly and Red Hat.
+
+Any files you need to use not related to JavaScript should be stored in [assets](src/assets). This includes CSS files, images, and other media.
+
+A majority of development work will happen in [components](src/components). These are the building blocks of your application, and good component design is crucial to a maintainable codebase. Since PatternFly is being used, custom components need to roll up into PatternFly wrappers, like `PageSection`, `PageHeader`, and `Page`. See PatternFly documentation for more info.
+
+Any configuration data should be stored in [config](src/config) and imported in the appropriate JS file.
+
+The top level of this project, with files such as `App.js`, `AppLayout.jsx`, and `AppRoutes.jsx` should stay as lean as possible, and be only for files that affect the entire project. If you cannot prefix your file name with `App` and it not make sense, then it most likely does not belong here.
+
+## PatternFly Tips
+
+-   Any component you want to use as a page in the application needs to be wrapped in `<PageSection></PageSection>`
+-   If you need to access the state of a PatternFly component, use a [React ref](https://reactjs.org/docs/refs-and-the-dom.html).
+-   Use the documentation to see what properties a component takes.
+
+## OpenAPI Code Generation
+
+This is only relevant if the OpenAPI contract changes. You do not need to generate code as long as the contract stays the same!
+
+The Giveback Ninja codebase leverages an API contract using the OpenAPI Spec, which can be found [here](<insert actual link here>). To ensure the front end is adhering to that contract, we generate client code from the contract. We use the [OpenAPI Generator command line tool](https://github.com/OpenAPITools/openapi-generator) to do so.
+
+Please follow the instructions [here](https://github.com/openapitools/openapi-generator-cli) to install the cli, using NPM.
+
+To generate the client code, run the following command from the [react](..) directory:
+`openapi-generator generate -g javascript -i INSERT_PATH_TO_CONTRACT_HERE -o ninja-model`
+
+# Known issues and potential improvements
+
+1.  When page shrinks, NavBar pops out of Header and has different styling.
+2.  Submission modal for user registration doesn't exist yet.
+3.  Combine JS object of routes with <Route> objects to have one source of truth.
 
 # create-react-app Generated README
 
