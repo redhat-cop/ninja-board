@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useRouteMatch } from "react-router-dom";
 import {
   Nav,
   NavExpandable,
@@ -12,7 +12,7 @@ import { ninjaRoutes, adminRoutes } from "../AppRoutes";
 /**
  * @author fostimus
  */
-class NavBar extends Component {
+function NavBar(props) {
   constructor(props) {
     super(props);
     this.ninjaExpandbleRef = React.createRef();
@@ -39,8 +39,9 @@ class NavBar extends Component {
     };
   }
 
-  render() {
     const { activeGroup, activeItem } = this.state;
+    const { url } = useRouteMatch();
+
 
     // NavList uses the map function twice to populate NavExpandables and NavItems; see src/data/NavBarLinks.js for content
     //TODO: vertical alignment is off compared to the logo. verticalAlign CSS property doesn't seem to affect anything
@@ -69,7 +70,7 @@ class NavBar extends Component {
                 }
                 onClick={this.closeExpandables}
               >
-                <NavLink exact to={link.routePath}>
+                <NavLink exact to={`${url}/${link.routePath}`}>
                   {link.routeName}
                 </NavLink>
               </NavItem>
@@ -93,7 +94,7 @@ class NavBar extends Component {
                 }
                 onClick={this.closeExpandables}
               >
-                <NavLink exact to={link.routePath}>
+                <NavLink exact to={`${url}/${link.routePath}`}>
                   {link.routeName}
                 </NavLink>
               </NavItem>
@@ -102,7 +103,7 @@ class NavBar extends Component {
         </NavList>
       </Nav>
     );
-  }
+
 }
 
 export default NavBar;

@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, useRouteMatch } from "react-router-dom";
 import FormSection from "./components/UserRegistrationForm";
 import AdminSection from "./components/AdminConfigurable";
 import ScorecardSection from "./components/Scorecard";
@@ -67,6 +67,7 @@ export const adminRoutes = [
 ];
 
 const AppRoutes = () => {
+
   return (
     <Fragment>
       <Switch>
