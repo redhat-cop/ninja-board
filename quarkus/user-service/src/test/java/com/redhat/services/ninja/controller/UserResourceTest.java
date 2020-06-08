@@ -19,6 +19,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static io.restassured.matcher.RestAssuredMatchers.*;
+import static org.hamcrest.Matchers.*;
 
 @QuarkusTest
 class UserResourceTest extends AbstractResourceTest {
@@ -30,7 +32,7 @@ class UserResourceTest extends AbstractResourceTest {
     @InjectMock
     @RestClient
     ScorecardClient scorecardClient;
-    
+
     @BeforeEach
     void initTest() {
         when(userClient.create(any(User.class)))
@@ -46,18 +48,21 @@ class UserResourceTest extends AbstractResourceTest {
         newUser.setUsername("new_ninja");
         newUser.setDisplayName("New Ninja");
         newUser.setGithubUsername("new_ninja");
-        
-        User createdUser = given()
+
+        given()
                 .contentType(ContentType.JSON)
                 .body(newUser)
                 .when()
                 .post("user")
-                .as(User.class);
-
-        assertAll(
-                () -> assertEquals(newUser, createdUser),
-                () -> assertEquals("EMEA", createdUser.getRegion())
-        );
+                .then()
+                .statusCode(201)
+                .contentType(ContentType.JSON)
+                .body(
+                        "username", equalTo("new_ninja"),
+                        "displayName", equalTo("New Ninja"),
+                        "githubUsername", equalTo("new_ninja"),
+                        "region", equalTo("EMEA")
+                );
     }
 
     @Test

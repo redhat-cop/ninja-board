@@ -36,3 +36,6 @@ bin/
 
 # macOS
 .DS_Store
+
+database.json
+node_modules/

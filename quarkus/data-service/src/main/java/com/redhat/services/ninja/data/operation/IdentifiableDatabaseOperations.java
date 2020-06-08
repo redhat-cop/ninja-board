@@ -1,9 +1,11 @@
 package com.redhat.services.ninja.data.operation;
 
-import com.redhat.services.ninja.data.operation.BasicDatabaseOperations;
+import com.redhat.services.ninja.entity.Identifiable;
 
-public interface IdentifiableDatabaseOperations<I, T> extends BasicDatabaseOperations<T> {
-    T get(I identifier);
+import java.util.Optional;
+
+public interface IdentifiableDatabaseOperations<I, T extends Identifiable<I>> extends BasicDatabaseOperations<T> {
+    Optional<T> get(I identifier);
 
     default T update(T entity) {
         return create(entity);
