@@ -8,7 +8,7 @@ import {
 } from "@patternfly/react-table";
 import { PageSection } from "@patternfly/react-core";
 import API from "../config/ServerUrls";
-// import Scorecard from "giveback_ninja";
+import Scorecard from "giveback_ninja";
 
 /**
  * @author fostimus
