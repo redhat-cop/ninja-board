@@ -1,0 +1,245 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: ninja-board-back-end
+  annotations:
+    iconClass: icon-jboss
+    tags: quarkus, java
+    description: Build the back-end Ninja Board App
+labels:
+  application: ${APPLICATION_NAME}
+objects:
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: ${APPLICATION_NAME}
+    name: openjdk-11-rhel7
+  spec:
+    tags:
+    - from:
+        kind: DockerImage
+        name: ${DOCKER_IMAGE_REPOSITORY}
+      name: latest
+- apiVersion: v1
+  kind: Secret
+  metadata:
+    labels:
+      app: ${APPLICATION_NAME}
+    name: ${SECRET_REF}
+  data:
+    WebHookSecretKey: bmluamEtYmFjaw==
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+  spec:
+    lookupPolicy:
+      local: false
+  status:
+    dockerImageRepository: ""
+- apiVersion: build.openshift.io/v1
+  kind: BuildConfig
+  metadata:
+    labels:
+      app: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: ${APPLICATION_NAME}:latest
+    resources: {}
+    source:
+      contextDir: ${SOURCE_REPOSITORY_DIR}
+      git:
+        ref: ${SOURCE_REPOSITORY_REF}
+        uri: ${SOURCE_REPOSITORY_URL}
+      type: Git
+    strategy:
+      sourceStrategy:
+        env:
+          - name: ARTIFACT_DIR
+            value: "all-service/target"
+          - name: ARTIFACT_COPY_ARGS
+            value: "-p -r lib/ *-runner.jar"
+          - name: USERS_LDAP_PROVIDER
+            value: ${USERS_LDAP_PROVIDER}
+          - name: USERS_LDAP_BASEDN
+            value: ${USERS_LDAP_BASEDN}
+        from:
+          kind: ImageStreamTag
+          name: openjdk-11-rhel7:latest
+          namespace: ${DEV_NAMESPACE}
+      type: Source
+    triggers:
+    - type: GitHub
+      github:
+        secretReference:
+          name: ${SECRET_REF}
+    - type: ConfigChange
+    - imageChange: {}
+      type: ImageChange
+  status:
+    lastVersion: 0
+- apiVersion: build.openshift.io/v1
+  kind: BuildConfig
+  metadata:
+    labels:
+      app: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}-dev-pipeline
+  spec:
+    source:
+      git:
+        ref: ${SOURCE_REPOSITORY_REF}
+        uri: ${SOURCE_REPOSITORY_URL}
+      type: Git
+    strategy:
+      jenkinsPipelineStrategy:
+        env:
+          - name: APPLICATION_NAME
+            value: ${APPLICATION_NAME}
+          - name: SOURCE_REPOSITORY_URL
+            value: ${SOURCE_REPOSITORY_URL}
+          - name: SOURCE_REPOSITORY_REF
+            value: ${SOURCE_REPOSITORY_REF}
+          - name: DEV_NAMESPACE
+            value: ${DEV_NAMESPACE}
+        jenkinsfilePath: ${SOURCE_REPOSITORY_DIR}/Jenkinsfile
+      type: JenkinsPipeline
+    triggers:
+- apiVersion: apps.openshift.io/v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      app: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+  spec:
+    replicas: 1
+    selector:
+      app: ${APPLICATION_NAME}
+      deploymentconfig: ${APPLICATION_NAME}
+    strategy:
+      resources:
+        requests:
+          cpu: 50m
+          memory: 64Mi
+        limits:
+          cpu: 200m
+          memory: 128Mi
+    template:
+      metadata:
+        labels:
+          app: ${APPLICATION_NAME}
+          deploymentconfig: ${APPLICATION_NAME}
+      spec:
+        containers:
+        - image: ${APPLICATION_NAME}:latest
+          name: ${APPLICATION_NAME}
+          ports:
+          - containerPort: 8778
+            protocol: TCP
+          - containerPort: 8080
+            protocol: TCP
+          - containerPort: 8443
+            protocol: TCP
+          resources: {}
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - ${APPLICATION_NAME}
+        from:
+          kind: ImageStreamTag
+          name: ${APPLICATION_NAME}:latest
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+  spec:
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    - name: 8443-tcp
+      port: 8443
+      protocol: TCP
+      targetPort: 8443
+    - name: 8778-tcp
+      port: 8778
+      protocol: TCP
+      targetPort: 8778
+    selector:
+      app: ${APPLICATION_NAME}
+      deploymentconfig: ${APPLICATION_NAME}
+  status:
+    loadBalancer: {}
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    labels:
+      app: ${APPLICATION_NAME}
+      application: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+  spec:
+    port:
+      targetPort: 8080-tcp
+    to:
+      kind: Service
+      name: ${APPLICATION_NAME}
+parameters:
+  - name: APPLICATION_NAME
+    description: The name for the application.
+    required: true
+    value: ninja-board-back-end
+  - name: SOURCE_REPOSITORY_URL
+    description: The source URL for the application
+    displayName: Source URL
+    value: https://github.com/redhat-cop/ninja-board
+    required: true
+  - name: SOURCE_REPOSITORY_REF
+    description: The branch name for the application
+    displayName: Source Branch
+    value: v2
+    required: true
+  - name: SOURCE_REPOSITORY_DIR
+    description: The location within the source repo of the application
+    displayName: Source Directory
+    value: quarkus
+    required: true
+  - name: DEV_NAMESPACE
+    description: Name of the Development Namespace
+    required: true
+    value: ninja-board-dev
+  - name: DOCKER_IMAGE_REPOSITORY
+    description: The image repository where the application is going to be built.
+    required: true
+    value: registry.access.redhat.com/openjdk/openjdk-11-rhel7:latest
+  - name: USERS_LDAP_BASEDN
+    description: Ldap basedn
+    required: true
+    value: ou=users,dc=redhat,dc=com
+  - name: USERS_LDAP_PROVIDER
+    description: Ldap provider
+    required: true
+    value: ldap://ldap.corp.redhat.com:389
+  - name: SECRET_REF
+    description: The secret reference
+    required: true
+    value: backend-secret
+    

@@ -20,15 +20,22 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
-/target/
+target/
 
 # OpenShift Applier
 galaxy
 =======
-/.settings/
-/.classpath
-/.project
+.settings/
+.classpath
+.project
+bin/
 
 .idea
 *.iml
 *.env
+
+# macOS
+.DS_Store
+
+database.json
+node_modules/
