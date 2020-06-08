@@ -30,6 +30,11 @@ objects:
       application: ${APPLICATION_NAME}
     name: ${APPLICATION_NAME}
   spec:
+    resources:
+      limits:
+        memory: 112Mi
+      requests:
+        memory: 64Mi
     nodeSelector: null
     output:
       to:
@@ -70,6 +75,15 @@ objects:
         jenkinsfilePath: ${SOURCE_REPOSITORY_DIR}/Jenkinsfile
       type: JenkinsPipeline
     triggers:
+      - type: ConfigChange
+- apiVersion: v1
+  data:
+    config.js: 'window.USER_MANAGEMENT_API_URL="http://localhost:8080";'
+  kind: ConfigMap
+  metadata:
+    labels:
+      application: ${APPLICATION_NAME}
+    name: front-end-configmap
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -83,6 +97,11 @@ objects:
       application: ${APPLICATION_NAME}
     strategy:
       type: Recreate
+      resources:
+        limits:
+          memory: 112Mi
+        requests:
+          memory: 64Mi
     template:
       metadata:
         labels:
@@ -97,6 +116,20 @@ objects:
           - containerPort: 8080
             name: http
             protocol: TCP
+          resources:
+            limits:
+              memory: 112Mi
+            requests:
+              memory: 64Mi
+          volumeMounts:
+            - mountPath: /opt/app-root/src/config
+              name: front-end-configmap
+              readOnly: true
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: front-end-configmap
+          name: front-end-configmap
       metadata:
         labels:
           application: ${APPLICATION_NAME}
