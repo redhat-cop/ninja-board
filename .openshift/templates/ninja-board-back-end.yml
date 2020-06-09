@@ -27,8 +27,8 @@ objects:
     labels:
       app: ${APPLICATION_NAME}
     name: ${SECRET_REF}
-  data:
-    WebHookSecretKey: bmluamEtYmFjaw==
+  stringData:
+    WebHookSecretKey: ${WEBHOOK_SECRET_KEY}
 - apiVersion: image.openshift.io/v1
   kind: ImageStream
   metadata:
@@ -242,4 +242,8 @@ parameters:
     description: The secret reference
     required: true
     value: backend-secret
-    
+  - name: WEBHOOK_SECRET_KEY
+    description: Identifier used by GitHub Webhook to make the URL unique 
+    required: true
+    value: ninja-backend
+
