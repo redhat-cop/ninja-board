@@ -20,14 +20,8 @@ pipeline {
     stage('Build Application'){
       steps {
         sh """
-          cd react/ninja-model
-          npm install
-          npm link
-          cd ../ninja-react
-          npm link ../ninja-model
-          cd ../ninja-model
-          npm run build
-          cd ../ninja-react
+          cd react/ninja-react
+          npm install giveback_ninja --save
           npm install
           npm run build
         """
