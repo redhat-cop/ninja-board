@@ -25,6 +25,7 @@ pipeline {
           npm link
           cd ../ninja-react
           npm link ../ninja-model
+          cd ../ninja-model
           npm run build
           cd ../ninja-react
           npm install
