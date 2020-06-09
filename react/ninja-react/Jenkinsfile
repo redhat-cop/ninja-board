@@ -21,8 +21,8 @@ pipeline {
       steps {
         sh """
           cd react/ninja-react
-          npm install giveback_ninja --save
           npm install
+          npm install giveback_ninja
           npm run build
         """
       }
