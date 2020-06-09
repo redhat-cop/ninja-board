@@ -27,32 +27,20 @@ const ScorecardSection = () => {
 export default ScorecardSection;
 
 export const SortableTable = props => {
-  // treat each object liket a dictionary, get the "keys" and use them as the column names
-  // after going through entire payload, sort columns alphabetically
-  //
-  // use the values as the row data, each row being ONE scorecard. populate each position in the row based on the key from JSON object.
-
+  /**
+   * State Initialization
+   */
   let initialColumns = [];
 
   getColumnHeadersFromObject(scorecardExample, initialColumns);
 
-  const createObjectRow = (object, row) => {
-    Object.keys(object).forEach(key => {
-      const position = initialColumns.indexOf(key);
-      if (position == -1) {
-        createObjectRow(object[key], row);
-      } else {
-        row.splice(position, 1, object[key]);
-      }
-    });
-  };
-
+  //TODO: replace tempScorecardData with serverData when "live" data becomes available
   const initialRows = tempScorecardData.map(scorecard => {
     let row = [];
     for (var i = 0; i < initialColumns.length; i++) {
-      row.push(0)
+      row.push("0");
     }
-    createObjectRow(scorecard, row);
+    createObjectRow(scorecard, row, initialColumns);
     return row;
   });
 
@@ -66,6 +54,10 @@ export const SortableTable = props => {
   const [columns, setColumns] = useState(sortableColumns);
   const [rows, setRows] = useState(initialRows);
   const [sortBy, setSortBy] = useState({});
+
+  /**
+   *  Methods that faciliate retrieval and manipulation of data
+   */
 
   const onSort = (_event, index, direction) => {
     const sortedRows = rows.sort((a, b) =>
@@ -81,7 +73,7 @@ export const SortableTable = props => {
   };
 
   useEffect(() => {
-    //TODO: ensure this actually syncs to the backend API
+    //TODO: fill this in and integrate when there is data coming from backend
     API.get(`/scorecard`).then(res => {});
   }, [serverData]);
 
@@ -104,7 +96,8 @@ const isObject = value => {
 };
 
 //recursive method to get all column headers into one array
-const getColumnHeadersFromObject = (object, columnHeaders, rows) => {
+// TODO: potentially move logic of setting up rows into this function, save some performance
+const getColumnHeadersFromObject = (object, columnHeaders) => {
   Object.keys(object).forEach(key => {
     // set up column headers
     if (!columnHeaders.includes(key)) {
@@ -114,8 +107,18 @@ const getColumnHeadersFromObject = (object, columnHeaders, rows) => {
         getColumnHeadersFromObject(object[key], columnHeaders);
       }
     }
+  });
+};
 
-    let row = [];
-    row.push();
+// recursive method to set up a row in the same order as the table headers
+const createObjectRow = (object, row, initialColumns) => {
+  Object.keys(object).forEach(key => {
+    const position = initialColumns.indexOf(key);
+    if (position === -1) {
+      createObjectRow(object[key], row, initialColumns);
+    } else {
+      // enter the value directly into the correct position, remove a "0" from the array
+      row.splice(position, 1, object[key].toString());
+    }
   });
 };
