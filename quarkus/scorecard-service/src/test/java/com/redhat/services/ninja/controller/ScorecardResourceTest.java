@@ -3,7 +3,6 @@ package com.redhat.services.ninja.controller;
 import com.data.services.ninja.test.AbstractResourceTest;
 import com.redhat.services.ninja.client.ScorecardClient;
 import com.redhat.services.ninja.entity.Scorecard;
-import com.redhat.services.ninja.entity.User;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 import io.restassured.http.ContentType;
@@ -61,7 +60,7 @@ class ScorecardResourceTest extends AbstractResourceTest {
         assertAll(
                 () -> assertEquals("new_ninja", scorecard.getUsername()),
                 () -> assertEquals(2, scorecard.getTotal()),
-                () -> assertEquals(2, scorecard.getPointMap().get("Trello"))
+                () -> assertEquals(2, scorecard.getDetails().get("Trello"))
         );
     }
 

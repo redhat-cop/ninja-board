@@ -23,7 +23,7 @@
   "scorecards": [
     {
       "identifier": "super_ninja",
-      "pointMap": {
+      "details": {
         "Github": 2
       },
       "total": 2,
@@ -31,7 +31,7 @@
     },
     {
       "identifier": "modest_ninja",
-      "pointMap": {
+      "details": {
         "Github": 2
       },
       "total": 2,
@@ -39,7 +39,7 @@
     },
     {
       "identifier": "retired_ninja",
-      "pointMap": {
+      "details": {
         "Github": 2
       },
       "total": 2,

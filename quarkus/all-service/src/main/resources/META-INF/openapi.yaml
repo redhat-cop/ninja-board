@@ -67,7 +67,7 @@ paths:
                     total: 248
                     pointsToNextLevel: 0
                     nextLevel: ""
-                    pointMap:
+                    details:
                       githubReviewedPullRequests: 24
                       githubClosedIssues: 0
                       servicesSupportMergeRequests: 0
@@ -281,7 +281,7 @@ components:
         score: 248
         pointsToNextLevel: 0
         nextLevel: ""
-        pointMap:
+        details:
           githubReviewedPullRequests: 24
           githubClosedIssues: 0
           servicesSupportMergeRequests: 0

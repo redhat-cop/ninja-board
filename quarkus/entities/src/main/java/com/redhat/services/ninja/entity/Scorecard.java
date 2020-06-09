@@ -1,12 +1,11 @@
 package com.redhat.services.ninja.entity;
 
-import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbTransient;
 import java.util.*;
 
 public class Scorecard implements Identifiable<String> {
     private String username;
-    private Map<String, Integer> pointMap;
+    private Map<String, Integer> details;
     private String level = "ZERO";
     private int pointsToNextLevel = 0;
     private String nextLevel = "";
@@ -25,7 +24,7 @@ public class Scorecard implements Identifiable<String> {
         this.username = username;
     }
 
-    public Map<String, Integer> getPointMap() {
+    public Map<String, Integer> getDetails() {
         return Collections.unmodifiableMap(getNonNullMap());
     }
 
@@ -74,13 +73,13 @@ public class Scorecard implements Identifiable<String> {
         return getNonNullMap().merge(category, incrementBy, Integer::sum);
     }
 
-    public void setPointMap(Map<String, Integer> pointMap) {
-        this.pointMap = pointMap;
+    public void setDetails(Map<String, Integer> details) {
+        this.details = details;
     }
 
     private synchronized Map<String, Integer> getNonNullMap() {
-        pointMap = Objects.requireNonNullElseGet(pointMap, HashMap::new);
-        return pointMap;
+        details = Objects.requireNonNullElseGet(details, HashMap::new);
+        return details;
     }
 
     @Override
