@@ -10,19 +10,19 @@ objects:
   metadata:
     creationTimestamp: null
     name: edit
-    namespace: ${PROD_NAMESPACE}
+    namespace: ${ACCESS_NAMESPACE}
   roleRef:
     name: edit
   subjects:
   - kind: ServiceAccount
     name: jenkins
-    namespace: ${DEV_NAMESPACE}
+    namespace: ${JENKINS_NAMESPACE}
   userNames:
-  - system:serviceaccount:${DEV_NAMESPACE}:jenkins
+  - system:serviceaccount:${JENKINS_NAMESPACE}:jenkins
 parameters:
 - description: Name of the Development Namespace
-  name: DEV_NAMESPACE
+  name: ACCESS_NAMESPACE
   required: true
 - description: Name of the Production Namespace
-  name: PROD_NAMESPACE
+  name: JENKINS_NAMESPACE
   required: true

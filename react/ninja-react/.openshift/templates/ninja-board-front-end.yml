@@ -30,11 +30,6 @@ objects:
       application: ${APPLICATION_NAME}
     name: ${APPLICATION_NAME}
   spec:
-    resources:
-      limits:
-        memory: 112Mi
-      requests:
-        memory: 64Mi
     nodeSelector: null
     output:
       to:
@@ -97,11 +92,6 @@ objects:
       application: ${APPLICATION_NAME}
     strategy:
       type: Recreate
-      resources:
-        limits:
-          memory: 112Mi
-        requests:
-          memory: 64Mi
     template:
       metadata:
         labels:
@@ -190,7 +180,7 @@ parameters:
   - name: SOURCE_REPOSITORY_DIR
     description: The location within the source repo of the application
     displayName: Source Directory
-    value: ninja-react
+    value: react/ninja-react
     required: true
   - description: Name of the Development Namespace
     name: DEV_NAMESPACE
