@@ -22,11 +22,12 @@ openshift_cluster_content:
         template: "{{ inventory_dir }}/../../.openshift/templates/rbac.yml"
         action: create
         params_from_vars:
-          DEV_NAMESPACE: "{{ ninja_board_dev_namespace }}"
-          PROD_NAMESPACE: "{{ ninja_board_prod_namespace }}"
+          JENKINS_NAMESPACE: "{{ ninja_board_jenkins_namespace }}"
+          ACCESS_NAMESPACE: "{{ access_namespace }}"
         tags:
           - projects-{{ ninja_board_prod_namespace }}
           - projects
+          - rbac
   - object: cicd
     content:
       - name: Deploy Jenkins Master
@@ -35,7 +36,6 @@ openshift_cluster_content:
         params_from_vars:
           MEMORY_LIMIT: 2Gi
         tags:
-          - projects-{{ ninja_board_dev_namespace }}
           - cicd
   - object: builds
     content:
@@ -80,3 +80,27 @@ openshift_cluster_content:
         tags:
           - projects-{{ ninja_board_prod_namespace }}
           - deployments
+  - object: front-end
+    content:
+      - name: "ninja-board-front-end"
+        template: "{{ inventory_dir }}/../../react/ninja-react/.openshift/templates/ninja-board-front-end.yml"
+        params_from_vars:
+          SOURCE_REPOSITORY_URL: "{{ source_repo }}"
+          SOURCE_REPOSITORY_REF: "{{ source_ref_v2 }}"
+          DEV_NAMESPACE: "{{ ninja_board_dev_namespace }}"
+        namespace: "{{ ninja_board_dev_namespace }}"
+        tags:
+          - projects-{{ ninja_board_dev_namespace }}
+          - front-end
+  - object: back-end
+    content:
+      - name: "build-ninja-board-back-end"
+        template: "{{ inventory_dir }}/../../.openshift/templates/ninja-board-back-end.yml"
+        params_from_vars:
+          SOURCE_REPOSITORY_URL: "{{ source_repo }}"
+          SOURCE_REPOSITORY_REF: "{{ source_ref_v2 }}"
+          DEV_NAMESPACE: "{{ ninja_board_dev_namespace }}"
+        namespace: "{{ ninja_board_dev_namespace }}"
+        tags:
+          - projects-{{ ninja_board_dev_namespace }}
+          - back-end
