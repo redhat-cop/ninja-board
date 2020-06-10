@@ -4,10 +4,11 @@ namespace: ninja-board
 ninja_board_dev_namespace: "{{ namespace }}-dev"
 ninja_board_prod_namespace: "{{ namespace }}"
 ninja_board_jenkins_namespace: "ninja-board-cicd-dev"
-access_namespace: "ninja-board-jenkins"
+access_namespace: "{{ namespace }}-dev"
 
 source_repo: https://github.com/redhat-cop/ninja-board.git
 source_ref: master
+source_ref_v2: v2
 
 dev:
   NAMESPACE: "{{ ninja_board_dev_namespace }}"
