@@ -1,23 +1,3 @@
-export const scorecardExample = {
-  username: "super_ninja",
-  level: "black",
-  score: 248,
-  pointsToNextLevel: 0,
-  nextLevel: "",
-  pointMap: {
-    githubReviewedPullRequests: 24,
-    githubClosedIssues: 0,
-    servicesSupportMergeRequests: 0,
-    servicesSupportClosedIssues: 0,
-    servicesSupportReviewedMergeRequests: 0,
-    githubPullRequests: 34,
-    gitlabMergeRequests: 43,
-    trelloCardsClosed: 23,
-    thoughtLeadershipCardsClosed: 1,
-    servicesSupportCardsClosed: 10
-  }
-};
-
 export const tempScorecardData = [
   {
     username: "super_ninja",
