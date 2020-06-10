@@ -32,7 +32,9 @@ export const SortableTable = props => {
    */
   let initialColumns = [];
 
-  getColumnHeadersFromObject(scorecardExample, initialColumns);
+  const maps = processServerData(tempScorecardData, initialColumns);
+
+  console.log(maps)
 
   //TODO: replace tempScorecardData with serverData when "live" data becomes available
   const initialRows = tempScorecardData.map(scorecard => {
@@ -40,7 +42,7 @@ export const SortableTable = props => {
     for (var i = 0; i < initialColumns.length; i++) {
       row.push("0");
     }
-    createObjectRow(scorecard, row, initialColumns);
+    createScorecardRow(scorecard, row, initialColumns);
     return row;
   });
 
@@ -95,30 +97,43 @@ const isObject = value => {
   return value && typeof value === "object" && value.constructor === Object;
 };
 
+/**
+* return value: Array of Maps, each map represents a scorecard
+*/
+const processServerData = (object, columnHeaders) => {
+  return object.map(scorecard => {
+    let scorecardMap = new Map();
+    getColumnHeadersAndScorecardMaps(scorecard, columnHeaders, scorecardMap);
+    return scorecardMap;
+  });
+};
+
 //recursive method to get all column headers into one array
-// TODO: potentially move logic of setting up rows into this function, save some performance
-const getColumnHeadersFromObject = (object, columnHeaders) => {
-  Object.keys(object).forEach(key => {
-    // set up column headers
-    if (!columnHeaders.includes(key)) {
-      if (!isObject(object[key])) {
+const getColumnHeadersAndScorecardMaps = (scorecard, columnHeaders, scorecardMap) => {
+  Object.keys(scorecard).forEach(key => {
+    if (!isObject(scorecard[key])) {
+      // set up column headers
+      if (!columnHeaders.includes(key)) {
         columnHeaders.push(key);
-      } else {
-        getColumnHeadersFromObject(object[key], columnHeaders);
       }
+      // populate scorecardMap
+      scorecardMap.set(key, scorecard[key]);
+    } else {
+      // if value is an object, recursively call this function to flatten headers and scorecardMap
+      getColumnHeadersAndScorecardMaps(scorecard[key], columnHeaders, scorecardMap);
     }
   });
 };
 
 // recursive method to set up a row in the same order as the table headers
-const createObjectRow = (object, row, initialColumns) => {
-  Object.keys(object).forEach(key => {
+const createScorecardRow = (scorecard, row, initialColumns) => {
+  Object.keys(scorecard).forEach(key => {
     const position = initialColumns.indexOf(key);
     if (position === -1) {
-      createObjectRow(object[key], row, initialColumns);
+      createScorecardRow(scorecard[key], row, initialColumns);
     } else {
       // enter the value directly into the correct position, remove a "0" from the array
-      row.splice(position, 1, object[key].toString());
+      row.splice(position, 1, scorecard[key].toString());
     }
   });
 };
