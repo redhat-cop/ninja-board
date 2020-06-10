@@ -243,7 +243,7 @@ parameters:
     required: true
     value: backend-secret
   - name: WEBHOOK_SECRET_KEY
-    description: Identifier used by GitHub Webhook to make the URL unique 
+    description: Identifier used by GitHub Webhook to make the URL unique.
     required: true
     value: ninja-backend
 
