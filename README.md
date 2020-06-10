@@ -96,21 +96,21 @@ Utilize the following steps to deploy the project
 
 4. Update ansible variables in *.applier/inventory/group_vars/all.yml* to configure desired end result.
 
-   a. Update variable `ninja_board_dev_namespace` to some unique value such as `"{{ namespace }}-dev-<your-keberos-id>"`. This will be the name of the openshift project.
-   
-   b. **Optional:** If you want to deploy a different github repository (ie, a forked copy of redhat-cop/ninja-board), then update the ansible variable `source_repo`.
+   1. Update variable `ninja_board_dev_namespace` to some unique value such as `"{{ namespace }}-dev-<your-keberos-id>"`. This will be the name of the openshift project.
+   2. Update variable `access_namespace` to the namespace defined in 4.1.
+   3. **Optional:** If you want to deploy a different github repository (ie, a forked copy of redhat-cop/ninja-board), then update the ansible variable `source_repo`.
 
-5. Add the namespace defined in 4a above to the Openshift Jenkins Sync plugin
+5. Add the namespace defined in 4.1 above to the Openshift Jenkins Sync plugin
 
    1. Login into the central Jenkins instance https://jenkins-ninja-board-cicd-dev.int.open.paas.redhat.com
    2. Click on `Manage Jenkins`
    3. Click on `Configure System`
-   4. Scroll down to the `Openshift Jenkins Sync` section and add the namespace created in 4a to the `Namespace` subsection. Add values to the list using a space separator.
+   4. Scroll down to the `Openshift Jenkins Sync` section and add the namespace created in 4.1 to the `Namespace` subsection. Add values to the list using a space separator.
    5. Click `Save`
 
 6. Execute the _openshift-applier_
 
-    Replace `<ninja-board-dev-namespace>` in the `include_tags` argument with the namespace created in 4a.
+    Replace `<ninja-board-dev-namespace>` in the `include_tags` argument with the namespace created in 4.1.
 
     ```
     ansible-playbook -i .applier/inventory galaxy/openshift-applier/playbooks/openshift-cluster-seed.yml -e="@.openshift/params/ninja-board-deployment" -e include_tags=projects-<ninja-board-dev-namespace>,rbac,front-end,back-end
