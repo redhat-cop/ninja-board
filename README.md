@@ -97,6 +97,7 @@ Utilize the following steps to deploy the project
 4. Update ansible variables in *.applier/inventory/group_vars/all.yml* to configure desired end result.
 
    a. Update variable `ninja_board_dev_namespace` to some unique value such as `"{{ namespace }}-dev-<your-keberos-id>"`. This will be the name of the openshift project.
+   
    b. **Optional:** If you want to deploy a different github repository (ie, a forked copy of redhat-cop/ninja-board), then update the ansible variable `source_repo`.
 
 5. Add the namespace defined in 4a above to the Openshift Jenkins Sync plugin
