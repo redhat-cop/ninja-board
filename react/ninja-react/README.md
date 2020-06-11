@@ -39,7 +39,6 @@ To generate the client code, run the following command from the [react](..) dire
 1.  When page shrinks, NavBar pops out of Header and has different styling.
 2.  Submission modal for user registration doesn't exist yet.
 3.  Combine JS object of routes with <Route> objects to have one source of truth.
-4.  Scorecard page doesn't allow sideways scroll, even when the table is off the page
 
 # create-react-app Generated README
 
