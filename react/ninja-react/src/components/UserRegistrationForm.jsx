@@ -10,6 +10,7 @@ import {
 } from "@patternfly/react-core";
 import { redHatEmailRegex, usernameRegex } from "../config/Validation";
 import API from "../config/ServerUrls";
+import ConfirmationModal from "./Modal";
 
 /**
  * @author fostimus
@@ -60,7 +61,10 @@ export class UserRegistrationForm extends React.Component {
         isValid: true,
         validated: "default"
       },
-      other: ""
+      other: "",
+      showModal: false,
+      modalTitle: "",
+      modalText: ""
     };
 
     /**
@@ -161,6 +165,10 @@ export class UserRegistrationForm extends React.Component {
       });
     };
 
+    this.handleModalToggle = () => {
+      this.setState({ showModal: !this.state.showModal });
+    };
+
     this.handleSubmit = event => {
       event.preventDefault();
 
@@ -172,9 +180,27 @@ export class UserRegistrationForm extends React.Component {
         githubUsername: this.state.github.value
       };
 
-      API.post(`/user`,  user ).then(res => {
+      API.post(`/user`, user).then(res => {
         console.log(res);
         console.log(res.data);
+
+        if (res.status === 201) {
+          this.setState({
+            showModal: true,
+            modalTitle: "Success!",
+            modalText:
+              "Thank you for registering for the Giveback Ninja Program"
+          });
+        }
+        //TODO: add in here checking for specific errors, e.g. LDAP lookup failed, trello/github username not found
+        else {
+          this.setState({
+            showModal: false,
+            modalTitle: "Registration Failed",
+            modalText:
+              "Thank you for registering for the Giveback Ninja Program"
+          });
+        }
       });
     };
   }
@@ -196,121 +222,129 @@ export class UserRegistrationForm extends React.Component {
       this.state.github.isValid;
 
     return (
-      <Form>
-        <FormGroup
-          label="Display Name"
-          isRequired
-          fieldId="horizontal-form-display-name"
-          helperText="Please provide your full name"
-        >
-          <TextInput
-            value={displayName}
+      <React.Fragment>
+        <ConfirmationModal
+          showModal={this.state.showModal}
+          handleModalToggle={this.handleModalToggle}
+          modalTitle={this.state.modalTitle}
+          modalText={this.state.modalText}
+        />
+        <Form>
+          <FormGroup
+            label="Display Name"
             isRequired
-            type="text"
-            id="horizontal-form-display-name"
-            aria-describedby="horizontal-form-display-name-helper"
-            name="horizontal-form-display-name"
-            onChange={this.handleInputChangeDisplayName}
-          />
-        </FormGroup>
-        <FormGroup
-          label="Username"
-          isRequired
-          fieldId="horizontal-form-username"
-          helperTextInvalid={username.invalidText}
-          validated={username.validated}
-          helperText="User your Kerberos ID"
-        >
-          <TextInput
-            value={username.value}
-            validated={username.validated}
-            isRequired
-            type="text"
-            id="horizontal-form-username"
-            aria-describedby="horizontal-form-username-helper"
-            name="horizontal-form-username"
-            onChange={this.handleInputChangeUsername}
-          />
-        </FormGroup>
-        <FormGroup
-          label="Email"
-          isRequired
-          helperText={email.helperText}
-          helperTextInvalid={email.invalidText}
-          fieldId="horizontal-form-email"
-          validated={email.validated}
-        >
-          <TextInput
-            validated={email.validated}
-            value={email.value}
-            onChange={this.handleInputChangeEmail}
-            isRequired
-            type="email"
-            id="horizontal-form-email"
-            name="horizontal-form-email"
-          />
-        </FormGroup>
-        <FormGroup
-          label="Trello"
-          isRequired
-          helperText={trello.helperText}
-          helperTextInvalid={trello.invalidText}
-          validated={trello.validated}
-          fieldId="horizontal-form-trello"
-        >
-          <TextInput
-            value={trello.value}
-            validated={trello.validated}
-            onChange={this.handleInputChangeTrello}
-            isRequired
-            type="text"
-            id="horizontal-form-trello"
-            name="horizontal-form-trello"
-          />
-        </FormGroup>
-        <FormGroup
-          label="GitHub"
-          isRequired
-          helperText={github.helperText}
-          helperTextInvalid={github.invalidText}
-          validated={github.validated}
-          fieldId="horizontal-form-github"
-        >
-          <TextInput
-            value={github.value}
-            validated={github.validated}
-            onChange={this.handleInputChangeGithub}
-            isRequired
-            type="text"
-            id="horizontal-form-github"
-            name="horizontal-form-github"
-          />
-        </FormGroup>
-        <FormGroup
-          label="Please provide links to any other qualifying CoP Contributions that do not show up in GitHub or Trello"
-          fieldId="horizontal-form-exp"
-        >
-          <TextArea
-            value={other}
-            onChange={this.handleInputChangeOther}
-            name="horizontal-form-exp"
-            id="horizontal-form-exp"
-          />
-        </FormGroup>
-        <ActionGroup>
-          <Button
-            onClick={this.handleSubmit}
-            isDisabled={!submitEnabled}
-            type="submit"
-            variant="primary"
+            fieldId="horizontal-form-display-name"
+            helperText="Please provide your full name"
           >
-            Submit Form
-          </Button>
-          <Button onClick={this.clearForm} type="reset" variant="secondary">
-            Cancel
-          </Button>
-        </ActionGroup>
-      </Form>
+            <TextInput
+              value={displayName}
+              isRequired
+              type="text"
+              id="horizontal-form-display-name"
+              aria-describedby="horizontal-form-display-name-helper"
+              name="horizontal-form-display-name"
+              onChange={this.handleInputChangeDisplayName}
+            />
+          </FormGroup>
+          <FormGroup
+            label="Username"
+            isRequired
+            fieldId="horizontal-form-username"
+            helperTextInvalid={username.invalidText}
+            validated={username.validated}
+            helperText="User your Kerberos ID"
+          >
+            <TextInput
+              value={username.value}
+              validated={username.validated}
+              isRequired
+              type="text"
+              id="horizontal-form-username"
+              aria-describedby="horizontal-form-username-helper"
+              name="horizontal-form-username"
+              onChange={this.handleInputChangeUsername}
+            />
+          </FormGroup>
+          <FormGroup
+            label="Email"
+            isRequired
+            helperText={email.helperText}
+            helperTextInvalid={email.invalidText}
+            fieldId="horizontal-form-email"
+            validated={email.validated}
+          >
+            <TextInput
+              validated={email.validated}
+              value={email.value}
+              onChange={this.handleInputChangeEmail}
+              isRequired
+              type="email"
+              id="horizontal-form-email"
+              name="horizontal-form-email"
+            />
+          </FormGroup>
+          <FormGroup
+            label="Trello"
+            isRequired
+            helperText={trello.helperText}
+            helperTextInvalid={trello.invalidText}
+            validated={trello.validated}
+            fieldId="horizontal-form-trello"
+          >
+            <TextInput
+              value={trello.value}
+              validated={trello.validated}
+              onChange={this.handleInputChangeTrello}
+              isRequired
+              type="text"
+              id="horizontal-form-trello"
+              name="horizontal-form-trello"
+            />
+          </FormGroup>
+          <FormGroup
+            label="GitHub"
+            isRequired
+            helperText={github.helperText}
+            helperTextInvalid={github.invalidText}
+            validated={github.validated}
+            fieldId="horizontal-form-github"
+          >
+            <TextInput
+              value={github.value}
+              validated={github.validated}
+              onChange={this.handleInputChangeGithub}
+              isRequired
+              type="text"
+              id="horizontal-form-github"
+              name="horizontal-form-github"
+            />
+          </FormGroup>
+          <FormGroup
+            label="Please provide links to any other qualifying CoP Contributions that do not show up in GitHub or Trello"
+            fieldId="horizontal-form-exp"
+          >
+            <TextArea
+              value={other}
+              onChange={this.handleInputChangeOther}
+              name="horizontal-form-exp"
+              id="horizontal-form-exp"
+            />
+          </FormGroup>
+          <ActionGroup>
+            <Button
+              onClick={this.handleSubmit}
+              isDisabled={!submitEnabled}
+              type="submit"
+              variant="primary"
+            >
+              Submit Form
+            </Button>
+            <Button onClick={this.clearForm} type="reset" variant="secondary">
+              Cancel
+            </Button>
+          </ActionGroup>
+        </Form>
+      </React.Fragment>
     );
   }
 }
