@@ -8,7 +8,6 @@ import {
 } from "@patternfly/react-table";
 import { PageSection } from "@patternfly/react-core";
 import API from "../config/ServerUrls";
-import { tempScorecardData } from "../config/TempScorecardData";
 import "../assets/css/horizontal-scroll.css";
 
 /**
@@ -30,30 +29,37 @@ export const SortableTable = props => {
   /**
    * State Initialization
    */
-  let initialColumns = [];
-
-  //TODO: replace tempScorecardData with serverData when "live" data becomes available
-  const scorecardMaps = processServerData(tempScorecardData, initialColumns);
-
-  const initialRows = scorecardMaps.map(scorecardMap => {
-    return createScorecardRow(scorecardMap, initialColumns);
-  });
-
-  // create collection of columns with sortable functionality
-  const sortableColumns = initialColumns.map(header => {
-    const sortableColumn = { title: header, transforms: [sortable] };
-    return sortableColumn;
-  });
-
-  const [serverData, setServerData] = useState({});
-  const [columns, setColumns] = useState(sortableColumns);
-  const [rows, setRows] = useState(initialRows);
+  const [columns, setColumns] = useState([]);
+  const [rows, setRows] = useState([]);
   const [sortBy, setSortBy] = useState({});
 
   /**
-   *  Methods that faciliate retrieval and manipulation of data
+   * Retrieve and process data from server
    */
+  useEffect(() => {
+    API.get(`/scorecard`).then(response => {
+      let tableHeaders = [];
 
+      const scorecardMaps = processServerData(response.data, tableHeaders);
+
+      const scorecardRows = scorecardMaps.map(scorecardMap => {
+        return createScorecardRow(scorecardMap, tableHeaders);
+      });
+
+      // create collection of columns with sortable functionality
+      const sortableColumns = tableHeaders.map(header => {
+        const sortableColumn = { title: header, transforms: [sortable] };
+        return sortableColumn;
+      });
+
+      setColumns(sortableColumns);
+      setRows(scorecardRows);
+    });
+  }, []);
+
+  /**
+   *  Manipulation of data
+   */
   const onSort = (_event, index, direction) => {
     const sortedRows = rows.sort((a, b) =>
       a[index] < b[index] ? -1 : a[index] > b[index] ? 1 : 0
@@ -66,11 +72,6 @@ export const SortableTable = props => {
       direction === SortByDirection.asc ? sortedRows : sortedRows.reverse()
     );
   };
-
-  useEffect(() => {
-    //TODO: fill this in and integrate when there is data coming from backend
-    API.get(`/scorecard`).then(res => {});
-  }, [serverData]);
 
   return (
     <Table
@@ -86,13 +87,15 @@ export const SortableTable = props => {
   );
 };
 
+/**
+ * Helper methods
+ */
+
 const isObject = value => {
   return value && typeof value === "object" && value.constructor === Object;
 };
 
-/**
- * return value: Array of Maps, each map represents a scorecard
- */
+//return value: Array of Maps, each map represents a scorecard
 const processServerData = (object, columnHeaders) => {
   return object.map(scorecard => {
     let scorecardMap = new Map();
@@ -137,7 +140,7 @@ const createScorecardRow = (scorecardMap, initialColumns) => {
   for (const [key, value] of scorecardMap) {
     const position = initialColumns.indexOf(key);
 
-    row.splice(position, 1, value);
+    row.splice(position, 1, value.toString());
   }
 
   return row;
