@@ -9,6 +9,7 @@ public class Database {
     private Set<Scorecard> scorecards = Set.of();
     private SortedSet<Level> levels;
     private List<Event> events = List.of();
+    private SortedSet<Period> history = new TreeSet<>();
 
     public Database() {
         levels = new TreeSet<>();
@@ -49,6 +50,14 @@ public class Database {
 
     public LocalDateTime getCreatedOn() {
         return createdOn;
+    }
+
+    public SortedSet<Period> getHistory() {
+        return history;
+    }
+
+    public void setHistory(SortedSet<Period> history) {
+        this.history = history;
     }
 
     public void setCreatedOn(LocalDateTime createdOn) {
