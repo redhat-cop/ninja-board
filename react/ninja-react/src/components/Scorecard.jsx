@@ -8,9 +8,8 @@ import {
 } from "@patternfly/react-table";
 import { PageSection } from "@patternfly/react-core";
 import API from "../config/ServerUrls";
-import {
-  tempScorecardData
-} from "../config/TempScorecardData";
+import { tempScorecardData } from "../config/TempScorecardData";
+import "../assets/css/horizontal-scroll.css";
 
 /**
  * @author fostimus
@@ -18,7 +17,9 @@ import {
 const ScorecardSection = () => {
   return (
     <PageSection>
-      <SortableTable />
+      <div className="horizontal-scroll">
+        <SortableTable />
+      </div>
     </PageSection>
   );
 };
