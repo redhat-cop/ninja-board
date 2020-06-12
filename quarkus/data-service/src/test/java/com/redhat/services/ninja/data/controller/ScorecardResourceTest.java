@@ -66,7 +66,7 @@ class ScorecardResourceTest extends AbstractResourceTest {
                 .when()
                 .put("/data/scorecard")
                 .then()
-                .body("total", equalTo(7));
+                .body("total", equalTo(modestNinja.getTotal()));
     }
 
     @Test

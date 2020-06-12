@@ -139,5 +139,6 @@
         <module>../user-service</module>
         <module>../scorecard-service</module>
         <module>../all-service</module>
+        <module>../migration</module>
     </modules>
 </project>

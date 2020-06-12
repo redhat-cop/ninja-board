@@ -6,7 +6,6 @@ import java.util.Objects;
 public class User implements Identifiable<String>{
     private String username;
     private String displayName;
-    private String levelChanged;
     private String email;
     private String githubUsername;
     private String trelloUsername;
@@ -32,14 +31,6 @@ public class User implements Identifiable<String>{
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
-    }
-
-    public String getLevelChanged() {
-        return levelChanged;
-    }
-
-    public void setLevelChanged(String levelChanged) {
-        this.levelChanged = levelChanged;
     }
 
     public String getEmail() {

@@ -1,13 +1,8 @@
 package com.redhat.services.ninja.data;
 
-import com.redhat.services.ninja.entity.Event;
-import com.redhat.services.ninja.entity.Scorecard;
-import com.redhat.services.ninja.entity.User;
+import com.redhat.services.ninja.entity.*;
 
-import javax.json.Json;
-import javax.json.JsonNumber;
-import javax.json.JsonObject;
-import javax.json.JsonValue;
+import javax.json.*;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
@@ -18,28 +13,25 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public class Migration {
     public static void main(String... args) throws IOException {
+        Database database = new Database();
         InputStream jsonInputStream = Files.newInputStream(Path.of("old-ninja-db.json"));
         JsonObject oldDatabase = Json.createReader(jsonInputStream).readObject();
 
-        Migration migration = new Migration();
-
-        migration.users = oldDatabase.getJsonObject("users")
+        var users = oldDatabase.getJsonObject("users")
                 .values().stream()
                 .map(JsonObject.class::cast)
                 .map(jo -> {
                     User user = new User();
 
-                    user.setLevel(jo.getString("level"));
                     user.setDisplayName(jo.getString("displayName", ""));
                     user.setGithubUsername(jo.getString("githubId", ""));
-                    user.setLevelChanged(jo.getString("levelChanged"));
                     user.setEmail(jo.getString("email"));
                     user.setTrelloUsername(jo.getString("trelloId", ""));
                     user.setUsername(jo.getString("username"));
@@ -47,10 +39,13 @@ public class Migration {
 
                     return user;
                 }).collect(Collectors.toSet());
+        
+        database.setUsers(users);
 
-        migration.createdOn = LocalDateTime.parse(oldDatabase.getString("created"));
+        var createdOn = LocalDateTime.parse(oldDatabase.getString("created"));
+        database.setCreatedOn(createdOn);
 
-        migration.scorecards = oldDatabase.getJsonObject("scoreCards").entrySet().stream()
+        var scorecards = oldDatabase.getJsonObject("scoreCards").entrySet().stream()
                 .map(e -> {
                     JsonObject jo = (JsonObject) e.getValue();
 
@@ -61,11 +56,14 @@ public class Migration {
 
                     Scorecard scorecard = new Scorecard();
                     scorecard.setUsername(e.getKey());
-                    scorecard.setPointMap(scores);
+                    scorecard.setDetails(scores);
+                    scorecard.computeLevel(database.getLevels());
                     return scorecard;
                 }).collect(Collectors.toSet());
+        
+        database.setScorecards(scorecards);
 
-        migration.events = oldDatabase.getJsonArray("events").stream()
+        var events = oldDatabase.getJsonArray("events").stream()
                 .map(JsonValue::asJsonObject)
                 .map(jo -> {
                     Event event = new Event();
@@ -77,49 +75,34 @@ public class Migration {
                     
                     return event;
                 }).collect(Collectors.toList());
+        
+        database.setEvents(events);
+
+        Set<Period> history = oldDatabase.getJsonObject("scorecardHistory").entrySet().stream()
+                .map(entry -> {
+                    Map<String, Record> records = entry.getValue().asJsonObject().entrySet().stream()
+                            .map(record ->
+                                    {
+                                        String recordDetail = ((JsonString) record.getValue()).getString();
+                                        String[] splitDetail = recordDetail.split("\\|");
+
+                                        return Map.entry(
+                                                record.getKey(),
+                                                new Record(splitDetail[0], Integer.parseInt(splitDetail[1]))
+                                        );
+                                    }
+                            ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+                    return new Period(entry.getKey(), records);
+                }).collect(Collectors.toSet());
+        
+        database.setHistory(new TreeSet<>(history));
 
         JsonbConfig config = new JsonbConfig().withFormatting(true).withPropertyOrderStrategy(PropertyOrderStrategy.ANY);
         Jsonb jsonb = JsonbBuilder.newBuilder().withConfig(config).build();
 
         Path ninjaPath = Paths.get("new-ninja-db.json");
-        String content = jsonb.toJson(migration);
+        String content = jsonb.toJson(database);
         Files.writeString(ninjaPath, content);
-    }
-
-    private LocalDateTime createdOn = LocalDateTime.now();
-    private Set<User> users;
-    private Set<Scorecard> scorecards;
-    private List<Event> events;
-
-    public LocalDateTime getCreatedOn() {
-        return createdOn;
-    }
-
-    public void setCreatedOn(LocalDateTime createdOn) {
-        this.createdOn = createdOn;
-    }
-
-    public Set<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<User> users) {
-        this.users = users;
-    }
-
-    public Set<Scorecard> getScorecards() {
-        return scorecards;
-    }
-
-    public void setScorecards(Set<Scorecard> scorecards) {
-        this.scorecards = scorecards;
-    }
-
-    public List<Event> getEvents() {
-        return events;
-    }
-
-    public void setEvents(List<Event> events) {
-        this.events = events;
     }
 }

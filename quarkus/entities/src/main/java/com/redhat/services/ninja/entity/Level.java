@@ -49,8 +49,7 @@ public class Level implements Identifiable<String>, Comparable<Level> {
     }
 
     public enum KNOWN_LEVEL {
-        RED(40), ZERO(0), GREY(20), BLUE(5), BLACK(75);
-
+        BLACK(75), RED(40), GREY(20), BLUE(5), ZERO(0);
         private final Level level;
 
         KNOWN_LEVEL(int minimumPoint) {

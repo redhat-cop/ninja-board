@@ -10,6 +10,13 @@ public class Scorecard implements Identifiable<String> {
     private int pointsToNextLevel = 0;
     private String nextLevel = "";
 
+    public Scorecard() {
+    }
+
+    public Scorecard(String username) {
+        this.username = username;
+    }
+
     @Override
     @JsonbTransient
     public String getIdentifier() {
