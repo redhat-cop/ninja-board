@@ -21,6 +21,14 @@ objects:
         kind: DockerImage
         name: ${DOCKER_IMAGE_REPOSITORY}
       name: latest
+- apiVersion: v1
+  kind: Secret
+  metadata:
+    labels:
+      app: ${APPLICATION_NAME}
+    name: ${SECRET_REF}
+  stringData:
+    WebHookSecretKey: ${WEBHOOK_SECRET_KEY}
 - apiVersion: image.openshift.io/v1
   kind: ImageStream
   metadata:
@@ -67,6 +75,10 @@ objects:
           namespace: ${DEV_NAMESPACE}
       type: Source
     triggers:
+    - type: GitHub
+      github:
+        secretReference:
+          name: ${SECRET_REF}
     - type: ConfigChange
     - imageChange: {}
       type: ImageChange
@@ -226,3 +238,12 @@ parameters:
     description: Ldap provider
     required: true
     value: ldap://ldap.corp.redhat.com:389
+  - name: SECRET_REF
+    description: The secret reference
+    required: true
+    value: backend-secret
+  - name: WEBHOOK_SECRET_KEY
+    description: Identifier used by GitHub Webhook to make the URL unique.
+    required: true
+    value: ninja-backend
+
