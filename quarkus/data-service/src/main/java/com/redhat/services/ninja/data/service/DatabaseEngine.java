@@ -2,10 +2,7 @@ package com.redhat.services.ninja.data.service;
 
 import com.redhat.services.ninja.data.operation.BasicDatabaseOperations;
 import com.redhat.services.ninja.data.operation.IdentifiableDatabaseOperations;
-import com.redhat.services.ninja.entity.Database;
-import com.redhat.services.ninja.entity.Event;
-import com.redhat.services.ninja.entity.Scorecard;
-import com.redhat.services.ninja.entity.User;
+import com.redhat.services.ninja.entity.*;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.annotation.PostConstruct;
@@ -37,11 +34,13 @@ public class DatabaseEngine {
     private Map<String, User> users;
     private Map<String, Scorecard> scorecards;
     private Map<String, com.redhat.services.ninja.entity.Level> levels;
+    private Map<String, Period> periods;
     private Queue<Event> events;
     private Jsonb jsonb;
     private IdentifiableDatabaseOperations<String, User> userOperations;
     private IdentifiableDatabaseOperations<String, Scorecard> scorecardOperations;
     private IdentifiableDatabaseOperations<String, com.redhat.services.ninja.entity.Level> levelOperations;
+    private IdentifiableDatabaseOperations<String, Period> periodOperations;
     private BasicDatabaseOperationsImpl<Event> eventOperations;
 
     @PostConstruct
@@ -62,9 +61,11 @@ public class DatabaseEngine {
         users = database.getUsers().parallelStream().collect(Collectors.toMap(User::getUsername, Function.identity()));
         scorecards = database.getScorecards().parallelStream().collect(Collectors.toMap(Scorecard::getUsername, Function.identity()));
         levels = database.getLevels().stream().collect(Collectors.toMap(com.redhat.services.ninja.entity.Level::getIdentifier, Function.identity()));
+        periods = database.getHistory().stream().collect(Collectors.toMap(Period::getIdentifier, Function.identity()));
         events = new LinkedBlockingQueue<>(maxEvents);
         userOperations = new IdentifiableDatabaseOperationsImpl<>(users);
         levelOperations = new IdentifiableDatabaseOperationsImpl<>(levels);
+        periodOperations = new IdentifiableDatabaseOperationsImpl<>(periods);
         scorecardOperations = new IdentifiableDatabaseOperationsImpl<>(scorecards) {
             @Override
             public Scorecard create(Scorecard entity) {
@@ -109,6 +110,7 @@ public class DatabaseEngine {
         database.setScorecards(Set.copyOf(scorecards.values()));
         database.setLevels(new TreeSet<>(levels.values()));
         database.setEvents(List.copyOf(events));
+        database.setHistory(new TreeSet<>(periods.values()));
 
         writeFile(database);
     }
@@ -129,6 +131,10 @@ public class DatabaseEngine {
 
     public IdentifiableDatabaseOperations<String, com.redhat.services.ninja.entity.Level> getLevelOperations() {
         return levelOperations;
+    }
+
+    public IdentifiableDatabaseOperations<String, Period> getPeriodOperations() {
+        return periodOperations;
     }
 
     public IdentifiableDatabaseOperations<String, User> getUserOperations() {

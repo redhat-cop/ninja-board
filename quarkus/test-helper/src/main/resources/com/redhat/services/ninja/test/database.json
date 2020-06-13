@@ -24,25 +24,27 @@
     {
       "identifier": "super_ninja",
       "details": {
-        "Github": 2
+        "Github": 20,
+        "Trello": 50,
+        "Merge": 10
       },
-      "total": 2,
+      "total": 80,
       "username": "super_ninja"
     },
     {
       "identifier": "modest_ninja",
       "details": {
-        "Github": 2
+        "Github": 30
       },
-      "total": 2,
+      "total": 30,
       "username": "modest_ninja"
     },
     {
       "identifier": "retired_ninja",
       "details": {
-        "Github": 2
+        "Github": 120
       },
-      "total": 2,
+      "total": 120,
       "username": "retired_ninja"
     }
   ],
@@ -70,6 +72,62 @@
       "region": "EMEA",
       "trelloUsername": "retired_ninja",
       "username": "retired_ninja"
+    }
+  ],
+  "history": [
+    {
+      "cumulatedOn": "2020-06-11T08:08:56.5899687",
+      "records": {
+        "retired_ninja": {
+          "score": 120,
+          "level": "BLACK"
+        },
+        "super_ninja": {
+          "score": 80,
+          "level": "BLACK"
+        },
+        "modest_ninja": {
+          "score": 30,
+          "level": "GREY"
+        }
+      },
+      "name": "FY19"
+    },
+    {
+      "cumulatedOn": "2019-06-11T08:08:56.5899687",
+      "records": {
+        "retired_ninja": {
+          "score": 120,
+          "level": "BLACK"
+        },
+        "super_ninja": {
+          "score": 80,
+          "level": "BLACK"
+        },
+        "modest_ninja": {
+          "score": 30,
+          "level": "GREY"
+        }
+      },
+      "name": "FY18"
+    },
+    {
+      "cumulatedOn": "2017-06-11T08:08:56.5899687",
+      "records": {
+        "retired_ninja": {
+          "score": 120,
+          "level": "BLACK"
+        },
+        "super_ninja": {
+          "score": 80,
+          "level": "BLACK"
+        },
+        "modest_ninja": {
+          "score": 30,
+          "level": "GREY"
+        }
+      },
+      "name": "FY16"
     }
   ],
   "levels": [
