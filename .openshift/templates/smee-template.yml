@@ -1,0 +1,117 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: smee-webhook
+  annotations:
+    iconClass: icon-nodejs
+    tags: smee
+    description: Build the Smee Webhook App
+labels:
+  application: ${APPLICATION_NAME}
+objects:
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: ${APPLICATION_NAME}
+    name: node
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - from:
+        kind: DockerImage
+        name: node:10
+      name: "10"
+      referencePolicy:
+        type: Source
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+- apiVersion: build.openshift.io/v1
+  kind: BuildConfig
+  metadata:
+    labels:
+      app: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: ${APPLICATION_NAME}:latest
+    runPolicy: Serial
+    source:
+      dockerfile: |-
+        FROM node:latest
+        RUN npm install --global smee-client
+        ENTRYPOINT smee -u ${SMEE_URL} -t ${SMEE_TARGET}
+      type: Binary
+    strategy:
+      dockerStrategy:
+        from:
+          kind: ImageStreamTag
+          name: node:10
+      type: Docker
+    triggers:
+    - type: ConfigChange
+    - type: ImageChange
+- apiVersion: apps.openshift.io/v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      app: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+  spec:
+    replicas: 1
+    selector:
+      app: ${APPLICATION_NAME}
+      deploymentconfig: ${APPLICATION_NAME}
+    template:
+      metadata:
+        labels:
+          app: ${APPLICATION_NAME}
+          deploymentconfig: ${APPLICATION_NAME}
+      spec:
+        containers:
+        - env:
+          - name: NODE_TLS_REJECT_UNAUTHORIZED
+            value: "0"
+          image: ${APPLICATION_NAME}:latest
+          name: ${APPLICATION_NAME}
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - ${APPLICATION_NAME}
+        from:
+          kind: ImageStreamTag
+          name: ${APPLICATION_NAME}:latest
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    readyReplicas: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+parameters:
+  - name: APPLICATION_NAME
+    description: The name for the application.
+    required: true
+    value: smee-webhook
+  - name: SMEE_URL
+    description: URL of the webhook proxy service
+    displayName: Webhook URL
+    value: https://smee.io/bn7mV7yPnzhkeRd
+    required: true
+  - name: SMEE_TARGET
+    description: Full URL of the target service the events will forward to (Generated git webhook)
+    displayName: The target
+    value: https://open.paas.redhat.com/oapi/v1/namespaces/ninja-board-dev/buildconfigs/ninja-board-back-end/webhooks/ninja-backend/github
+    required: true
