@@ -115,3 +115,4 @@ parameters:
     displayName: The target
     value: https://open.paas.redhat.com/oapi/v1/namespaces/ninja-board-dev/buildconfigs/ninja-board-back-end/webhooks/ninja-backend/github
     required: true
+
