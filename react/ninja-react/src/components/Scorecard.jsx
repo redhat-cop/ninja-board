@@ -7,6 +7,7 @@ import {
   SortByDirection
 } from "@patternfly/react-table";
 import { PageSection } from "@patternfly/react-core";
+import  PaginationControls  from "./PaginationControls";
 import API from "../config/ServerUrls";
 import "../assets/css/horizontal-scroll.css";
 
@@ -31,6 +32,8 @@ export const SortableTable = props => {
    */
   const [columns, setColumns] = useState([]);
   const [rows, setRows] = useState([]);
+  const [displayedRows, setDisplayedRows] = useState([]);
+  const [perPage, setPerPage] = useState(10);
   const [sortBy, setSortBy] = useState({});
 
   /**
@@ -54,6 +57,13 @@ export const SortableTable = props => {
 
       setColumns(sortableColumns);
       setRows(scorecardRows);
+
+      const loopEnd = scorecardRows < perPage ? scorecardRows.length : perPage;
+      let toBeDisplayed = [];
+      for (let i = 0; i < loopEnd; i++) {
+        toBeDisplayed.push(scorecardRows[i]);
+      }
+      setDisplayedRows(toBeDisplayed);
     });
   }, []);
 
@@ -73,17 +83,42 @@ export const SortableTable = props => {
     );
   };
 
+  const changeDisplayedRows = (amountOfRows, index) => {
+
+    //set the appropriate value to end looping at
+    let targetEnd = index + amountOfRows;
+    let loopEnd = rows.length > targetEnd ? targetEnd : rows.length;
+
+    //create displayedRows from array of all rows
+    let toBeDisplayed = [];
+    for (let i = index; i < loopEnd; i++) {
+      toBeDisplayed.push(rows[i]);
+    }
+
+    setDisplayedRows(toBeDisplayed);
+  };
+
+  const numberOfScorecards = rows.length;
+
   return (
-    <Table
-      aria-label="Sortable Table"
-      sortBy={sortBy}
-      onSort={onSort}
-      cells={columns}
-      rows={rows}
-    >
-      <TableHeader />
-      <TableBody />
-    </Table>
+    <React.Fragment>
+      <Table
+        aria-label="Sortable Table"
+        sortBy={sortBy}
+        onSort={onSort}
+        cells={columns}
+        rows={displayedRows}
+      >
+        <TableHeader />
+        <TableBody />
+      </Table>
+      <PaginationControls
+        rows={numberOfScorecards}
+        perPage={perPage}
+        onPerPageSelect={setPerPage}
+        changeDisplayedRows={changeDisplayedRows}
+      />
+    </React.Fragment>
   );
 };
 
