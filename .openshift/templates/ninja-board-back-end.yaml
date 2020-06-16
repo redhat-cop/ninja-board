@@ -38,8 +38,6 @@ objects:
   spec:
     lookupPolicy:
       local: false
-  status:
-    dockerImageRepository: ""
 - apiVersion: build.openshift.io/v1
   kind: BuildConfig
   metadata:
@@ -72,7 +70,6 @@ objects:
         from:
           kind: ImageStreamTag
           name: openjdk-11-rhel7:latest
-          namespace: ${DEV_NAMESPACE}
       type: Source
     triggers:
     - type: GitHub
@@ -84,32 +81,6 @@ objects:
       type: ImageChange
   status:
     lastVersion: 0
-- apiVersion: build.openshift.io/v1
-  kind: BuildConfig
-  metadata:
-    labels:
-      app: ${APPLICATION_NAME}
-    name: ${APPLICATION_NAME}-dev-pipeline
-  spec:
-    source:
-      git:
-        ref: ${SOURCE_REPOSITORY_REF}
-        uri: ${SOURCE_REPOSITORY_URL}
-      type: Git
-    strategy:
-      jenkinsPipelineStrategy:
-        env:
-          - name: APPLICATION_NAME
-            value: ${APPLICATION_NAME}
-          - name: SOURCE_REPOSITORY_URL
-            value: ${SOURCE_REPOSITORY_URL}
-          - name: SOURCE_REPOSITORY_REF
-            value: ${SOURCE_REPOSITORY_REF}
-          - name: DEV_NAMESPACE
-            value: ${DEV_NAMESPACE}
-        jenkinsfilePath: ${SOURCE_REPOSITORY_DIR}/Jenkinsfile
-      type: JenkinsPipeline
-    triggers:
 - apiVersion: apps.openshift.io/v1
   kind: DeploymentConfig
   metadata:
@@ -176,14 +147,6 @@ objects:
       port: 8080
       protocol: TCP
       targetPort: 8080
-    - name: 8443-tcp
-      port: 8443
-      protocol: TCP
-      targetPort: 8443
-    - name: 8778-tcp
-      port: 8778
-      protocol: TCP
-      targetPort: 8778
     selector:
       app: ${APPLICATION_NAME}
       deploymentconfig: ${APPLICATION_NAME}
@@ -222,10 +185,6 @@ parameters:
     displayName: Source Directory
     value: quarkus
     required: true
-  - name: DEV_NAMESPACE
-    description: Name of the Development Namespace
-    required: true
-    value: ninja-board-dev
   - name: DOCKER_IMAGE_REPOSITORY
     description: The image repository where the application is going to be built.
     required: true
@@ -246,4 +205,3 @@ parameters:
     description: Identifier used by GitHub Webhook to make the URL unique.
     required: true
     value: ninja-backend
-
