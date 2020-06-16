@@ -12,7 +12,7 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public abstract class AbstractResource<T, O extends BasicDatabaseOperations<T>> {
-    
+
     @POST
     public T create(T entity) {
         T createdEntity = getOperations().create(entity);

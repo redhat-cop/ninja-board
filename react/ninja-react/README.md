@@ -2,7 +2,6 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 # Running
 
-0.  Set up local module (giveback_ninja found in ../ninja-model), follow instructions at ../ninja-model/README.md under \_Local development_
 1.  `npm install`
 2.  `npm start`
 

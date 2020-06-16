@@ -4,7 +4,7 @@ import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
 
 public class ErrorResponse {
-    private String message;
+    private final String message;
 
     @JsonbCreator
     public ErrorResponse(@JsonbProperty("message") String message) {
