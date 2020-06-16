@@ -61,7 +61,8 @@ export class UserRegistrationForm extends React.Component {
     other: "",
     showModal: false,
     modalTitle: "",
-    modalText: ""
+    modalText: "",
+    clearFormOnSubmit: true
   };
 
   /**
@@ -188,7 +189,9 @@ export class UserRegistrationForm extends React.Component {
 
   handleModalToggle = () => {
     this.setState({ showModal: !this.state.showModal });
-    this.clearForm();
+    if (this.state.clearFormOnSubmit) {
+      this.clearForm();
+    }
   };
 
   handleSubmit = event => {
@@ -212,18 +215,32 @@ export class UserRegistrationForm extends React.Component {
             showModal: true,
             modalTitle: "Success!",
             modalText:
-              "Thank you for registering for the Giveback Ninja Program"
+              "Thank you for registering for the Giveback Ninja Program",
+            clearFormOnSubmit: true
           });
         }
       })
       .catch(error => {
-        console.log(error);
+        if (error.response) {
+          if (error.response.status === 404) {
+            this.setState({
+              showModal: true,
+              modalTitle: "Registration Failed",
+              modalText:
+                "Kerberos ID not found; please ensure a valid ID for username.",
+              clearFormOnSubmit: false
+            });
+          } else {
+            this.setState({
+              showModal: true,
+              modalTitle: "Registration Failed",
+              modalText:
+                "Please see an admin for why your registration failed.",
+              clearFormOnSubmit: true
+            });
+          }
+        }
 
-        this.setState({
-          showModal: true,
-          modalTitle: "Registration Failed",
-          modalText: "Please see an admin for why your registration failed."
-        });
         //TODO: add in here checking for specific errors, e.g. LDAP lookup fad, trello/github username not found
       });
   };
