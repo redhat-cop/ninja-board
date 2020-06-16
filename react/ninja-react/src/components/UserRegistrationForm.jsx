@@ -27,11 +27,132 @@ export default class FormSection extends React.Component {
 }
 
 export class UserRegistrationForm extends React.Component {
-  constructor(props) {
-    super(props);
+  //TODO: use redux or find a different way to manage state better
+  state = {
+    displayName: "",
+    username: {
+      value: "",
+      invalidText: "",
+      helperText: "",
+      isValid: true,
+      validated: "default"
+    },
+    email: {
+      value: "",
+      invalidText: "",
+      helperText: "",
+      isValid: true,
+      validated: "default"
+    },
+    trello: {
+      value: "",
+      invalidText: "",
+      helperText: "",
+      isValid: true,
+      validated: "default"
+    },
+    github: {
+      value: "",
+      invalidText: "",
+      helperText: "",
+      isValid: true,
+      validated: "default"
+    },
+    other: "",
+    showModal: false,
+    modalTitle: "",
+    modalText: ""
+  };
 
-    //TODO: use redux or find a different way to manage state better
-    this.state = {
+  /**
+   * input change handlers
+   */
+  handleInputChangeDisplayName = displayName => {
+    this.setState({ displayName });
+  };
+
+  handleInputChangeUsername = username => {
+    // ... is the spread operator
+    let newState = {
+      username: {
+        value: username,
+        ...this.usernameValidation(username)
+      }
+    };
+    this.setState(newState);
+  };
+
+  handleInputChangeEmail = email => {
+    const isValid = redHatEmailRegex.test(email);
+    if (isValid) {
+      this.setState({
+        email: {
+          value: email,
+          isValid: isValid,
+          helperText: "Email is valid",
+          validated: "success"
+        }
+      });
+    } else {
+      this.setState({
+        email: {
+          value: email,
+          isValid: isValid,
+          invalidText: "Please follow the format: email@redhat.com",
+          helperText: "Validating...",
+          validated: "error"
+        }
+      });
+    }
+  };
+
+  handleInputChangeTrello = trello => {
+    let newState = {
+      trello: {
+        value: trello,
+        ...this.usernameValidation(trello)
+      }
+    };
+    this.setState(newState);
+  };
+
+  handleInputChangeGithub = github => {
+    let newState = {
+      github: {
+        value: github,
+        ...this.usernameValidation(github)
+      }
+    };
+    this.setState(newState);
+  };
+
+  handleInputChangeOther = other => {
+    this.setState({ other });
+  };
+
+  usernameValidation = value => {
+    const isValid = usernameRegex.test(value);
+    if (isValid) {
+      return {
+        isValid: isValid,
+        validated: "success"
+      };
+    } else {
+      return {
+        isValid: isValid,
+        invalidText: "Usernames cannot have spaces",
+        helperText: "Validating...",
+        validated: "error"
+      };
+    }
+  };
+
+  /**
+   * Form Actions (submit, cancel)
+   */
+
+  clearForm = () => {
+    this.setState({
       displayName: "",
       username: {
         value: "",
@@ -61,126 +182,28 @@ export class UserRegistrationForm extends React.Component {
         isValid: true,
         validated: "default"
       },
-      other: "",
-      showModal: false,
-      modalTitle: "",
-      modalText: ""
+      other: ""
+    });
+  };
+
+  handleModalToggle = () => {
+    this.setState({ showModal: !this.state.showModal });
+    this.clearForm();
+  };
+
+  handleSubmit = event => {
+    event.preventDefault();
+
+    const user = {
+      displayName: this.state.displayName,
+      username: this.state.username.value,
+      email: this.state.email.value,
+      trelloUsername: this.state.trello.value,
+      githubUsername: this.state.github.value
     };
 
-    /**
-     * input change handlers
-     */
-    this.handleInputChangeDisplayName = displayName => {
-      this.setState({ displayName });
-    };
-
-    this.handleInputChangeUsername = username => {
-      // ... is the spread operator
-      let newState = {
-        username: {
-          value: username,
-          ...this.usernameValidation(username)
-        }
-      };
-      this.setState(newState);
-    };
-
-    this.handleInputChangeEmail = email => {
-      const isValid = redHatEmailRegex.test(email);
-      if (isValid) {
-        this.setState({
-          email: {
-            value: email,
-            isValid: isValid,
-            helperText: "Email is valid",
-            validated: "success"
-          }
-        });
-      } else {
-        this.setState({
-          email: {
-            value: email,
-            isValid: isValid,
-            invalidText: "Please follow the format: email@redhat.com",
-            helperText: "Validating...",
-            validated: "error"
-          }
-        });
-      }
-    };
-
-    this.handleInputChangeTrello = trello => {
-      let newState = {
-        trello: {
-          value: trello,
-          ...this.usernameValidation(trello)
-        }
-      };
-      this.setState(newState);
-    };
-
-    this.handleInputChangeGithub = github => {
-      let newState = {
-        github: {
-          value: github,
-          ...this.usernameValidation(github)
-        }
-      };
-      this.setState(newState);
-    };
-
-    this.handleInputChangeOther = other => {
-      this.setState({ other });
-    };
-
-    this.usernameValidation = value => {
-      const isValid = usernameRegex.test(value);
-      if (isValid) {
-        return {
-          isValid: isValid,
-          validated: "success"
-        };
-      } else {
-        return {
-          isValid: isValid,
-          invalidText: "Usernames cannot have spaces",
-          helperText: "Validating...",
-          validated: "error"
-        };
-      }
-    };
-
-    /**
-     * Form Actions (submit, cancel)
-     */
-
-    this.clearForm = () => {
-      this.setState({
-        displayName: "",
-        username: "",
-        email: "",
-        trello: "",
-        github: "",
-        other: ""
-      });
-    };
-
-    this.handleModalToggle = () => {
-      this.setState({ showModal: !this.state.showModal });
-    };
-
-    this.handleSubmit = event => {
-      event.preventDefault();
-
-      const user = {
-        displayName: this.state.displayName,
-        username: this.state.username.value,
-        email: this.state.email.value,
-        trelloUsername: this.state.trello.value,
-        githubUsername: this.state.github.value
-      };
-
-      API.post(`/user`, user).then(res => {
+    API.post(`/user`, user)
+      .then(res => {
         console.log(res);
         console.log(res.data);
 
@@ -192,18 +215,18 @@ export class UserRegistrationForm extends React.Component {
               "Thank you for registering for the Giveback Ninja Program"
           });
         }
-        //TODO: add in here checking for specific errors, e.g. LDAP lookup failed, trello/github username not found
-        else {
-          this.setState({
-            showModal: false,
-            modalTitle: "Registration Failed",
-            modalText:
-              "Thank you for registering for the Giveback Ninja Program"
-          });
-        }
+      })
+      .catch(error => {
+        console.log(error);
+
+        this.setState({
+          showModal: true,
+          modalTitle: "Registration Failed",
+          modalText: "Please see an admin for why your registration failed."
+        });
+        //TODO: add in here checking for specific errors, e.g. LDAP lookup fad, trello/github username not found
       });
-    };
-  }
+  };
 
   render() {
     const { displayName, username, email, trello, github, other } = this.state;
