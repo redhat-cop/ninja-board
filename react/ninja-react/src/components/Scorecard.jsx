@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Table,
   TableHeader,
@@ -7,7 +7,7 @@ import {
   SortByDirection
 } from "@patternfly/react-table";
 import { PageSection } from "@patternfly/react-core";
-import  PaginationControls  from "./PaginationControls";
+import PaginationControls from "./PaginationControls";
 import API from "../config/ServerUrls";
 import "../assets/css/horizontal-scroll.css";
 
@@ -33,8 +33,29 @@ export const SortableTable = props => {
   const [columns, setColumns] = useState([]);
   const [rows, setRows] = useState([]);
   const [displayedRows, setDisplayedRows] = useState([]);
+  const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [sortBy, setSortBy] = useState({});
+
+  /**
+   * method to set/change which rows are displayed
+   */
+  const changeDisplayedRows = useCallback(
+    (amountOfRows, index, serverData = rows) => {
+      //set the appropriate value to end looping at
+      let targetEnd = index + amountOfRows;
+      let loopEnd = serverData.length > targetEnd ? targetEnd : rows.length;
+
+      //create displayedRows from array of all rows
+      let toBeDisplayed = [];
+      for (let i = index; i < loopEnd; i++) {
+        toBeDisplayed.push(serverData[i]);
+      }
+
+      setDisplayedRows(toBeDisplayed);
+    },
+    [rows]
+  );
 
   /**
    * Retrieve and process data from server
@@ -57,15 +78,9 @@ export const SortableTable = props => {
 
       setColumns(sortableColumns);
       setRows(scorecardRows);
-
-      const loopEnd = scorecardRows < perPage ? scorecardRows.length : perPage;
-      let toBeDisplayed = [];
-      for (let i = 0; i < loopEnd; i++) {
-        toBeDisplayed.push(scorecardRows[i]);
-      }
-      setDisplayedRows(toBeDisplayed);
+      changeDisplayedRows(perPage, 0, scorecardRows);
     });
-  }, []);
+  }, [changeDisplayedRows, perPage]);
 
   /**
    *  Manipulation of data
@@ -83,22 +98,11 @@ export const SortableTable = props => {
     );
   };
 
-  const changeDisplayedRows = (amountOfRows, index) => {
-
-    //set the appropriate value to end looping at
-    let targetEnd = index + amountOfRows;
-    let loopEnd = rows.length > targetEnd ? targetEnd : rows.length;
-
-    //create displayedRows from array of all rows
-    let toBeDisplayed = [];
-    for (let i = index; i < loopEnd; i++) {
-      toBeDisplayed.push(rows[i]);
-    }
-
-    setDisplayedRows(toBeDisplayed);
+  const onPerPageSelect = newPerPage => {
+    let currentIndex = page * perPage;
+    changeDisplayedRows(newPerPage, currentIndex);
+    setPerPage(newPerPage);
   };
-
-  const numberOfScorecards = rows.length;
 
   return (
     <React.Fragment>
@@ -113,9 +117,11 @@ export const SortableTable = props => {
         <TableBody />
       </Table>
       <PaginationControls
-        rows={numberOfScorecards}
+        rows={rows.length}
+        page={page}
+        setPage={setPage}
         perPage={perPage}
-        onPerPageSelect={setPerPage}
+        onPerPageSelect={onPerPageSelect}
         changeDisplayedRows={changeDisplayedRows}
       />
     </React.Fragment>
@@ -123,9 +129,8 @@ export const SortableTable = props => {
 };
 
 /**
- * Helper methods
+ * Helper methods - don't directly use state
  */
-
 const isObject = value => {
   return value && typeof value === "object" && value.constructor === Object;
 };
