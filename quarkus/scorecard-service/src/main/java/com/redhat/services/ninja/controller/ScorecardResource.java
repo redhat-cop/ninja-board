@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +16,10 @@ import java.util.Optional;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class ScorecardResource {
+
+    private static final Comparator<Scorecard> LEADERBOARD_COMPARATOR
+            = Comparator.comparingDouble(Scorecard::getTotal).reversed();
+
     @Inject
     @RestClient
     ScorecardClient scorecardClient;
@@ -46,6 +51,8 @@ public class ScorecardResource {
 
     @GET
     public List<Scorecard> getAll() {
-        return scorecardClient.getAll();
+        List<Scorecard> scorecards = scorecardClient.getAll();
+        scorecards.sort(LEADERBOARD_COMPARATOR);
+        return scorecards;
     }
 }
