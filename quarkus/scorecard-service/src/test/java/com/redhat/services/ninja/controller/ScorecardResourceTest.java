@@ -5,18 +5,20 @@ import com.redhat.services.ninja.client.ScorecardClient;
 import com.redhat.services.ninja.entity.Scorecard;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
+import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.ContentType;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -26,7 +28,7 @@ class ScorecardResourceTest extends AbstractResourceTest {
     @RestClient
     ScorecardClient client;
 
-    static private Map<String, Scorecard> scorecards = new HashMap<>();
+    static private final Map<String, Scorecard> scorecards = new HashMap<>();
 
 
     @BeforeAll
@@ -46,6 +48,8 @@ class ScorecardResourceTest extends AbstractResourceTest {
                 .thenAnswer(a -> a.getArgument(0));
 
         when(client.get(any())).thenAnswer(a -> scorecards.get(a.getArgument(0)));
+
+        when(client.getAll()).thenReturn(new ArrayList<>(scorecards.values()));
     }
 
     @Test
@@ -91,5 +95,18 @@ class ScorecardResourceTest extends AbstractResourceTest {
                 .get("scorecard/non_existing_ninja")
                 .then()
                 .statusCode(404);
+    }
+
+    @Test
+    void getAllScorecards() {
+        List<Scorecard> scorecards = given()
+                .when()
+                .get("scorecard")
+                .as(new TypeRef<>() {
+                });
+
+        for (int i = 0; i < scorecards.size() - 1; i++) {
+            assertTrue(scorecards.get(i).getTotal() >= scorecards.get(i + 1).getTotal());
+        }
     }
 }
