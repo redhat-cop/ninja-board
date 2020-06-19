@@ -12,7 +12,6 @@ import { ninjaRoutes, adminRoutes } from "../AppRoutes";
 /**
  * @author fostimus
  */
-
 const NavBar = props => {
   const ninjaExpandbleRef = React.createRef();
   const adminExpandbleRef = React.createRef();
