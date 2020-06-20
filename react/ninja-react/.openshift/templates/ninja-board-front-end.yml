@@ -97,9 +97,6 @@ objects:
           - containerPort: 8080
             name: http
             protocol: TCP
-      metadata:
-        labels:
-          application: ${APPLICATION_NAME}
     triggers:
       - type: ConfigChange
       - type: ImageChange

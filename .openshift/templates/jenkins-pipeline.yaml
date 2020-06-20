@@ -1,0 +1,78 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: ninja-board-back-end-pipeline
+  annotations:
+    iconClass: icon-jboss
+    tags: quarkus, java
+    description: Build the back-end Ninja Board App
+objects:
+- apiVersion: build.openshift.io/v1
+  kind: BuildConfig
+  metadata:
+    labels:
+      app: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}-dev-pipeline
+  spec:
+    source:
+      git:
+        ref: ${SOURCE_REPOSITORY_REF}
+        uri: ${SOURCE_REPOSITORY_URL}
+      type: Git
+    strategy:
+      jenkinsPipelineStrategy:
+        env:
+        - name: APPLICATION_NAME
+          value: ${APPLICATION_NAME}
+        - name: SOURCE_REPOSITORY_URL
+          value: ${SOURCE_REPOSITORY_URL}
+        - name: SOURCE_REPOSITORY_REF
+          value: ${SOURCE_REPOSITORY_REF}
+        - name: DEV_NAMESPACE
+          value: ${DEV_NAMESPACE}
+        jenkinsfilePath: ${SOURCE_REPOSITORY_DIR}/Jenkinsfile
+      type: JenkinsPipeline
+parameters:
+- name: APPLICATION_NAME
+  description: The name for the application.
+  required: true
+  value: ninja-board-back-end
+- name: SOURCE_REPOSITORY_URL
+  description: The source URL for the application
+  displayName: Source URL
+  value: https://github.com/redhat-cop/ninja-board
+  required: true
+- name: SOURCE_REPOSITORY_REF
+  description: The branch name for the application
+  displayName: Source Branch
+  value: v2
+  required: true
+- name: SOURCE_REPOSITORY_DIR
+  description: The location within the source repo of the application
+  displayName: Source Directory
+  value: quarkus
+  required: true
+- name: DEV_NAMESPACE
+  description: Name of the Development Namespace
+  required: true
+  value: ninja-board-dev
+- name: DOCKER_IMAGE_REPOSITORY
+  description: The image repository where the application is going to be built.
+  required: true
+  value: registry.access.redhat.com/openjdk/openjdk-11-rhel7:latest
+- name: USERS_LDAP_BASEDN
+  description: Ldap basedn
+  required: true
+  value: ou=users,dc=redhat,dc=com
+- name: USERS_LDAP_PROVIDER
+  description: Ldap provider
+  required: true
+  value: ldap://ldap.corp.redhat.com:389
+- name: SECRET_REF
+  description: The secret reference
+  required: true
+  value: backend-secret
+- name: WEBHOOK_SECRET_KEY
+  description: Identifier used by GitHub Webhook to make the URL unique.
+  required: true
+  value: ninja-backend
