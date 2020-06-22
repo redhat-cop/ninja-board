@@ -232,7 +232,7 @@ export class UserRegistrationForm extends React.Component {
               modalTitle: "Registration Failed",
               modalText:
                 "Please see an admin for why your registration failed.",
-              clearFormOnSubmit: true
+              clearFormOnSubmit: false
             });
           }
           //TODO: add in here checking for specific errors, e.g. LDAP lookup fad, trello/github username not found
@@ -244,7 +244,7 @@ export class UserRegistrationForm extends React.Component {
             modalTitle: "Network Error",
             modalText:
               "The backend server is down, or your network connection isn't working.",
-            clearFormOnSubmit: true
+            clearFormOnSubmit: false
           });
         }
       });
