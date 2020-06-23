@@ -8,10 +8,14 @@ import {
   ActionGroup,
   Button
 } from "@patternfly/react-core";
-import { redHatEmailRegex, usernameRegex } from "../config/Validation";
+import {
+  redHatEmailRegex,
+  usernameRegex,
+  validateGithubUsername,
+  validateTrelloUsername
+} from "../utils/UsernameValidation";
 import API from "../config/ServerUrls";
 import ConfirmationModal from "./Modal";
-import { validateGithubUsername } from "../utils/UsernameValidation";
 
 /**
  * @author fostimus
@@ -222,15 +226,32 @@ export class UserRegistrationForm extends React.Component {
   handleSubmit = event => {
     event.preventDefault();
 
-    const val = validateGithubUsername(this.state.github.value);
-    console.log(val)
-    if (!val) {
-      this.setState({
-        showModal: true,
-        modalTitle: "Github Username Not Found",
-        modalText:
-          "The GitHub username you entered was not found. Please enter an existing username.",
-        clearFormOnSubmit: false
+    validateGithubUsername(this.state.github.value).then(response => {
+      console.log(response);
+      if (!response) {
+        this.setState({
+          showModal: true,
+          modalTitle: "Github Username Not Found",
+          modalText:
+            "The GitHub username you entered was not found. Please enter an existing username.",
+          clearFormOnSubmit: false
+        });
+      }
+    });
+
+    if (this.state.trello.value !== "") {
+      validateTrelloUsername(this.state.trello.value).then(response => {
+        console.log(response);
+        if (!response) {
+          this.setState({
+            showModal: true,
+            modalTitle: "Trello Username Not Found",
+            modalText:
+              "The Trello username you entered was not found. Please enter an existing username.",
+            clearFormOnSubmit: false
+          });
+          return;
+        }
       });
     }
 
