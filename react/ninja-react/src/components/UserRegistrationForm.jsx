@@ -11,6 +11,7 @@ import {
 import { redHatEmailRegex, usernameRegex } from "../config/Validation";
 import API from "../config/ServerUrls";
 import ConfirmationModal from "./Modal";
+import { validateGithubUsername } from "../utils/UsernameValidation";
 
 /**
  * @author fostimus
@@ -220,6 +221,18 @@ export class UserRegistrationForm extends React.Component {
 
   handleSubmit = event => {
     event.preventDefault();
+
+    const val = validateGithubUsername(this.state.github.value);
+    console.log(val)
+    if (!val) {
+      this.setState({
+        showModal: true,
+        modalTitle: "Github Username Not Found",
+        modalText:
+          "The GitHub username you entered was not found. Please enter an existing username.",
+        clearFormOnSubmit: false
+      });
+    }
 
     //TODO: update with jira when backend API can handle it
     const user = {
