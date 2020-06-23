@@ -58,6 +58,13 @@ export class UserRegistrationForm extends React.Component {
       isValid: true,
       validated: "default"
     },
+    jira: {
+      value: "",
+      invalidText: "",
+      helperText: "",
+      isValid: true,
+      validated: "default"
+    },
     other: "",
     showModal: false,
     modalTitle: "",
@@ -127,6 +134,16 @@ export class UserRegistrationForm extends React.Component {
     this.setState(newState);
   };
 
+  handleInputChangeJira = jira => {
+    let newState = {
+      jira: {
+        value: jira,
+        ...this.usernameValidation(jira)
+      }
+    };
+    this.setState(newState);
+  };
+
   handleInputChangeOther = other => {
     this.setState({ other });
   };
@@ -183,6 +200,13 @@ export class UserRegistrationForm extends React.Component {
         isValid: true,
         validated: "default"
       },
+      jira: {
+        value: "",
+        invalidText: "",
+        helperText: "",
+        isValid: true,
+        validated: "default"
+      },
       other: ""
     });
   };
@@ -197,6 +221,7 @@ export class UserRegistrationForm extends React.Component {
   handleSubmit = event => {
     event.preventDefault();
 
+    //TODO: update with jira when backend API can handle it
     const user = {
       displayName: this.state.displayName,
       username: this.state.username.value,
@@ -246,14 +271,21 @@ export class UserRegistrationForm extends React.Component {
   };
 
   render() {
-    const { displayName, username, email, trello, github, other } = this.state;
+    const {
+      displayName,
+      username,
+      email,
+      trello,
+      github,
+      jira,
+      other
+    } = this.state;
 
     const submitEnabled =
       // not empty
       this.state.displayName !== "" &&
       this.state.username.value !== "" &&
       this.state.email.value !== "" &&
-      this.state.trello.value !== "" &&
       this.state.github.value !== "" &&
       // validation passes
       this.state.username.isValid &&
@@ -324,24 +356,6 @@ export class UserRegistrationForm extends React.Component {
             />
           </FormGroup>
           <FormGroup
-            label="Trello"
-            isRequired
-            helperText={trello.helperText}
-            helperTextInvalid={trello.invalidText}
-            validated={trello.validated}
-            fieldId="horizontal-form-trello"
-          >
-            <TextInput
-              value={trello.value}
-              validated={trello.validated}
-              onChange={this.handleInputChangeTrello}
-              isRequired
-              type="text"
-              id="horizontal-form-trello"
-              name="horizontal-form-trello"
-            />
-          </FormGroup>
-          <FormGroup
             label="GitHub"
             isRequired
             helperText={github.helperText}
@@ -360,7 +374,39 @@ export class UserRegistrationForm extends React.Component {
             />
           </FormGroup>
           <FormGroup
-            label="Please provide links to any other qualifying CoP Contributions that do not show up in GitHub or Trello"
+            label="Trello"
+            helperText={trello.helperText}
+            helperTextInvalid={trello.invalidText}
+            validated={trello.validated}
+            fieldId="horizontal-form-trello"
+          >
+            <TextInput
+              value={trello.value}
+              validated={trello.validated}
+              onChange={this.handleInputChangeTrello}
+              type="text"
+              id="horizontal-form-trello"
+              name="horizontal-form-trello"
+            />
+          </FormGroup>
+          <FormGroup
+            label="Jira"
+            helperText={jira.helperText}
+            helperTextInvalid={jira.invalidText}
+            validated={jira.validated}
+            fieldId="horizontal-form-jira"
+          >
+            <TextInput
+              value={jira.value}
+              validated={jira.validated}
+              onChange={this.handleInputChangeJira}
+              type="text"
+              id="horizontal-form-jira"
+              name="horizontal-form-jira"
+            />
+          </FormGroup>
+          <FormGroup
+            label="Please provide links to any other qualifying CoP Contributions that do not show up in GitHub, Trello, or Jira"
             fieldId="horizontal-form-exp"
           >
             <TextArea
