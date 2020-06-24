@@ -1,0 +1,259 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: ldap
+  annotations:
+    tags: ldap
+    description: LDAP
+labels:
+  application: ${APPLICATION_NAME}
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: ${APPLICATION_NAME}
+    labels:
+      application: ${APPLICATION_NAME}
+- apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: ldif-config
+    labels:
+      application: ${APPLICATION_NAME}
+  data:
+    database.ldif: |
+      version: 1
+
+      dn: ou=users,dc=redhat,dc=com
+      changetype: add
+      objectClass: organizationalUnit
+      objectClass: top
+      ou: Users
+
+      dn: uid=john,ou=users,dc=redhat,dc=com
+      changetype: add
+      objectClass: organizationalPerson
+      objectClass: person
+      objectClass: rhPerson
+      objectClass: inetOrgPerson
+      objectClass: top
+      cn: john
+      sn: admin
+      uid: john
+      mail: jhon.admin@example.com
+      rhatGeo: Central
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    name: ${APPLICATION_NAME}
+    labels:
+      application: ${APPLICATION_NAME}
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: ${APPLICATION_NAME}
+    labels:
+      application: ${APPLICATION_NAME}
+  spec:
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: ${APPLICATION_NAME}:latest
+    runPolicy: Serial
+    source:
+      contextDir: ${SOURCE_REPOSITORY_DIR}
+      git:
+        ref: ${SOURCE_REPOSITORY_REF}
+        uri: ${SOURCE_REPOSITORY_URL}
+      type: Git
+    strategy:
+      dockerStrategy: {}
+      type: Docker
+    triggers:
+      - type: ConfigChange
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: ${APPLICATION_NAME}
+    labels:
+      application: ${APPLICATION_NAME}
+  spec:
+    replicas: 1
+    selector:
+      app: ldap
+    template:
+      metadata:
+        labels:
+          app: ldap
+      spec:
+        serviceAccountName: ldap
+        containers:
+          - name: ldap
+            image: docker-registry.default.svc:5000/ninja-board-v2/ldap
+            volumeMounts:
+              # - name: ldap-data
+              #   mountPath: /var/lib/ldap
+              # - name: ldap-config
+              #   mountPath: /etc/ldap/slapd.d
+              - name: ldap-certs
+                mountPath: /container/service/slapd/assets/certs
+              - name: ldif-config
+                mountPath: >-
+                  /container/service/slapd/assets/config/bootstrap/ldif/custom/database.ldif
+                subPath: database.ldif
+            ports:
+              - containerPort: 389
+                name: openldap
+            args:
+              - '--copy-service'
+              - '--loglevel'
+              - 'debug'
+            env:
+              - name: LDAP_LOG_LEVEL
+                # value: "256"
+                value: "32"
+              - name: LDAP_ORGANISATION
+                value: "Example Inc."
+              - name: LDAP_DOMAIN
+                value: "redhat.com"
+              - name: LDAP_ADMIN_PASSWORD
+                value: "admin"
+              - name: LDAP_CONFIG_PASSWORD
+                value: "config"
+              - name: LDAP_READONLY_USER
+                value: "false"
+              - name: LDAP_READONLY_USER_USERNAME
+                value: "readonly"
+              - name: LDAP_READONLY_USER_PASSWORD
+                value: "readonly"
+              - name: LDAP_RFC2307BIS_SCHEMA
+                value: "false"
+              - name: LDAP_BACKEND
+                value: "mdb"
+              - name: LDAP_TLS
+                value: "true"
+              - name: LDAP_TLS_CRT_FILENAME
+                value: "ldap.crt"
+              - name: LDAP_TLS_KEY_FILENAME
+                value: "ldap.key"
+              - name: LDAP_TLS_DH_PARAM_FILENAME
+                value: "dhparam.pem"
+              - name: LDAP_TLS_CA_CRT_FILENAME
+                value: "ca.crt"
+              - name: LDAP_TLS_ENFORCE
+                value: "false"
+              - name: LDAP_TLS_CIPHER_SUITE
+                value: "SECURE256:+SECURE128:-VERS-TLS-ALL:+VERS-TLS1.2:-RSA:-DHE-DSS:-CAMELLIA-128-CBC:-CAMELLIA-256-CBC"
+              - name: LDAP_TLS_VERIFY_CLIENT
+                value: "demand"
+              - name: LDAP_REPLICATION
+                value: "false"
+              - name: LDAP_REPLICATION_CONFIG_SYNCPROV
+                value: "binddn=\"cn=admin,cn=config\" bindmethod=simple credentials=$LDAP_CONFIG_PASSWORD searchbase=\"cn=config\" type=refreshAndPersist retry=\"60 +\" timeout=1 starttls=critical"
+              - name: LDAP_REPLICATION_DB_SYNCPROV
+                value: "binddn=\"cn=admin,$LDAP_BASE_DN\" bindmethod=simple credentials=$LDAP_ADMIN_PASSWORD searchbase=\"$LDAP_BASE_DN\" type=refreshAndPersist interval=00:00:00:10 retry=\"60 +\" timeout=1 starttls=critical"
+              - name: LDAP_REPLICATION_HOSTS
+                value: "#PYTHON2BASH:['ldap://ldap-one-service', 'ldap://ldap-two-service']"
+              - name: KEEP_EXISTING_CONFIG
+                value: "false"
+              - name: LDAP_REMOVE_CONFIG_AFTER_SETUP
+                value: "false"
+              - name: LDAP_SSL_HELPER_PREFIX
+                value: "ldap"
+          - name: phpldapadmin
+            image: osixia/phpldapadmin:0.9.0
+            volumeMounts:
+              - name: phpldapadmin-certs
+                mountPath: /container/service/phpldapadmin/assets/apache2/certs
+              - name: ldap-certs
+                mountPath: /container/service/ldap-client/assets/certs
+            ports:
+              - containerPort: 443
+            env:
+              - name: PHPLDAPADMIN_LDAP_HOSTS
+                value: "#PYTHON2BASH:[{'localhost': [{'server': [{'tls': 'true'}]}]}]"
+              - name: PHPLDAPADMIN_SERVER_ADMIN
+                value: "webmaster@example.org"
+              - name: PHPLDAPADMIN_SERVER_PATH
+                value: "/phpldapadmin"
+              - name: PHPLDAPADMIN_HTTPS
+                value: "true"
+              - name: PHPLDAPADMIN_HTTPS_CRT_FILENAME
+                value: "cert.crt"
+              - name: PHPLDAPADMIN_HTTPS_KEY_FILENAME
+                value: "cert.key"
+              - name: PHPLDAPADMIN_HTTPS_CA_CRT_FILENAME
+                value: "ca.crt"
+              - name: PHPLDAPADMIN_LDAP_CLIENT_TLS
+                value: "true"
+              - name: PHPLDAPADMIN_LDAP_CLIENT_TLS_REQCERT
+                value: "demand"
+              - name: PHPLDAPADMIN_LDAP_CLIENT_TLS_CRT_FILENAME
+                value: "cert.crt"
+              - name: PHPLDAPADMIN_LDAP_CLIENT_TLS_KEY_FILENAME
+                value: "cert.key"
+              - name: PHPLDAPADMIN_LDAP_CLIENT_TLS_CA_CRT_FILENAME
+                value: "ca.crt"
+        volumes:
+          # - name: ldap-data
+          #   emptyDir: {}
+          # - name: ldap-config
+          #   emptyDir: {}
+          - name: ldap-certs
+            emptyDir: {}
+          - name: phpldapadmin-certs
+            emptyDir: {}
+          - name: ldif-config
+            configMap:
+              name: ldif-config
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      application: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+  spec:
+    ports:
+      - port: 389
+        name: ldap
+      - port: 443
+        name: https-admin
+    selector:
+      app: ldap
+- apiVersion: v1
+  kind: Route
+  metadata:
+    name: ${APPLICATION_NAME}-admin
+    labels:
+      application: ${APPLICATION_NAME}
+  spec:
+    to:
+      kind: Service
+      name: ldap
+      weight: 100
+    port:
+      targetPort: https-admin
+    tls:
+      termination: passthrough
+      insecureEdgeTerminationPolicy: Redirect
+    wildcardPolicy: None
+parameters:
+  - name: APPLICATION_NAME
+    description: The name for the application.
+    required: true
+    value: ldap
+  - name: SOURCE_REPOSITORY_URL
+    description: The source URL for the application
+    displayName: Source URL
+    value: https://github.com/redhat-cop/ninja-board
+    required: true
+  - name: SOURCE_REPOSITORY_REF
+    description: The branch name for the application
+    displayName: Source Branch
+    value: v2
+    required: true
+  - name: SOURCE_REPOSITORY_DIR
+    description: The location within the source repo of the application
+    displayName: Source Directory
+    value: ldap
