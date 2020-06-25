@@ -44,7 +44,8 @@ export const SortableTable = props => {
     (amountOfRows, index, serverData = rows) => {
       //set the appropriate value to end looping at
       let targetEnd = index + amountOfRows;
-      let loopEnd = serverData.length > targetEnd ? targetEnd : rows.length;
+      let loopEnd =
+        serverData.length > targetEnd ? targetEnd : serverData.length;
 
       //create displayedRows from array of all rows
       let toBeDisplayed = [];
@@ -80,11 +81,20 @@ export const SortableTable = props => {
       if (mounted) {
         setColumns(sortableColumns);
         setRows(scorecardRows);
-        changeDisplayedRows(perPage, 0, scorecardRows);
+        let loopEnd =
+          scorecardRows.length > perPage ? perPage : scorecardRows.length;
+
+        //create displayedRows from array of all rows
+        let toBeDisplayed = [];
+        for (let i = 0; i < loopEnd; i++) {
+          toBeDisplayed.push(scorecardRows[i]);
+        }
+
+        setDisplayedRows(toBeDisplayed);
       }
     });
     return () => (mounted = false);
-  }, [changeDisplayedRows, perPage]);
+  }, [perPage]);
 
   /**
    *  Manipulation of data
