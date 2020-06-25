@@ -61,6 +61,7 @@ export const SortableTable = props => {
    * Retrieve and process data from server
    */
   useEffect(() => {
+    let mounted = true;
     API.get(`/scorecard`).then(response => {
       let tableHeaders = [];
 
@@ -76,10 +77,13 @@ export const SortableTable = props => {
         return sortableColumn;
       });
 
-      setColumns(sortableColumns);
-      setRows(scorecardRows);
-      changeDisplayedRows(perPage, 0, scorecardRows);
+      if (mounted) {
+        setColumns(sortableColumns);
+        setRows(scorecardRows);
+        changeDisplayedRows(perPage, 0, scorecardRows);
+      }
     });
+    return () => (mounted = false);
   }, [changeDisplayedRows, perPage]);
 
   /**
