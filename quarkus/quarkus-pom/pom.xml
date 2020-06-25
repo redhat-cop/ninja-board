@@ -138,6 +138,7 @@
         <module>../data-service</module>
         <module>../user-service</module>
         <module>../scorecard-service</module>
+        <module>../event-service</module>
         <module>../all-service</module>
     </modules>
 </project>

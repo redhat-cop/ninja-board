@@ -17,9 +17,8 @@ class EventResourceTest extends AbstractResourceTest {
 
     @Test
     void create() {
-        Event event = new Event();
+        Event event = Event.Type.SUCCESSFUL_REGISTRATION.createEvent("new_user");
         event.setUser("new_user");
-        event.setType("New User Registered");
 
         Event createdEvent = given()
                 .contentType(ContentType.JSON)

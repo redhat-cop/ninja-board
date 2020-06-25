@@ -1,7 +1,10 @@
 package com.redhat.services.ninja.controller;
 
 import com.data.services.ninja.test.AbstractResourceTest;
+import com.redhat.services.ninja.client.EventClient;
 import com.redhat.services.ninja.client.ScorecardClient;
+import com.redhat.services.ninja.entity.Event;
+import com.redhat.services.ninja.entity.Point;
 import com.redhat.services.ninja.entity.Scorecard;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
@@ -28,6 +31,10 @@ class ScorecardResourceTest extends AbstractResourceTest {
     @RestClient
     ScorecardClient client;
 
+    @InjectMock
+    @RestClient
+    EventClient eventClient;
+
     static private final Map<String, Scorecard> scorecards = new HashMap<>();
 
 
@@ -44,6 +51,9 @@ class ScorecardResourceTest extends AbstractResourceTest {
         when(client.create(any(Scorecard.class)))
                 .thenAnswer(a -> a.getArgument(0));
 
+        when(eventClient.create(any(Event.class)))
+                .thenAnswer(a -> a.getArgument(0));
+
         when(client.update(any(Scorecard.class)))
                 .thenAnswer(a -> a.getArgument(0));
 
@@ -54,11 +64,16 @@ class ScorecardResourceTest extends AbstractResourceTest {
 
     @Test
     void increment() {
+        Point point = new Point();
+        point.setValue(2);
+        point.setPool("Trello");
+        point.setReference("trello/1");
+
         Scorecard scorecard = given()
-                .contentType(ContentType.TEXT)
-                .body(2)
+                .contentType(ContentType.JSON)
+                .body(point)
                 .when()
-                .post("scorecard/new_ninja/Trello")
+                .post("scorecard/new_ninja")
                 .as(Scorecard.class);
 
         assertAll(
@@ -70,9 +85,15 @@ class ScorecardResourceTest extends AbstractResourceTest {
 
     @Test
     void incrementNonExistingScorecard() {
+        Point point = new Point();
+        point.setValue(3);
+        point.setPool("Trello");
+        point.setReference("trello/3");
+
         given()
                 .when()
-                .body(3)
+                .contentType(ContentType.JSON)
+                .body(point)
                 .post("scorecard/non_existing_ninja/Trello")
                 .then()
                 .statusCode(404);
