@@ -1,0 +1,42 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: ldap
+  annotations:
+    tags: ldap
+    description: LDAP
+labels:
+  application: ${APPLICATION_NAME}
+objects:
+- apiVersion: v1
+  kind: Role
+  metadata:
+    name: allow-anyuid-scc
+  rules:
+    - apiGroups:
+        - security.openshift.io
+      resources:
+        - securitycontextconstraints
+      verbs:
+        - use
+      resourceNames:
+        - anyuid
+- apiVersion: v1
+  kind: RoleBinding
+  metadata:
+    name: anyuid-scc
+  roleRef:
+    name: allow-anyuid-scc
+  subjects:
+    - kind: ServiceAccount
+      name: ${APPLICATION_NAME}
+      namespace: ${NAMESPACE}
+parameters:
+  - name: APPLICATION_NAME
+    description: The name for the application.
+    required: true
+    value: ldap
+  - name: NAMESPACE
+    description: The Name of the OpenShift Project
+    required: true
+    value: ninja-board-v2

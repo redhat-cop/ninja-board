@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
   name: ldap
@@ -89,8 +89,8 @@ objects:
       spec:
         serviceAccountName: ldap
         containers:
-          - name: ldap
-            image: docker-registry.default.svc:5000/ninja-board-v2/ldap
+          - name: ${APPLICATION_NAME}
+            image: ${APPLICATION_NAME}:latest
             volumeMounts:
               # - name: ldap-data
               #   mountPath: /var/lib/ldap
@@ -207,6 +207,16 @@ objects:
           - name: ldif-config
             configMap:
               name: ldif-config
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - ${APPLICATION_NAME}
+        from:
+          kind: ImageStreamTag
+          name: ${APPLICATION_NAME}:latest
+      type: ImageChange
 - apiVersion: v1
   kind: Service
   metadata:
