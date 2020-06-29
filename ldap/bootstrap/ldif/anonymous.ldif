@@ -1,0 +1,14 @@
+dn: olcDatabase={1}mdb,cn=config
+changetype: modify
+delete: olcAccess
+olcAccess: {1}
+
+dn: olcDatabase={1}mdb,cn=config
+changetype: modify
+delete: olcAccess
+olcAccess: {0}
+
+dn: olcDatabase={1}mdb,cn=config
+changetype: modify
+add: olcAccess
+olcAccess: {0}to * by * read
