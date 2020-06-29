@@ -227,7 +227,6 @@ export class UserRegistrationForm extends React.Component {
     event.preventDefault();
 
     validateGithubUsername(this.state.github.value).then(response => {
-      console.log(response);
       if (!response) {
         this.setState({
           showModal: true,

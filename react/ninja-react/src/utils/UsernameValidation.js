@@ -17,11 +17,8 @@ export const validateGithubUsername = username => {
           validated = true;
           break;
         }
-        index++;
       }
 
-      console.log(response.data);
-      console.log(response.data.items);
       return validated;
     });
 };
@@ -30,7 +27,15 @@ export const validateTrelloUsername = username => {
   return axios
     .get("https://api.trello.com/1/search/members/?query=" + username)
     .then(response => {
-      console.log(response.data);
-      return false;
+      let validated = false;
+
+      for (let index = 0; index < response.data.length; index++) {
+        let item = response.data[index];
+        if (item.username === username) {
+          validated = true;
+          break;
+        }
+      }
+      return validated;
     });
 };
