@@ -9,7 +9,7 @@ labels:
   application: ${APPLICATION_NAME}
 objects:
 - apiVersion: v1
-  kind: Role
+  kind: ClusterRole
   metadata:
     name: allow-anyuid-scc
   rules:
@@ -22,7 +22,7 @@ objects:
       resourceNames:
         - anyuid
 - apiVersion: v1
-  kind: RoleBinding
+  kind: ClusterRoleBinding
   metadata:
     name: anyuid-scc
   roleRef:
