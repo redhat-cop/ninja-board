@@ -1,6 +1,9 @@
 import React from "react";
 import { Pagination, PaginationVariant } from "@patternfly/react-core";
 
+/**
+ * @author fostimus
+ */
 const PaginationControls = props => {
   const onSetPage = (_event, pageNumber) => {
     props.setPage(pageNumber);

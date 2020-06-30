@@ -44,7 +44,8 @@ export const SortableTable = props => {
     (amountOfRows, index, serverData = rows) => {
       //set the appropriate value to end looping at
       let targetEnd = index + amountOfRows;
-      let loopEnd = serverData.length > targetEnd ? targetEnd : rows.length;
+      let loopEnd =
+        serverData.length > targetEnd ? targetEnd : serverData.length;
 
       //create displayedRows from array of all rows
       let toBeDisplayed = [];
@@ -61,6 +62,7 @@ export const SortableTable = props => {
    * Retrieve and process data from server
    */
   useEffect(() => {
+    let mounted = true;
     API.get(`/scorecard`).then(response => {
       let tableHeaders = [];
 
@@ -76,11 +78,23 @@ export const SortableTable = props => {
         return sortableColumn;
       });
 
-      setColumns(sortableColumns);
-      setRows(scorecardRows);
-      changeDisplayedRows(perPage, 0, scorecardRows);
+      if (mounted) {
+        setColumns(sortableColumns);
+        setRows(scorecardRows);
+        let loopEnd =
+          scorecardRows.length > perPage ? perPage : scorecardRows.length;
+
+        //create displayedRows from array of all rows
+        let toBeDisplayed = [];
+        for (let i = 0; i < loopEnd; i++) {
+          toBeDisplayed.push(scorecardRows[i]);
+        }
+
+        setDisplayedRows(toBeDisplayed);
+      }
     });
-  }, [changeDisplayedRows, perPage]);
+    return () => (mounted = false);
+  }, [perPage]);
 
   /**
    *  Manipulation of data

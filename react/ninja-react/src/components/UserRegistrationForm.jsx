@@ -10,21 +10,20 @@ import {
 } from "@patternfly/react-core";
 import { redHatEmailRegex, usernameRegex } from "../config/Validation";
 import API from "../config/ServerUrls";
-import ConfirmationModal from "./Modal";
+import ConfirmationModal from "./ConfirmationModal";
 
 /**
  * @author fostimus
  */
+const FormSection = props => {
+  return (
+    <PageSection>
+      <UserRegistrationForm />
+    </PageSection>
+  );
+};
 
-export default class FormSection extends React.Component {
-  render() {
-    return (
-      <PageSection>
-        <UserRegistrationForm />
-      </PageSection>
-    );
-  }
-}
+export default FormSection;
 
 export class UserRegistrationForm extends React.Component {
   //TODO: use redux or find a different way to manage state better
@@ -207,9 +206,6 @@ export class UserRegistrationForm extends React.Component {
 
     API.post(`/user`, user)
       .then(res => {
-        console.log(res);
-        console.log(res.data);
-
         if (res.status === 201) {
           this.setState({
             showModal: true,
@@ -236,12 +232,21 @@ export class UserRegistrationForm extends React.Component {
               modalTitle: "Registration Failed",
               modalText:
                 "Please see an admin for why your registration failed.",
-              clearFormOnSubmit: true
+              clearFormOnSubmit: false
             });
           }
+          //TODO: add in here checking for specific errors, e.g. LDAP lookup fad, trello/github username not found
         }
-
-        //TODO: add in here checking for specific errors, e.g. LDAP lookup fad, trello/github username not found
+        //undefined error response == network error
+        else {
+          this.setState({
+            showModal: true,
+            modalTitle: "Network Error",
+            modalText:
+              "The backend server is down, or your network connection isn't working.",
+            clearFormOnSubmit: false
+          });
+        }
       });
   };
 
