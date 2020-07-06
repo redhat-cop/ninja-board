@@ -1,11 +1,14 @@
 ---
 app_name: ninja-board
 namespace: ninja-board
-ninja_board_dev_namespace: "{{ namespace }}-dev"
+ninja_board_dev_namespace: "{{ namespace }}-v2"
 ninja_board_prod_namespace: "{{ namespace }}"
 
 source_repo: https://github.com/redhat-cop/ninja-board.git
 source_ref: master
+
+source_repo_v2: https://github.com/jtlnguyen/ninja-board.git
+source_ref_v2: v2-dev
 
 dev:
   NAMESPACE: "{{ ninja_board_dev_namespace }}"

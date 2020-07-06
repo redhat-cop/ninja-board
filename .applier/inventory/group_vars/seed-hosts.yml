@@ -80,3 +80,47 @@ openshift_cluster_content:
         tags:
           - projects-{{ ninja_board_prod_namespace }}
           - deployments
+  - object: ldap-rbac
+    content:
+      - name: "ldap-rbac"
+        template: "{{ inventory_dir }}/../../ldap/.openshift/templates/rbac-ldap.yaml"
+        params_from_vars:
+          NAMESPACE: "{{ ninja_board_dev_namespace }}"
+        namespace: "{{ ninja_board_dev_namespace }}"
+        tags:
+          - projects-{{ ninja_board_dev_namespace }}
+          - ldap-rbac
+  - object: ldap
+    content:
+      - name: "ldap"
+        template: "{{ inventory_dir }}/../../ldap/.openshift/templates/ldap.yaml"
+        params_from_vars:
+          SOURCE_REPOSITORY_URL: "{{ source_repo_v2 }}"
+          SOURCE_REPOSITORY_REF: "{{ source_ref_v2 }}"
+        namespace: "{{ ninja_board_dev_namespace }}"
+        tags:
+          - projects-{{ ninja_board_dev_namespace }}
+          - ldap
+  - object: user-management-back-end
+    content:
+      - name: "user-management-back-end"
+        template: "{{ inventory_dir }}/../../.openshift/templates/ninja-board-back-end.yaml"
+        params_from_vars:
+          SOURCE_REPOSITORY_URL: "{{ source_repo_v2 }}"
+          SOURCE_REPOSITORY_REF: "{{ source_ref_v2 }}"
+        namespace: "{{ ninja_board_dev_namespace }}"
+        tags:
+          - projects-{{ ninja_board_dev_namespace }}
+          - user-management-back-end
+  - object: front-end
+    content:
+      - name: "front-end"
+        template: "{{ inventory_dir }}/../../react/ninja-react/.openshift/templates/ninja-board-front-end.yml"
+        params_from_vars:
+          SOURCE_REPOSITORY_URL: "{{ source_repo_v2 }}"
+          SOURCE_REPOSITORY_REF: "{{ source_ref_v2 }}"
+          DEV_NAMESPACE: "{{ ninja_board_dev_namespace }}"
+        namespace: "{{ ninja_board_dev_namespace }}"
+        tags:
+          - projects-{{ ninja_board_dev_namespace }}
+          - front-end
