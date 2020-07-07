@@ -32,6 +32,7 @@
                         <include>data-service/src/main/java/**</include>
                         <include>user-service/src/main/java/**</include>
                         <include>scorecard-service/src/main/java/**</include>
+                        <include>event-service/src/main/java/**</include>
                     </includes>
                 </configuration>
             </plugin>

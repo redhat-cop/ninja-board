@@ -1,7 +1,9 @@
 package com.redhat.services.ninja.controller;
 
+import com.redhat.services.ninja.client.EventClient;
 import com.redhat.services.ninja.client.ScorecardClient;
 import com.redhat.services.ninja.client.UserClient;
+import com.redhat.services.ninja.entity.Event;
 import com.redhat.services.ninja.entity.Scorecard;
 import com.redhat.services.ninja.entity.User;
 import com.redhat.services.ninja.service.LdapService;
@@ -32,6 +34,10 @@ public class UserResource {
     @RestClient
     ScorecardClient scorecardClient;
 
+    @Inject
+    @RestClient
+    EventClient eventClient;
+
     @GET
     @Path("/{uid}")
     public RedHatUser findByUid(@PathParam("uid") String uid) {
@@ -41,13 +47,24 @@ public class UserResource {
     @POST
     public Response register(User user) {
         Optional.ofNullable(user).orElseThrow(() -> new WebApplicationException(Response.Status.BAD_REQUEST));
-        RedHatUser redHatUser = searchById(user.getUsername()).orElseThrow(() -> new WebApplicationException(Response.Status.NOT_FOUND));
+        RedHatUser redHatUser = searchById(user.getUsername()).orElseThrow(() -> {
+            Event event = Event.Type.FAILED_LDAP_REGISTRATION.createEvent(user.getUsername());
+            event.setUser(user.getUsername());
+            eventClient.create(event);
+            return new WebApplicationException(Response.Status.NOT_FOUND);
+        });
+
         user.setRegion(redHatUser.getLocation());
         User createdUser = userClient.create(user);
         Scorecard scorecard = new Scorecard();
         scorecard.setUsername(createdUser.getUsername());
         scorecardClient.create(scorecard);
-        
+
+        Event event = Event.Type.SUCCESSFUL_REGISTRATION.createEvent(user.getUsername());
+        event.setUser(createdUser.getUsername());
+
+        eventClient.create(event);
+
         return Response.status(Response.Status.CREATED).entity(createdUser).build();
     }
 

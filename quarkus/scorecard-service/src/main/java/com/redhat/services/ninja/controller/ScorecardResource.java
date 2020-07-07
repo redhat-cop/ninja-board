@@ -1,6 +1,9 @@
 package com.redhat.services.ninja.controller;
 
+import com.redhat.services.ninja.client.EventClient;
 import com.redhat.services.ninja.client.ScorecardClient;
+import com.redhat.services.ninja.entity.Event;
+import com.redhat.services.ninja.entity.Point;
 import com.redhat.services.ninja.entity.Scorecard;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -24,19 +27,29 @@ public class ScorecardResource {
     @RestClient
     ScorecardClient scorecardClient;
 
+    @Inject
+    @RestClient
+    EventClient eventClient;
+
     @POST
-    @Path("/{username}/{category}")
-    @Consumes(MediaType.TEXT_PLAIN)
+    @Path("/{username}")
     public Scorecard increment(
             @PathParam("username") String username,
-            @PathParam("category") String category,
-            Integer incrementedBy
+            Point point
     ) {
         Scorecard scorecard = get(username);
+        int pastScore = scorecard.getTotal();
+        scorecard.increment(point.getPool(), point.getValue());
+        Scorecard updatedCard = scorecardClient.update(scorecard);
 
-        scorecard.increment(category, incrementedBy);
+        Event event = Event.Type.POINT_INCREMENT.createEvent(
+                username, point.getValue(), pastScore, scorecard.getTotal(), point.getPool(), point.getReference()
+        );
+        event.setUser(username);
 
-        return scorecardClient.update(scorecard);
+        eventClient.create(event);
+
+        return updatedCard;
     }
 
     @GET

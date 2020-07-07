@@ -1,15 +1,18 @@
 package com.redhat.services.ninja.entity;
 
+import javax.json.bind.annotation.JsonbPropertyOrder;
+import javax.json.bind.annotation.JsonbTransient;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
+@JsonbPropertyOrder({"timestamp", "user", "type", "description"})
 public class Event {
     private LocalDateTime timestamp = LocalDateTime.now();
-    private String type;
     private String user;
+    private String type;
     private String description;
 
     public LocalDateTime getTimestamp() {
@@ -20,8 +23,12 @@ public class Event {
         this.timestamp = timestamp;
     }
 
-    public Optional<Type> getKnownType() {
-        return Type.fromString(type);
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
     }
 
     public String getType() {
@@ -32,12 +39,14 @@ public class Event {
         this.type = type;
     }
 
-    public String getUser() {
-        return user;
+    @JsonbTransient
+    public Optional<Type> getKnownType() {
+        return Type.fromString(type);
     }
 
-    public void setUser(String user) {
-        this.user = user;
+    @JsonbTransient
+    public void setKnownType(Type type) {
+        this.type = type.toString();
     }
 
     public String getDescription() {
@@ -49,7 +58,9 @@ public class Event {
     }
 
     public enum Type {
-        POINT_INCREMENT;
+        SUCCESSFUL_REGISTRATION("User %s was registered successfully."),
+        FAILED_LDAP_REGISTRATION("Failed to register User %s."),
+        POINT_INCREMENT("User %s score changed by %d from %d to %d in category %s for %s.");
 
         private static final Function<String, String> NAME_NORMALIZER = name -> name.toLowerCase().replace('_', ' ');
         private static final Map<String, Type> TYPE_MAP = new HashMap<>();
@@ -60,10 +71,23 @@ public class Event {
             }
         }
 
+        private final String format;
+
+        Type(String format) {
+            this.format = format;
+        }
+
         public static Optional<Type> fromString(String type) {
             var normalizedName = NAME_NORMALIZER.apply(type);
 
             return Optional.ofNullable(TYPE_MAP.get(normalizedName));
+        }
+
+        public Event createEvent(Object... parameters) {
+            Event event = new Event();
+            event.setKnownType(this);
+            event.description = String.format(format, parameters);
+            return event;
         }
 
         @Override

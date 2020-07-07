@@ -2,22 +2,22 @@
   "createdOn": "2020-05-13T00:26:44.8489978",
   "events": [
     {
-      "description": "",
-      "type": "New User Registered",
+      "description": "User modest_ninja was registered successfully.",
+      "type": "successful registration",
       "user": "modest_ninja",
-      "timestamp": "2020-03-03T17:17:00"
+      "timestamp": "2020-03-03T17:17:55.7285164"
     },
     {
-      "description": "",
-      "type": "New User Registered",
+      "description": "User super_ninja was registered successfully.",
+      "type": "successful registration",
       "user": "super_ninja",
-      "timestamp": "2020-03-03T17:17:00"
+      "timestamp": "2020-03-03T17:17:55.7285164"
     },
     {
-      "description": "",
-      "type": "New User Registered",
+      "description": "User retired_ninja was registered successfully.",
+      "type": "successful registration",
       "user": "retired_ninja",
-      "timestamp": "2020-03-03T17:17:00"
+      "timestamp": "2020-03-03T17:17:55.7285164"
     }
   ],
   "scorecards": [

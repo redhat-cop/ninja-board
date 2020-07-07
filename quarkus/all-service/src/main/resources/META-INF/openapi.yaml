@@ -51,73 +51,6 @@ paths:
                   $ref: '#/components/schemas/Scorecard'
           description: Returns a list of all user scorecards.
       summary: Get all user scorecards.
-  /scorecard/{username}:
-    get:
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Scorecard'
-              examples:
-                super_ninja:
-                  value:
-                    username: super_ninja
-                    level: black
-                    total: 248
-                    pointsToNextLevel: 0
-                    nextLevel: ""
-                    pointMap:
-                      githubReviewedPullRequests: 24
-                      githubClosedIssues: 0
-                      servicesSupportMergeRequests: 0
-                      servicesSupportClosedIssues: 0
-                      servicesSupportReviewedMergeRequests: 0
-                      githubPullRequests: 34
-                      gitlabMergeRequests: 43
-                      trelloCardsClosed: 23
-                      thoughtLeadershipCardsClosed: 1
-                      servicesSupportCardsClosed: 10
-          description: Get Scorecard Info
-      summary: Gets Scorecard info for a specific user.
-    parameters:
-    - name: username
-      description: The unique name of a specific user.
-      schema:
-        type: string
-      in: path
-      required: true
-  /scorecard/{username}/{pool}:
-    post:
-      requestBody:
-        content:
-          text/plain:
-            schema:
-              type: integer
-        required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Scorecard'
-          description: Pool for provided username was incremented successfully.
-      summary: Increments a scorecard for provided username and pool.
-      description: ""
-    parameters:
-    - name: username
-      description: The unique name of the user.
-      schema:
-        type: string
-      in: path
-      required: true
-    - name: pool
-      description: The pool to increment. The pool will be created if not already
-        defined.
-      schema:
-        type: string
-      in: path
-      required: true
   /level:
     get:
       responses:
@@ -200,6 +133,84 @@ paths:
           value: FY20
       name: period
       description: Period name
+      schema:
+        type: string
+      in: path
+      required: true
+  /event:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+              examples:
+                event-list:
+                  value:
+                  - timestamp: 2020-03-03T17:17:55.7285164
+                    user: modest_ninja
+                    type: successful registration
+                    description: User modest_ninja was registered successfully.
+                  - timestamp: 2020-03-03T17:17:55.7285164
+                    user: super_ninja
+                    type: successful registration
+                    description: User super_ninja was registered successfully.
+                  - timestamp: 2020-03-03T17:17:55.7285164
+                    user: retired_ninja
+                    type: successful registration
+                    description: User retired_ninja was registered successfully.
+          description: All Events
+  /scorecard/{username}:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scorecard'
+              examples:
+                super_ninja:
+                  value:
+                    username: super_ninja
+                    level: black
+                    total: 248
+                    pointsToNextLevel: 0
+                    nextLevel: ""
+                    pointMap:
+                      githubReviewedPullRequests: 24
+                      githubClosedIssues: 0
+                      servicesSupportMergeRequests: 0
+                      servicesSupportClosedIssues: 0
+                      servicesSupportReviewedMergeRequests: 0
+                      githubPullRequests: 34
+                      gitlabMergeRequests: 43
+                      trelloCardsClosed: 23
+                      thoughtLeadershipCardsClosed: 1
+                      servicesSupportCardsClosed: 10
+          description: Get Scorecard Info
+      summary: Gets Scorecard info for a specific user.
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Point'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scorecard'
+          description: Pool for provided username was incremented successfully.
+      summary: Increments a scorecard for provided username and pool.
+      description: ""
+    parameters:
+    - name: username
+      description: The unique name of a specific user.
       schema:
         type: string
       in: path
@@ -366,6 +377,22 @@ components:
       example:
         name: BLACK
         minimumScore: 75
+    Point:
+      title: Root Type for Point
+      description: ""
+      type: object
+      properties:
+        value:
+          format: int32
+          type: integer
+        pool:
+          type: string
+        reference:
+          type: string
+      example:
+        value: 1
+        pool: Trello
+        reference: /trello/1
   responses:
     NotFoundResponse:
       content:
