@@ -39,3 +39,13 @@ export const validateTrelloUsername = username => {
       return validated;
     });
 };
+
+export const validateJiraUsername = username => {
+  return axios.get("https://jira.atlassian.com/rest/api/latest/myself").then(response => {
+    let validated = false;
+
+    //TODO: no Jira API to validate the username
+
+    return validated;
+  })
+}
