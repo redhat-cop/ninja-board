@@ -99,15 +99,16 @@ export const SortableTable = props => {
   /**
    *  Manipulation of data
    */
+   // uses displayedRows as opposed to rows, since we only want to sort the rows currently displayed
   const onSort = (_event, index, direction) => {
-    const sortedRows = rows.sort((a, b) =>
+    const sortedRows = displayedRows.sort((a, b) =>
       a[index] < b[index] ? -1 : a[index] > b[index] ? 1 : 0
     );
     setSortBy({
       index,
       direction
     });
-    setRows(
+    setDisplayedRows(
       direction === SortByDirection.asc ? sortedRows : sortedRows.reverse()
     );
   };
