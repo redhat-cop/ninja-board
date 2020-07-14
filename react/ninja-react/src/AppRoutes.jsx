@@ -3,7 +3,7 @@ import { Route, Switch } from "react-router-dom";
 import FormSection from "./components/UserRegistrationForm";
 import AdminSection from "./components/AdminConfigurable";
 import ScorecardSection from "./components/Scorecard";
-import HomeSection from "./components/Home";
+import LoginSection from "./components/NinjaLogin";
 
 /**
  * @author fostimus
@@ -94,7 +94,7 @@ const AppRoutes = () => {
           />
         ))}
 
-        <Route key="home-page" exact path="/" render={() => <HomeSection />} />
+        <Route key="login" exact path="/" render={() => <LoginSection />} />
       </Switch>
     </Fragment>
   );
