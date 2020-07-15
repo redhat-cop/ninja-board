@@ -1,5 +1,6 @@
-import React, { Fragment } from "react";
-import { Route, Switch } from "react-router-dom";
+import React, { Fragment, useState } from "react";
+import { Route, Switch, Redirect } from "react-router-dom";
+import { PageSection } from "@patternfly/react-core";
 import FormSection from "./components/UserRegistrationForm";
 import AdminSection from "./components/AdminConfigurable";
 import ScorecardSection from "./components/Scorecard";
@@ -71,30 +72,49 @@ export const adminRoutes = [
     adminPage: "Database"
   }
 ];
+//
+// <Route exact path="/">
+//   {loggedIn ? <Redirect to="/dashboard" /> : <PublicHomePage />}
+// </Route>
 
 const AppRoutes = () => {
+  const [loggedIn, setLoggedIn] = useState(false);
+
   return (
     <Fragment>
       <Switch>
+        <Route key="home" exact path="/" render={() => <LoginSection />} />
+        <Route key="login" path="/login" render={(props) => <LoginSection {...props} setLoggedIn={setLoggedIn} />} />
+
         {ninjaRoutes.map(route => (
           <Route
             key={route.routeName}
             path={route.routePath}
-            component={route.component}
-          />
+          >
+            {loggedIn ? route.component : <Redirect to="/login" />}
+          </Route>
         ))}
 
         {adminRoutes.map(route => (
-          <Route
-            key={route.routeName}
-            path={route.routePath}
-            render={props => (
-              <AdminSection {...props} adminPage={route.adminPage} />
+          <Route key={route.routeName} path={route.routePath}>
+            {loggedIn ? (
+              //TODO: use route.component and pass in route.adminPage as prop
+              <AdminSection adminPage={route.adminPage} />
+            ) : (
+              <Redirect to="/login" />
             )}
-          />
+          </Route>
         ))}
 
-        <Route key="login" exact path="/" render={() => <LoginSection />} />
+        <Route
+          key="not-found"
+          path="*"
+          render={() => (
+            <PageSection>
+              <div>Not Found</div>
+            </PageSection>
+          )}
+        />
       </Switch>
     </Fragment>
   );

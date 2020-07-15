@@ -1,47 +1,55 @@
-import React, { useState } from "react";
+import React from "react";
 import GoogleLogin from "react-google-login";
 import API from "../config/ServerUrls";
-import { Redirect } from "react-router-dom";
 import { PageSection } from "@patternfly/react-core";
+// import { ninjaRoutes } from "../AppRoutes"
 
-import axios from "axios";
-
-const LoginSection = params => {
+const LoginSection = props => {
   return (
     <PageSection>
-      <NinjaLogin />
+      <NinjaLogin {...props} />
     </PageSection>
-  )
-}
+  );
+};
 
 export default LoginSection;
 
-export const NinjaLogin = params => {
+export const NinjaLogin = props => {
   const register = googleResponse => {
     // match this object to ninja user registration API
     const userRegistrationRequest = {
-      name: googleResponse.profileObj.name,
+      firstName: googleResponse.profileObj.givenName,
+      lastName: googleResponse.profileObj.familyName,
       email: googleResponse.profileObj.email,
-      token: googleResponse.googleId,
-      image: googleResponse.profileObj.imageUrl,
+      //does the backend need the token or the tokenId?
+      tokenId: googleResponse.tokenId,
+      imageUrl: googleResponse.profileObj.imageUrl,
       providerId: "Google"
     };
 
     // /user API needs to be modified
-    API.post(`/user`, userRegistrationRequest).then(res => {
-      if (res.status === 201) {
-        this.setState({
-          showModal: true,
-          modalTitle: "Success!",
-          modalText: "Thank you for registering for the Giveback Ninja Program",
-          clearFormOnSubmit: true
-        });
-      }
-    });
+    API.post(`/user`, userRegistrationRequest)
+      .then(res => {
+        //intended state: by logging in some information (name, email, profile picture) will already be set on the profile. should be taken to "edit" page, instead of "registration" page
+        props.setLoggedIn(true)
+        props.history.push("/registration-form");
+      })
+      .catch(error => {
+        if (error.response) {
+        }
+        //undefined error response == network error
+        else {
+          //temporary way to test log in works, but this is when the network or server is down
+          props.setLoggedIn(true)
+          props.history.push("/registration-form");
+        }
+      });
   };
 
   const responseGoogle = response => {
     console.log(response);
+    register(response);
+
   };
 
   return (
