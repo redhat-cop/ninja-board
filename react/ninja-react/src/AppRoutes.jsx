@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment } from "react";
 import { Route, Switch, Redirect } from "react-router-dom";
 import { PageSection } from "@patternfly/react-core";
 import FormSection from "./components/UserRegistrationForm";
@@ -10,6 +10,7 @@ import LoginSection from "./components/NinjaLogin";
  * @author fostimus
  */
 
+// edit/add routes here
 export const ninjaRoutes = [
   {
     id: 1,
@@ -72,32 +73,40 @@ export const adminRoutes = [
     adminPage: "Database"
   }
 ];
-//
-// <Route exact path="/">
-//   {loggedIn ? <Redirect to="/dashboard" /> : <PublicHomePage />}
-// </Route>
 
-const AppRoutes = () => {
-  const [loggedIn, setLoggedIn] = useState(false);
+const AppRoutes = props => {
+  console.log(props);
+  console.log(props.setLoggedIn);
 
   return (
     <Fragment>
       <Switch>
-        <Route key="home" exact path="/" render={() => <LoginSection />} />
-        <Route key="login" path="/login" render={(props) => <LoginSection {...props} setLoggedIn={setLoggedIn} />} />
+        {/*TODO: home page shouldn't be login; landing page should, but home should be ______*/}
+        <Route
+          key="home"
+          exact
+          path="/"
+          render={properties => (
+            <LoginSection {...properties} setLoggedIn={props.setLoggedIn} />
+          )}
+        />
+        <Route
+          key="login"
+          path="/login"
+          render={properties => (
+            <LoginSection {...properties} setLoggedIn={props.setLoggedIn} />
+          )}
+        />
 
         {ninjaRoutes.map(route => (
-          <Route
-            key={route.routeName}
-            path={route.routePath}
-          >
-            {loggedIn ? route.component : <Redirect to="/login" />}
+          <Route key={route.routeName} path={route.routePath}>
+            {props.loggedIn ? route.component : <Redirect to="/login" />}
           </Route>
         ))}
 
         {adminRoutes.map(route => (
           <Route key={route.routeName} path={route.routePath}>
-            {loggedIn ? (
+            {props.loggedIn ? (
               //TODO: use route.component and pass in route.adminPage as prop
               <AdminSection adminPage={route.adminPage} />
             ) : (

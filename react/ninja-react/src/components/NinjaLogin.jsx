@@ -2,7 +2,6 @@ import React from "react";
 import GoogleLogin from "react-google-login";
 import API from "../config/ServerUrls";
 import { PageSection } from "@patternfly/react-core";
-// import { ninjaRoutes } from "../AppRoutes"
 
 const LoginSection = props => {
   return (
@@ -27,6 +26,8 @@ export const NinjaLogin = props => {
       providerId: "Google"
     };
 
+    console.log(props)
+
     // /user API needs to be modified
     API.post(`/user`, userRegistrationRequest)
       .then(res => {
@@ -34,6 +35,7 @@ export const NinjaLogin = props => {
         props.setLoggedIn(true)
         props.history.push("/registration-form");
       })
+      //TODO: fill in error handling
       .catch(error => {
         if (error.response) {
         }
@@ -52,6 +54,7 @@ export const NinjaLogin = props => {
 
   };
 
+  //TODO: client id should be stored in OCP configmap
   return (
     <GoogleLogin
       clientId="1029231296777-6hg51pd9kiesovjs89shafotuc9s82go.apps.googleusercontent.com"

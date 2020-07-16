@@ -1,13 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { PageHeader, Page } from "@patternfly/react-core";
 import NavBar from "./components/NavBar";
 import RedHatLogo from "./assets/media/logo.svg";
+import AppRoutes from "./AppRoutes"
 
 /**
  * @author fostimus
  */
 
-const AppLayout = ({ children }) => {
+const AppLayout = (props) => {
+  const [loggedIn, setLoggedIn] = useState(false);
+
   const logoProps = {
     href: "https://redhat.com",
     onClick: () => console.log("clicked logo"),
@@ -22,18 +25,14 @@ const AppLayout = ({ children }) => {
     />
   );
 
-// this Header construct is a PatternFly design
-  const Header = (
-    <PageHeader
-      logo={logo}
-      logoProps={logoProps}
-      topNav={<NavBar />}
-    />
-  );
+  // this Header construct is a PatternFly design
+  const Header = loggedIn ? (
+    <PageHeader logo={logo} logoProps={logoProps} topNav={<NavBar />} />
+  ) : null;
 
   return (
     <Page mainContainerId="primary-app-container" header={Header}>
-      {children}
+      <AppRoutes loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
     </Page>
   );
 };
