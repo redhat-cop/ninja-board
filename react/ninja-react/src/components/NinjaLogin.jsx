@@ -26,13 +26,13 @@ export const NinjaLogin = props => {
       providerId: "Google"
     };
 
-    console.log(props)
+    console.log(props);
 
     // /user API needs to be modified
     API.post(`/user`, userRegistrationRequest)
       .then(res => {
         //intended state: by logging in some information (name, email, profile picture) will already be set on the profile. should be taken to "edit" page, instead of "registration" page
-        props.setLoggedIn(true)
+        props.setLoggedIn(true);
         props.history.push("/registration-form");
       })
       //TODO: fill in error handling
@@ -42,7 +42,7 @@ export const NinjaLogin = props => {
         //undefined error response == network error
         else {
           //temporary way to test log in works, but this is when the network or server is down
-          props.setLoggedIn(true)
+          props.setLoggedIn(true);
           props.history.push("/registration-form");
         }
       });
@@ -51,7 +51,6 @@ export const NinjaLogin = props => {
   const responseGoogle = response => {
     console.log(response);
     register(response);
-
   };
 
   //TODO: client id should be stored in OCP configmap

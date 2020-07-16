@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { PageHeader, Page } from "@patternfly/react-core";
 import NavBar from "./components/NavBar";
 import RedHatLogo from "./assets/media/logo.svg";
-import AppRoutes from "./AppRoutes"
+import AppRoutes from "./AppRoutes";
 
 /**
  * @author fostimus
  */
 
-const AppLayout = (props) => {
+const AppLayout = props => {
   const [loggedIn, setLoggedIn] = useState(false);
 
   const logoProps = {

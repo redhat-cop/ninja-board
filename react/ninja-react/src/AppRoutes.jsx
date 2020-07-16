@@ -75,9 +75,6 @@ export const adminRoutes = [
 ];
 
 const AppRoutes = props => {
-  console.log(props);
-  console.log(props.setLoggedIn);
-
   return (
     <Fragment>
       <Switch>
