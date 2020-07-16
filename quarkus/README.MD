@@ -58,6 +58,13 @@ mvn install
 java -jar all-service/target/all-service-2.0.0-SNAPSHOT-runner.jar
 ```
 
+For native application:
+```shell script
+mvn install
+mvn package -Pnative -f all-service
+./all-service/target/all-service-2.0.0-SNAPSHOT-runner
+```
+
 ## Testing
 
 ### Important Note
