@@ -1,0 +1,11 @@
+[
+  {
+    "name": "com.sun.jndi.ldap.LdapCtxFactory",
+    "allDeclaredConstructors": false,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": false,
+    "allPublicMethods": false,
+    "allDeclaredFields": false,
+    "allPublicFields": false
+  }
+]
