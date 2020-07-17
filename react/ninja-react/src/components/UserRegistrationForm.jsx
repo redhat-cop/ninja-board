@@ -8,7 +8,12 @@ import {
   ActionGroup,
   Button
 } from "@patternfly/react-core";
-import { redHatEmailRegex, usernameRegex } from "../config/Validation";
+import {
+  redHatEmailRegex,
+  usernameRegex,
+  validateGithubUsername,
+  validateTrelloUsername
+} from "../utils/UsernameValidation";
 import API from "../config/ServerUrls";
 import ConfirmationModal from "./ConfirmationModal";
 
@@ -51,6 +56,13 @@ export class UserRegistrationForm extends React.Component {
       validated: "default"
     },
     github: {
+      value: "",
+      invalidText: "",
+      helperText: "",
+      isValid: true,
+      validated: "default"
+    },
+    jira: {
       value: "",
       invalidText: "",
       helperText: "",
@@ -126,6 +138,16 @@ export class UserRegistrationForm extends React.Component {
     this.setState(newState);
   };
 
+  handleInputChangeJira = jira => {
+    let newState = {
+      jira: {
+        value: jira,
+        ...this.usernameValidation(jira)
+      }
+    };
+    this.setState(newState);
+  };
+
   handleInputChangeOther = other => {
     this.setState({ other });
   };
@@ -182,6 +204,13 @@ export class UserRegistrationForm extends React.Component {
         isValid: true,
         validated: "default"
       },
+      jira: {
+        value: "",
+        invalidText: "",
+        helperText: "",
+        isValid: true,
+        validated: "default"
+      },
       other: ""
     });
   };
@@ -196,6 +225,38 @@ export class UserRegistrationForm extends React.Component {
   handleSubmit = event => {
     event.preventDefault();
 
+    validateGithubUsername(this.state.github.value).then(response => {
+      if (!response) {
+        this.setState({
+          showModal: true,
+          modalTitle: "Github Username Not Found",
+          modalText:
+            "The GitHub username you entered was not found. Please enter an existing username.",
+          clearFormOnSubmit: false
+        });
+        return;
+      }
+
+      //if empty, skip validation (not required)
+      this.state.trello.value !== ""
+        ? validateTrelloUsername(this.state.trello.value).then(response => {
+            //if no response, set state to trello not found
+            !response
+              ? this.setState({
+                  showModal: true,
+                  modalTitle: "Trello Username Not Found",
+                  modalText:
+                    "The Trello username you entered was not found. Please enter an existing username.",
+                  clearFormOnSubmit: false
+                })
+              : this.postUser();
+          })
+        : this.postUser();
+    });
+  };
+
+  postUser = () => {
+    //TODO: update with jira when backend API can handle it
     const user = {
       displayName: this.state.displayName,
       username: this.state.username.value,
@@ -217,6 +278,7 @@ export class UserRegistrationForm extends React.Component {
         }
       })
       .catch(error => {
+        console.log(error);
         if (error.response) {
           if (error.response.status === 404) {
             this.setState({
@@ -235,7 +297,7 @@ export class UserRegistrationForm extends React.Component {
               clearFormOnSubmit: false
             });
           }
-          //TODO: add in here checking for specific errors, e.g. LDAP lookup fad, trello/github username not found
+          //TODO: add in here checking for specific errors, e.g. LDAP lookup fail, trello/github username not found
         }
         //undefined error response == network error
         else {
@@ -251,14 +313,21 @@ export class UserRegistrationForm extends React.Component {
   };
 
   render() {
-    const { displayName, username, email, trello, github, other } = this.state;
+    const {
+      displayName,
+      username,
+      email,
+      trello,
+      github,
+      jira,
+      other
+    } = this.state;
 
     const submitEnabled =
       // not empty
       this.state.displayName !== "" &&
       this.state.username.value !== "" &&
       this.state.email.value !== "" &&
-      this.state.trello.value !== "" &&
       this.state.github.value !== "" &&
       // validation passes
       this.state.username.isValid &&
@@ -329,24 +398,6 @@ export class UserRegistrationForm extends React.Component {
             />
           </FormGroup>
           <FormGroup
-            label="Trello"
-            isRequired
-            helperText={trello.helperText}
-            helperTextInvalid={trello.invalidText}
-            validated={trello.validated}
-            fieldId="horizontal-form-trello"
-          >
-            <TextInput
-              value={trello.value}
-              validated={trello.validated}
-              onChange={this.handleInputChangeTrello}
-              isRequired
-              type="text"
-              id="horizontal-form-trello"
-              name="horizontal-form-trello"
-            />
-          </FormGroup>
-          <FormGroup
             label="GitHub"
             isRequired
             helperText={github.helperText}
@@ -365,7 +416,39 @@ export class UserRegistrationForm extends React.Component {
             />
           </FormGroup>
           <FormGroup
-            label="Please provide links to any other qualifying CoP Contributions that do not show up in GitHub or Trello"
+            label="Trello"
+            helperText={trello.helperText}
+            helperTextInvalid={trello.invalidText}
+            validated={trello.validated}
+            fieldId="horizontal-form-trello"
+          >
+            <TextInput
+              value={trello.value}
+              validated={trello.validated}
+              onChange={this.handleInputChangeTrello}
+              type="text"
+              id="horizontal-form-trello"
+              name="horizontal-form-trello"
+            />
+          </FormGroup>
+          <FormGroup
+            label="Jira"
+            helperText={jira.helperText}
+            helperTextInvalid={jira.invalidText}
+            validated={jira.validated}
+            fieldId="horizontal-form-jira"
+          >
+            <TextInput
+              value={jira.value}
+              validated={jira.validated}
+              onChange={this.handleInputChangeJira}
+              type="text"
+              id="horizontal-form-jira"
+              name="horizontal-form-jira"
+            />
+          </FormGroup>
+          <FormGroup
+            label="Please provide links to any other qualifying CoP Contributions that do not show up in GitHub, Trello, or Jira"
             fieldId="horizontal-form-exp"
           >
             <TextArea
