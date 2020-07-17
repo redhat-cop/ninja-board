@@ -6,7 +6,7 @@ export const redHatEmailRegex = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%
 export const usernameRegex = /^\S*$/;
 
 export const validateGithubUsername = username => {
-   return axios
+  return axios
     .get("https://api.github.com/search/users?q=" + username)
     .then(response => {
       let validated = false;
@@ -41,11 +41,13 @@ export const validateTrelloUsername = username => {
 };
 
 export const validateJiraUsername = username => {
-  return axios.get("https://jira.atlassian.com/rest/api/latest/myself").then(response => {
-    let validated = false;
+  return axios
+    .get("https://jira.atlassian.com/rest/api/latest/myself")
+    .then(response => {
+      let validated = false;
 
-    //TODO: no Jira API to validate the username
+      //TODO: no Jira API to validate the username
 
-    return validated;
-  })
-}
+      return validated;
+    });
+};

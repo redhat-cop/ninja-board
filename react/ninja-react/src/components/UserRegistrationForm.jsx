@@ -234,25 +234,28 @@ export class UserRegistrationForm extends React.Component {
             "The GitHub username you entered was not found. Please enter an existing username.",
           clearFormOnSubmit: false
         });
+        return;
       }
+
+      //if empty, skip validation (not required)
+      this.state.trello.value !== ""
+        ? validateTrelloUsername(this.state.trello.value).then(response => {
+            //if no response, set state to trello not found
+            !response
+              ? this.setState({
+                  showModal: true,
+                  modalTitle: "Trello Username Not Found",
+                  modalText:
+                    "The Trello username you entered was not found. Please enter an existing username.",
+                  clearFormOnSubmit: false
+                })
+              : this.postUser();
+          })
+        : this.postUser();
     });
+  };
 
-    if (this.state.trello.value !== "") {
-      validateTrelloUsername(this.state.trello.value).then(response => {
-        console.log(response);
-        if (!response) {
-          this.setState({
-            showModal: true,
-            modalTitle: "Trello Username Not Found",
-            modalText:
-              "The Trello username you entered was not found. Please enter an existing username.",
-            clearFormOnSubmit: false
-          });
-          return;
-        }
-      });
-    }
-
+  postUser = () => {
     //TODO: update with jira when backend API can handle it
     const user = {
       displayName: this.state.displayName,
@@ -275,6 +278,7 @@ export class UserRegistrationForm extends React.Component {
         }
       })
       .catch(error => {
+        console.log(error);
         if (error.response) {
           if (error.response.status === 404) {
             this.setState({
@@ -293,7 +297,7 @@ export class UserRegistrationForm extends React.Component {
               clearFormOnSubmit: false
             });
           }
-          //TODO: add in here checking for specific errors, e.g. LDAP lookup fad, trello/github username not found
+          //TODO: add in here checking for specific errors, e.g. LDAP lookup fail, trello/github username not found
         }
         //undefined error response == network error
         else {
