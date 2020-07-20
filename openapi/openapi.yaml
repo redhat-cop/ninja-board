@@ -8,6 +8,21 @@ info:
     url: https://www.apache.org/licenses/LICENSE-2.0
 paths:
   /user:
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: Updated user record.
+      summary: Updates an existing user record.
     post:
       requestBody:
         content:
@@ -280,12 +295,10 @@ components:
       description: ""
       required:
       - username
+      - lastName
+      - firstName
       type: object
       properties:
-        displayName:
-          description: The name displayed to all users of the system. Typically the
-            users first and last name.
-          type: string
         username:
           description: The user's Red Hat Kerberos ID.
           type: string
@@ -298,12 +311,32 @@ components:
         email:
           description: The Red Hat email associated with the user.
           type: string
+        profileImageUrl:
+          description: URL of profile image resource.
+          type: string
+        firstName:
+          description: The user's first name. Typically the name displayed to all
+            users of the system.
+          type: string
+        lastName:
+          description: The user's last/family name.
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+          description: User's mailing address.
       example:
-        displayName: Super Ninja
+        firstName: Super
+        lastName: Ninja
         username: super_ninja
         githubUsername: super_ninja
         trelloUsername: super_ninja
         email: super_ninja@redhat.com
+        profileImageUrl: https://imagesource.com/path/to/image
+        address:
+          lineOne: 123 John St.
+          city: New York
+          state: NY
+          postalCode: "11111"
     Scorecard:
       title: User Scorecard
       description: All stats around a user that are used to calculate Ninja Belt level.
@@ -393,6 +426,32 @@ components:
         value: 1
         pool: Trello
         reference: /trello/1
+    Address:
+      title: Root Type for Address
+      description: User's mailing address (for Red Hat swag)
+      required:
+      - city
+      - lineOne
+      - postalCode
+      - state
+      type: object
+      properties:
+        lineOne:
+          type: string
+        lineTwo:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        postalCode:
+          type: string
+      example:
+        lineOne: 123 Maple St.
+        lineTwo: Apt 2A
+        city: Raleigh
+        state: NC
+        postalCode: "00000"
   responses:
     NotFoundResponse:
       content:
