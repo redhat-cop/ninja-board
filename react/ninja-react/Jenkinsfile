@@ -20,7 +20,7 @@ pipeline {
     stage('Build Application'){
       steps {
         sh """
-          cd ninja-react
+          cd react/ninja-react
           npm install
           npm run build
         """
@@ -32,7 +32,7 @@ pipeline {
         script {
           openshift.withCluster() {
             openshift.withProject("${DEV_NAMESPACE}") {
-              openshift.selector("bc", "${APPLICATION_NAME}").startBuild("--from-dir=ninja-react/build").logs("-f")
+              openshift.selector("bc", "${APPLICATION_NAME}").startBuild("--from-dir=react/ninja-react/build").logs("-f")
             }
           }
         }

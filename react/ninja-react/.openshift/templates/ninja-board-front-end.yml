@@ -24,6 +24,14 @@ objects:
         kind: DockerImage
         name: 'centos/nginx-112-centos7:latest'
 - apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    labels:
+      application: ${APPLICATION_NAME}
+    name: front-end-configmap
+  data:
+    config.js: window.USER_MANAGEMENT_API_URL="${USER_MANAGEMENT_API_URL}";
+- apiVersion: v1
   kind: BuildConfig
   metadata:
     labels:
@@ -70,6 +78,7 @@ objects:
         jenkinsfilePath: ${SOURCE_REPOSITORY_DIR}/Jenkinsfile
       type: JenkinsPipeline
     triggers:
+    - type: ConfigChange
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -97,6 +106,15 @@ objects:
           - containerPort: 8080
             name: http
             protocol: TCP
+          volumeMounts:
+            - mountPath: /opt/app-root/src/config
+              name: front-end-configmap
+              readOnly: true
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: front-end-configmap
+          name: front-end-configmap
     triggers:
       - type: ConfigChange
       - type: ImageChange
@@ -154,9 +172,13 @@ parameters:
   - name: SOURCE_REPOSITORY_DIR
     description: The location within the source repo of the application
     displayName: Source Directory
-    value: ninja-react
+    value: react/ninja-react
     required: true
   - description: Name of the Development Namespace
     name: DEV_NAMESPACE
     required: true
     value: ninja-board-dev
+  - name: USER_MANAGEMENT_API_URL
+    description: The URL for User Management API
+    required: true
+    value: http://localhost:8080
