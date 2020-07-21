@@ -9,6 +9,7 @@ openshift_cluster_content:
         tags:
           - projects-{{ ninja_board_dev_namespace }}
           - projects
+          - project-req-dev
       - name: ninja-board-project
         template: "{{ inventory_dir }}/../../.openshift/projects/project.yml"
         action: create
@@ -108,10 +109,12 @@ openshift_cluster_content:
         params_from_vars:
           SOURCE_REPOSITORY_URL: "{{ source_repo_v2 }}"
           SOURCE_REPOSITORY_REF: "{{ source_ref_v2 }}"
+          USERS_LDAP_PROVIDER: "{{ ldap_service }}"
         namespace: "{{ ninja_board_dev_namespace }}"
         tags:
           - projects-{{ ninja_board_dev_namespace }}
           - user-management-back-end
+          - v2
   - object: front-end
     content:
       - name: "front-end"
@@ -120,7 +123,9 @@ openshift_cluster_content:
           SOURCE_REPOSITORY_URL: "{{ source_repo_v2 }}"
           SOURCE_REPOSITORY_REF: "{{ source_ref_v2 }}"
           DEV_NAMESPACE: "{{ ninja_board_dev_namespace }}"
+          USER_MANAGEMENT_API_URL: "{{ user_management_url }}"
         namespace: "{{ ninja_board_dev_namespace }}"
         tags:
           - projects-{{ ninja_board_dev_namespace }}
           - front-end
+          - v2

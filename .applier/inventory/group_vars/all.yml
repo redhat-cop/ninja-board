@@ -7,8 +7,11 @@ ninja_board_prod_namespace: "{{ namespace }}"
 source_repo: https://github.com/redhat-cop/ninja-board.git
 source_ref: master
 
-source_repo_v2: https://github.com/jtlnguyen/ninja-board.git
-source_ref_v2: v2-dev
+source_repo_v2: https://github.com/redhat-cop/ninja-board.git
+source_ref_v2: v2
+
+ldap_service: ldap://ldap.{{ ninja_board_dev_namespace }}.svc.cluster.local:389
+user_management_url: http://ninja-board-back-end-ninja-board-v2.apps.d1.casl.rht-labs.com
 
 dev:
   NAMESPACE: "{{ ninja_board_dev_namespace }}"
