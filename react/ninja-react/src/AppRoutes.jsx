@@ -1,14 +1,16 @@
 import React, { Fragment } from "react";
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, Redirect } from "react-router-dom";
+import { PageSection } from "@patternfly/react-core";
 import FormSection from "./components/UserRegistrationForm";
 import AdminSection from "./components/AdminConfigurable";
 import ScorecardSection from "./components/Scorecard";
-import HomeSection from "./components/Home";
+import LoginSection from "./components/NinjaLogin";
 
 /**
  * @author fostimus
  */
 
+// edit/add routes here
 export const ninjaRoutes = [
   {
     id: 1,
@@ -72,29 +74,53 @@ export const adminRoutes = [
   }
 ];
 
-const AppRoutes = () => {
+const AppRoutes = props => {
   return (
     <Fragment>
       <Switch>
+        {/*TODO: home page shouldn't be login; landing page should, but home should be ______*/}
+        <Route
+          key="home"
+          exact
+          path="/"
+          render={properties => (
+            <LoginSection {...properties} setLoggedIn={props.setLoggedIn} />
+          )}
+        />
+        <Route
+          key="login"
+          path="/login"
+          render={properties => (
+            <LoginSection {...properties} setLoggedIn={props.setLoggedIn} />
+          )}
+        />
+
         {ninjaRoutes.map(route => (
-          <Route
-            key={route.routeName}
-            path={route.routePath}
-            component={route.component}
-          />
+          <Route key={route.routeName} path={route.routePath}>
+            {props.loggedIn ? route.component : <Redirect to="/login" />}
+          </Route>
         ))}
 
         {adminRoutes.map(route => (
-          <Route
-            key={route.routeName}
-            path={route.routePath}
-            render={props => (
-              <AdminSection {...props} adminPage={route.adminPage} />
+          <Route key={route.routeName} path={route.routePath}>
+            {props.loggedIn ? (
+              //TODO: use route.component and pass in route.adminPage as prop
+              <AdminSection adminPage={route.adminPage} />
+            ) : (
+              <Redirect to="/login" />
             )}
-          />
+          </Route>
         ))}
 
-        <Route key="home-page" exact path="/" render={() => <HomeSection />} />
+        <Route
+          key="not-found"
+          path="*"
+          render={() => (
+            <PageSection>
+              <div>Not Found</div>
+            </PageSection>
+          )}
+        />
       </Switch>
     </Fragment>
   );

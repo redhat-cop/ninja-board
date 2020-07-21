@@ -18,6 +18,10 @@
             <artifactId>jakarta.json.bind-api</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-core</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

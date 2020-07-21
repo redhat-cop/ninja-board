@@ -1,8 +1,11 @@
 package com.redhat.services.ninja.entity;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
+
 import java.time.LocalDateTime;
 import java.util.*;
 
+@RegisterForReflection
 public class Database {
     private LocalDateTime createdOn = LocalDateTime.now();
     private Set<User> users = Set.of();
