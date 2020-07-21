@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import { Route, Switch, Redirect } from "react-router-dom";
 import { PageSection } from "@patternfly/react-core";
 import FormSection from "./components/UserRegistrationForm";
@@ -84,14 +84,22 @@ const AppRoutes = props => {
           exact
           path="/"
           render={properties => (
-            <LoginSection {...properties} setLoggedIn={props.setLoggedIn} />
+            <LoginSection
+              {...properties}
+              loggedIn={props.loggedIn}
+              setLoggedIn={props.setLoggedIn}
+            />
           )}
         />
         <Route
           key="login"
           path="/login"
           render={properties => (
-            <LoginSection {...properties} setLoggedIn={props.setLoggedIn} />
+            <LoginSection
+              {...properties}
+              loggedIn={props.loggedIn}
+              setLoggedIn={props.setLoggedIn}
+            />
           )}
         />
 
