@@ -107,7 +107,7 @@ Utilize the following steps to deploy the project
 4. Execute the _openshift-applier_
 
     ```
-    ansible-playbook -i .applier/inventory galaxy/openshift-applier/playbooks/openshift-cluster-seed.yml -e="@.openshift/params/ninja-board-deployment -e exclude_tags=ldap-rbac,ldap,v2"
+    ansible-playbook -i .applier/inventory galaxy/openshift-applier/playbooks/openshift-cluster-seed.yml -e="@.openshift/params/ninja-board-deployment" -e exclude_tags=ldap-rbac,ldap,v2
     ```
 
 Once complete, all of the v1 resources should be available in OpenShift
@@ -144,7 +144,7 @@ Utilize the following steps to deploy the project
 4. Execute the _openshift-applier_
 
     ```
-    ansible-playbook -i .applier/inventory galaxy/openshift-applier/playbooks/openshift-cluster-seed.yml -e="@.openshift/params/ninja-board-deployment -e include_tags=v2"
+    ansible-playbook -i .applier/inventory galaxy/openshift-applier/playbooks/openshift-cluster-seed.yml -e="@.openshift/params/ninja-board-deployment" -e include_tags=v2
     ```
 
     ***NOTES***
