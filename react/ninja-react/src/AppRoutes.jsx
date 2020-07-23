@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment } from "react";
 import { Route, Switch, Redirect } from "react-router-dom";
 import { PageSection } from "@patternfly/react-core";
 import FormSection from "./components/UserRegistrationForm";

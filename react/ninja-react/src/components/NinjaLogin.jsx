@@ -1,6 +1,6 @@
 import React from "react";
 import GoogleLogin from "react-google-login";
-import API, { userFromToken } from "../config/ServerUrls";
+import API from "../config/ServerUrls";
 import { PageSection } from "@patternfly/react-core";
 
 const LoginSection = props => {
@@ -51,6 +51,7 @@ export const NinjaLogin = props => {
     console.log(response);
     //store jwt in local storage, to enable user sessions
     localStorage.setItem("jwt-token", response.tokenId);
+    localStorage.setItem("display-name", response.profileObj.name);
     register(response);
   };
 

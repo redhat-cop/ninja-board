@@ -1,11 +1,12 @@
-import React, {  useState } from "react";
+import React, { useState, Fragment } from "react";
 import { NavLink } from "react-router-dom";
 import {
   Nav,
   NavExpandable,
   NavItem,
   NavList,
-  NavVariants
+  NavVariants,
+  Button
 } from "@patternfly/react-core";
 import { ninjaRoutes, adminRoutes } from "../AppRoutes";
 
@@ -33,14 +34,18 @@ const NavBar = props => {
     setActiveItem(result.itemId);
   };
 
+  const logout = () => {
+    localStorage.removeItem("jwt-token");
+    localStorage.removeItem("display-name");
+    window.location.reload();
+  };
+
   // NavList uses the map function twice to populate NavExpandables and NavItems; see src/data/NavBarLinks.js for content
   //TODO: vertical alignment is off compared to the logo. verticalAlign CSS property doesn't seem to affect anything
   //TODO: Nav bar comes out of the page header when the window shrinks horizontally, and there is an obvious style change
+  // TODO: styling for "Logged in as" and Logout button
   return (
-    <Nav
-      style={{ marginLeft: "20px", fontSize: "20px" }}
-      onSelect={onSelect}
-    >
+    <Nav style={{ marginLeft: "20px", fontSize: "20px" }} onSelect={onSelect}>
       <NavList variant={NavVariants.horizontal}>
         <NavExpandable
           key="ninja"
@@ -91,6 +96,12 @@ const NavBar = props => {
           ))}
         </NavExpandable>
       </NavList>
+      <Fragment>
+        Logged in as: {localStorage.getItem("display-name")}
+        <Button onClick={logout} type="submit" variant="tertiary">
+          Logout
+        </Button>
+      </Fragment>
     </Nav>
   );
 };
