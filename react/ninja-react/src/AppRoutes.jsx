@@ -5,6 +5,7 @@ import FormSection from "./components/UserRegistrationForm";
 import AdminSection from "./components/AdminConfigurable";
 import ScorecardSection from "./components/Scorecard";
 import LoginSection from "./components/NinjaLogin";
+import AccountSection from "./components/AccountPage";
 
 /**
  * @author fostimus
@@ -30,27 +31,16 @@ export const ninjaRoutes = [
   },
   {
     id: 4,
-    routeName: "Tasks",
-    routePath: "/tasks"
-  },
-  {
-    id: 5,
-    routeName: "Registration Form",
-    routePath: "/registration-form",
-    component: FormSection
-  },
-  {
-    id: 6,
     routeName: "Responses Spreadsheet",
     routePath: "/responses-spreadsheets"
   },
   {
-    id: 7,
+    id: 5,
     routeName: "Support - Trello Query",
     routePath: "/support/trello-query"
   },
   {
-    id: 8,
+    id: 6,
     routeName: "Support - Trello Reconciliation",
     routePath: "/support/trello-reconciliation"
   }
@@ -73,6 +63,21 @@ export const adminRoutes = [
     adminPage: "Database"
   }
 ];
+
+export const accountRoutes = [
+  {
+    id: 1,
+    routeName: "Registration Form",
+    routePath: "/registration-form",
+    component: FormSection
+  },
+  {
+    id: 2,
+    routeName: "Edit Account",
+    routePath: "/edit-account",
+    component: AccountSection
+  },
+]
 
 const AppRoutes = props => {
   return (
@@ -117,6 +122,12 @@ const AppRoutes = props => {
             ) : (
               <Redirect to="/login" />
             )}
+          </Route>
+        ))}
+
+        {accountRoutes.map(route => (
+          <Route key={route.routeName} path={route.routePath}>
+            {props.loggedIn ? route.component : <Redirect to="/login" />}
           </Route>
         ))}
 
