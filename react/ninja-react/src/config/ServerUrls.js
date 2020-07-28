@@ -6,7 +6,7 @@ const local = axios.create({
 
 export const userFromToken = jwt => {
   return axios.get(
-    `https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=` + jwt
+    'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + jwt
   );
 };
 
