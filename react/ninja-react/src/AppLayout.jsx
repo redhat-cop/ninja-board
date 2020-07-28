@@ -4,7 +4,6 @@ import { userFromToken } from "./config/ServerUrls";
 import NavBar from "./components/NavBar";
 import RedHatLogo from "./assets/media/logo.svg";
 import AppRoutes from "./AppRoutes";
-import { Link } from "react-router-dom";
 
 /**
  * @author fostimus
@@ -47,9 +46,8 @@ const AppLayout = props => {
     <PageHeader
       logo={logo}
       logoProps={{
-        to: "/"
+        href: "/"
       }}
-      logoComponent={Link}
       topNav={<NavBar />}
     />
   ) : null;

@@ -75,33 +75,33 @@ export const adminRoutes = [
 ];
 
 const AppRoutes = props => {
+  const homeComponent = properties =>
+    !props.loggedIn ? (
+      <LoginSection
+        {...properties}
+        loggedIn={props.loggedIn}
+        setLoggedIn={props.setLoggedIn}
+      />
+    ) : (
+      // will be profile page when it's made
+      <Redirect to="/scorecards" />
+    );
+
   return (
     <Fragment>
       <Switch>
         {/*TODO: home page shouldn't be login; landing page should, but home should be ______*/}
-        <Route key="home" exact path="/">
-          {!props.loggedIn ? (
-            <LoginSection
-              loggedIn={props.loggedIn}
-              setLoggedIn={props.setLoggedIn}
-            />
-          ) : (
-            // will be profile page when it's made
-            <Redirect to="/registration-form" />
-          )}
-        </Route>
-
-        <Route key="login" path="/login">
-          {!props.loggedIn ? (
-            <LoginSection
-              loggedIn={props.loggedIn}
-              setLoggedIn={props.setLoggedIn}
-            />
-          ) : (
-            // will be profile page when it's made
-            <Redirect to="/registration-form" />
-          )}
-        </Route>
+        <Route
+          key="home"
+          exact
+          path="/"
+          render={properties => homeComponent(properties)}
+        />
+        <Route
+          key="login"
+          path="/login"
+          render={properties => homeComponent(properties)}
+        />
 
         {ninjaRoutes.map(route => (
           <Route key={route.routeName} path={route.routePath}>
