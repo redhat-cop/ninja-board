@@ -1,13 +1,14 @@
-import React, { useState, Fragment } from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
   Nav,
   NavExpandable,
   NavItem,
   NavList,
-  NavVariants,
-  Button
+  NavVariants
 } from "@patternfly/react-core";
+import "../assets/css/nav.css";
+
 /**
  * @author fostimus
  */
@@ -36,38 +37,21 @@ const NavBar = props => {
     window.location.reload();
   };
 
-  const style = {
-    color: "blue"
-  }
-
   // NavList uses the map function twice to populate NavExpandables and NavItems; see src/data/NavBarLinks.js for content
   //TODO: vertical alignment is off compared to the logo. verticalAlign CSS property doesn't seem to affect anything
   //TODO: Nav bar comes out of the page header when the window shrinks horizontally, and there is an obvious style change
   // TODO: styling for "Logged in as" and Logout button
   return (
-    <Nav style={{ marginLeft: "20px", fontSize: "20px" }} onSelect={onSelect}>
-      <NavList variant={NavVariants.horizontal}>
+    <Nav className="account-menu" onSelect={onSelect}>
+      <NavList className="right-align" variant={NavVariants.horizontal}>
         <NavExpandable
           key="ninja"
-          title="Account"
+          title={"Account: " + localStorage.getItem("display-name")}
           srText="Account"
           groupId="account"
           isActive={activeGroup === "account"}
           ref={expandbleRef}
-          style={style}
         >
-          <NavItem
-            key="authentication-status"
-            groupId="account"
-            itemId="authentication-status"
-            isActive={activeItem === "authentication-status"}
-            onClick={closeExpandables}
-          >
-            Logged in as: {localStorage.getItem("display-name")}
-            <Button onClick={logout} type="submit" variant="tertiary">
-              Logout
-            </Button>
-          </NavItem>
           <NavItem
             key="account-edit"
             groupId="account"
@@ -78,6 +62,15 @@ const NavBar = props => {
             <NavLink exact to="/edit-account">
               Edit Account
             </NavLink>
+          </NavItem>
+          <NavItem
+            key="authentication-logout"
+            groupId="account"
+            itemId="authentication-logout"
+            isActive={activeItem === "authentication-logout"}
+            onClick={logout}
+          >
+            Logout
           </NavItem>
         </NavExpandable>
       </NavList>
