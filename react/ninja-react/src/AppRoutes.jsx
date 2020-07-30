@@ -80,6 +80,18 @@ export const accountRoutes = [
 ]
 
 const AppRoutes = props => {
+  const homeComponent = properties =>
+    !props.loggedIn ? (
+      <LoginSection
+        {...properties}
+        loggedIn={props.loggedIn}
+        setLoggedIn={props.setLoggedIn}
+      />
+    ) : (
+      // will be profile page when it's made
+      <Redirect to="/scorecards" />
+    );
+
   return (
     <Fragment>
       <Switch>
@@ -88,24 +100,12 @@ const AppRoutes = props => {
           key="home"
           exact
           path="/"
-          render={properties => (
-            <LoginSection
-              {...properties}
-              loggedIn={props.loggedIn}
-              setLoggedIn={props.setLoggedIn}
-            />
-          )}
+          render={properties => homeComponent(properties)}
         />
         <Route
           key="login"
           path="/login"
-          render={properties => (
-            <LoginSection
-              {...properties}
-              loggedIn={props.loggedIn}
-              setLoggedIn={props.setLoggedIn}
-            />
-          )}
+          render={properties => homeComponent(properties)}
         />
 
         {ninjaRoutes.map(route => (

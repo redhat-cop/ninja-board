@@ -30,12 +30,6 @@ const AppLayout = props => {
   // longer knows to re-render whatever page it was previously on
   const [loggedIn, setLoggedIn] = useState(true);
 
-  const logoProps = {
-    href: "https://redhat.com",
-    onClick: () => console.log("clicked logo"),
-    target: "_blank"
-  };
-
   const logo = (
     <img
       style={{ width: "150px", marginLeft: "20px" }}
@@ -45,8 +39,17 @@ const AppLayout = props => {
   );
 
   // this Header construct is a PatternFly design
+
+  // logoProps = specifies properties on the component specified in logoComponent.
+  // here, we are specifying the Link component to go to our index route
   const Header = loggedIn ? (
-    <PageHeader logo={logo} logoProps={logoProps} topNav={<NavBar />} />
+    <PageHeader
+      logo={logo}
+      logoProps={{
+        href: "/"
+      }}
+      topNav={<NavBar />}
+    />
   ) : null;
 
   return (
