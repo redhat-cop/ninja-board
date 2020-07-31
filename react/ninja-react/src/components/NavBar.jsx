@@ -37,10 +37,7 @@ const NavBar = props => {
     window.location.reload();
   };
 
-  // NavList uses the map function twice to populate NavExpandables and NavItems; see src/data/NavBarLinks.js for content
-  //TODO: vertical alignment is off compared to the logo. verticalAlign CSS property doesn't seem to affect anything
   //TODO: Nav bar comes out of the page header when the window shrinks horizontally, and there is an obvious style change
-  // TODO: styling for "Logged in as" and Logout button
   return (
     <Nav className="account-menu" onSelect={onSelect}>
       <NavList className="right-align" variant={NavVariants.horizontal}>

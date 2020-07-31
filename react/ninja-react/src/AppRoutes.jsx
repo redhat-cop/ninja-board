@@ -80,7 +80,11 @@ export const accountRoutes = [
 ]
 
 const AppRoutes = props => {
-  const homeComponent = properties =>
+  // TODO: add in a third case.
+  // 1. not logged in --> routed to login page
+  // 2. logged in, but not registered --> edit account/registration
+  // 3. logged in and registered --> scorecards
+  const firstComponent = properties =>
     !props.loggedIn ? (
       <LoginSection
         {...properties}
@@ -100,12 +104,12 @@ const AppRoutes = props => {
           key="home"
           exact
           path="/"
-          render={properties => homeComponent(properties)}
+          render={properties => firstComponent(properties)}
         />
         <Route
           key="login"
           path="/login"
-          render={properties => homeComponent(properties)}
+          render={properties => firstComponent(properties)}
         />
 
         {ninjaRoutes.map(route => (

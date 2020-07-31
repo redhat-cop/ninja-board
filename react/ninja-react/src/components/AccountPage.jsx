@@ -1,5 +1,5 @@
 import React from "react";
-import API from "../config/ServerUrls";
+// import API from "../config/ServerUrls";
 import { PageSection } from "@patternfly/react-core";
 
 const AccountSection = props => {
@@ -16,5 +16,5 @@ export default AccountSection;
 // create page/form to update account details
 export const AccountPage = props => {
 
-  
+
 }
