@@ -14,6 +14,22 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/User'
+            examples:
+              super_ninja:
+                value:
+                  firstName: Super
+                  lastName: Ninja
+                  username: super_ninja
+                  githubUsername: super_ninja
+                  trelloUsername: super_ninja
+                  email: super_ninja@redhat.com
+                  profileImageUrl: https://imagesource.com/path/to/image
+                  region: NA
+                  address:
+                    lineOne: 123 John St.
+                    city: New York
+                    state: NY
+                    postalCode: "11111"
         required: true
       responses:
         "200":
@@ -21,6 +37,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+              examples:
+                super_ninja:
+                  value:
+                    firstName: Super
+                    lastName: Ninja
+                    username: super_ninja
+                    githubUsername: super_ninja
+                    trelloUsername: super_ninja
+                    email: super_ninja@redhat.com
+                    profileImageUrl: https://imagesource.com/path/to/image
+                    region: NA
+                    address:
+                      lineOne: 123 John St.
+                      city: New York
+                      state: NY
+                      postalCode: "11111"
           description: Updated user record.
       summary: Updates an existing user record.
     post:
@@ -32,9 +64,11 @@ paths:
             examples:
               new-ninja:
                 value:
-                  username: new_ninja
-                  displayName: New Ninja
-                  githubUsername: new_ninja
+                  firstName: Super
+                  lastName: Ninja
+                  username: super_ninja
+                  email: super_ninja@redhat.com
+                  profileImageUrl: https://imagesource.com/path/to/image
         required: true
       responses:
         "201":
@@ -45,10 +79,19 @@ paths:
               examples:
                 created-user:
                   value:
-                    username: new_ninja
-                    displayName: New Ninja
-                    githubUsername: new_ninja
+                    firstName: Super
+                    lastName: Ninja
+                    username: super_ninja
+                    githubUsername: super_ninja
+                    trelloUsername: super_ninja
+                    email: super_ninja@redhat.com
+                    profileImageUrl: https://imagesource.com/path/to/image
                     region: NA
+                    address:
+                      lineOne: 123 John St.
+                      city: New York
+                      state: NY
+                      postalCode: "11111"
           description: Creates a user within the system.
         "404":
           description: When the username was not found in the backend ldap service.
@@ -294,9 +337,9 @@ components:
       title: User
       description: ""
       required:
-      - username
       - lastName
       - firstName
+      - email
       type: object
       properties:
         username:
@@ -324,6 +367,8 @@ components:
         address:
           $ref: '#/components/schemas/Address'
           description: User's mailing address.
+        region:
+          description: Region code found in LDAP.
       example:
         firstName: Super
         lastName: Ninja
@@ -332,6 +377,7 @@ components:
         trelloUsername: super_ninja
         email: super_ninja@redhat.com
         profileImageUrl: https://imagesource.com/path/to/image
+        region: NA
         address:
           lineOne: 123 John St.
           city: New York
