@@ -25,9 +25,9 @@ The top level of this project, with files such as `App.js`, `AppLayout.jsx`, and
 
 ## OpenAPI Code Generation
 
-This is only relevant if the OpenAPI contract changes. You do not need to generate code as long as the contract stays the same!
+This feature is currently not used; but could be useful in the future.
 
-The Giveback Ninja codebase leverages an API contract using the OpenAPI Spec, which can be found [here](<insert actual link here>). To ensure the front end is adhering to that contract, we generate client code from the contract. We use the [OpenAPI Generator command line tool](https://github.com/OpenAPITools/openapi-generator) to do so.
+The Giveback Ninja codebase leverages an API contract using the OpenAPI Spec, which can be found [here](<insert actual link here>). To ensure the front end is adhering to that contract, we can generate client code from the contract. We use the [OpenAPI Generator command line tool](https://github.com/OpenAPITools/openapi-generator) to do so.
 
 Please follow the instructions [here](https://github.com/openapitools/openapi-generator-cli) to install the cli, using NPM.
 
@@ -37,8 +37,6 @@ To generate the client code, run the following command from the [react](..) dire
 # Known issues and potential improvements
 
 1.  When page shrinks, NavBar pops out of Header and has different styling.
-2.  Submission modal for user registration doesn't exist yet.
-3.  Combine JS object of routes with <Route> objects to have one source of truth.
 
 # create-react-app Generated README
 

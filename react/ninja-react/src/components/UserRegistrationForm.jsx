@@ -4,7 +4,6 @@ import {
   Form,
   FormGroup,
   TextInput,
-  TextArea,
   ActionGroup,
   Button
 } from "@patternfly/react-core";
@@ -62,14 +61,6 @@ export class UserRegistrationForm extends React.Component {
       isValid: true,
       validated: "default"
     },
-    jira: {
-      value: "",
-      invalidText: "",
-      helperText: "",
-      isValid: true,
-      validated: "default"
-    },
-    other: "",
     showModal: false,
     modalTitle: "",
     modalText: "",
@@ -138,20 +129,6 @@ export class UserRegistrationForm extends React.Component {
     this.setState(newState);
   };
 
-  handleInputChangeJira = jira => {
-    let newState = {
-      jira: {
-        value: jira,
-        ...this.usernameValidation(jira)
-      }
-    };
-    this.setState(newState);
-  };
-
-  handleInputChangeOther = other => {
-    this.setState({ other });
-  };
-
   usernameValidation = value => {
     const isValid = usernameRegex.test(value);
     if (isValid) {
@@ -203,15 +180,7 @@ export class UserRegistrationForm extends React.Component {
         helperText: "",
         isValid: true,
         validated: "default"
-      },
-      jira: {
-        value: "",
-        invalidText: "",
-        helperText: "",
-        isValid: true,
-        validated: "default"
-      },
-      other: ""
+      }
     });
   };
 
@@ -318,9 +287,7 @@ export class UserRegistrationForm extends React.Component {
       username,
       email,
       trello,
-      github,
-      jira,
-      other
+      github
     } = this.state;
 
     const submitEnabled =
@@ -429,33 +396,6 @@ export class UserRegistrationForm extends React.Component {
               type="text"
               id="horizontal-form-trello"
               name="horizontal-form-trello"
-            />
-          </FormGroup>
-          <FormGroup
-            label="Jira"
-            helperText={jira.helperText}
-            helperTextInvalid={jira.invalidText}
-            validated={jira.validated}
-            fieldId="horizontal-form-jira"
-          >
-            <TextInput
-              value={jira.value}
-              validated={jira.validated}
-              onChange={this.handleInputChangeJira}
-              type="text"
-              id="horizontal-form-jira"
-              name="horizontal-form-jira"
-            />
-          </FormGroup>
-          <FormGroup
-            label="Please provide links to any other qualifying CoP Contributions that do not show up in GitHub, Trello, or Jira"
-            fieldId="horizontal-form-exp"
-          >
-            <TextArea
-              value={other}
-              onChange={this.handleInputChangeOther}
-              name="horizontal-form-exp"
-              id="horizontal-form-exp"
             />
           </FormGroup>
           <ActionGroup>
