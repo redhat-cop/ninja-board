@@ -51,13 +51,13 @@ The following prerequisites must be satisfied:
 2. OpenShift Command Line Interface (CLI)
 3. OpenShift environment
 
-### OpenShift v1 Deployment
+### v1 OpenShift Deployment
 
 #### Setting up the deployment config files
 
 **Optional:** If you want to deploy a different github repository (ie, a forked copy of redhat-cop/ninja-board), then update the ansible variable `source_repo` in *.applier/inventory/group_vars/all.yml* or specify it as an extra variable.
 
-Configure the mandatory deployment parameters in *applier/params/community-ninja-board-deployment*
+Configure the mandatory deployment parameters in *.openshift/applier/params/ninja-board-deployment*
 ```
 github_api_token=<your token>
 trello_api_token=<your token>
@@ -112,7 +112,7 @@ Utilize the following steps to deploy the project
 
 Once complete, all of the v1 resources should be available in OpenShift
 
-### OpenShift v2 Deployment
+### v2 OpenShift Deployment
 
 #### Login to OpenShift
 
@@ -149,6 +149,7 @@ Utilize the following steps to deploy the project
 
     ***NOTES***
     * If you have not yet created the openshift dev project, you will need to change the `include_tags` argument to `include_tags=project-req-dev,v2`
+    * If you have not yet created a Jenkins instance in the openshift dev project, you will need to change the `include_tags` argument to `include_tags=cicd,v2`
     * If you are not behind RedHat Network and would like access to services that use ldap, you will need to change the `include_tags` argument to `include_tags=ldap-rbac,ldap,v2`. This will ***FAIL*** if you do not have sufficient priveleges. If you don't have access to perform this, ask a cluster administrator.
 
 Once complete, all of the v2 resources should be available in OpenShift
