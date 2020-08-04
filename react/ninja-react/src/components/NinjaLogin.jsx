@@ -40,10 +40,11 @@ export const NinjaLogin = props => {
         }
         //undefined error response == network error
         else {
-          //temporary way to test log in works, but this is when the network or server is down
-          props.setLoggedIn(true);
-          props.history.push("/registration-form");
+
         }
+        //temporary way to test log in works, but this is when the network or server is down
+        props.setLoggedIn(true);
+        props.history.push("/registration-form");
       });
   };
 
