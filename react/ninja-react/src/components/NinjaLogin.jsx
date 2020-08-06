@@ -1,6 +1,6 @@
 import React from "react";
 import GoogleLogin from "react-google-login";
-import API, { userFromToken } from "../config/ServerUrls";
+import API from "../config/ServerUrls";
 import { PageSection } from "@patternfly/react-core";
 
 const LoginSection = props => {
@@ -40,10 +40,11 @@ export const NinjaLogin = props => {
         }
         //undefined error response == network error
         else {
-          //temporary way to test log in works, but this is when the network or server is down
-          props.setLoggedIn(true);
-          props.history.push("/registration-form");
+
         }
+        //temporary way to test log in works, but this is when the network or server is down
+        props.setLoggedIn(true);
+        props.history.push("/registration-form");
       });
   };
 
@@ -51,6 +52,7 @@ export const NinjaLogin = props => {
     console.log(response);
     //store jwt in local storage, to enable user sessions
     localStorage.setItem("jwt-token", response.tokenId);
+    localStorage.setItem("display-name", response.profileObj.name);
     register(response);
   };
 
@@ -61,7 +63,7 @@ export const NinjaLogin = props => {
       buttonText="Login"
       onSuccess={responseGoogle}
       onFailure={responseGoogle}
-      cookiePolicy={"single_host_origin"}
+      cookiePolicy={"none"}
     />
   );
 };
