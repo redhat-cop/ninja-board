@@ -32,6 +32,14 @@ objects:
   data:
     config.js: window.USER_MANAGEMENT_API_URL="${USER_MANAGEMENT_API_URL}";
 - apiVersion: v1
+  kind: Secret
+  metadata:
+    labels:
+      app: ${APPLICATION_NAME}
+    name: ${SECRET_REF}
+  stringData:
+    WebHookSecretKey: ${WEBHOOK_SECRET_KEY}
+- apiVersion: v1
   kind: BuildConfig
   metadata:
     labels:
@@ -78,6 +86,10 @@ objects:
         jenkinsfilePath: ${SOURCE_REPOSITORY_DIR}/Jenkinsfile
       type: JenkinsPipeline
     triggers:
+    - type: GitHub
+      github:
+        secretReference:
+          name: ${SECRET_REF}
     - type: ConfigChange
 - apiVersion: v1
   kind: DeploymentConfig
@@ -182,3 +194,11 @@ parameters:
     description: The URL for User Management API
     required: true
     value: http://localhost:8080
+  - name: SECRET_REF
+    description: The secret reference
+    required: true
+    value: frontend-secret
+  - name: WEBHOOK_SECRET_KEY
+    description: Identifier used by GitHub Webhook to make the URL unique.
+    required: true
+    value: ninja-frontend
