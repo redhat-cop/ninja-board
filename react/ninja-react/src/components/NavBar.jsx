@@ -73,12 +73,6 @@ const NavBar = props => {
           </NavItem>
         </NavExpandable>
       </NavList>
-      <Fragment>
-        Logged in as: {localStorage.getItem("display-name")}
-        <Button onClick={logout} type="submit" variant="tertiary">
-          Logout
-        </Button>
-      </Fragment>
     </Nav>
   );
 };
