@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
   Nav,
@@ -8,14 +8,13 @@ import {
   NavVariants,
   Button
 } from "@patternfly/react-core";
-import { ninjaRoutes, adminRoutes } from "../AppRoutes";
+import "../assets/css/nav.css";
 
 /**
  * @author fostimus
  */
 const NavBar = props => {
-  const ninjaExpandbleRef = React.createRef();
-  const adminExpandbleRef = React.createRef();
+  const expandbleRef = React.createRef();
 
   // this controls CSS highlighting when selecting a link
   const [activeGroup, setActiveGroup] = useState("");
@@ -25,8 +24,7 @@ const NavBar = props => {
   // we need to use refs to manually change the expandedState
   // when an item is clicked
   const closeExpandables = () => {
-    ninjaExpandbleRef.current.state.expandedState = false;
-    adminExpandbleRef.current.state.expandedState = false;
+    expandbleRef.current.state.expandedState = false;
   };
 
   const onSelect = result => {
@@ -40,68 +38,41 @@ const NavBar = props => {
     window.location.reload();
   };
 
-  // NavList uses the map function twice to populate NavExpandables and NavItems; see src/data/NavBarLinks.js for content
-  //TODO: vertical alignment is off compared to the logo. verticalAlign CSS property doesn't seem to affect anything
   //TODO: Nav bar comes out of the page header when the window shrinks horizontally, and there is an obvious style change
   // TODO: styling for "Logged in as" and Logout button
   return (
-    <Nav style={{ marginLeft: "20px", fontSize: "20px" }} onSelect={onSelect}>
-      <NavList variant={NavVariants.horizontal}>
+    <Nav className="account-menu" onSelect={onSelect}>
+      <NavList className="right-align" variant={NavVariants.horizontal}>
         <NavExpandable
           key="ninja"
-          title="Ninja Program"
-          srText="Ninja Program"
-          groupId="ninja"
-          isActive={activeGroup === "ninja"}
-          ref={ninjaExpandbleRef}
+          title={"Account: " + localStorage.getItem("display-name")}
+          srText="Account"
+          groupId="account"
+          isActive={activeGroup === "account"}
+          ref={expandbleRef}
         >
-          {ninjaRoutes.map(link => (
-            <NavItem
-              key={"ninja-" + link.routeName + "-" + link.id}
-              groupId="ninja"
-              itemId={"ninja-" + link.routeName + "-" + link.id}
-              isActive={
-                activeItem === "ninja-" + link.routeName + "-" + link.id
-              }
-              onClick={closeExpandables}
-            >
-              <NavLink exact to={link.routePath}>
-                {link.routeName}
-              </NavLink>
-            </NavItem>
-          ))}
-        </NavExpandable>
-        <NavExpandable
-          key="admin"
-          title="Admin"
-          srText="Admin"
-          groupId="admin"
-          isActive={activeGroup === "admin"}
-          ref={adminExpandbleRef}
-        >
-          {adminRoutes.map(link => (
-            <NavItem
-              key={"admin-" + link.routeName + "-" + link.id}
-              groupId="admin"
-              itemId={"admin-" + link.routeName + "-" + link.id}
-              isActive={
-                activeItem === "admin-" + link.routeName + "-" + link.id
-              }
-              onClick={closeExpandables}
-            >
-              <NavLink exact to={link.routePath}>
-                {link.routeName}
-              </NavLink>
-            </NavItem>
-          ))}
+          <NavItem
+            key="account-edit"
+            groupId="account"
+            itemId="account-edit"
+            isActive={activeItem === "account-edit"}
+            onClick={closeExpandables}
+          >
+            <NavLink exact to="/edit-account">
+              Edit Account
+            </NavLink>
+          </NavItem>
+          <NavItem
+            key="authentication-logout"
+            groupId="account"
+            itemId="authentication-logout"
+            isActive={activeItem === "authentication-logout"}
+            onClick={logout}
+          >
+            Logout
+          </NavItem>
         </NavExpandable>
       </NavList>
-      <Fragment>
-        Logged in as: {localStorage.getItem("display-name")}
-        <Button onClick={logout} type="submit" variant="tertiary">
-          Logout
-        </Button>
-      </Fragment>
     </Nav>
   );
 };

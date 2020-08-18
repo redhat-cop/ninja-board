@@ -15,20 +15,21 @@ export default LoginSection;
 
 export const NinjaLogin = props => {
   const register = googleResponse => {
-    // match this object to ninja user registration API
+    const headers = {
+      headers: { Authorization: `Bearer ${googleResponse.tokenObj}` }
+    };
+
+    // NOTE: username is not sent in google response
     const userRegistrationRequest = {
       firstName: googleResponse.profileObj.givenName,
       lastName: googleResponse.profileObj.familyName,
       email: googleResponse.profileObj.email,
-      //does the backend need the token or the tokenId?
-      tokenId: googleResponse.tokenId,
       imageUrl: googleResponse.profileObj.imageUrl
     };
 
     console.log(props);
 
-    // /user API needs to be modified
-    API.post(`/user`, userRegistrationRequest)
+    API.post(`/user`, userRegistrationRequest, headers)
       .then(res => {
         //intended state: by logging in some information (name, email, profile picture) will already be set on the profile. should be taken to "edit" page, instead of "registration" page
         props.setLoggedIn(true);
