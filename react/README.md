@@ -5,6 +5,12 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 1.  `npm install`
 2.  `npm start`
 
+# Current Status
+
+The user management features are the big ones to tackle now. Google OIDC is implemented, but the "implicit" flow is implemented and you should implement the "server" flow.
+
+The /registration-page is for submitting a request from the user to the backend hosted on Quarkus, which creates a user in the Giveback Ninja system. It was going to be repurposed into the "Edit Profile" page, with the first time logging in through Google sending the necessary info to "register" (create) a user. From the "Edit Profile" page, a user could then update more information as needed.
+
 # Background
 
 This project is set up with React.js, leveraging components from [PatternFly](https://www.patternfly.org). PatternFly is a library of reusable, familiar components on any webpage, e.g. Navigation Bar, Table, Buttons, Forms, etc. It includes CSS, so you don't have to worry about styling if you don't want to. It is recommended to use their CSS, as it is inline with the branding of PatternFly and Red Hat.
@@ -23,20 +29,10 @@ The top level of this project, with files such as `App.js`, `AppLayout.jsx`, and
 -   If you need to access the state of a PatternFly component, use a [React ref](https://reactjs.org/docs/refs-and-the-dom.html).
 -   Use the documentation to see what properties a component takes.
 
-## OpenAPI Code Generation
-
-This feature is currently not used; but could be useful in the future.
-
-The Giveback Ninja codebase leverages an API contract using the OpenAPI Spec, which can be found [here](<insert actual link here>). To ensure the front end is adhering to that contract, we can generate client code from the contract. We use the [OpenAPI Generator command line tool](https://github.com/OpenAPITools/openapi-generator) to do so.
-
-Please follow the instructions [here](https://github.com/openapitools/openapi-generator-cli) to install the cli, using NPM.
-
-To generate the client code, run the following command from the [react](..) directory:
-`openapi-generator generate -g javascript -i INSERT_PATH_TO_CONTRACT_HERE -o ninja-model`
-
 # Known issues and potential improvements
 
 1.  When page shrinks, NavBar pops out of Header and has different styling.
+2.  Start up performance sucks
 
 # create-react-app Generated README
 
