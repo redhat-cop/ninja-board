@@ -14,10 +14,9 @@ export GITHUB_API_TOKEN=<your token>
 export GITLAB_API_TOKEN=<your token>
 export GD_CREDENTIALS=<contents of you google drive credentials.json file (escaped & in quotes)>
 export GRAPHS_PROXY=<optional: url to an external proxy storage app>
-export USERS_LDAP_PROVIDER=<optional: ldap url for user lookup>
-
+export USERS_LDAP_PROVIDER=<ldap url for user lookup>
 ```
-note: see *Getting your google drive credentials.json file* below for the GD_CREDENTIALS value
+note: see *Getting your Google drive credentials.json file* below for the GD_CREDENTIALS value
 
 
 #### Starting up the application
@@ -43,7 +42,7 @@ mvn clean package -DskipTests jetty:run -Djetty.port=8082
 
 The project can be deployed using the [openshift-applier](https://github.com/redhat-cop/openshift-applier).
 
-#### Prerequisites
+### Prerequisites
 
 The following prerequisites must be satisfied:
 
@@ -55,7 +54,8 @@ The following prerequisites must be satisfied:
 
 #### Setting up the deployment config files
 
-**Optional:** If you want to deploy a different github repository (ie, a forked copy of redhat-cop/ninja-board), then update the ansible variable `source_repo` in *.applier/inventory/group_vars/all.yml* or specify it as an extra variable.
+**Optional:** If you want to deploy a different github repository (ie, a forked copy of redhat-cop/ninja-board), then
+update the ansible variable `source_repo` in *.applier/inventory/group_vars/all.yml* or specify it as an extra variable.
 
 Configure the mandatory deployment parameters in *.openshift/applier/params/ninja-board-deployment*
 ```
@@ -64,7 +64,8 @@ trello_api_token=<your token>
 ...
 ```
 
-Alternatively, you can target each of the environments for deployment by prepending `dev_` or `prod_` before each variable.s
+Alternatively, you can target each of the environments for deployment by prepending `dev_` or `prod_` before each 
+variable.
 
 #### Getting your google drive credentials.json file
 ```
@@ -75,7 +76,7 @@ chmod +x drive_linux
 ./drive_linux init
 
 ```
-This will output a url you need to visit and sign in, which will return an auth code to enter in the console.
+This will output an url you need to visit and sign in, which will return an auth code to enter the console.
 After you've entered the auto code, the credentials are stored in *gdrive_temp/.gd/credentials.json*.
 
 #### Login to OpenShift
@@ -107,10 +108,11 @@ Utilize the following steps to deploy the project
 4. Execute the _openshift-applier_
 
     ```
-    ansible-playbook -i .applier/inventory galaxy/openshift-applier/playbooks/openshift-cluster-seed.yml -e="@.openshift/params/ninja-board-deployment" -e exclude_tags=ldap-rbac,ldap,v2
+    ansible-playbook -i .applier/inventory galaxy/openshift-applier/playbooks/openshift-cluster-seed.yml \
+    -e="@.openshift/params/ninja-board-deployment" -e exclude_tags=ldap-rbac,ldap,v2
     ```
 
-Once complete, all of the v1 resources should be available in OpenShift
+Once complete, all the v1 resources should be available in OpenShift
 
 ### v2 OpenShift Deployment
 
@@ -139,17 +141,22 @@ Utilize the following steps to deploy the project
     ansible-galaxy install -r requirements.yml --roles-path=galaxy
     ```
 
-3. Ensure the variables have been updated in the _.applier/inventory/group_vars/all.yml_ ansible params file to the desired values
+3. Ensure the variables have been updated in the _.applier/inventory/group_vars/all.yml_ ansible params file to the
+desired values
 
 4. Execute the _openshift-applier_
-
     ```
-    ansible-playbook -i .applier/inventory galaxy/openshift-applier/playbooks/openshift-cluster-seed.yml -e="@.openshift/params/ninja-board-deployment" -e include_tags=v2
+    ansible-playbook -i .applier/inventory galaxy/openshift-applier/playbooks/openshift-cluster-seed.yml \
+    -e="@.openshift/params/ninja-board-deployment" -e include_tags=v2
     ```
-
+   
     ***NOTES***
-    * If you have not yet created the openshift dev project, you will need to change the `include_tags` argument to `include_tags=project-req-dev,v2`
-    * If you have not yet created a Jenkins instance in the openshift dev project, you will need to change the `include_tags` argument to `include_tags=cicd,v2`
-    * If you are not behind RedHat Network and would like access to services that use ldap, you will need to change the `include_tags` argument to `include_tags=ldap-rbac,ldap,v2`. This will ***FAIL*** if you do not have sufficient priveleges. If you don't have access to perform this, ask a cluster administrator.
+    `include_tags` is a comma separated variable. For creating v2 artifacts, v2 should always be included. Add
+    additional tags depending on your need:
+    * If you have not yet created the openshift dev project, you will need to add `project-req-dev`
+    * If you have not yet created a Jenkins instance in the openshift dev project, you will need to add `cicd`
+    * If you are not behind RedHat Network and would like access to services that use ldap, you will need to add 
+    `ldap-rbac,ldap`. This will ***FAIL*** if you do not have sufficient privileges. If you don't have access to 
+    perform this, ask a cluster administrator.
 
-Once complete, all of the v2 resources should be available in OpenShift
+Once complete, all the v2 resources should be available in OpenShift
