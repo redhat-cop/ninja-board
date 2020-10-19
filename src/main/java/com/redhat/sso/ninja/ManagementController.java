@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
@@ -316,6 +317,25 @@ public class ManagementController {
     return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Database2.get())).build();
   }
 
+  
+  // Admin UI to be able to update a single user field
+  
+  @PUT
+  @Path("/users/{user}")
+  public Response updateUserProperty(@Context HttpServletRequest request, @PathParam("user") String user) throws JsonGenerationException, JsonMappingException, IOException{
+  	
+  	Map<String,String> values=Json.newObjectMapper(true).readValue(IOUtils2.toStringAndClose(request.getInputStream()), new TypeReference<Map<String,String>>() {});
+  	Database2 db=Database2.get();
+  	Map<String, String> userInfo=db.getUsers().get(user);
+  	for (Entry<String, String> e:values.entrySet()){
+  		String existingValue=userInfo.get(e.getKey());
+//  		System.out.println((existingValue!=null?"changing existing ":"adding new ")+"value "+e.getKey()+"->"+e.getValue());
+  		userInfo.put(e.getKey(), e.getValue());
+  	}
+  	db.save();
+  	
+  	return Response.status(200).build();
+  }
   
   // Admin UI call (to edit the user) - returns the scorecard and userInfo data for be able to display and edit one specific user
   @GET
