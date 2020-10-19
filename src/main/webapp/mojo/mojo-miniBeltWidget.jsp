@@ -24,7 +24,6 @@ a:hover, a:active{
 </center>
 
 <script>
-  window.frameElement.style.height="247px"; // default window height
   
   var ctx = "https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs";
   
@@ -54,15 +53,22 @@ a:hover, a:active{
 	    setTimeout(function(){ resizeParent(); }, 500);
 	  }
   }
+  Utils = {
+			getParameterByName: function(name, url) {
+				if (!url) url = window.location.href;
+				name = name.replace(/[\[\]]/g, "\\$&");
+				var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+				    results = regex.exec(url);
+				if (!results) return undefined;
+				if (!results[2]) return '';
+				return decodeURIComponent(results[2].replace(/\+/g, " "));
+			}
+	}
+
+	function getUsername(){
+		return Utils.getParameterByName("username");
+	}
   
-  function getUsername(){
-	  var username;
-	  if (undefined!=window.parent._jive_current_user)
-		  username=window.parent._jive_current_user.username;
-	  if (undefined!=window._jive_current_user)
-		  username=window._jive_current_user.username;
-	  return username;
-  }
   
   function resizeParent() {
 	  //var e=window.parent.document.getElementsByClassName("htmlWidgetIframe");
