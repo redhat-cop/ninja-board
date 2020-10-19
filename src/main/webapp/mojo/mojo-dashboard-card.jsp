@@ -175,7 +175,7 @@
 										}
 										
 										</style>
-										<td class="cardName" colspan="2"><span class="_displayName"></span><input class="_displayName_edit hidden edit_box" type="textbox"/><i style="font-size:10pt;" class="fas fa-edit" onclick="toggleEditAndSave('displayName', this);"></i></td>
+										<td class="cardName" colspan="2"><span class="_displayName"></span><input class="_displayName_edit hidden edit_box" type="textbox"/><i style="font-size:10pt;" class="hidden fas fa-edit" onclick="toggleEditAndSave('displayName', this);"></i></td>
 										<td class="cardScore" rowspan="5"><img class="ninjaIcon _level"></img></td>
 										<td class="cardScore"><span class="_Trello">0</span></td>
 										<td class="cardScore"><span class="_Github">0</span></td>
@@ -374,6 +374,20 @@ function _displ(username, dontReset){
 		}
 	}
 }
+	
+$(document).ready(function() {
+	
+	// only show the edit icons if we can get to the server on the VPN
+	Http.httpGet(server+"/config/get", function(response, status){
+		if (status==200){
+			// enable the fa fa-edit buttons
+			$(".fa-edit").each(function() {
+				$(this).removeClass("hidden");
+			});
+		}
+	});
+	
+});
 
 //alert('Display Name: ' + window.parent._jive_current_user.displayName +  
 //'\nAnonymous: ' + window.parent._jive_current_user.anonymous+  
