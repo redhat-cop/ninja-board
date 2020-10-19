@@ -24,7 +24,6 @@ a:hover, a:active{
 </center>
 
 <script>
-  //window.frameElement.style.height="247px"; // default window height
   
   var ctx = "https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs";
   
