@@ -1,7 +1,7 @@
 <center>
 <style>
 table{
-  width:210px; /* width of the mojo widget in Overview mode, remove for Tiles mode*/
+  width:174px; /* width of the mojo widget in Overview mode, remove for Tiles mode*/
 }
 .text{
   font-family: Overpass, Sans-serif;
