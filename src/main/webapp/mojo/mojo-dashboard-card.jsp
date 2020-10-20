@@ -1,40 +1,17 @@
-<center>
-<div style="width:100%; background-color:#000">
- <div style="color:#fff; font-size:30px; font-weight:bold;">COMMUNITIES OF PRACTICE</div>
- <div style="color:#fff; font-size:30px; font-weight:bold;">YOUR GIVEBACK NINJA PROGRAM DASHBOARD</div>
-</div>
-<div style="width:100%; background-color:#f2f1f1;">
- <div style="color:#444; font-size:10pt;">Hover over the chart to see your progress and/or what is needed to reach the next belt level.</div>
-</div>
-<br/>
-<div style="height:500px;">
-	
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-		<!--
-		<script src="https://github.com/chartjs/Chart.js/releases/download/v2.6.0/Chart.min.js"></script>
-		-->
-		
-		<script src="https://www.chartjs.org/dist/2.7.2/Chart.bundle.js"></script>
-		<script src="../js/http.js"></script>
-		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.7/css/all.css"/>
-
-
-		<script>
-			var ctx="https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs/api/proxy";
-			var server="https://dashboard.ninja.redhat.com/community-ninja-board/api";
-			if (window.location.href.includes("localhost")){
-				server="http://localhost:8082/community-ninja-board/api";
-				ctx=server+"/scorecard";
-			}
-			//var ctx = "http://localhost:8082/community-ninja-board/api/scorecard";
-			//var ctx = "${pageContext.request.contextPath}";
-		</script>
-		
-		
-		<!--######-->
-		<!-- CARD -->
-		<!--######-->
-		<style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://www.chartjs.org/dist/2.7.2/Chart.bundle.js"></script>
+<script src="../js/http.js"></script>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.7/css/all.css"/>
+<script>
+	var ctx="https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs/api/proxy";
+	var server="https://dashboard.ninja.redhat.com/community-ninja-board/api";
+	if (window.location.href.includes("localhost")){
+		server="http://localhost:8082/community-ninja-board/api";
+		ctx=server+"/scorecard";
+	}
+	//var ctx = "${pageContext.request.contextPath}";
+</script>
+<style>
 		body{
 			font-family: Overpass, Arial, sans-serif;
 			background-color: #f2f1f1;
@@ -111,13 +88,33 @@
 		}
 		
 		a{
+		/*
 		  color: white;
+		*/
 		  text-decoration: none;
 		}
 		a:hover{
 		  text-decoration: underline;
 		}
-		</style>
+
+</style>
+
+<center>
+	<div style="width:100%; background-color:#000">
+	 <div style="color:#fff; font-size:30px; font-weight:bold;">COMMUNITIES OF PRACTICE</div>
+	 <div style="color:#fff; font-size:30px; font-weight:bold;">YOUR GIVEBACK NINJA PROGRAM DASHBOARD</div>
+	</div>
+	<div style="width:100%; background-color:#f2f1f1;">
+	 <div style="color:#444; font-size:10pt;">Hover over the chart to see your progress and/or what is needed to reach the next belt level.</div>
+	</div>
+	
+	<br/>
+
+	<div style="height:500px;">
+		
+		<!--######-->
+		<!-- CARD -->
+		<!--######-->
 					<span id="userSelect"></span>
 					<table id="dashboard" border=0 style="width:1000px;">
 						<tr>
@@ -271,6 +268,8 @@ Utils = {
 
 function getUsername(){
 	  var username;
+	  if ($("#username").length>0) return $("#username").val();
+	  
 	  if (Utils.getParameterByName("username")!=undefined) username=Utils.getParameterByName("username");
 	  if (username==undefined && undefined!=window.parent._jive_current_user)
 		  username=window.parent._jive_current_user.username;
@@ -281,7 +280,19 @@ function getUsername(){
 	  return username;
 }
 
-setTimeout(function(){ displ(); }, 200);
+$(document).ready(function() {
+	// Show the user properties once we get a username from mojo, igloo, parameter or whereever 
+	setTimeout(function(){ displ(); }, 200);
+	// Only show the edit icons if we can get to the server on the VPN
+	Http.httpGet(server+"/config/get", function(response, status){
+		if (status==200){
+			// enable the fa fa-edit buttons
+			$(".fa-edit").each(function() {
+				$(this).removeClass("hidden");
+			});
+		}
+	});
+});
 
 function displ(){
 	username=getUsername();
@@ -297,12 +308,9 @@ function _displ(username, dontReset){
   
 	if (!dontReset){
 		for(k in resets){
-			//var es=document.getElementsByClassName(k);
-			//for(e in es){
-		    $("."+k).each(function(index) {
-		    	$(this).text(resets[k]);
-		    });
-			//}
+	    $("."+k).each(function(index) {
+	    	$(this).text(resets[k]);
+	    });
 		}
 	}
 		
@@ -316,7 +324,6 @@ function _displ(username, dontReset){
 	xhr.open("GET", ctx+"/summary"+(ctx.includes("localhost")?"/":"_")+username, true);
 	xhr.send();
 	xhr.onloadend = function () {
-	  console.log("statusCode="+xhr.status);
 	  
 		var json=JSON.parse(xhr.responseText);
 	  if (xhr.status==500){
@@ -357,14 +364,8 @@ function _displ(username, dontReset){
 		    }else{
 		    	//console.log("NOT setting [_"+key+"] to ["+value+"]");
 		    }
-		    //console.log(value);
 			});
 			
-			//if (json['displayName']==undefined){
-			//		$("._displayName").text(json['username']);
-			//}else{
-			//	$("._displayName").text(json['displayName']);
-			//}
 			
 			if ("true"==json['admin']){
 				document.getElementById("userSelect").innerHTML=`<input type='text' id='username' value='`+username+`'><input type='button' value='Go' onclick='_displ(document.getElementById("username").value); return false;'/>`;
@@ -373,34 +374,12 @@ function _displ(username, dontReset){
 			//document.getElementById("nav").height=document.getElementById("dashboard").height;
 		}
 	}
+	
+	// Show the points allocations
+	showPointsAllocations();
 }
 	
-$(document).ready(function() {
-	
-	// only show the edit icons if we can get to the server on the VPN
-	Http.httpGet(server+"/config/get", function(response, status){
-		if (status==200){
-			// enable the fa fa-edit buttons
-			$(".fa-edit").each(function() {
-				$(this).removeClass("hidden");
-			});
-		}
-	});
-	
-});
-
-//alert('Display Name: ' + window.parent._jive_current_user.displayName +  
-//'\nAnonymous: ' + window.parent._jive_current_user.anonymous+  
-//'\nUsername: ' + window.parent._jive_current_user.username +  
-//'\nID: ' + window.parent._jive_current_user.ID+  
-//'\nEnabled: ' + window.parent._jive_current_user.enabled +  
-//'\nAvatar ID: ' + window.parent._jive_current_user.avatarID);  
 </script>
-
-
-
-
-		
 
 <script>
 	Chart.pluginService.register({
@@ -550,5 +529,74 @@ function refresh(){
 }
 //refresh();
 </script>
+	
+	
+	<script>
+	$(document).ready(function() {
+	});
+	
+	function showPointsAllocations(){
+		$("#eventsBody").html("");
+		Http.httpGet("../api/events?user="+getUsername(), function(response,status){
+			console.log("status="+status);
+			response=JSON.parse(response);
+			for(i in response){
+				var item=response[i];
+				if (item["type"]=="Points Increment"){
+					var ts=item["timestamp"].split("T")[0];
+					var txt=item["text"].substring(0, item["text"].indexOf("added"));
+					txt+="- ";
+					
+					if (item["text"].indexOf("[")>=0){
+						var first=item["text"].substring(item["text"].indexOf("http"));
+						first=item["text"].substring(item["text"].indexOf("["));
+						first=first.substring(0, first.indexOf("]"))+"]";
+					}else{
+						first="Unknown";
+					}
+					
+					txt+=processText(first);
+					//txt=processText(item["text"]);
+					$("#eventsBody").append("<tr><td>"+ts+"</td><td>"+txt+"</td></tr>");
+				}
+			}
+		})
+	}
+	
+	function processText(text){
+		var result=text;
+    if (/.*\[.+\].*/.test(text)){ // look for a set of square brackets
+      var before=/.*\[(.+)\].*/.exec(text);
+      
+      var split=before[1].split("|");
+      var title=split[0];
+      var link=split[1];
+      link="<a href='"+link+"'>"+title+"</a>";
+      
+      var find1=escapeRegExp(("["+before[1]+"]").replace(/\[/g,'\\[').replace(/\]/g,'\\]').replace(/\|/g,'\\|'));
+      var find2=("["+before[1]+"]").replace(/\[/g,'\\[').replace(/\]/g,'\\]').replace(/\|/g,'\\|');
+      
+      var after=text.replace(new RegExp(find2, 'g'), link);
+      
+      result=after;
+    }
+    return result;
+	}
+	function escapeRegExp(str) {
+    return str.replace(/([.*+?^=!:\${}()|\[\]\/\\])/g, "\\$1");
+	}
+	</script>
+	<table class="card2" border="0" style="width:1000px;">
+		<thead>
+			<tr>
+				<th colspan="2">Points Allocations</th>
+			</tr>
+		</thead>
+		<tbody id="eventsBody">
+		</tbody>
+	</table>
 </div>
+
+
+
 </center>
