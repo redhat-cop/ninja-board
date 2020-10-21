@@ -1,36 +1,17 @@
-<center>
-<div style="width:100%; background-color:#000">
- <div style="color:#fff; font-size:30px; font-weight:bold;">COMMUNITIES OF PRACTICE</div>
- <div style="color:#fff; font-size:30px; font-weight:bold;">YOUR GIVEBACK NINJA PROGRAM DASHBOARD</div>
-</div>
-<div style="width:100%; background-color:#f2f1f1;">
- <div style="color:#444; font-size:10pt;">Hover over the chart to see your progress and/or what is needed to reach the next belt level.</div>
-</div>
-<br/>
-<div style="height:500px;">
-	
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-		<!--
-		<script src="https://github.com/chartjs/Chart.js/releases/download/v2.6.0/Chart.min.js"></script>
-		-->
-		
-		<script src="https://www.chartjs.org/dist/2.7.2/Chart.bundle.js"></script>
-		
-	
-
-		<script>
-			var ctx="https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs/api/proxy";
-			if (window.location.href.includes("localhost"))
-				ctx="http://localhost:8082/community-ninja-board/api/scorecard";
-			//var ctx = "http://localhost:8082/community-ninja-board/api/scorecard";
-			//var ctx = "${pageContext.request.contextPath}";
-		</script>
-		
-		
-		<!--######-->
-		<!-- CARD -->
-		<!--######-->
-		<style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://www.chartjs.org/dist/2.7.2/Chart.bundle.js"></script>
+<script src="../js/http.js"></script>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.7/css/all.css"/>
+<script>
+	var ctx="https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs/api/proxy";
+	var server="https://dashboard.ninja.redhat.com/community-ninja-board/api";
+	if (window.location.href.includes("localhost")){
+		server="http://localhost:8082/community-ninja-board/api";
+		ctx=server+"/scorecard";
+	}
+	//var ctx = "${pageContext.request.contextPath}";
+</script>
+<style>
 		body{
 			font-family: Overpass, Arial, sans-serif;
 			background-color: #f2f1f1;
@@ -107,13 +88,33 @@
 		}
 		
 		a{
+		/*
 		  color: white;
+		*/
 		  text-decoration: none;
 		}
 		a:hover{
 		  text-decoration: underline;
 		}
-		</style>
+
+</style>
+
+<center>
+	<div style="width:100%; background-color:#000">
+	 <div style="color:#fff; font-size:30px; font-weight:bold;">COMMUNITIES OF PRACTICE</div>
+	 <div style="color:#fff; font-size:30px; font-weight:bold;">YOUR GIVEBACK NINJA PROGRAM DASHBOARD</div>
+	</div>
+	<div style="width:100%; background-color:#f2f1f1;">
+	 <div style="color:#444; font-size:10pt;">Hover over the chart to see your progress and/or what is needed to reach the next belt level.</div>
+	</div>
+	
+	<br/>
+
+	<div style="height:500px;">
+		
+		<!--######-->
+		<!-- CARD -->
+		<!--######-->
 					<span id="userSelect"></span>
 					<table id="dashboard" border=0 style="width:1000px;">
 						<tr>
@@ -123,7 +124,55 @@
 										<td colspan="8"><span class="cardName" id="_error"></span><br/><span id="_error2"></td>
 									</tr>
 									<tr>
-										<td class="cardName" colspan="2"><span class="_displayName"></span></td>
+										
+										<script>
+											function toggleEditAndSave(id, caller){
+												var ele=$("._"+id);
+												if (!ele.hasClass("hidden")){
+													$("._"+id).addClass("hidden");
+													$("._"+id+"_edit").removeClass("hidden");
+													$(caller).removeClass("fa-edit");
+													$(caller).addClass("fa-check");
+												}else{
+													$("._"+id).removeClass("hidden");
+													$("._"+id+"_edit").addClass("hidden");
+													$(caller).addClass("fa-edit");
+													$(caller).removeClass("fa-check");
+													var values={};
+													values[id]=$("._"+id+"_edit").prop("value");
+													$("._"+id).text(values[id]); // correct a visual glitch as the text is visible again with the old value
+													var username=getUsername();
+													var uri=server+"/users/"+username;
+													Http.send("PUT", uri, values, function(response, status) {
+														if (status!=200){
+															alert("Unable to apply change. Please ensure you are on the VPN when updating account information.");
+														}else{
+															console.log("response status = "+status);
+															_displ(username);
+														}
+													});
+													
+												}
+											}
+										</script>
+										<style>
+										.hidden{display:none;}
+										.edit_box{
+									    font-size: 26pt;
+									    font-weight: bold;
+									    width: 250px;
+										}
+										.edit_box_small{
+										  font-size: 14pt;
+									    font-weight: normal;
+									    width: 170px;
+										}
+										i{
+											margin-left: 5px;
+										}
+										
+										</style>
+										<td class="cardName" colspan="2"><span class="_displayName"></span><input class="_displayName_edit hidden edit_box" type="textbox"/><i style="font-size:10pt;" class="hidden fas fa-edit" onclick="toggleEditAndSave('displayName', this);"></i></td>
 										<td class="cardScore" rowspan="5"><img class="ninjaIcon _level"></img></td>
 										<td class="cardScore"><span class="_Trello">0</span></td>
 										<td class="cardScore"><span class="_Github">0</span></td>
@@ -146,16 +195,16 @@
 									</tr>
 									<tr>
 										<td class="cardRow"><img class="icon" src="https://d2k1ftgv7pobq7.cloudfront.net/meta/u/res/images/brand-assets/Logos/0099ec3754bf473d2bbf317204ab6fea/trello-logo-blue.png"></td>
-										<td><span class="_trelloId"></span></td>
+										<td><span class="_trelloId"></span><input class="_trelloId_edit hidden edit_box_small" type="textbox"/><i style="font-size:10pt;" class="fas fa-edit" onclick="toggleEditAndSave('trelloId', this);"></i></td>
 									</tr>
 									<tr>
 										<td class="cardRow"><img  style="height:20px;" src="https://github.githubassets.com/images/modules/logos_page/GitHub-Logo.png"></td>
-										<td><span class="_githubId"></span></td>
+										<td><span class="_githubId"></span><input class="_githubId_edit hidden edit_box_small" type="textbox"/><i style="font-size:10pt;" class="fas fa-edit" onclick="toggleEditAndSave('githubId', this);"></i></td>
 									</tr>
 									<tr>
 										<td class="cardRow">
 										<svg height="20" viewBox="0 0 1231 342" xmlns="http://www.w3.org/2000/svg" class="nav-logo"> <g fill="none" fill-rule="evenodd"> <g fill="#8C929D" class="wordmark"> <path d="M764.367 94.13h-20.803l.066 154.74h84.155v-19.136h-63.352l-.066-135.603zM907.917 221.7c-5.2 5.434-13.946 10.87-25.766 10.87-15.838 0-22.22-7.797-22.22-17.957 0-15.354 10.637-22.678 33.332-22.678 4.255 0 11.11.472 14.655 1.18v28.586zm-21.51-93.787c-16.8 0-32.208 5.952-44.23 15.858l7.352 12.73c8.51-4.962 18.91-9.924 33.802-9.924 17.02 0 24.585 8.742 24.585 23.39v7.56c-3.31-.71-10.164-1.184-14.42-1.184-36.404 0-54.842 12.757-54.842 39.454 0 23.86 14.656 35.908 36.876 35.908 14.97 0 29.314-6.852 34.278-17.954l3.782 15.118h14.657v-79.14c0-25.04-10.874-41.815-41.84-41.815zM995.368 233.277c-7.802 0-14.657-.945-19.858-3.308v-71.58c7.093-5.908 15.84-10.16 26.95-10.16 20.092 0 27.893 14.174 27.893 37.09 0 32.6-12.53 47.957-34.985 47.957m8.742-105.364c-18.592 0-28.6 12.64-28.6 12.64V120.59l-.066-26.458H955.116l.066 150.957c10.164 4.25 24.11 6.613 39.24 6.613 38.768 0 57.442-24.804 57.442-67.564 0-33.783-17.26-56.227-47.754-56.227M538.238 110.904c18.438 0 30.258 6.142 38.06 12.285l8.938-15.477c-12.184-10.678-28.573-16.417-46.053-16.417-44.204 0-75.17 26.932-75.17 81.267 0 56.935 33.407 79.14 71.624 79.14 19.148 0 35.46-4.488 46.096-8.976l-.435-60.832V162.76h-56.734v19.135h36.167l.437 46.184c-4.727 2.362-13 4.252-24.11 4.252-30.73 0-51.297-19.32-51.297-60.006 0-41.34 21.275-61.422 52.478-61.422M684.534 94.13h-20.33l.066 25.988v89.771c0 25.04 10.874 41.814 41.84 41.814 4.28 0 8.465-.39 12.53-1.126v-18.245c-2.943.45-6.083.707-9.455.707-17.02 0-24.585-8.74-24.585-23.387v-61.895h34.04v-17.01H684.6l-.066-36.617zM612.62 248.87h20.33V130.747h-20.33v118.12zM612.62 114.448h20.33V94.13h-20.33v20.318z"></path> </g> <path d="M185.398 341.13l68.013-209.322H117.39L185.4 341.13z" fill="#E24329" class="logo-svg-shape logo-dark-orange-shape"></path> <path d="M185.398 341.13l-68.013-209.322h-95.32L185.4 341.128z" fill="#FC6D26" class="logo-svg-shape logo-orange-shape"></path> <path d="M22.066 131.808l-20.67 63.61c-1.884 5.803.18 12.16 5.117 15.744L185.398 341.13 22.066 131.807z" fill="#FCA326" class="logo-svg-shape logo-light-orange-shape"></path> <path d="M22.066 131.808h95.32L76.42 5.735c-2.107-6.487-11.284-6.487-13.39 0L22.065 131.808z" fill="#E24329" class="logo-svg-shape logo-dark-orange-shape"></path> <path d="M185.398 341.13l68.013-209.322h95.32L185.4 341.128z" fill="#FC6D26" class="logo-svg-shape logo-orange-shape"></path> <path d="M348.73 131.808l20.67 63.61c1.884 5.803-.18 12.16-5.117 15.744L185.398 341.13 348.73 131.807z" fill="#FCA326" class="logo-svg-shape logo-light-orange-shape"></path> <path d="M348.73 131.808h-95.32L294.376 5.735c2.108-6.487 11.285-6.487 13.392 0l40.963 126.073z" fill="#E24329" class="logo-svg-shape logo-dark-orange-shape"></path> </g> </svg></td>
-										<td><span class="_userId"></span></td>
+										<td><span class="_gitlabId"></span><input class="_gitlabId_edit hidden edit_box_small" type="textbox"/><i style="font-size:10pt;" class="fas fa-edit" onclick="toggleEditAndSave('gitlabId', this);"></i></td>
 									</tr>
 									
 									<tr>
@@ -219,6 +268,8 @@ Utils = {
 
 function getUsername(){
 	  var username;
+	  if ($("#username").length>0) return $("#username").val();
+	  
 	  if (Utils.getParameterByName("username")!=undefined) username=Utils.getParameterByName("username");
 	  if (username==undefined && undefined!=window.parent._jive_current_user)
 		  username=window.parent._jive_current_user.username;
@@ -229,7 +280,19 @@ function getUsername(){
 	  return username;
 }
 
-setTimeout(function(){ displ(); }, 200);
+$(document).ready(function() {
+	// Show the user properties once we get a username from mojo, igloo, parameter or whereever 
+	setTimeout(function(){ displ(); }, 200);
+	// Only show the edit icons if we can get to the server on the VPN
+	Http.httpGet(server+"/config/get", function(response, status){
+		if (status==200){
+			// enable the fa fa-edit buttons
+			$(".fa-edit").each(function() {
+				$(this).removeClass("hidden");
+			});
+		}
+	});
+});
 
 function displ(){
 	username=getUsername();
@@ -241,15 +304,14 @@ function displ(){
 }
 
 var resets=[];
-function _displ(username){
+function _displ(username, dontReset){
   
-	for(k in resets){
-		//var es=document.getElementsByClassName(k);
-		//for(e in es){
+	if (!dontReset){
+		for(k in resets){
 	    $("."+k).each(function(index) {
 	    	$(this).text(resets[k]);
 	    });
-		//}
+		}
 	}
 		
   graphs={
@@ -262,7 +324,6 @@ function _displ(username){
 	xhr.open("GET", ctx+"/summary"+(ctx.includes("localhost")?"/":"_")+username, true);
 	xhr.send();
 	xhr.onloadend = function () {
-	  console.log("statusCode="+xhr.status);
 	  
 		var json=JSON.parse(xhr.responseText);
 	  if (xhr.status==500){
@@ -272,7 +333,9 @@ function _displ(username){
 	  }
 	  
 	  if (xhr.status==200){
-
+		  if (json["displayName"]==undefined) json["displayName"]=json["username"]; // alias the username as the displayName if one is not set
+		  if (json["gitlabId"]==undefined) json["gitlabId"]=json["userId"]; // alias the getlabId as the username if one is not set
+		  
 			Object.keys(json).forEach(function(key) {
 		    value = json[key];
 				
@@ -286,6 +349,10 @@ function _displ(username){
 			    	resets[this.className]=$(this).text();
 			    	$(this).text(value);
 			    });
+			    $("._"+key+"_edit").each(function(index) {
+			    	//resets[this.className]=$(this).text();
+			    	$(this).prop("value", value);
+			    });
 			    
 		    	
 		    	if (key=="level"){
@@ -297,36 +364,22 @@ function _displ(username){
 		    }else{
 		    	//console.log("NOT setting [_"+key+"] to ["+value+"]");
 		    }
-		    //console.log(value);
 			});
 			
-			if (json['displayName']==undefined){
-					$("._displayName").text(json['username']);
-			}else{
-				$("._displayName").text(json['displayName']);
-			}
 			
 			if ("true"==json['admin']){
 				document.getElementById("userSelect").innerHTML=`<input type='text' id='username' value='`+username+`'><input type='button' value='Go' onclick='_displ(document.getElementById("username").value); return false;'/>`;
 			}
 			
-			document.getElementById("nav").height=document.getElementById("dashboard").height;
+			//document.getElementById("nav").height=document.getElementById("dashboard").height;
 		}
 	}
+	
+	// Show the points allocations
+	showPointsAllocations();
 }
-
-//alert('Display Name: ' + window.parent._jive_current_user.displayName +  
-//'\nAnonymous: ' + window.parent._jive_current_user.anonymous+  
-//'\nUsername: ' + window.parent._jive_current_user.username +  
-//'\nID: ' + window.parent._jive_current_user.ID+  
-//'\nEnabled: ' + window.parent._jive_current_user.enabled +  
-//'\nAvatar ID: ' + window.parent._jive_current_user.avatarID);  
+	
 </script>
-
-
-
-
-		
 
 <script>
 	Chart.pluginService.register({
@@ -476,5 +529,74 @@ function refresh(){
 }
 //refresh();
 </script>
+	
+	
+	<script>
+	$(document).ready(function() {
+	});
+	
+	function showPointsAllocations(){
+		$("#eventsBody").html("");
+		Http.httpGet("../api/events?user="+getUsername(), function(response,status){
+			console.log("status="+status);
+			response=JSON.parse(response);
+			for(i in response){
+				var item=response[i];
+				if (item["type"]=="Points Increment"){
+					var ts=item["timestamp"].split("T")[0];
+					var txt=item["text"].substring(0, item["text"].indexOf("added"));
+					txt+="- ";
+					
+					if (item["text"].indexOf("[")>=0){
+						var first=item["text"].substring(item["text"].indexOf("http"));
+						first=item["text"].substring(item["text"].indexOf("["));
+						first=first.substring(0, first.indexOf("]"))+"]";
+					}else{
+						first="Unknown";
+					}
+					
+					txt+=processText(first);
+					//txt=processText(item["text"]);
+					$("#eventsBody").append("<tr><td>"+ts+"</td><td>"+txt+"</td></tr>");
+				}
+			}
+		})
+	}
+	
+	function processText(text){
+		var result=text;
+    if (/.*\[.+\].*/.test(text)){ // look for a set of square brackets
+      var before=/.*\[(.+)\].*/.exec(text);
+      
+      var split=before[1].split("|");
+      var title=split[0];
+      var link=split[1];
+      link="<a href='"+link+"'>"+title+"</a>";
+      
+      var find1=escapeRegExp(("["+before[1]+"]").replace(/\[/g,'\\[').replace(/\]/g,'\\]').replace(/\|/g,'\\|'));
+      var find2=("["+before[1]+"]").replace(/\[/g,'\\[').replace(/\]/g,'\\]').replace(/\|/g,'\\|');
+      
+      var after=text.replace(new RegExp(find2, 'g'), link);
+      
+      result=after;
+    }
+    return result;
+	}
+	function escapeRegExp(str) {
+    return str.replace(/([.*+?^=!:\${}()|\[\]\/\\])/g, "\\$1");
+	}
+	</script>
+	<table class="card2" border="0" style="width:1000px;">
+		<thead>
+			<tr>
+				<th colspan="2">Points Allocations</th>
+			</tr>
+		</thead>
+		<tbody id="eventsBody">
+		</tbody>
+	</table>
 </div>
+
+
+
 </center>
