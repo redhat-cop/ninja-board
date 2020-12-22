@@ -5,7 +5,9 @@ java.util.Calendar
 
 <%@include file="header.jsp"%>
 <%@include file="datatables-dependencies.jsp"%>
-
+	<!-- markdown library -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.6.4/showdown.min.js"></script>
+	
 <script>
 function escapeRegExp(str) {
     return str.replace(/([.*+?^=!:\${}()|\[\]\/\\])/g, "\\$1");
@@ -35,6 +37,16 @@ function loadDataTable(){
             { "targets": 2, "orderable": true, "render": function (data,type,row){
               
               var result=row['text'];
+              
+              if (typeof showdown !== 'undefined'){
+            		var markDownConverter = new showdown.Converter();
+        				var str = markDownConverter.makeHtml(result);
+        				//remove root paragraphs <p></p>
+        				str = str.substring(3);
+        				str = str.substring(0, str.length - 4);
+        				result = str;
+            	}
+              
               if (/.*\[.+\].*/.test(row['text'])){ // look for a set of square brackets
                 var before=/.*\[(.+)\].*/.exec(row['text']);
                 

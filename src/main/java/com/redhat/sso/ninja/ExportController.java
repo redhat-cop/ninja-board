@@ -31,6 +31,7 @@ import org.codehaus.jackson.type.TypeReference;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.redhat.sso.ninja.controllers.EventsController;
 import com.redhat.sso.ninja.utils.Json;
 import com.redhat.sso.ninja.utils.MapBuilder;
 
@@ -77,7 +78,7 @@ public class ExportController{
   @GET
   @Path("/events/export/{format}")
   public Response exportEvents(@Context HttpServletRequest request, @PathParam("format") String format) throws IOException{
-    List<Map<String, String>> data=new ManagementController().getAllEvents();
+    List<Map<String, String>> data=new EventsController().getAllEvents();
     
     Set<String> headerset=new HashSet<String>();
     for(Map<String, String> row:data)
