@@ -35,26 +35,31 @@ public class EventsController{
   private static final Logger log=Logger.getLogger(EventsController.class);
   
   
+  // Admin/Support UI call to display all events, user events or specific types of events
   @GET
-  @Path("/v3/events")
-  public Response getEventsAsCSV(@Context HttpServletRequest request) throws JsonGenerationException, JsonMappingException, IOException{
+  @Path("/v2/events")
+  public Response getEventsV2(@Context HttpServletRequest request) throws JsonGenerationException, JsonMappingException, IOException{
   	Map<String, String> filters=new MapBuilder<String, String>(true)
 		.put("user", request.getParameter("user"))
 		.put("events", request.getParameter("events"))
 		.put("daysOld", request.getParameter("daysOld"))
 		.build();
+  	
+  	boolean asCSV="true".equalsIgnoreCase(request.getParameter("asCSV")); // ideally i'd use the Accept headers, but it's being called from an =Import function from a spreadsheet which is easier to set params from
+  	String result=asCSV?jsonToCSV(getFilteredEvents2(filters)):Json.newObjectMapper(true).writeValueAsString(getFilteredEvents2(filters));
+  			
     return Response.status(200)
         .header("Access-Control-Allow-Origin",  "*")
         .header("Content-Type","text/html")
         .header("Cache-Control", "no-store, must-revalidate, no-cache, max-age=0")
         .header("Pragma", "no-cache")
-        .header("X-Content-Type-Options", "nosniff").entity(getEventsAsCSV(filters)).build();
+        .header("X-Content-Type-Options", "nosniff").entity(result).build();
   }
-  	
-	public String getEventsAsCSV(Map<String, String> filters) throws JsonGenerationException, JsonMappingException, IOException{
-  	List<Map<String, String>> events=getFilteredEvents2(filters);
-  	
+  
+  
+	public String jsonToCSV(List<Map<String, String>> events) throws JsonGenerationException, JsonMappingException, IOException{
   	// go through the events in the time window and extract/build the points values
+  	Map<String, Map<String, String>> userMap=Database2.get().getUsers();
   	
   	Pattern regex1=Pattern.compile("(\\d+) point.* added to (.+) \\((.+)\\)");
   	Pattern regex2=Pattern.compile("(\\d+) point.* added to (.+)");
@@ -64,6 +69,7 @@ public class EventsController{
   	for (Map<String, String> event:events){
   		String ts=event.get(EVENT_FIELDS.TIMESTAMP.v);
   		String user=event.get(EVENT_FIELDS.USER.v);
+  		String email=userMap.get(user).get("email"); // lookup email from database user details
   		String type=event.get(EVENT_FIELDS.TYPE.v);
   		String text=event.get(EVENT_FIELDS.TEXT.v);
   		String points=event.get(EVENT_FIELDS.POINTS.v);
@@ -71,7 +77,7 @@ public class EventsController{
   		String source=event.get(EVENT_FIELDS.SOURCE.v);
   		
   		if (null!=source && !"".equals(source)){ // if it's an event with a source, pool & points
-  			result.add(Joiner.on(",").join(ts, user, type, points, pool, source));
+  			result.add(Joiner.on(",").join(ts, user, email, type, points, pool, source));
   		}else{ // if it's the older "text" formats
   			Matcher m1=regex1.matcher(text); // text format with links
   			Matcher m2=regex2.matcher(text); // text format without links
@@ -95,7 +101,7 @@ public class EventsController{
   	
   	String r="";
   	for(String l:result){
-  		r+=l+"\n<br/>";
+  		r+=l+"\n";
   	}
   	
   	return r;
@@ -157,17 +163,17 @@ public class EventsController{
 		return source;
   }
   
-  // Admin/Support UI call to display all events, user events or specific types of events
-  @GET
-  @Path("/events2")
-  public Response getEventsV2(@Context HttpServletRequest request) throws JsonGenerationException, JsonMappingException, IOException{
-  	Map<String, String> filters=new MapBuilder<String, String>(true)
-  			.put("user", request.getParameter("user"))
-  			.put("events", request.getParameter("events"))
-  			.put("daysOld", request.getParameter("daysOld"))
-  			.build();
-    return NewResponse.status(200).entity(Json.newObjectMapper(true).writeValueAsString(getFilteredEvents2(filters))).build();
-  }
+//  // Admin/Support UI call to display all events, user events or specific types of events
+//  @GET
+//  @Path("/v2/events")
+//  public Response getEventsV2(@Context HttpServletRequest request) throws JsonGenerationException, JsonMappingException, IOException{
+//  	Map<String, String> filters=new MapBuilder<String, String>(true)
+//  			.put("user", request.getParameter("user"))
+//  			.put("events", request.getParameter("events"))
+//  			.put("daysOld", request.getParameter("daysOld"))
+//  			.build();
+//    return NewResponse.status(200).entity(Json.newObjectMapper(true).writeValueAsString(getFilteredEvents2(filters))).build();
+//  }
   public List<Map<String, String>> getAllEvents() throws JsonGenerationException, JsonMappingException, IOException{
     return getFilteredEvents2(new MapBuilder<String,String>().build());
   }
