@@ -43,19 +43,19 @@ public class EventsController{
 		.put("user", request.getParameter("user"))
 		.put("events", request.getParameter("events"))
 		.put("daysOld", request.getParameter("daysOld"))
+		.put("asCSV", request.getParameter("asCSV"))
 		.build();
-  	
-  	boolean asCSV="true".equalsIgnoreCase(request.getParameter("asCSV")); // ideally i'd use the Accept headers, but it's being called from an =Import function from a spreadsheet which is easier to set params from
-  	String result=asCSV?jsonToCSV(getFilteredEvents2(filters)):Json.newObjectMapper(true).writeValueAsString(getFilteredEvents2(filters));
-  			
     return Response.status(200)
         .header("Access-Control-Allow-Origin",  "*")
         .header("Content-Type","text/html")
         .header("Cache-Control", "no-store, must-revalidate, no-cache, max-age=0")
         .header("Pragma", "no-cache")
-        .header("X-Content-Type-Options", "nosniff").entity(result).build();
+        .header("X-Content-Type-Options", "nosniff").entity(getEventsV2(filters)).build();
   }
-  
+  public String getEventsV2(Map<String,String> filters) throws JsonGenerationException, JsonMappingException, IOException{
+  	boolean asCSV="true".equalsIgnoreCase(filters.get("asCSV")); // ideally i'd use the Accept headers, but it's being called from an =Import function from a spreadsheet which is easier to set params from
+  	return asCSV?jsonToCSV(getFilteredEvents2(filters)):Json.newObjectMapper(true).writeValueAsString(getFilteredEvents2(filters));
+  }
   
 	public String jsonToCSV(List<Map<String, String>> events) throws JsonGenerationException, JsonMappingException, IOException{
   	// go through the events in the time window and extract/build the points values
