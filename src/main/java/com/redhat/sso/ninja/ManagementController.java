@@ -310,24 +310,6 @@ public class ManagementController {
   }
 
   // Admin UI to be able to update a single user field
-  @PUT
-  @Path("/users/{user}")
-  public Response updateUserProperty(@Context HttpServletRequest request, @PathParam("user") String user) throws JsonGenerationException, JsonMappingException, IOException{
-  	
-  	Map<String,String> values=Json.newObjectMapper(true).readValue(IOUtils2.toStringAndClose(request.getInputStream()), new TypeReference<Map<String,String>>() {});
-  	Database2 db=Database2.get();
-  	Map<String, String> userInfo=db.getUsers().get(user);
-  	for (Entry<String, String> e:values.entrySet()){
-  		String existingValue=userInfo.get(e.getKey());
-//  		System.out.println((existingValue!=null?"changing existing ":"adding new ")+"value "+e.getKey()+"->"+e.getValue());
-  		userInfo.put(e.getKey(), e.getValue());
-  	}
-  	db.save();
-  	
-  	return Response.status(200).build();
-  }
-  
-  // Admin UI to be able to update a single user field
   
   @PUT
   @Path("/users/{user}")
