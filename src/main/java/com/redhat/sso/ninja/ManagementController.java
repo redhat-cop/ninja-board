@@ -41,9 +41,9 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
 import com.google.common.base.Splitter;
-import com.redhat.sso.ninja.Database2.EVENT_FIELDS;
 import com.redhat.sso.ninja.chart.ChartJson;
 import com.redhat.sso.ninja.chart.DataSet;
+import com.redhat.sso.ninja.controllers.NewResponse;
 import com.redhat.sso.ninja.utils.Http;
 import com.redhat.sso.ninja.utils.IOUtils2;
 import com.redhat.sso.ninja.utils.Json;
@@ -68,15 +68,7 @@ public class ManagementController {
     return "true".equalsIgnoreCase(Config.get().getOptions().get("login.enabled"));
   }
   
-  // common response created because post v79'ish of Chrome they introduced a SIGNED_EXCHANGE error without the following headers on every response
-  private ResponseBuilder newResponse(int status){
-    return Response.status(status)
-     .header("Access-Control-Allow-Origin",  "*")
-     .header("Content-Type","application/json")
-     .header("Cache-Control", "no-store, must-revalidate, no-cache, max-age=0")
-     .header("Pragma", "no-cache")
-     .header("X-Content-Type-Options", "nosniff");
-  }
+
   
   @POST
   @Path("/yearEnd/{priorYear}")
@@ -85,7 +77,7 @@ public class ManagementController {
     Database2 db=Database2.get();
     
     if (db.getScorecardHistory().containsKey(priorYear))
-      return newResponse(400).entity("Can't do that - the key '"+priorYear+"' already exists!").build();
+      return NewResponse.status(400).entity("Can't do that - the key '"+priorYear+"' already exists!").build();
     
     // clear outstanding tasks
     db.getTasks().clear();
@@ -131,7 +123,7 @@ public class ManagementController {
     db.save();
     Database2.resetInstance();
     
-    return newResponse(200).entity("OK, it's done!").build();
+    return NewResponse.status(200).entity("OK, it's done!").build();
   }
   
   private String getParameter(HttpServletRequest request, String name, String defaultValue){
@@ -179,7 +171,7 @@ public class ManagementController {
       if (max>0 && count>=max) break;
     }
     
-    return newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(unknownUsers)).build();
+    return NewResponse.status(200).entity(Json.newObjectMapper(true).writeValueAsString(unknownUsers)).build();
   }
   
   @POST
@@ -236,7 +228,7 @@ public class ManagementController {
   @GET
   @Path("/config/get")
   public Response configGet(@Context HttpServletRequest request,@Context HttpServletResponse response,@Context ServletContext servletContext) throws JsonGenerationException, JsonMappingException, IOException{
-    return newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(Config.get())).build();
+    return NewResponse.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Config.get())).build();
   }
   
   // saves a new complete config
@@ -269,7 +261,7 @@ public class ManagementController {
     Database2.get(); //reload it
     
     log.debug("Config Saved");
-    return newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(Config.get())).build();
+    return NewResponse.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Config.get())).build();
   }
 
   // Runs the scripts immediately - critical feature for supporting the system
@@ -280,7 +272,7 @@ public class ManagementController {
     Database2.resetInstance();
     Database2.get(); //reload it
     log.debug("Scripts run started - check logs for results");
-    return newResponse(200).entity("RUNNING").build();
+    return NewResponse.status(200).entity("RUNNING").build();
   }
 
   // Pushes the current database graph data to the external cache to be accessible by end users mojo dashboard - critical for support
@@ -290,7 +282,7 @@ public class ManagementController {
   	Database2 db=Database2.get();
   	Config cfg=Config.get();
   	new Heartbeat2.HeartbeatRunnable(null).publishGraphsData(db, cfg);
-    return newResponse(200).entity("RUNNING").build();
+    return NewResponse.status(200).entity("RUNNING").build();
   }
   
   // returns the database content - used in admin UI & backup purposes
@@ -317,6 +309,23 @@ public class ManagementController {
     return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Database2.get())).build();
   }
 
+  // Admin UI to be able to update a single user field
+  @PUT
+  @Path("/users/{user}")
+  public Response updateUserProperty(@Context HttpServletRequest request, @PathParam("user") String user) throws JsonGenerationException, JsonMappingException, IOException{
+  	
+  	Map<String,String> values=Json.newObjectMapper(true).readValue(IOUtils2.toStringAndClose(request.getInputStream()), new TypeReference<Map<String,String>>() {});
+  	Database2 db=Database2.get();
+  	Map<String, String> userInfo=db.getUsers().get(user);
+  	for (Entry<String, String> e:values.entrySet()){
+  		String existingValue=userInfo.get(e.getKey());
+//  		System.out.println((existingValue!=null?"changing existing ":"adding new ")+"value "+e.getKey()+"->"+e.getValue());
+  		userInfo.put(e.getKey(), e.getValue());
+  	}
+  	db.save();
+  	
+  	return Response.status(200).build();
+  }
   
   // Admin UI to be able to update a single user field
   
@@ -360,9 +369,8 @@ public class ManagementController {
       payload=Json.newObjectMapper(true).writeValueAsString(data);
     }
     
-    return newResponse(payload.contains("ERROR")?500:200).entity(payload).build();
+    return NewResponse.status(payload.contains("ERROR")?500:200).entity(payload).build();
   }
-  
   
   // User Dashboard UI call - returns the payload to render a chart displaying the breakdown of how many points came from which pool (trello, github PR, github reviewed PR's etc..)
   @GET
@@ -383,7 +391,7 @@ public class ManagementController {
       chart.getLabels().add("No Points");
       chart.getDatasets().get(0).getData().add(0);
     }
-    return newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(chart)).build();
+    return NewResponse.status(200).entity(Json.newObjectMapper(true).writeValueAsString(chart)).build();
   }
   
   // User Dashboard UI call - returns user scorecard data to display the user dashboard (mojo)
@@ -422,7 +430,7 @@ public class ManagementController {
       payload=Json.newObjectMapper(true).writeValueAsString(data);
     }
     
-    return newResponse(200).entity(payload).build();
+    return NewResponse.status(200).entity(payload).build();
   }
 
   // Admin UI call (edit/update user) - updates an existing user with new values & points
@@ -465,31 +473,7 @@ public class ManagementController {
     }
     
     db.save();
-    return newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString("OK")).build();
-  }
-  
-  // Admin/Support UI call to display all events, user events or specific types of events
-  @GET
-  @Path("/events")
-  public Response getEvents(@Context HttpServletRequest request) throws JsonGenerationException, JsonMappingException, IOException{
-    return newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(getEvents(request.getParameter("user"), request.getParameter("event")))).build();
-  }
-  public List<Map<String, String>> getAllEvents() throws JsonGenerationException, JsonMappingException, IOException{
-    return getEvents(null, null);
-  }
-  public List<Map<String, String>> getEvents(String user, String event) throws JsonGenerationException, JsonMappingException, IOException{
-    Database2 db=Database2.get();
-    List<Map<String, String>> result=new ArrayList<Map<String,String>>();
-    
-    if (null==user && null==event){
-      result=db.getEvents();
-    }else{
-      for(Map<String, String> e:db.getEvents()){
-        if (e.get(EVENT_FIELDS.USER.v).equals(user)) result.add(e);
-        if (e.get(EVENT_FIELDS.TYPE.v).equals(event)) result.add(e);
-      }
-    }
-    return result;
+    return NewResponse.status(200).entity(Json.newObjectMapper(true).writeValueAsString("OK")).build();
   }
   
   // Admin/Support UI call to list all users and their scorecards
@@ -554,7 +538,7 @@ public class ManagementController {
     wrapper.put("columns", columns);
     wrapper.put("data", data);
     
-    return newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(wrapper)).build();
+    return NewResponse.status(200).entity(Json.newObjectMapper(true).writeValueAsString(wrapper)).build();
   }
   
   

@@ -9,7 +9,7 @@
 	</context-param>
     <context-param>
         <param-name>resteasy.resources</param-name>
-        <param-value>com.redhat.sso.ninja.ManagementController,com.redhat.sso.ninja.ExportController,com.redhat.sso.ninja.ChartsController,com.redhat.sso.ninja.TasksController,com.redhat.sso.ninja.SupportController</param-value>
+        <param-value>com.redhat.sso.ninja.ManagementController,com.redhat.sso.ninja.ExportController,com.redhat.sso.ninja.ChartsController,com.redhat.sso.ninja.TasksController,com.redhat.sso.ninja.SupportController,com.redhat.sso.ninja.controllers.EventsController</param-value>
     </context-param>
 
 	<context-param>

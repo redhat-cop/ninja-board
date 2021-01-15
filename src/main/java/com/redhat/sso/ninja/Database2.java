@@ -53,6 +53,23 @@ public class Database2{
   	this.version=version;
   }
   
+  
+  // markdown format
+  public static String buildLinkMarkdown(Map<String,String> params){
+  	if (!params.containsKey("linkId")) return "";
+  	if (params.get("id").startsWith("TR")){
+  		return "[Trello: "+params.get("linkId")+"/"+params.get("id")+"](https://trello.com/c/"+params.get("linkId");
+  	}else if (params.get("id").startsWith("GH")){
+  		if (params.get("pool").toLowerCase().contains("pull")){
+  			return "[Github PR: "+params.get("linkId")+"](https://github.com/"+params.get("org")+"/"+params.get("board")+"/pull/"+params.get("linkId")+")";
+  		}else{ // assume "issues"
+  			return "[Github Issue: "+params.get("linkId")+"](https://github.com/"+params.get("org")+"/"+params.get("board")+"/issues/"+params.get("linkId")+")";
+  		}
+  	}
+  	return "";
+  }
+  
+  // my custom UI format
   public static String buildLink(Map<String,String> params){
   	if (!params.containsKey("linkId")) return "";
   	if (params.get("id").startsWith("TR")){
@@ -91,10 +108,12 @@ public class Database2{
       scorecards.get(userId).put(poolId, scorecards.get(userId).get(poolId)+increment);
       
       if (params!=null && params.size()>1){ //because "id" is always added
-      	addEvent("Points Increment", userId, increment+" point"+(increment<=1?"":"s")+" added to "+poolId+" "+buildLink(params));
+//      	addEvent("Points Increment", userId, increment+" point"+(increment<=1?"":"s")+" added to "+poolId+" "+buildLink(params));
+      	addEvent2("Points Increment", userId, increment, buildLinkMarkdown(params), poolId, "");
       }else{
       	// no params & therefore no link
-      	addEvent("Points Increment", userId, increment+" point"+(increment<=1?"":"s")+" added to "+poolId+"");
+//      	addEvent("Points Increment", userId, increment+" point"+(increment<=1?"":"s")+" added to "+poolId+"");
+      	addEvent2("Points Increment", userId, increment, "", poolId, "");
       }
       
     }else{
@@ -121,7 +140,11 @@ public class Database2{
   	TIMESTAMP("timestamp"),
   	TYPE("type"),
   	USER("user"),
-  	TEXT("text");
+  	TEXT("text"),
+  	POINTS("points"),
+  	SOURCE("source"),
+  	POOL("pool"),
+  	;
   	public String v;
   	EVENT_FIELDS(String v){
   		this.v=v;
@@ -148,12 +171,30 @@ public class Database2{
   	}
   }
   
+  
+  public void addEvent2(String type, String user, Integer points, String source, String pool, String text){
+    Map<String,String> event=new HashMap<String, String>();
+    event.put(EVENT_FIELDS.TIMESTAMP.v, sdf2.format(new Date()));
+    event.put(EVENT_FIELDS.TYPE.v, type);
+    event.put(EVENT_FIELDS.USER.v, user);
+    if (text!=null && !"".equals(text)) event.put(EVENT_FIELDS.TEXT.v, text);
+    event.put(EVENT_FIELDS.POINTS.v, String.valueOf(points));
+    event.put(EVENT_FIELDS.SOURCE.v, source);
+    event.put(EVENT_FIELDS.POOL.v, pool);
+    getEvents().add(event);
+    
+    // limit the events to a configurable number of entries
+    while (getEvents().size()>getMaxEventEntries()){
+      getEvents().remove(0);
+    }
+  }
+  
   public void addEvent(String type, String user, String text){
     Map<String,String> event=new HashMap<String, String>();
     event.put(EVENT_FIELDS.TIMESTAMP.v, sdf2.format(new Date()));
     event.put(EVENT_FIELDS.TYPE.v, type);
     event.put(EVENT_FIELDS.USER.v, user);
-    event.put(EVENT_FIELDS.TEXT.v, text);
+    if (text!=null && !"".equals(text)) event.put(EVENT_FIELDS.TEXT.v, text);
     getEvents().add(event);
     
     // limit the events to a configurable number of entries

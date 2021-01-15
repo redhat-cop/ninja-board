@@ -37,6 +37,7 @@ import org.mortbay.log.Log;
 
 import com.google.common.collect.Lists;
 import com.redhat.sso.ninja.ChatNotification.ChatEvent;
+import com.redhat.sso.ninja.controllers.EventsController;
 import com.redhat.sso.ninja.user.UserService;
 import com.redhat.sso.ninja.user.UserService.User;
 import com.redhat.sso.ninja.utils.DownloadFile;
@@ -200,7 +201,7 @@ public class Heartbeat2 {
   }
   
 
-  static class HeartbeatRunnable extends TimerTask {
+  public static class HeartbeatRunnable extends TimerTask {
     static SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private Timer t;
     
@@ -330,7 +331,7 @@ public class Heartbeat2 {
             // add the user a zero scorecard
             db.getScoreCards().put(userInfo.get("username"), new HashMap<String, Integer>());
             
-            db.addEvent("New User Registered", userInfo.get("username"), "");
+            db.addEvent("New User", userInfo.get("username"), "");
             
             // Notify everyone on the Ninja chat group of a new registree
             String displayName=userInfo.containsKey("displayName")?userInfo.get("displayName"):userInfo.get("username");
@@ -534,7 +535,7 @@ public class Heartbeat2 {
       if (t!=null) t.cancel();
     }
     
-    protected void publishGraphsData(Database2 db, Config config){
+    public void publishGraphsData(Database2 db, Config config){
       String graphsProxyUrl=config.getOptions().get("graphs-proxy");
       if (null==graphsProxyUrl) graphsProxyUrl=System.getenv("GRAPHS_PROXY");
       
@@ -544,18 +545,30 @@ public class Heartbeat2 {
         log.warn("graphsProxy configured at: "+url);
         ChartsController cc=new ChartsController();
         ManagementController mc=new ManagementController();
+        EventsController ec=new EventsController();
+        int errorCount=0;
         for(String user:db.getUsers().keySet()){
+          if (errorCount>=20){
+            log.error("Aborting pushing data to graphs because it failed 20+ times");
+            break;
+          }
           try{
-            if (200!=Http.post(url+"/nextLevel_"+user, (String)cc.getUserNextLevel(user).getEntity()).responseCode)
+            if (200!=Http.post(url+"/nextLevel_"+user, (String)cc.getUserNextLevel(user).getEntity()).responseCode){
               log.error("Error pushing 'nextLevel' info for '"+user+"' to graphsProxy");
-            if (200!=Http.post(url+"/summary_"+user, (String)mc.getScorecardSummary(user).getEntity()).responseCode)
+              errorCount+=1;
+            }
+            if (200!=Http.post(url+"/summary_"+user, (String)mc.getScorecardSummary(user).getEntity()).responseCode){
               log.error("Error pushing 'summary' info for '"+user+"' to graphsProxy");
-            if (200!=Http.post(url+"/breakdown_"+user, (String)mc.getUserBreakdown(user).getEntity()).responseCode)
+              errorCount+=1;
+            }
+            if (200!=Http.post(url+"/breakdown_"+user, (String)mc.getUserBreakdown(user).getEntity()).responseCode){
               log.error("Error pushing 'breakdown' info for '"+user+"' to graphsProxy");
+              errorCount+=1;
+            }
           }catch (IOException e){
             e.printStackTrace();
+            errorCount+=1;
           }
-          
         }
         
         // add the top 10 to the graphs too so they're available externally
@@ -573,6 +586,15 @@ public class Heartbeat2 {
         }catch (IOException e){
           e.printStackTrace();
         }
+        
+        // add the Events to the graphs so they're available externally
+        try{
+        	Map<String,String> filters=new MapBuilder<String,String>().put("daysOld", "180").put("events","User Promotion,Points Increment").put("asCSV", "true").build();
+        	String events=(String)ec.getEventsV2(filters);
+        	System.out.println("\n\n\n"+events);
+          if (200!=Http.post(url+"/events180", events).responseCode)
+            log.error("Error pushing 'events180' info to graphsProxy");
+        }catch (IOException e){ e.printStackTrace(); }
         
       }else{
         log.warn("not pushing to graphs proxy - url was: "+graphsProxyUrl);
@@ -602,7 +624,7 @@ public class Heartbeat2 {
             userInfo.put("level", nextLevel.getRight());
             userInfo.put("levelChanged", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));// nextLevel.getRight());
             
-            db.addEvent("User Promotion", userInfo.get("username"), "Promoted to "+nextLevel.getRight()+" level");
+            db.addEvent("User Promotion", userInfo.get("username"), "Promoted to "+nextLevel.getRight());
             
             String displayName=userInfo.containsKey("displayName")?userInfo.get("displayName"):userInfo.get("username");
             String message="<https://mojo.redhat.com/people/"+userInfo.get("username")+"|"+displayName+"> promoted to "+nextLevel.getRight()+" belt";
