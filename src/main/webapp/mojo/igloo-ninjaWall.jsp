@@ -31,20 +31,26 @@
 		}
 		
 		.belt-blue {
-			color: #a4dbea;
+			/*color: #a4dbea;*/
+			color: #316EC2;
 		}
 		
 		.belt-red {
-			color: #a21c20;
+			/*color: #a21c20;*/
+			color: #41A85F;
 		}
 		
 		.belt-grey {
-			color: #999999;
+			/*color: #999999;*/
+			color: #808080;
 		}
 		
 		.belt-black {
-			color: #000000;
+			/*color: #000000;*/
+			color: #FAC51C;
 		}
+		
+		
 
 	</style>
 
@@ -83,11 +89,11 @@
 
 		function toColor(color)
 		{
-			if ("BLUE" == color) return "#a4dbea";
-			if ("GREY" == color) return "#999999";
-			if ("RED" == color) return "#c10000";
-			if ("BLACK" == color) return "#000000";
-			if ("ZERO" == color) return "#ffffff";
+			if ("BLUE" == color)  return "#316EC2";//"#a4dbea";
+			if ("GREY" == color)  return "#808080";//"#999999";
+			if ("RED" == color)   return "#41A85F";//"#c10000";
+			if ("BLACK" == color) return "#FAC51C";//"#000000";
+			if ("ZERO" == color)  return "#ffffff";//"#ffffff";
 		}
 
 		var badgeTemplate2 = `<svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24"><title>Earned {2}pts in {3}<\/title>
@@ -114,7 +120,7 @@
 			// Header
 			var hdr_tr = tableRef.insertRow(tableRef.rows.length);
 			var hdr_td = hdr_tr.insertCell(0);
-			var hdr_n = document.createTextNode("NINJA WALL");
+			var hdr_n = document.createTextNode("Red Hat Walk of Fame");
 			hdr_td.className = "header";
 			hdr_td.colSpan = cols;
 			hdr_td.appendChild(hdr_n);
@@ -142,7 +148,7 @@
 				users.push(username);
 				var belt = json['custom1'][i].split("|")[1];
 				var geo = json['custom1'][i].split("|")[2];
-				belt = (belt == "zero" ? "No" : "<span class='belt-" + belt + "'>" + uCase(belt)) + " Belt<\/span>";
+				belt = (belt == "zero" ? "No" : "<span class='belt-" + belt + "'>" + uCase(belt)) + " Star<\/span>";
 				var NL = "<br/>";
 
 				var badges = "";
