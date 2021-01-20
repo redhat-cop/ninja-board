@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.7/css/all.css"/>
 <script>
 	var ctx="https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs/api/proxy";
-	var server="https://dashboard.ninja.redhat.com/community-ninja-board/api";
+	var server="https://community-ninja-board-ninja-board.int.open.paas.redhat.com/community-ninja-board/api";
 	if (window.location.href.includes("localhost")){
 		server="http://localhost:8082/community-ninja-board/api";
 		ctx=server+"/scorecard";
@@ -267,7 +267,6 @@ Utils = {
 }
 
 function getUsername(){
-	return "ablock";
 	  var username;
 	  if ($("#username").length>0) return $("#username").val();
 	  
@@ -357,7 +356,6 @@ function _displ(username, dontReset){
 			    
 		    	
 		    	if (key=="level"){
-						//document.getElementsByClassName("_level")[0].src=ctx+"/../../images/"+value.toLowerCase()+"_belt_icon.png";
 						document.getElementsByClassName("_level")[0].innerHTML=badgeTemplate2.format(toColor(value));
 						
 		    	}else{
