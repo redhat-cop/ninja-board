@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.7/css/all.css"/>
 <script>
 	var ctx="https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs/api/proxy";
-	var server="https://dashboard.ninja.redhat.com/community-ninja-board/api";
+	var server="https://community-ninja-board-ninja-board.int.open.paas.redhat.com/community-ninja-board/api";
 	if (window.location.href.includes("localhost")){
 		server="http://localhost:8082/community-ninja-board/api";
 		ctx=server+"/scorecard";
@@ -101,11 +101,11 @@
 
 <center>
 	<div style="width:100%; background-color:#000">
-	 <div style="color:#fff; font-size:30px; font-weight:bold;">COMMUNITIES OF PRACTICE</div>
-	 <div style="color:#fff; font-size:30px; font-weight:bold;">YOUR GIVEBACK NINJA PROGRAM DASHBOARD</div>
+	 <div style="color:#fff; font-size:30px; font-weight:bold;">Red Hat Giveback Program</div>
+	 <div style="color:#fff; font-size:30px; font-weight:bold;">Participant Dashboard</div>
 	</div>
 	<div style="width:100%; background-color:#f2f1f1;">
-	 <div style="color:#444; font-size:10pt;">Hover over the chart to see your progress and/or what is needed to reach the next belt level.</div>
+	 <div style="color:#444; font-size:10pt;">Hover over the chart to see your progress and/or what is needed to reach the next star.</div>
 	</div>
 	
 	<br/>
@@ -173,7 +173,7 @@
 										
 										</style>
 										<td class="cardName" colspan="2"><span class="_displayName"></span><input class="_displayName_edit hidden edit_box" type="textbox"/><i style="font-size:10pt;" class="hidden fas fa-edit" onclick="toggleEditAndSave('displayName', this);"></i></td>
-										<td class="cardScore" rowspan="5"><img class="ninjaIcon _level"></img></td>
+										<td class="cardScore" rowspan="5"><div class="ninjaIcon _level"></img></td>
 										<td class="cardScore"><span class="_Trello">0</span></td>
 										<td class="cardScore"><span class="_Github">0</span></td>
 										<td class="cardScore"><span class="_Gitlab">0</span></td>
@@ -356,7 +356,8 @@ function _displ(username, dontReset){
 			    
 		    	
 		    	if (key=="level"){
-						document.getElementsByClassName("_level")[0].src=ctx+"/../../images/"+value.toLowerCase()+"_belt_icon.png";
+						document.getElementsByClassName("_level")[0].innerHTML=badgeTemplate2.format(toColor(value));
+						
 		    	}else{
 		    	  //$("#_"+key).text(value);
 		    		//document.getElementById("_"+key).innerText=value;
@@ -378,6 +379,27 @@ function _displ(username, dontReset){
 	// Show the points allocations
 	showPointsAllocations();
 }
+
+
+String.prototype.format = function(){
+	a = this;
+	for (k in arguments)
+		a = a.replace("{" + k + "}", arguments[k])
+	return a
+}
+
+function toColor(color){
+	if ("BLUE" == color)  return "#316EC2";//"#a4dbea";
+	if ("GREY" == color)  return "#808080";//"#999999";
+	if ("RED" == color)   return "#41A85F";//"#c10000";
+	if ("BLACK" == color) return "#FAC51C";//"#000000";
+	if ("ZERO" == color)  return "#ffffff";//"#ffffff";
+}
+
+var badgeTemplate2 = `<svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24"><title><\/title>
+        <path fill="{0}" d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/>
+        <text font-weight="bold" stroke="#000" xml:space="preserve" text-anchor="start" font-family="Helvetica, Arial, sans-serif" font-size="5.5" y="15" x="5.5" stroke-width="0" fill="#ffffff"><\/text>
+				<\/svg>`;
 	
 </script>
 

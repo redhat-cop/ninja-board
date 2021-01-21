@@ -47,7 +47,7 @@
 		.belt {
 			color: white;
 		}
-		
+		/*
 		.belt-black {
 			background-color: black !important;
 		}
@@ -63,6 +63,28 @@
 		.belt-blue {
 			background-color: #a4dbea !important;
 		}
+		*/
+		
+		.belt-blue {
+			/*color: #a4dbea;*/
+			background-color: #316EC2 !important;
+		}
+		
+		.belt-red {
+			/*color: #a21c20;*/
+			background-color: #41A85F !important;
+		}
+		
+		.belt-grey {
+			/*color: #999999;*/
+			background-color: #808080 !important;
+		}
+		
+		.belt-black {
+			/*color: #000000;*/
+			background-color: #FAC51C !important;
+		}
+		
 
 	</style>
 
@@ -70,10 +92,8 @@
 		<tbody>
 			<tr>
 				<td class="header" colspan="4">
-
-					<h2>Race to
-						<br>Black Belt!</h2>
-					<div class="subtitle">First to 75 points wins the race!</div>
+					<h2 style="text-align: center;"><span style="font-size: 24px;"><strong>Race to the<br>Gold Star!</strong></span></h2>
+					<div class="subtitle" style="text-align: center;">First to 75 points wins the race!</div>
 				</td>
 			</tr>
 		</tbody>

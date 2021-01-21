@@ -65,7 +65,7 @@ public class EventsController{
   	Pattern regex2=Pattern.compile("(\\d+) point.* added to (.+)");
   	
   	List<String> result=new ArrayList<>();
-  	result.add("Timestamp,User,Type,Points,Pool,Source");
+  	result.add("Timestamp,User,Email,Type,Points,Pool,Source");
   	for (Map<String, String> event:events){
   		String ts=event.get(EVENT_FIELDS.TIMESTAMP.v);
   		String user=event.get(EVENT_FIELDS.USER.v);
