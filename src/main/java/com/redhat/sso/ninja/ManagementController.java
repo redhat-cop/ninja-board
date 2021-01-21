@@ -343,13 +343,14 @@ public class ManagementController {
     log.debug(user+" user data for userInfo "+(userInfo!=null?"found":"NOT FOUND!"));
     
     String payload="{\"status\":\"ERROR\",\"message\":\"Unable to find user: "+user+"\", \"displayName\":\"You ("+user+") are not registered\"}";
-    if (scorecard!=null && userInfo!=null){
-      Map<String, Object> data=new HashMap<String, Object>();
-      data.put("userId", user);
-      data.putAll(scorecard);
-      data.putAll(userInfo);
-      payload=Json.newObjectMapper(true).writeValueAsString(data);
-    }
+    
+    Map<String, Object> data=new HashMap<String, Object>();
+    data.put("userId", user);
+    if (null!=scorecard)
+    	data.putAll(scorecard);
+    if (null!=userInfo)
+    	data.putAll(userInfo);
+    payload=Json.newObjectMapper(true).writeValueAsString(data);
     
     return NewResponse.status(payload.contains("ERROR")?500:200).entity(payload).build();
   }
@@ -438,19 +439,29 @@ public class ManagementController {
     
     for(String k:map.keySet()){
       if (!k.equals("userId")){
-        
+
         if (userInfo.containsKey(k)) {
-          log.debug("Setting 'userInfo."+k+"' to "+(String)map.get(k));
-          userInfo.put(k, (String)map.get(k));
-        }else if (scorecard.containsKey(k)) {
-          log.debug("Setting 'scorecard."+k+"' to "+(String)map.get(k));
-          scorecard.put(k, Integer.parseInt((String)map.get(k)));
+        	if (!userInfo.get(k).equals(map.get(k))){ // if it's changed then...
+        		log.debug("Setting 'userInfo."+k+"' to "+(String)map.get(k));
+        		db.addEvent("User Update", user, k+" changed from "+userInfo.get(k)+" to "+(String)map.get(k));
+        		userInfo.put(k, (String)map.get(k));
+        	}
+        }else if (scorecard.containsKey(k)){
+        	if (!scorecard.get(k).equals(map.get(k))){ // if it's changed then...
+        		log.debug("Setting 'scorecard."+k+"' to "+(String)map.get(k));
+        		db.addEvent("User Update", user, k+" changed from "+scorecard.get(k)+" to "+(String)map.get(k));
+        		scorecard.put(k, Integer.parseInt((String)map.get(k)));
+        	}
         }else{
-          log.debug("Setting 'userInfo."+k+"' to "+(String)map.get(k));
-          userInfo.put(k, (String)map.get(k));
+        	if (!userInfo.get(k).equals(map.get(k))){ // if it's changed then...
+        		log.debug("Setting 'userInfo."+k+"' to "+(String)map.get(k));
+        		db.addEvent("User Update", user, k+" set as "+(String)map.get(k));
+        		userInfo.put(k, (String)map.get(k));
+        	}
           //// ALERT! unknown field
           //log.error("UNKNOWN FIELD: "+k+" = "+map.get(k));
         }
+        
       }
     }
     
@@ -525,3 +536,4 @@ public class ManagementController {
   
   
 }
+
