@@ -169,7 +169,7 @@
 
 		function getUserPics(users)
 		{
-			var jqxhr = jQuery.getJSON("/.api2/api/v1/communities/10/search/members?query=" + users.join("+OR+") + "&memberSearchType=Namespace&limit=1000", function(data)
+			var jqxhr = jQuery.getJSON("/.api2/api/v1/communities/10/search/members?query=" + users.join("+OR+") + "&memberSearchType=email&limit=1000", function(data)
 			{
 				usersinfo = data.results;
 				for (i in usersinfo)

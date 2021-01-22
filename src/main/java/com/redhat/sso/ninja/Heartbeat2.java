@@ -535,6 +535,31 @@ public class Heartbeat2 {
       if (t!=null) t.cancel();
     }
     
+    // Just push the user info, no graphs since the graphs
+    public void publishGraphDataFor(String user){
+      String graphsProxyUrl=Config.get().getOptions().get("graphs-proxy");
+      if (null==graphsProxyUrl) graphsProxyUrl=System.getenv("GRAPHS_PROXY");
+      
+      if (!StringUtils.isEmpty(graphsProxyUrl)){
+        String url=graphsProxyUrl+"/api/proxy";
+        ChartsController cc=new ChartsController();
+        ManagementController mc=new ManagementController();
+        try{
+          if (200!=Http.post(url+"/nextLevel_"+user, (String)cc.getUserNextLevel(user).getEntity()).responseCode){
+            log.error("Error pushing 'nextLevel' info for '"+user+"' to graphsProxy");
+          }
+          if (200!=Http.post(url+"/summary_"+user, (String)mc.getScorecardSummary(user).getEntity()).responseCode){
+            log.error("Error pushing 'summary' info for '"+user+"' to graphsProxy");
+          }
+          if (200!=Http.post(url+"/breakdown_"+user, (String)mc.getUserBreakdown(user).getEntity()).responseCode){
+            log.error("Error pushing 'breakdown' info for '"+user+"' to graphsProxy");
+          }
+        }catch (IOException e){
+          e.printStackTrace();
+        }
+      }
+    }
+    
     public void publishGraphsData(Database2 db, Config config){
       String graphsProxyUrl=config.getOptions().get("graphs-proxy");
       if (null==graphsProxyUrl) graphsProxyUrl=System.getenv("GRAPHS_PROXY");

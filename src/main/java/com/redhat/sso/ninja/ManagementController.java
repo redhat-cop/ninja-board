@@ -285,6 +285,12 @@ public class ManagementController {
     return NewResponse.status(200).entity("RUNNING").build();
   }
   
+  // Pushes graph data for a specific user only (used in conjunction with user details update features so the UI pulls data from the graph proxy)
+  public void pushGraphDataFor(String user){
+  	new Heartbeat2.HeartbeatRunnable(null).publishGraphDataFor(user);
+  }
+  
+  
   // returns the database content - used in admin UI & backup purposes
   @GET
   @Path("/database/get")
@@ -318,11 +324,20 @@ public class ManagementController {
   	Map<String,String> values=Json.newObjectMapper(true).readValue(IOUtils2.toStringAndClose(request.getInputStream()), new TypeReference<Map<String,String>>() {});
   	Database2 db=Database2.get();
   	Map<String, String> userInfo=db.getUsers().get(user);
+  	if (null==userInfo) throw new JsonMappingException("User info for '"+user+"' not found");
   	for (Entry<String, String> e:values.entrySet()){
   		String existingValue=userInfo.get(e.getKey());
-//  		System.out.println((existingValue!=null?"changing existing ":"adding new ")+"value "+e.getKey()+"->"+e.getValue());
-  		userInfo.put(e.getKey(), e.getValue());
+  		if (!existingValue.equals(e.getValue())){
+  			userInfo.put(e.getKey(), e.getValue());
+  			// Add an event entry so we know what was changed and when
+  			db.addEvent("User Update", user, e.getKey()+" changed from "+existingValue+" to "+e.getValue());
+  		}
   	}
+  	
+  	// push the new data to the graphs proxy, so when the page refreshes it loads the new values from the proxy
+  	ManagementController mc=new ManagementController();
+  	mc.pushGraphDataFor(user);
+  	
   	db.save();
   	
   	return Response.status(200).build();
