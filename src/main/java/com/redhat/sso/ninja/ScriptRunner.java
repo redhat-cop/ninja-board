@@ -8,10 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
-
-import com.google.common.base.Joiner;
-
 public class ScriptRunner{
 	
 	public class ProcessResult{
