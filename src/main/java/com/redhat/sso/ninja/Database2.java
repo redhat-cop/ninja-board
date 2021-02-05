@@ -61,12 +61,10 @@ public class Database2{
   		return "[Trello: "+params.get("linkId")+"/"+params.get("id")+"](https://trello.com/c/"+params.get("linkId")+")";
   	}else if (params.get("id").startsWith("GH")){
   		if (params.get("pool").toLowerCase().contains("pull")){
-//			return "[Github PR: "+params.get("linkId")+"](https://github.com/"+params.get("org")+"/"+params.get("board")+"/pull/"+params.get("linkId")+")";
-			return "<https://github.com/"+params.get("org")+"/"+params.get("board")+"/pull/"+params.get("linkId")+">";
-		}else{ // assume "issues"
-//			return "[Github Issue: "+params.get("linkId")+"](https://github.com/"+params.get("org")+"/"+params.get("board")+"/issues/"+params.get("linkId")+")";
-			return "<https://github.com/"+params.get("org")+"/"+params.get("board")+"/issues/"+params.get("linkId")+">";
-		}
+				return "<https://github.com/"+params.get("org")+"/"+params.get("board")+"/pull/"+params.get("linkId")+">";
+			}else{ // assume "issues"
+				return "<https://github.com/"+params.get("org")+"/"+params.get("board")+"/issues/"+params.get("linkId")+">";
+			}
   	}
   	return "";
   }
