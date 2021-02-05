@@ -149,7 +149,7 @@
 				users.push(username);
 				var belt = json['custom1'][i].split("|")[1];
 				var geo = json['custom1'][i].split("|")[2];
-				belt = (belt == "zero" ? "No" : "<span class='belt-" + belt + "'>" + uCase(belt)) + " Star<\/span>";
+				belt = (belt == "zero" ? "No" : "<span class='belt-" + belt + "'>" + beltToStar(uCase(belt))) + " Star<\/span>";
 				var NL = "<br/>";
 
 				var badges = "";
@@ -187,7 +187,14 @@
 		{
 			return string.charAt(0).toUpperCase() + string.slice(1);
 		}
-
+		
+		function beltToStar(string)
+		{
+			if (string == "Black") return "Gold";
+			if (string == "Red") return "Green";
+			return string;
+		}
+		
 		function getUserPics(users)
 		{
 			var jqxhr = jQuery.getJSON("/.api2/api/v1/communities/10/search/members?query=" + users.join("+OR+") + "&memberSearchType=email&limit=1000", function(data)

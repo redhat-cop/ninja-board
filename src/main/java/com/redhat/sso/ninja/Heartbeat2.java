@@ -35,8 +35,10 @@ import org.apache.log4j.Logger;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.mortbay.log.Log;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.redhat.sso.ninja.ChatNotification.ChatEvent;
+import com.redhat.sso.ninja.ScriptRunner.ProcessResult;
 import com.redhat.sso.ninja.controllers.EventsController;
 import com.redhat.sso.ninja.user.UserService;
 import com.redhat.sso.ninja.user.UserService.User;
@@ -464,35 +466,18 @@ public class Heartbeat2 {
             	command=convertLastRun(command, lastRun);
             }
             
-            
             log.info("Script downloaded ("+version+"): "+originalCommand);
             log.info("Script executing: "+command);
             
-            Process script_exec=Runtime.getRuntime().exec(command);
-            script_exec.waitFor();
-            if(script_exec.exitValue() != 0){
-              
-              BufferedReader stdInput=new BufferedReader(new InputStreamReader(script_exec.getInputStream()));
-              StringBuffer sb=new StringBuffer();
-              String s;
-              while ((s=stdInput.readLine()) != null) sb.append(s).append("\n");
-              log.error("Error while executing script (stdout): "+sb.toString());
-              
-              BufferedReader stdErr=new BufferedReader(new InputStreamReader(script_exec.getErrorStream()));
-              sb.setLength(0);
-              while ((s=stdErr.readLine()) != null) sb.append(s).append("\n");
-              log.error("Error while executing script (stderr): "+sb.toString());
-              
-              db.addEvent("Script Execution FAILED", "", command+"\nERROR (stderr):\n"+sb.toString());
-              
-              new ChatNotification().send(ChatEvent.onScriptError, name+" script failure occurred. Please investigate");
-              
-              scriptFailure=true;
-              
-            }else{
-            	allocatePoints(db, script_exec.getInputStream(), script, scriptFolder, poolToUserIdMapper);
-            	db.addEvent("Script Execution Succeeded", "", command +" (took "+(System.currentTimeMillis()-start)+"ms)");
-            	
+            PointsAllocation allocate=new PointsAllocation().database(db).mapper(poolToUserIdMapper).scriptName((String)script.get("name"));
+            
+            ProcessResult process=new ScriptRunner().run(scriptFolder, command);
+            if (0==process.exitValue()){
+            	for(String line:process.lines())
+            		allocate.allocatePoints2(line);
+            }else{ // error
+            	db.addEvent("Script Execution FAILED", "", command+"\nERROR (stderr):\n"+ Joiner.on("\n").join(process.lines()));
+            	new ChatNotification().send(ChatEvent.onScriptError, name+" script failure occurred. Please investigate");
             }
             
           }catch (IOException e){
@@ -616,7 +601,6 @@ public class Heartbeat2 {
         try{
         	Map<String,String> filters=new MapBuilder<String,String>().put("daysOld", "180").put("events","User Promotion,Points Increment").put("asCSV", "true").build();
         	String events=(String)ec.getEventsV2(filters);
-        	System.out.println("\n\n\n"+events);
           if (200!=Http.post(url+"/events180", events).responseCode)
             log.error("Error pushing 'events180' info to graphsProxy");
         }catch (IOException e){ e.printStackTrace(); }
@@ -652,7 +636,7 @@ public class Heartbeat2 {
             db.addEvent("User Promotion", userInfo.get("username"), "Promoted to "+nextLevel.getRight());
             
             String displayName=userInfo.containsKey("displayName")?userInfo.get("displayName"):userInfo.get("username");
-            String message="<https://mojo.redhat.com/people/"+userInfo.get("username")+"|"+displayName+"> promoted to "+nextLevel.getRight()+" belt";
+            String message=displayName +" promoted to "+nextLevel.getRight();
             db.addTask(message, userInfo.get("username"));
             
             // Notify everyone on the Ninja chat group of a new belt promotion

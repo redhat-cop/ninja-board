@@ -1,6 +1,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script src="https://www.chartjs.org/dist/2.7.2/Chart.bundle.js"></script>
 <script src="../js/http.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.6.4/showdown.min.js"></script>
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.7/css/all.css"/>
 <script>
 	var ctx="https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs/api/proxy";
@@ -552,32 +553,63 @@ function refresh(){
 //refresh();
 </script>
 	
-	
 	<script>
-	$(document).ready(function() {
+	var markdown;
+	$(document).ready(function(){
+		if (typeof showdown !== 'undefined')
+			markdown=new showdown.Converter();
 	});
 	
 	function showPointsAllocations(){
 		$("#eventsBody").html("");
 		Http.httpGet("../api/events?user="+getUsername(), function(response,status){
-			console.log("status="+status);
 			response=JSON.parse(response);
 			for(i in response){
 				var item=response[i];
 				if (item["type"]=="Points Increment"){
 					var ts=item["timestamp"].split("T")[0];
-					var txt=item["text"].substring(0, item["text"].indexOf("added"));
-					txt+="- ";
+					var txt;
 					
-					if (item["text"].indexOf("[")>=0){
-						var first=item["text"].substring(item["text"].indexOf("http"));
-						first=item["text"].substring(item["text"].indexOf("["));
-						first=first.substring(0, first.indexOf("]"))+"]";
+					// support newer split event field format (post Jan 2021). although there are 2 markdown formats to support. one <url> and the other [name](url)
+					if (item["points"] && item["source"]){
+						var source;
+						// display the links a bit nicer if we can, extracting bits using regex
+						if (item["source"].startsWith("<") && item["source"].endsWith(">")){
+							var name;
+							if (item["source"].includes("github")){
+								var match=item["source"].match(/http.*\/\/(.+)\/(.+)\/(.+)\/(.+)\/(.+)>/);
+								name=match[2]+"/"+match[3]+" "+match[4]+" "+match[5]; // 2=org, 3=board, 4=contribution type, 5=id
+							}
+							if (item["source"].includes("gitlab")){
+								var match=item["source"].match(/http.*\/\/(.+)\/(.+)\/(.+)\/(.+)\/(.+)\/(.+)>/);
+								name=match[2]+"/"+match[3]+" "+match[5]+" "+match[6]; // 2=org, 3=board, 5=contribution type, 6=id
+							}
+							if (item["source"].includes("trello")){
+								var match=item["source"].match(/http.*\/\/(.+)\.(.+)\/(.+)\/(.+)>/); // 1=trello, 4=trello card id
+								name=match[1]+"/"+match[4];
+							}
+							
+							source="["+name+"]("+item["source"]+")";
+						}else // assume link has a descriptor, so use as is
+							source=item["source"]
+						txt=item["points"]+" point - "+source;
+						txt=markdown.makeHtml(txt);
 					}else{
-						first="Unknown";
+						// support for older event text messages (pre Jan 2021)
+						txt=item["text"].substring(0, item["text"].indexOf("added"));
+						txt+="- ";
+						
+						// support pre showdown markup link in the following format [url](name)
+						if (item["text"].indexOf("[")>=0){
+							var first=item["text"].substring(item["text"].indexOf("http"));
+							first=item["text"].substring(item["text"].indexOf("["));
+							first=first.substring(0, first.indexOf("]"))+"]";
+						}else{
+							first="Unknown";
+						}
+						txt+=processText(first);
 					}
 					
-					txt+=processText(first);
 					//txt=processText(item["text"]);
 					$("#eventsBody").append("<tr><td>"+ts+"</td><td>"+txt+"</td></tr>");
 				}

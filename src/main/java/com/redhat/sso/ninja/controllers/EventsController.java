@@ -137,8 +137,6 @@ public class EventsController{
   	for(Map<String, String> v:result){
   		// add a generated "text" field if none exists - this is because on the events UI there is not enough space for all the separated fields
   		if ("Points Increment".equals(v.get(EVENT_FIELDS.TYPE.v)) && !v.containsKey(EVENT_FIELDS.TEXT.v)){
-//  			System.out.println("adding a text field");
-//    		if (!v.containsKey(EVENT_FIELDS.TEXT.v)){// && v.containsKey(EVENT_FIELDS.POINTS.v)){
   			Integer points=Integer.parseInt(v.get(EVENT_FIELDS.POINTS.v));
   			v.put(EVENT_FIELDS.TEXT.v, points+" point"+(points<=1?"":"s")+" added to "+v.get(EVENT_FIELDS.POOL.v)+" "+convertSourceToShowdown(v.get(EVENT_FIELDS.SOURCE.v)));
   		}
@@ -218,7 +216,7 @@ public class EventsController{
       			}
       		}
       		
-      		if (include) result.add(e);
+      		if (include) result.add(new HashMap<>(e));
       	}
       }
     }
