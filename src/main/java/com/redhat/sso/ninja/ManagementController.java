@@ -327,11 +327,18 @@ public class ManagementController {
   	if (null==userInfo) throw new JsonMappingException("User info for '"+user+"' not found");
   	for (Entry<String, String> e:values.entrySet()){
   		String existingValue=userInfo.get(e.getKey());
-  		if (!existingValue.equals(e.getValue())){
+  		
+  		if (null==existingValue){ // no existing, value so just add it
   			userInfo.put(e.getKey(), e.getValue());
-  			// Add an event entry so we know what was changed and when
-  			db.addEvent("User Update", user, e.getKey()+" changed from "+existingValue+" to "+e.getValue());
+  			db.addEvent("User Update", user, e.getKey()+" added as "+e.getValue());
+  		}else{ // value exists, so update it (if it's changed)
+  			if (!existingValue.equals(e.getValue())){
+  				userInfo.put(e.getKey(), e.getValue());
+  				// Add an event entry so we know what was changed and when
+  				db.addEvent("User Update", user, e.getKey()+" changed from "+existingValue+" to "+e.getValue());
+  			}
   		}
+  		
   	}
   	
   	// push the new data to the graphs proxy, so when the page refreshes it loads the new values from the proxy
