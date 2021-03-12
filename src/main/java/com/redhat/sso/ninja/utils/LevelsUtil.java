@@ -54,6 +54,13 @@ public class LevelsUtil{
     }
     return null; // should never happen
   }
+  public Tuple<Integer,String> getLastLevel(String currentLevelName){
+  	if (levels.get(0).getRight().equals(currentLevelName)) return levels.get(0);
+    for(int i=levels.size()-1;i>=0;i--){
+      if (levels.get(i).getRight().equals(currentLevelName)) return levels.get((i-1)==levels.size()?i:i-1);
+    }
+    return null; // should never happen
+  }
   
   //logic: last one you hit where the points are greater than required for the level
   public Tuple<Integer,String> getLevelGivenPoints(Integer points){

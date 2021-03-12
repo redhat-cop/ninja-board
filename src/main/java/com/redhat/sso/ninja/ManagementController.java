@@ -326,16 +326,26 @@ public class ManagementController {
   	Map<String, String> userInfo=db.getUsers().get(user);
   	if (null==userInfo) throw new JsonMappingException("User info for '"+user+"' not found");
   	for (Entry<String, String> e:values.entrySet()){
-  		String existingValue=userInfo.get(e.getKey());
   		
-  		if (null==existingValue){ // no existing, value so just add it
-  			userInfo.put(e.getKey(), e.getValue());
-  			db.addEvent("User Update", user, e.getKey()+" added as "+e.getValue());
-  		}else{ // value exists, so update it (if it's changed)
-  			if (!existingValue.equals(e.getValue())){
+  		String existingValue=userInfo.get(e.getKey());
+  		if ("displayName".equals(e.getKey()) || e.getKey().endsWith("Id")){ // ensure we only update info fields, not points or levels
+  			
+  			if (null==existingValue){ // no existing, value so just add it
   				userInfo.put(e.getKey(), e.getValue());
-  				// Add an event entry so we know what was changed and when
-  				db.addEvent("User Update", user, e.getKey()+" changed from "+existingValue+" to "+e.getValue());
+  				db.addEvent("User Update", user, e.getKey()+" added as "+e.getValue());
+  			}else{ // value exists, so update it (if it's changed)
+  				if (!existingValue.equals(e.getValue())){
+  					userInfo.put(e.getKey(), e.getValue());
+  					// Add an event entry so we know what was changed and when
+  					db.addEvent("User Update", user, e.getKey()+" changed from "+existingValue+" to "+e.getValue());
+  				}
+  			}
+  			
+  		}else{
+  			// Field NOT ALLOWED - potential fraudulent activity
+  			if (e.getKey().contains("level")){
+  				log.warn("Suspicious Activity: User ["+user+"] attempting to update their level from ["+existingValue+"] to ["+e.getValue()+"]");
+  				new ChatNotification().send(ChatNotification.ChatEvent.onSystemWarning, "Suspicious Activity: User "+user+" has attempted to update their level via the API from "+existingValue+" to "+e.getValue()+"");
   			}
   		}
   		
@@ -523,9 +533,15 @@ public class ManagementController {
       }
       
       // points to next level
-      Integer pointsToNextLevel=LevelsUtil.get().getNextLevel(userInfo.get("level")).getLeft()-total;
-      if (pointsToNextLevel<0) pointsToNextLevel=0;
-      row.put("pointsToNextLevel", pointsToNextLevel);
+      if (null==userInfo.get("level") || null==LevelsUtil.get().getNextLevel(userInfo.get("level"))){
+      	log.error("Invalid level for user "+row.get("name")+" : "+Json.newObjectMapper(true).writeValueAsString(userInfo));
+      	row.put("pointsToNextLevel", 0);
+      }else{
+      	Integer pointsToNextLevel=LevelsUtil.get().getNextLevel(userInfo.get("level")).getLeft()-total;
+      	if (pointsToNextLevel<0) pointsToNextLevel=0;
+      	row.put("pointsToNextLevel", pointsToNextLevel);
+      }
+      
       data.add(row);
     }
     
