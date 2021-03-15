@@ -13,7 +13,7 @@ import com.redhat.sso.ninja.utils.MapBuilder;
  * @author mallen
  */
 public class ChatNotification{
-	public enum ChatEvent{onRegistration,onBeltPromotion,onScriptError}
+	public enum ChatEvent{onRegistration,onBeltPromotion,onBeltDemotion,onScriptError,onSystemWarning}
 //	public static void main(String[] asd){
 //		Config c=Config.get();
 //		System.out.println("googlehangoutschat.webhook.template="+c.getOptions().get("googlehangoutschat.webhook.template"));
