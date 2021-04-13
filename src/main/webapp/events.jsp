@@ -42,26 +42,13 @@ function loadDataTable(){
             		var markDownConverter = new showdown.Converter();
         				var str = markDownConverter.makeHtml(result);
         				//remove root paragraphs <p></p>
-        				str = str.substring(3);
-        				str = str.substring(0, str.length - 4);
-        				result = str;
+        				if (str!=undefined){
+	        				if (str==undefined || str.length<=3) console.log("error: str="+result)
+	        				str = str.substring(3);
+	        				str = str.substring(0, str.length - 4);
+	        				result = str;
+        				}
             	}
-              
-              if (/.*\[.+\].*/.test(row['text'])){ // look for a set of square brackets
-                var before=/.*\[(.+)\].*/.exec(row['text']);
-                
-                var split=before[1].split("|");
-                var title=split[0];
-                var link=split[1];
-                link="<a href='"+link+"'>"+title+"</a>";
-                
-                var find1=escapeRegExp(("["+before[1]+"]").replace(/\[/g,'\\[').replace(/\]/g,'\\]').replace(/\|/g,'\\|'));
-                var find2=("["+before[1]+"]").replace(/\[/g,'\\[').replace(/\]/g,'\\]').replace(/\|/g,'\\|');
-                
-                var after=row['text'].replace(new RegExp(find2, 'g'), link);
-                
-                result=after;
-              }
               
               return result;
             }},  

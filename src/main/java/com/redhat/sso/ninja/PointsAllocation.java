@@ -54,6 +54,10 @@ public class PointsAllocation{
 			
 			// take the last section of the script name as the pool id. so "trello" stays as "trello", but "trello.thoughtleadership" becomes "thoughtleadership" where the "trello" part is the source type/context
 			String pool=(String)scriptName;
+			if (params.containsKey("pool")){
+				log.debug("updating pool name from params from ["+pool+"] to ["+params.get("pool")+"] ");
+				pool=params.get("pool");
+			}
 			String[] splitPool=pool.split("\\.");
 			pool=splitPool[splitPool.length-1];
 			
@@ -78,8 +82,8 @@ public class PointsAllocation{
 					if (null!=userId){
 						db.increment(pool, userId, inc, params);//.save();
 					}else{
-						log.info("Unable to find '"+poolUserId+"' "+scriptName+" user - not registered? "+Database2.buildLink(params));
-						db.addEvent("Lost Points", poolUserId +"("+scriptName+")", scriptName+" user '"+poolUserId+"' was not found - not registered? "+Database2.buildLink(params));
+						log.info("Unable to find '"+poolUserId+"' "+scriptName+" user - not registered? "+Database2.buildLinkMarkdown(params));
+						db.addEvent("Lost Points", poolUserId +"("+scriptName+")", scriptName+" user '"+poolUserId+"' was not found - not registered? "+Database2.buildLinkMarkdown(params));
 					}
 				}else{
 					// it's a duplicate increment for that actionId & user, so ignore it

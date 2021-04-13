@@ -65,23 +65,8 @@ public class Database2{
 			}else{ // assume "issues"
 				return "<https://github.com/"+params.get("org")+"/"+params.get("board")+"/issues/"+params.get("linkId")+">";
 			}
-  	}
-  	return "";
-  }
-  
-  // my custom UI format
-  public static String buildLink(Map<String,String> params){
-  	if (!params.containsKey("linkId")) return "";
-  	if (params.get("id").startsWith("TR")){
-  		return "([Trello card: "+params.get("linkId")+"|https://trello.com/c/"+params.get("linkId")+"] / "+params.get("id")+")";
-  	}else if (params.get("id").startsWith("GH")){
-  		if (params.get("pool").toLowerCase().contains("pull")){
-  			return "([Github card: "+params.get("linkId")+"|https://github.com/"+params.get("org")+"/"+params.get("board")+"/pull/"+params.get("linkId")+"] / "+params.get("id")+")";
-  		}else{ // assume "issues"
-  			return "([Github card: "+params.get("linkId")+"|https://github.com/"+params.get("org")+"/"+params.get("board")+"/issues/"+params.get("linkId")+"] / "+params.get("id")+")";
-  		}
-  	//}else if (params.get("id").startsWith("GL")){
-  	//	return "([Gitlab card: "+params.get("linkId")+"|"+params.get("linkId")+"])";
+  	}else if (params.get("id").startsWith("SS")){ // smartsheets
+  		return "[Smartsheets: "+params.get("linkId")+"](https://app.smartsheet.com/sheets/"+params.get("board")+")";
   	}
   	return "";
   }
