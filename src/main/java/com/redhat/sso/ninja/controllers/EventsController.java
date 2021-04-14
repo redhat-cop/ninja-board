@@ -120,11 +120,23 @@ public class EventsController{
     return NewResponse.status(200).entity(Json.newObjectMapper(true).writeValueAsString(getFilteredEvents1(filters))).build();
   }
   private List<Map<String, String>> getFilteredEvents1(Map<String,String> filters) throws JsonGenerationException, JsonMappingException, IOException{
-//  	System.out.println("getFilteredEvents1");
     Database2 db=Database2.get();
     List<Map<String, String>> result=new ArrayList<Map<String,String>>();
+    
+    // bug fixing, the "text" field sometimes got written back to the database events, so here we're going to strip it back out
+    int changed=0;
+    for(Map<String, String> e:db.getEvents()){
+    	if ((e.get("type").equals("Points Increment") || e.get("type").equals("New User")) && e.containsKey("text")) e.remove("text");
+    	changed+=1;
+    }
+    if (changed>0){
+    	log.info("updated "+changed+" events to strip out unnecessary 'text' fields");
+    	db.save();
+    }
+    
     if (filters.size()<=0){
-      result.addAll(db.getEvents());
+      for (Map<String, String> e:db.getEvents())
+      	result.add(new HashMap<>(e));
     }else{
     	for(Map<String, String> e:db.getEvents()){
     		HashMap<String,String> v=new HashMap<>(e);
@@ -138,7 +150,7 @@ public class EventsController{
   		// add a generated "text" field if none exists - this is because on the events UI there is not enough space for all the separated fields
   		if ("Points Increment".equals(v.get(EVENT_FIELDS.TYPE.v)) && !v.containsKey(EVENT_FIELDS.TEXT.v)){
   			Integer points=Integer.parseInt(v.get(EVENT_FIELDS.POINTS.v));
-  			v.put(EVENT_FIELDS.TEXT.v, points+" point"+(points<=1?"":"s")+" added to "+v.get(EVENT_FIELDS.POOL.v)+" "+convertSourceToShowdown(v.get(EVENT_FIELDS.SOURCE.v)));
+  			v.put(EVENT_FIELDS.TEXT.v, points+" point"+(points<=1?"":"s")+" added to "+v.get(EVENT_FIELDS.POOL.v)+" "+v.get(EVENT_FIELDS.SOURCE.v));
   		}
   		
   		if ("New User".equals(v.get(EVENT_FIELDS.TYPE.v))){
@@ -150,16 +162,6 @@ public class EventsController{
   	return result;
   }
   
-  // convert link format to showdown markdown?
-  private String convertSourceToShowdown(String source){
-		Pattern p=Pattern.compile(".+\\((.+)\\)");
-		Matcher m=p.matcher(source);
-		if (m.find()){
-			String link=m.group(1);
-			return "<"+link+">";
-		}
-		return source;
-  }
   
 //  // Admin/Support UI call to display all events, user events or specific types of events
 //  @GET
@@ -228,7 +230,7 @@ public class EventsController{
 //  			System.out.println("adding a text field");
 //    		if (!v.containsKey(EVENT_FIELDS.TEXT.v)){// && v.containsKey(EVENT_FIELDS.POINTS.v)){
   			Integer points=Integer.parseInt(v.get(EVENT_FIELDS.POINTS.v));
-  			v.put(EVENT_FIELDS.TEXT.v, points+" point"+(points<=1?"":"s")+" added to "+v.get(EVENT_FIELDS.POOL.v)+" "+convertSourceToShowdown(v.get(EVENT_FIELDS.SOURCE.v)));
+  			v.put(EVENT_FIELDS.TEXT.v, points+" point"+(points<=1?"":"s")+" added to "+v.get(EVENT_FIELDS.POOL.v)+" "+v.get(EVENT_FIELDS.SOURCE.v));
   		}
   		
   		if ("New User".equals(v.get(EVENT_FIELDS.TYPE.v))){
