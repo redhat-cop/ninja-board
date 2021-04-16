@@ -50,6 +50,8 @@ objects:
             value: ${TRELLO_API_KEY}
           - name: GITLAB_API_TOKEN
             value: ${GITLAB_API_TOKEN}
+          - name: SMARTSHEETS_API_TOKEN
+            value: ${SMARTSHEETS_API_TOKEN}
           - name: GD_CREDENTIALS
             value: ${GD_CREDENTIALS}
           - name: XGRAPHS_PROXY
@@ -159,6 +161,9 @@ parameters:
   required: true
 - description: Token for the Gitlab API.
   name: GITLAB_API_TOKEN
+  required: true
+- description: Token for the Smartsheets API.
+  name: SMARTSHEETS_API_TOKEN
   required: true
 - description: Google Drive credentials.
   name: GD_CREDENTIALS
