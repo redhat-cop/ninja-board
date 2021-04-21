@@ -37,10 +37,12 @@ objects:
         FROM openshift3/jboss-webserver31-tomcat7-openshift:latest
         USER 0
         RUN yum clean all && \
-          INSTALL_PKGS="python-requests pytz" && \
+          yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
+          INSTALL_PKGS="python-pip python-requests pytz" && \
           yum install -y --setopt=tsflags=nodocs $INSTALL_PKGS && \
           rpm -V $INSTALL_PKGS && \
-          yum clean all
+          yum clean all && \
+          pip install --no-cache-dir enum smartsheet-python-sdk
         USER 185
       type: Dockerfile
     strategy:
