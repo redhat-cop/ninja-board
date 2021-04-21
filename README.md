@@ -10,6 +10,7 @@ export TRELLO_API_TOKEN=<your token>
 export TRELLO_API_KEY=<your token>
 export GITHUB_API_TOKEN=<your token>
 export GITLAB_API_TOKEN=<your token>
+export SMARTSHEETS_API_TOKEN=<your token>
 export GD_CREDENTIALS=<contents of you google drive credentials.json file (escaped & in quotes)>
 export GRAPHS_PROXY=<optional: url to an external proxy storage app> 
 export USERS_LDAP_PROVIDER=<optional: ldap url for user lookup>
