@@ -66,7 +66,7 @@ public class Database2{
 				return "<https://github.com/"+params.get("org")+"/"+params.get("board")+"/issues/"+params.get("linkId")+">";
 			}
   	}else if (params.get("id").startsWith("SS")){ // smartsheets
-  		return "[Smartsheets: "+params.get("linkId")+"](https://app.smartsheet.com/sheets/"+params.get("board")+")";
+  		return "[Smartsheets: "+params.get("linkId")+"](https://app.smartsheet.com/sheets/"+params.get("board")+(null!=params.get("rowId")?"?rowId="+params.get("rowId"):"")+")";
   	}
   	return "";
   }

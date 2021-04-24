@@ -4,11 +4,12 @@ github_api_token: ""
 trello_api_token: ""
 trello_api_key: ""
 gitlab_api_token: ""
+smartsheets_api_token: ""
 gd_credentials: ''
 xgraphs_proxy: ""
 users_ldap_provider: ""
 
-# Alternatively, use environment speicfic variables
+# Alternatively, use environment specific variables
 
 ## Development
 #dev_github_api_token: ""
