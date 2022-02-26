@@ -1,4 +1,3 @@
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script src="https://www.chartjs.org/dist/2.7.2/Chart.bundle.js"></script>
 <script src="../js/http.js"></script>
@@ -655,4 +654,3 @@ function refresh(){
 
 
 </center>
-
