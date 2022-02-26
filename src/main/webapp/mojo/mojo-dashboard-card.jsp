@@ -12,7 +12,6 @@
 		server="http://localhost:8082/community-ninja-board/api";
 		ctx=server+"/scorecard";
 	}
-	//var ctx = "/community-ninja-board";
 </script>
 <style>
 		body{
@@ -656,3 +655,4 @@ function refresh(){
 
 
 </center>
+
