@@ -1,0 +1,81 @@
+kind: DeploymentConfig
+apiVersion: apps.openshift.io/v1
+metadata:
+  name: ninja-board
+  namespace: giveback--prod
+  labels:
+    app.kubernetes.io/part-of: giveback
+spec:
+  strategy:
+    type: Rolling
+    rollingParams:
+      updatePeriodSeconds: 1
+      intervalSeconds: 1
+      timeoutSeconds: 600
+      maxUnavailable: 25%
+      maxSurge: 25%
+    resources: {}
+    activeDeadlineSeconds: 21600
+  triggers:
+    - type: ConfigChange
+  replicas: 1
+  revisionHistoryLimit: 10
+  test: false
+  selector:
+    app: ninja-board
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ninja-board
+    spec:
+      volumes:
+        - name: giveback-prod-storage
+          persistentVolumeClaim:
+            claimName: giveback-prod-storage
+      containers:
+        - resources: {}
+          terminationMessagePath: /dev/termination-log
+          name: ninja-board
+          env:
+            - name: GITHUB_API_TOKEN
+              value: 7935781f5b2c74302f91d3274736958cf2521438
+            - name: TRELLO_API_TOKEN
+              value: 85e332445c4d221e09ecd0d1309a795c4f6aa0b99249852d896d3cee1f235610
+            - name: TRELLO_API_KEY
+              value: 39cca1583d34154be24aa99ee024106d
+            - name: GITLAB_API_TOKEN
+              value: sacCXjRwS9mDcKQsJJFC
+            - name: SMARTSHEETS_API_TOKEN
+              value: 7o8djelr503ekzb4phyje3wvoh
+            - name: GD_CREDENTIALS
+              value: >-
+                {"access_token":
+                "ya29.GlxsB54BamYjni1ZZGLfOW2MhlOQuJA2Mh4sEMHWaUYJNntKiYL6v42ivmP9EXInBetcaTltbbjcsqOLLuT8jA0ucBUBEmYNahCdqanPtLGIYKjueuSBCmAz2yakzA",
+                "token_type": "Bearer", "refresh_token":
+                "1/dktL5rchPlNJlY7CezrMp3cBt4k6j8Tx_5NLGmkA8D5yO1KqDR0_gWOTosp3H-wx",
+                "expiry": "2019-08-22T13:48:25.666651305-05:00"}
+            - name: GRAPHS_PROXY
+              value: >-
+                http://ninja-graphs-giveback--prod.apps.int.spoke.prod.us-east-1.aws.paas.redhat.com/ninja-graphs
+            - name: USERS_LDAP_PROVIDER
+              value: 'ldap://ldap.corp.redhat.com:389'
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+            - containerPort: 8443
+              protocol: TCP
+            - containerPort: 8778
+              protocol: TCP
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: giveback-prod-storage
+              mountPath: /home/jboss
+              subPath: target/ninja-persistence
+          terminationMessagePolicy: File
+          image: 'images.paas.redhat.com/giveback/ninja-board:latest'
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
