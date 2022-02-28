@@ -39,27 +39,22 @@ spec:
           name: ninja-board
           env:
             - name: GITHUB_API_TOKEN
-              value: 7935781f5b2c74302f91d3274736958cf2521438
+              value: SET
             - name: TRELLO_API_TOKEN
-              value: 85e332445c4d221e09ecd0d1309a795c4f6aa0b99249852d896d3cee1f235610
+              value: SET
             - name: TRELLO_API_KEY
-              value: 39cca1583d34154be24aa99ee024106d
+              value: SET
             - name: GITLAB_API_TOKEN
-              value: sacCXjRwS9mDcKQsJJFC
+              value: SET
             - name: SMARTSHEETS_API_TOKEN
-              value: 7o8djelr503ekzb4phyje3wvoh
+              value: SET
             - name: GD_CREDENTIALS
-              value: >-
-                {"access_token":
-                "ya29.GlxsB54BamYjni1ZZGLfOW2MhlOQuJA2Mh4sEMHWaUYJNntKiYL6v42ivmP9EXInBetcaTltbbjcsqOLLuT8jA0ucBUBEmYNahCdqanPtLGIYKjueuSBCmAz2yakzA",
-                "token_type": "Bearer", "refresh_token":
-                "1/dktL5rchPlNJlY7CezrMp3cBt4k6j8Tx_5NLGmkA8D5yO1KqDR0_gWOTosp3H-wx",
-                "expiry": "2019-08-22T13:48:25.666651305-05:00"}
+              value: SET
             - name: GRAPHS_PROXY
               value: >-
                 http://ninja-graphs-giveback--prod.apps.int.spoke.prod.us-east-1.aws.paas.redhat.com/ninja-graphs
             - name: USERS_LDAP_PROVIDER
-              value: 'ldap://ldap.corp.redhat.com:389'
+              value: SET
           ports:
             - containerPort: 8080
               protocol: TCP
