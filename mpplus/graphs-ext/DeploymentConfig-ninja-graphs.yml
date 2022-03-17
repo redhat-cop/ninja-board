@@ -1,0 +1,58 @@
+kind: DeploymentConfig
+apiVersion: apps.openshift.io/v1
+metadata:
+  name: ninja-graphs
+  namespace: giveback--graphs-ext
+  labels:
+    app.kubernetes.io/part-of: giveback
+spec:
+  strategy:
+    type: Rolling
+    rollingParams:
+      updatePeriodSeconds: 1
+      intervalSeconds: 1
+      timeoutSeconds: 600
+      maxUnavailable: 25%
+      maxSurge: 25%
+    resources: {}
+    activeDeadlineSeconds: 21600
+  triggers:
+    - type: ConfigChange
+  replicas: 1
+  revisionHistoryLimit: 10
+  test: false
+  selector:
+    app: ninja-graphs
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ninja-graphs
+    spec:
+      volumes:
+        - name: giveback-graphs-storage
+          persistentVolumeClaim:
+            claimName: giveback-graphs-storage
+      containers:
+        - resources: {}
+          terminationMessagePath: /dev/termination-log
+          name: ninja-graphs
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+            - containerPort: 8443
+              protocol: TCP
+            - containerPort: 8778
+              protocol: TCP
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: giveback-graphs-storage
+              mountPath: /home/jboss
+              subPath: target/ninja-persistence
+          terminationMessagePolicy: File
+          image: 'images.paas.redhat.com/giveback/ninja-graphs:latest'
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler

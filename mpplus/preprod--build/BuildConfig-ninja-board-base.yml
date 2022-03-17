@@ -1,0 +1,86 @@
+kind: BuildConfig
+apiVersion: build.openshift.io/v1
+metadata:
+  name: ninja-board-base
+  namespace: giveback--build
+spec:
+  nodeSelector: null
+  output:
+    to:
+      kind: ImageStreamTag
+      name: 'ninja-board-base:latest'
+  resources: {}
+  successfulBuildsHistoryLimit: 5
+  failedBuildsHistoryLimit: 5
+  strategy:
+    type: Docker
+    dockerStrategy:
+      from:
+        kind: ImageStreamTag
+        namespace: openshift
+        name: 'jboss-webserver31-tomcat7-openshift:1.1'
+  postCommit: {}
+  source:
+    type: Dockerfile
+    dockerfile: |-
+
+      FROM openshift/jboss-webserver31-tomcat7-openshift:latest
+      USER 0
+
+      # Copy entitlements
+      COPY ./etc-pki-entitlement /etc/pki/entitlement
+
+      # Copy keys
+      COPY ./etc-pki-consumer /etc/pki/consumer
+      COPY ./etc-pki-product /etc/pki/product
+
+      # Copy repository configuration
+      COPY ./etc-rhsm-conf /etc/rhsm/
+      COPY ./etc-rhsm-ca /etc/rhsm/ca
+      COPY ./usr-share-rhsmplugins /usr/share/rhsm-plugins
+
+      RUN rm -f /etc/rhsm-host && \
+        yum clean all && \
+        subscription-manager repos --disable='*' && \
+        subscription-manager repos --enable="rhel-7-server-rpms" && \
+        yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
+        INSTALL_PKGS="ca-certificates python2-pip python-requests pytz" && \
+        yum install -y --setopt=tsflags=nodocs $INSTALL_PKGS && \
+        rpm -V $INSTALL_PKGS && \
+        yum clean all && \
+                pip install --no-cache-dir enum smartsheet-python-sdk && \
+                pip install --no-cache-dir urllib3 --upgrade && \
+                pip install --no-cache-dir enum34 && \
+                ln  -s /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem /usr/lib/python2.7/site-packages/certifi/cacert.pem -f
+
+      RUN rm -rf /etc/pki/entitlement && \
+        rm -rf /etc/rhsm
+
+      USER 185
+    secrets:
+      - secret:
+          name: etc-pki-entitlement
+        destinationDir: etc-pki-entitlement
+      - secret:
+          name: consumer-keys
+        destinationDir: etc-pki-consumer
+      - secret:
+          name: product-keys
+        destinationDir: etc-pki-product
+    configMaps:
+      - configMap:
+          name: rhsm-conf
+        destinationDir: etc-rhsm-conf
+      - configMap:
+          name: rhsm-ca
+        destinationDir: etc-rhsm-ca
+      - configMap:
+          name: rhsmplugins
+        destinationDir: usr-share-rhsmplugins
+  triggers:
+    - type: ImageChange
+      imageChange:
+        lastTriggeredImageID: >-
+          image-registry.openshift-image-registry.svc:5000/openshift/jboss-webserver31-tomcat7-openshift@sha256:db8c51f756447deebe1e963e6f0880b86c0d000255301aabef89c35b18e3fdb8
+    - type: ConfigChange
+  runPolicy: Serial

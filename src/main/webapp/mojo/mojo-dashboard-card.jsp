@@ -5,12 +5,12 @@
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.7/css/all.css"/>
 <script>
 	var ctx="https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs/api/proxy";
-	var server="https://community-ninja-board-ninja-board.int.open.paas.redhat.com/community-ninja-board/api";
+	var server="https://ninja-board-giveback--prod.apps.int.spoke.prod.us-east-1.aws.paas.redhat.com/community-ninja-board/api";
+//	var server="https://community-ninja-board-ninja-board.int.open.paas.redhat.com/community-ninja-board/api";
 	if (window.location.href.includes("localhost")){
 		server="http://localhost:8082/community-ninja-board/api";
 		ctx=server+"/scorecard";
 	}
-	//var ctx = "${pageContext.request.contextPath}";
 </script>
 <style>
 		body{
@@ -637,7 +637,7 @@ function refresh(){
     return result;
 	}
 	function escapeRegExp(str) {
-    return str.replace(/([.*+?^=!:\${}()|\[\]\/\\])/g, "\\$1");
+    return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
 	}
 	</script>
 	<table class="card2" border="0" style="width:1000px;">
