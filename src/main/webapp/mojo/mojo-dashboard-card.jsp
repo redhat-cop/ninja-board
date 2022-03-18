@@ -6,8 +6,6 @@
 <script>
 	var ctx="http://ninja-graphs-giveback--graphs-ext.apps.ext-waf.spoke.prod.us-east-1.aws.paas.redhat.com/ninja-graphs/api/proxy";
 	var server="https://ninja-board-giveback--prod.apps.int.spoke.prod.us-east-1.aws.paas.redhat.com/community-ninja-board/api";
-//	var ctx="https://ninja-graphs-ninja-graphs.6923.rh-us-east-1.openshiftapps.com/ninja-graphs/api/proxy";
-//	var server="https://community-ninja-board-ninja-board.int.open.paas.redhat.com/community-ninja-board/api";
 	if (window.location.href.includes("localhost")){
 		server="http://localhost:8082/community-ninja-board/api";
 		ctx=server+"/scorecard";
