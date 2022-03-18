@@ -637,7 +637,7 @@ function refresh(){
     return result;
 	}
 	function escapeRegExp(str) {
-    return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+    return str.replace(/([.*+?^=!:\${}()|\[\]\/\\])/g, "\\$1");
 	}
 	</script>
 	<table class="card2" border="0" style="width:1000px;">
