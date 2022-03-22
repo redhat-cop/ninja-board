@@ -4,7 +4,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.6.4/showdown.min.js"></script>
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.7/css/all.css"/>
 <script>
-	var ctx="http://ninja-graphs-giveback--graphs-ext.apps.ext-waf.spoke.prod.us-east-1.aws.paas.redhat.com/ninja-graphs/api/proxy";
+	var ctx="https://ninja-graphs-giveback--graphs-ext.apps.ext-waf.spoke.prod.us-east-1.aws.paas.redhat.com/ninja-graphs/api/proxy";
 	var server="https://ninja-board-giveback--prod.apps.int.spoke.prod.us-east-1.aws.paas.redhat.com/community-ninja-board/api";
 	if (window.location.href.includes("localhost")){
 		server="http://localhost:8082/community-ninja-board/api";
