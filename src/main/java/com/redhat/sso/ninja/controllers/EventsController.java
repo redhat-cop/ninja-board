@@ -25,6 +25,7 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 
 import com.google.common.base.Joiner;
+import com.redhat.sso.ninja.Config;
 import com.redhat.sso.ninja.Database2;
 import com.redhat.sso.ninja.Database2.EVENT_FIELDS;
 import com.redhat.sso.ninja.user.CachedUserService;
