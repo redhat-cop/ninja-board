@@ -48,6 +48,7 @@ public class EventsController{
 		.put("events", request.getParameter("events"))
 		.put("daysOld", request.getParameter("daysOld"))
 		.put("asCSV", request.getParameter("asCSV"))
+		.put("includeLM", request.getParameter("includeLM"))
 		.build();
     return Response.status(200)
         .header("Access-Control-Allow-Origin",  "*")
@@ -244,7 +245,7 @@ public class EventsController{
   		}
   		
 			try{
-  			if (!ldapDown){
+  			if (!ldapDown && StringUtils.isNotBlank(filters.get("includeLM"))){
 	  			String kerberos=v.get("user");
 	  			if (StringUtils.isNotBlank(kerberos)){
 	  				List<User> ldapResult=userService.search("uid", kerberos);
