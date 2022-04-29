@@ -600,8 +600,11 @@ public class Heartbeat2 {
         
         // add the Events to the graphs so they're available externally
         try{
-        	Map<String,String> filters=new MapBuilder<String,String>().put("daysOld", "180").put("events","User Promotion,Points Increment").put("asCSV", "true").build();
-        	String events=(String)ec.getEventsV2(filters);
+        	String events=(String)ec.getEventsV2(new MapBuilder<String,String>()
+        			.put("events","User Promotion,Points Increment")
+      				.put("daysOld", "180")
+      				.put("asCSV", "true")
+      				.build());
           if (200!=Http.post(url+"/events180", events).responseCode)
             log.error("Error pushing 'events180' info to graphsProxy");
         }catch (IOException e){ e.printStackTrace(); }

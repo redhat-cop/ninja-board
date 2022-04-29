@@ -9,16 +9,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -26,6 +27,9 @@ import org.codehaus.jackson.map.JsonMappingException;
 import com.google.common.base.Joiner;
 import com.redhat.sso.ninja.Database2;
 import com.redhat.sso.ninja.Database2.EVENT_FIELDS;
+import com.redhat.sso.ninja.user.CachedUserService;
+import com.redhat.sso.ninja.user.UserService;
+import com.redhat.sso.ninja.user.UserService.User;
 import com.redhat.sso.ninja.utils.FluentCalendar;
 import com.redhat.sso.ninja.utils.Json;
 import com.redhat.sso.ninja.utils.MapBuilder;
@@ -224,6 +228,8 @@ public class EventsController{
     }
     
     // Enrich the event results without affecting the stored data
+    UserService userService=new CachedUserService();
+    boolean ldapDown=false;
   	for(Map<String, String> v:result){
   		// add a generated "text" field if none exists - this is because on the events UI there is not enough space for all the separated fields
   		if ("Points Increment".equals(v.get(EVENT_FIELDS.TYPE.v)) && !v.containsKey(EVENT_FIELDS.TEXT.v)){
@@ -237,7 +243,27 @@ public class EventsController{
   			v.put(EVENT_FIELDS.TEXT.v, v.get(EVENT_FIELDS.USER.v)+" registered");
   		}
   		
+			try{
+  			if (!ldapDown){
+	  			String kerberos=v.get("user");
+	  			if (StringUtils.isNotBlank(kerberos)){
+	  				List<User> ldapResult=userService.search("uid", kerberos);
+	  				if (ldapResult.size()>0){
+	  					User u=ldapResult.get(0);
+	  					v.put("user.manager", u.asMap().get("user.manager"));
+	  				}else{
+	  					v.put("user.manager", "");
+	  				}
+	  			}
+  			}
+			}catch (NamingException e){
+				e.printStackTrace();
+				ldapDown=true;
+			}
+  		
   	}
+//  	userService.printCacheStats();
+//  	System.out.println("results.size="+result.size());
     return result;
   }
 }
