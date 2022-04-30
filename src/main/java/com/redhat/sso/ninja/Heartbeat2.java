@@ -600,7 +600,6 @@ public class Heartbeat2 {
         
         // add the Events to the graphs so they're available externally
         try{
-//        	Map<String,String> filters=;
         	String events=(String)ec.getEventsV2(new MapBuilder<String,String>()
         			.put("events","User Promotion,Points Increment")
       				.put("daysOld", "180")

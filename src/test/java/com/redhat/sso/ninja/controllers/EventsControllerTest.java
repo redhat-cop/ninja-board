@@ -10,7 +10,7 @@ public class EventsControllerTest{
 	public void testGetEventsV2_30DaysOld() throws Exception{
 
   	long s=System.currentTimeMillis();
-		new EventsController().getEventsV2(new MapBuilder<String,String>().put("daysOld","30").build());
+		new EventsController().getEventsV2(new MapBuilder<String,String>().put("daysOld","30").put("includeLM","true").build());
 //  	System.out.println(
 			//new ExportController().exportEvents(null, "csv")
 //  	);

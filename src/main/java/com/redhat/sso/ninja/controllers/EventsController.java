@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,6 +49,7 @@ public class EventsController{
 		.put("events", request.getParameter("events"))
 		.put("daysOld", request.getParameter("daysOld"))
 		.put("asCSV", request.getParameter("asCSV"))
+		.put("includeLM", request.getParameter("includeLM"))
 		.build();
     return Response.status(200)
         .header("Access-Control-Allow-Origin",  "*")
@@ -246,7 +246,7 @@ public class EventsController{
   		}
   		
 			try{
-  			if (!ldapDown){
+  			if (!ldapDown && StringUtils.isNotBlank(filters.get("includeLM"))){
 	  			String kerberos=v.get("user");
 	  			if (StringUtils.isNotBlank(kerberos)){
 	  				List<User> ldapResult=userService.search("uid", kerberos);
@@ -265,7 +265,7 @@ public class EventsController{
   		
   	}
 //  	userService.printCacheStats();
-  	System.out.println("results.size="+result.size());
+//  	System.out.println("results.size="+result.size());
     return result;
   }
 }
