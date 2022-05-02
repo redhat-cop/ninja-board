@@ -50,6 +50,7 @@ public class EventsController{
 		.put("daysOld", request.getParameter("daysOld"))
 		.put("asCSV", request.getParameter("asCSV"))
 		.put("includeLM", request.getParameter("includeLM"))
+		.put("eol", request.getParameter("eol"))
 		.build();
     return Response.status(200)
         .header("Access-Control-Allow-Origin",  "*")
@@ -60,22 +61,24 @@ public class EventsController{
   }
   public String getEventsV2(Map<String,String> filters) throws JsonGenerationException, JsonMappingException, IOException{
   	boolean asCSV="true".equalsIgnoreCase(filters.get("asCSV")); // ideally i'd use the Accept headers, but it's being called from an =Import function from a spreadsheet which is easier to set params from
-  	return asCSV?jsonToCSV(getFilteredEvents2(filters)):Json.newObjectMapper(true).writeValueAsString(getFilteredEvents2(filters));
+  	return asCSV?jsonToCSV(getFilteredEvents2(filters), filters):Json.newObjectMapper(true).writeValueAsString(getFilteredEvents2(filters));
   }
   
-	public String jsonToCSV(List<Map<String, String>> events) throws JsonGenerationException, JsonMappingException, IOException{
+	public String jsonToCSV(List<Map<String, String>> events, Map<String,String> filters) throws JsonGenerationException, JsonMappingException, IOException{
   	// go through the events in the time window and extract/build the points values
   	Map<String, Map<String, String>> userMap=Database2.get().getUsers();
+  	String eol=filters.get("eol");
   	
   	Pattern regex1=Pattern.compile("(\\d+) point.* added to (.+) \\((.+)\\)");
   	Pattern regex2=Pattern.compile("(\\d+) point.* added to (.+)");
   	
   	List<String> result=new ArrayList<>();
-  	result.add("Timestamp,User,Email,Type,Points,Pool,Source");
+  	result.add("Timestamp,User,Email,Manager,Type,Points,Pool,Source");
   	for (Map<String, String> event:events){
   		String ts=event.get(EVENT_FIELDS.TIMESTAMP.v);
   		String user=event.get(EVENT_FIELDS.USER.v);
-  		String email=userMap.get(user).get("email"); // lookup email from database user details
+  		String email=userMap.containsKey(user)?userMap.get(user).get("email"):"unknown"; // lookup email from database user details
+  		String manager=event.containsKey("user.manager")?event.get("user.manager"):"";
   		String type=event.get(EVENT_FIELDS.TYPE.v);
   		String text=event.get(EVENT_FIELDS.TEXT.v);
   		String points=event.get(EVENT_FIELDS.POINTS.v);
@@ -83,7 +86,7 @@ public class EventsController{
   		String source=event.get(EVENT_FIELDS.SOURCE.v);
   		
   		if (null!=source && !"".equals(source)){ // if it's an event with a source, pool & points
-  			result.add(Joiner.on(",").join(ts, user, email, type, points, pool, source));
+  			result.add(Joiner.on(",").join(ts, user, email, manager, type, points, pool, source));
   		}else{ // if it's the older "text" formats
   			Matcher m1=regex1.matcher(text); // text format with links
   			Matcher m2=regex2.matcher(text); // text format without links
@@ -105,9 +108,11 @@ public class EventsController{
   		
   	}
   	
+  	if (StringUtils.isBlank(eol) || "CRLF".equals(eol)) eol="\n";
+  	
   	String r="";
   	for(String l:result){
-  		r+=l+"\n";
+  		r+=l+eol;
   	}
   	
   	return r;
