@@ -29,6 +29,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.redhat.sso.ninja.Config;
 import com.redhat.sso.ninja.Database2;
 import com.redhat.sso.ninja.Database2.EVENT_FIELDS;
 import com.redhat.sso.ninja.ExportController;
@@ -266,7 +267,8 @@ public class EventsController{
     List<String> kerbIds=Lists.newArrayList();
     try{
 	    UserService userService=new CachedUserService();
-	    List<User> ldapResult=userService.search("manager", "uid="+managerUid+",ou=users,dc=redhat,dc=com");
+	    String ldapBaseDN=Config.get().getOptions().get("users.ldap.baseDN");
+	    List<User> ldapResult=userService.search("manager", "uid="+managerUid+","+ldapBaseDN);
 			for(User u:ldapResult)
 				kerbIds.add(u.getUid());
 			
