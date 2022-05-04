@@ -54,7 +54,7 @@ public class ExportController{
 //  }
   
   /* Comparator to order the header and fields of the exported data */
-  class HeaderComparator implements Comparator<String>{
+  public static class HeaderComparator implements Comparator<String>{
     List<String> order;
     public HeaderComparator(String[] orderOfItems){
       order=Lists.newArrayList(orderOfItems);
@@ -157,8 +157,8 @@ public class ExportController{
     return writeExportFile("Scorecards", format, headers, data, dataHeaderMapping);
   }
   
-  private Response writeExportFile(String type, String format, List<String> headers, List<Map<String,String>> data, Map<String,String> dataHeaderMapping ){
-  	File file=new File(type+"."+format.toLowerCase());
+  public Response writeExportFile(String filename, String format, List<String> headers, List<Map<String,String>> data, Map<String,String> dataHeaderMapping ){
+  	File file=new File(filename+"."+format.toLowerCase());
   	try{
       switch(Format.valueOf(format)){
       case json:
@@ -184,7 +184,7 @@ public class ExportController{
         
       case xls:
         HSSFWorkbook wb=new HSSFWorkbook();
-        HSSFSheet s=wb.createSheet(type);
+        HSSFSheet s=wb.createSheet(filename);
         
         HSSFRow row=s.createRow(0);
         for(int i=0;i<headers.size();i++){

@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,6 +18,7 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
@@ -25,9 +28,10 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 
 import com.google.common.base.Joiner;
-import com.redhat.sso.ninja.Config;
+import com.google.common.collect.Lists;
 import com.redhat.sso.ninja.Database2;
 import com.redhat.sso.ninja.Database2.EVENT_FIELDS;
+import com.redhat.sso.ninja.ExportController;
 import com.redhat.sso.ninja.user.CachedUserService;
 import com.redhat.sso.ninja.user.UserService;
 import com.redhat.sso.ninja.user.UserService.User;
@@ -40,24 +44,49 @@ public class EventsController{
   private static final Logger log=Logger.getLogger(EventsController.class);
   
   
+  @GET
+  @Path("/v2/events/export/{format}")
+  public Response getEventsV2Export(@Context HttpServletRequest request, @PathParam("format") String format) throws JsonGenerationException, JsonMappingException, IOException{
+  	Map<String, String> filters=buildFilters(request);
+  	List<Map<String,String>> data=getFilteredEvents2(filters);
+  	
+    Set<String> headerset=new HashSet<String>();
+    for(Map<String, String> row:data)
+      headerset.addAll(row.keySet());
+    List<String> headers=new ArrayList<String>();
+    headers.addAll(headerset);
+    
+    // Sort the data columns
+    headers.sort(new ExportController.HeaderComparator(new String[]{"timestamp","type","text","user"}));
+    
+    Map<String,String> dataHeaderMapping=new MapBuilder<String,String>().build();
+    
+    // export the data
+    return new ExportController().writeExportFile("Events", format, headers, data, dataHeaderMapping);
+  }
+  
+  
   // Admin/Support UI call to display all events, user events or specific types of events
   @GET
   @Path("/v2/events")
   public Response getEventsV2(@Context HttpServletRequest request) throws JsonGenerationException, JsonMappingException, IOException{
-  	Map<String, String> filters=new MapBuilder<String, String>(true)
-		.put("user", request.getParameter("user"))
-		.put("events", request.getParameter("events"))
-		.put("daysOld", request.getParameter("daysOld"))
-		.put("asCSV", request.getParameter("asCSV"))
-		.put("includeLM", request.getParameter("includeLM"))
-		.put("eol", request.getParameter("eol"))
-		.build();
+  	Map<String, String> filters=buildFilters(request);
     return Response.status(200)
         .header("Access-Control-Allow-Origin",  "*")
         .header("Content-Type","text/html")
         .header("Cache-Control", "no-store, must-revalidate, no-cache, max-age=0")
         .header("Pragma", "no-cache")
         .header("X-Content-Type-Options", "nosniff").entity(getEventsV2(filters)).build();
+  }
+  private Map<String,String> buildFilters(HttpServletRequest request){
+  	return new MapBuilder<String, String>(true)
+		.put("user", request.getParameter("user"))
+		.put("events", request.getParameter("events"))
+		.put("daysOld", request.getParameter("daysOld"))
+		.put("asCSV", request.getParameter("asCSV"))
+		.put("manager", request.getParameter("manager"))
+		.put("eol", request.getParameter("eol"))
+		.build();
   }
   public String getEventsV2(Map<String,String> filters) throws JsonGenerationException, JsonMappingException, IOException{
   	boolean asCSV="true".equalsIgnoreCase(filters.get("asCSV")); // ideally i'd use the Accept headers, but it's being called from an =Import function from a spreadsheet which is easier to set params from
@@ -104,8 +133,6 @@ public class EventsController{
   				result.add(Joiner.on(",").join(null!=ts?ts:"null", null!=user?user:"null", null!=type?type:"null", "","",null!=text?text:"null"));
   			}
   		}
-  		
-  		
   	}
   	
   	if (StringUtils.isBlank(eol) || "CRLF".equals(eol)) eol="\n";
@@ -234,14 +261,23 @@ public class EventsController{
       }
     }
     
+    
+    String managerUid=filters.get("manager");
+    List<String> kerbIds=Lists.newArrayList();
+    try{
+	    UserService userService=new CachedUserService();
+	    List<User> ldapResult=userService.search("manager", "uid="+managerUid+",ou=users,dc=redhat,dc=com");
+			for(User u:ldapResult)
+				kerbIds.add(u.getUid());
+			
+    }catch(NamingException e){
+    	e.printStackTrace();
+    }
+    
     // Enrich the event results without affecting the stored data
-    UserService userService=new CachedUserService();
-    boolean ldapDown=false;
   	for(Map<String, String> v:result){
   		// add a generated "text" field if none exists - this is because on the events UI there is not enough space for all the separated fields
   		if ("Points Increment".equals(v.get(EVENT_FIELDS.TYPE.v)) && !v.containsKey(EVENT_FIELDS.TEXT.v)){
-//  			System.out.println("adding a text field");
-//    		if (!v.containsKey(EVENT_FIELDS.TEXT.v)){// && v.containsKey(EVENT_FIELDS.POINTS.v)){
   			Integer points=Integer.parseInt(v.get(EVENT_FIELDS.POINTS.v));
   			v.put(EVENT_FIELDS.TEXT.v, points+" point"+(points<=1?"":"s")+" added to "+v.get(EVENT_FIELDS.POOL.v)+" "+v.get(EVENT_FIELDS.SOURCE.v));
   		}
@@ -249,28 +285,19 @@ public class EventsController{
   		if ("New User".equals(v.get(EVENT_FIELDS.TYPE.v))){
   			v.put(EVENT_FIELDS.TEXT.v, v.get(EVENT_FIELDS.USER.v)+" registered");
   		}
-  		
-			try{
-  			if (!ldapDown && StringUtils.isNotBlank(filters.get("includeLM"))){
-	  			String kerberos=v.get("user");
-	  			if (StringUtils.isNotBlank(kerberos)){
-	  				List<User> ldapResult=userService.search("uid", kerberos);
-	  				if (ldapResult.size()>0){
-	  					User u=ldapResult.get(0);
-	  					v.put("user.manager", u.asMap().get("user.manager"));
-	  				}else{
-	  					v.put("user.manager", "");
-	  				}
-	  			}
-  			}
-			}catch (NamingException e){
-				e.printStackTrace();
-				ldapDown=true;
-			}
-  		
   	}
-//  	userService.printCacheStats();
-//  	System.out.println("results.size="+result.size());
-    return result;
+  	
+  	if (!filters.containsKey("manager")){
+  		return result;
+  	}
+  	
+  	// if manager filtering specified, then remove any unwanted events
+  	List<Map<String,String>> realResult=Lists.newArrayList();
+  	for(Map<String, String> v:result){
+  		if (kerbIds.contains(v.get(EVENT_FIELDS.USER.v))){
+  			realResult.add(v);
+  		}
+  	}
+  	return realResult;
   }
 }
