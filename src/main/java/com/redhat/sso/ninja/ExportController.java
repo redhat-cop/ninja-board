@@ -54,7 +54,7 @@ public class ExportController{
 //  }
   
   /* Comparator to order the header and fields of the exported data */
-  class HeaderComparator implements Comparator<String>{
+  public static class HeaderComparator implements Comparator<String>{
     List<String> order;
     public HeaderComparator(String[] orderOfItems){
       order=Lists.newArrayList(orderOfItems);
@@ -157,7 +157,7 @@ public class ExportController{
     return writeExportFile("Scorecards", format, headers, data, dataHeaderMapping);
   }
   
-  private Response writeExportFile(String type, String format, List<String> headers, List<Map<String,String>> data, Map<String,String> dataHeaderMapping ){
+  public Response writeExportFile(String type, String format, List<String> headers, List<Map<String,String>> data, Map<String,String> dataHeaderMapping ){
   	File file=new File(type+"."+format.toLowerCase());
   	try{
       switch(Format.valueOf(format)){
