@@ -455,7 +455,7 @@ public class SupportController {
 		if (null==dbUserInfo) return Response.serverError().entity("User '"+redHatUserId+"' not found in database").build();
   	
 		try{
-			Map<String, Map<String, String>> users=new Heartbeat2.HeartbeatRunnable(null).getUsersFromRegistrationSheet(Config.get());
+			Map<String, Map<String, String>> users=HeartbeatUserManagement.getUsersFromRegistrationSheet(Config.get());
 			for (Entry<String, Map<String, String>> e:users.entrySet()){
 				if (redHatUserId.equals(e.getKey())){
 					
