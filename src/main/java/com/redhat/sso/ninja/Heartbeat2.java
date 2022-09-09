@@ -203,7 +203,7 @@ public class Heartbeat2 {
       publishGraphsData(db, config);
 
     	if (allScriptsWorked){
-	      log.debug("Updating the \"lastRun\" date");
+	      log.info("Updating the \"lastRun\" date");
 	      config.getValues().put("lastRun2", sdf.format(now));
 	    }else{
 	      log.info("NOT Updating the \"lastRun\" date due to a script failure. It will re-run the same period next time and dupe prevention will keep the data correct");
@@ -251,10 +251,12 @@ public class Heartbeat2 {
 		          	for(String line:process.lines())
 		          		allocate.allocatePoints2(line);
 		          	db.addEvent("Script Execution Succeeded", "", command +" (took "+(System.currentTimeMillis()-start)+"ms)");
+		          	log.info("Script succeeded");
 		          }else{ // error
 		          	db.addEvent("Script Execution FAILED", "", command+"\nERROR (stderr):\n"+ Joiner.on("\n").join(process.lines()));
 		          	new ChatNotification().send(ChatEvent.onScriptError, name+" script failure occurred. Please investigate");
 		          	result=false;
+		          	log.error("Script failed - (stderr):\n"+Joiner.on("\n").join(process.lines()));
 		          }
 		        }
 		        log.info("Script ("+(String)script.get("name")+") execution took "+(System.currentTimeMillis()-start)+"ms");
@@ -263,6 +265,7 @@ public class Heartbeat2 {
 	        	db.addEvent("Script Execution FAILED", "", command+"\nERROR (e.message):\n"+ e.getMessage());
 	        	new ChatNotification().send(ChatEvent.onScriptError, name+" script failure occurred. Please investigate");
 	        	result=false;
+          	log.error("Script failed - "+e.getMessage());
 	      	}
 	      	db.save(); //save after each script execution, including if it failed because otherwise we lose the event log failure
 	        
