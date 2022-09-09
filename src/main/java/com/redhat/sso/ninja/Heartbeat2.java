@@ -25,7 +25,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringSubstitutor;
 import org.apache.log4j.Logger;
 import org.mortbay.log.Log;
 
@@ -48,39 +47,6 @@ public class Heartbeat2 {
   private static Timer t;
   private static Timer tRunOnce;
 
-  public static String convertLastRun2(String command, Date lastRunDate) throws ParseException {
-//  	StringSubstitutor substitutor=new StringSubstitutor(answers); // replaces ${name} placeholders
-//  	substitutor.
-//  	
-//  	for(Entry<String, String> e:values.entrySet()){
-//			String value=substitutor.replace(e.getValue());
-//				eloquaFields.put(e.getKey(), value);
-//		}
-  	
-  	Matcher m=Pattern.compile("(\\$\\{([^}]+)\\})").matcher(command);
-    StringBuffer sb=new StringBuffer();
-    while (m.find()){
-      String toReplace=m.group(2);
-      if (toReplace.contains("LAST_RUN:")){
-        SimpleDateFormat sdf=new SimpleDateFormat(toReplace.split(":")[1].replaceAll("}", "")); // nasty replaceall when I just want to trim the last char
-        m.appendReplacement(sb, sdf.format(lastRunDate));
-        
-      }else if (toReplace.contains("DAYS_FROM_LAST_RUN")){
-        Date runTo2=java.sql.Date.valueOf(LocalDate.now());
-        Integer daysFromLastRun=(int)((runTo2.getTime() - lastRunDate.getTime()) / (1000 * 60 * 60 * 24))+1;
-        m.appendReplacement(sb, String.valueOf(daysFromLastRun));
-      }else{
-        // is it a system property?
-        if (null!=System.getProperty(toReplace)){
-          m.appendReplacement(sb, System.getProperty(toReplace));
-        }else{
-          m.appendReplacement(sb, "?????");
-        }
-      }
-    }
-    m.appendTail(sb);
-    return sb.toString();
-  }
   
   public static void main(String[] asd){
     try{
