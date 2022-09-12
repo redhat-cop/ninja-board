@@ -38,11 +38,14 @@ objects:
         USER 0
         RUN yum clean all && \
           yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
-          INSTALL_PKGS="python2-pip python-requests pytz" && \
+          INSTALL_PKGS="ca-certificates python2-pip python-requests pytz" && \
           yum install -y --setopt=tsflags=nodocs $INSTALL_PKGS && \
           rpm -V $INSTALL_PKGS && \
           yum clean all && \
-          pip install --no-cache-dir enum smartsheet-python-sdk
+          pip install --no-cache-dir enum smartsheet-python-sdk && \
+          pip install --no-cache-dir urllib3 --upgrade && \
+          pip install --no-cache-dir enum34 && \
+          ln  -s /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem /usr/lib/python2.7/site-packages/certifi/cacert.pem -f
         USER 185
       type: Dockerfile
     strategy:

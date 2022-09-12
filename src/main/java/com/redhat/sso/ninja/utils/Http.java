@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 
 public class Http{
 	private static final Logger log = Logger.getLogger(Http.class);
+	public static boolean loggingEnabled=true;
 	
 	public static class Response{
 		public Response(int responseCode, String response){
@@ -68,7 +69,7 @@ public class Http{
 //			log.info("Http call responded with code: "+response.responseCode);
 			
 			
-			log.info("Http call '"+method+"' to '"+url+"'"+(null!=data?" (with data length of "+data.length()+" characters)":"")+" - ResponseCode: "+response.responseCode);
+			if (loggingEnabled) log.info("Http call '"+method+"' to '"+url+"'"+(null!=data?" (with data length of "+data.length()+" characters)":"")+" - ResponseCode: "+response.responseCode);
 			
 			cnn.disconnect();
 			return response;

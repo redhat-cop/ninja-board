@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: giveback-graphs-storage
+  namespace: giveback--graphs-ext
+  labels:
+    paas.redhat.com/appcode: GVBK-001
+  annotations:
+    kubernetes.io/reclaimPolicy: Delete
+spec:
+  accessModes:
+    - ReadWriteMany
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: aws-efs-tier-c3

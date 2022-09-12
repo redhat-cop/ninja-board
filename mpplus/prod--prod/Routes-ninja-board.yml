@@ -1,0 +1,26 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: ninja-board
+  namespace: giveback--prod
+  labels:
+    app: ninja-board
+    app.kubernetes.io/component: ninja-board
+    app.kubernetes.io/instance: ninja-board
+    app.kubernetes.io/name: java
+    app.kubernetes.io/part-of: giveback
+    app.openshift.io/runtime: java
+    app.openshift.io/runtime-version: openjdk-11-el7
+    shard: internal
+spec:
+  host: ninja-board-giveback--prod.apps.int.spoke.prod.us-east-1.aws.paas.redhat.com
+  to:
+    kind: Service
+    name: ninja-board
+    weight: 100
+  port:
+    targetPort: 8080-tcp
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: None
+  wildcardPolicy: None

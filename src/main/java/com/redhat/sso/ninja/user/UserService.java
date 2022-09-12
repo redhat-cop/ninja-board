@@ -17,6 +17,7 @@ import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
 
 import com.redhat.sso.ninja.Config;
+import com.redhat.sso.ninja.utils.RegExHelper;
 
 public class UserService {
 
@@ -71,6 +72,11 @@ public class UserService {
         u.userInfo.put("geo",            safeToString(attrs.get("rhatGeo")));
         u.userInfo.put("hireDate",       safeToString(attrs.get("rhatHireDate")));
         u.userInfo.put("jobCode",        safeToString(attrs.get("rhatJobCode")));
+        u.userInfo.put("manager",        safeToString(attrs.get("manager")));
+        u.userInfo.put("user.manager",    RegExHelper.extract(attrs.get("manager").toString(), "uid=(.+),ou", 1));
+        
+        
+        
         result2.add(u);
       }
       return result2;
