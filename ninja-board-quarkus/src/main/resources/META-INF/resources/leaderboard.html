@@ -1,0 +1,236 @@
+<html>
+
+<head>
+  <meta http-equiv="cache-control" content="no-cache" />
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Communities of Practice</title>
+
+  <link href="css/jquery.dataTables.min.css" rel="stylesheet">
+  <link type="text/css" rel="stylesheet"
+    href="https://static.redhat.com/libs/redhat/redhat-font/2/webfonts/red-hat-font.css" media="all" />
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style2.css" type="text/css">
+  <script src="js/Chart-2.6.0.min.js"></script>
+  <script src="js/jquery-1.11.3.min.js"></script>
+  <script src="js/jquery.dataTables.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/ChartNew.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/http.js?v1"></script>
+
+  <style>
+    .edit-link {
+      font-family: Overpass;
+      /*
+      font-size: smaller;
+      */
+      font-size: 6pt;
+      vertical-align: super;
+    }
+  
+    .btn {
+      padding: 2px 12px !important;
+    }
+  
+    .btn-small {
+      height: 25px;
+  
+    }
+    td{
+      padding-top:40px;
+    }
+    <style>
+  .container {
+      display: inline-block;
+      cursor: pointer;
+      width: 50px !important;
+  }
+  .bar1, .bar2, .bar3 {
+      width: 35px;
+      height: 4px;
+      background-color: #333;
+      margin: 6px 0;
+      transition: 0.4s;
+  }
+  /* Rotate first bar */
+  .change .bar1 {
+      -webkit-transform: rotate(-45deg) translate(-5px, 8px) ;
+      transform: rotate(-45deg) translate(-5px, 8px) ;
+  }
+  
+  /* Fade out the second bar */
+  .change .bar2 {
+      opacity: 0;
+  }
+  
+  /* Rotate last bar */
+  .change .bar3 {
+      -webkit-transform: rotate(45deg) translate(-8px, -8px) ;
+      transform: rotate(45deg) translate(-8px, -8px) ;
+  }
+  
+  .adjustment{
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+  }
+  .adjustment>div{
+    padding: 10px 10px !important;
+  }
+  </style>
+  <script>
+  function myFunction(x) {
+      x.classList.toggle("change");
+  }
+  </script>
+  
+  <div id="main_nav" class="navbar">
+    <div class="navbar-header">
+      <a href="/" class="navbar-brand2"><img role="logo" src="images/logo.svg"/>
+        <span class="navbar-brand3"></span>
+      </a>
+    </div>
+    <div class="collapse navbar-collapse bs-example-js-navbar-collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+          <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="menu-title dropdown-toggle" href="#" id="drop2">
+            Ninja Program
+            <span class="caret"></span>
+          </a>
+          <ul aria-labelledby="drop2" class="dropdown-menu">
+            <li><a href="scorecards.html">Scorecards</a></li>
+            <li><a href="leaderboard.html">Leaderboard</a></li>
+            <li><a href="events.html">Events</a></li>
+            <li><a href="tasks.html">Tasks</a></li>
+            <li><a href="https://docs.google.com/a/redhat.com/forms/d/e/1FAIpQLSdWGcCks2zKKnVoZFQz3CieLQDc1lsSex_Knwh_-eyRm0ZQTg/viewform">Registration Form</a></li>
+            <li><a href="https://docs.google.com/spreadsheets/d/1E91hT_ZpySyvhnANxqZ7hcBSM2EEd9TqfQF-cavB8hQ">Responses Spreadsheet</a></li>
+            <li><a href="support-trello-card.html">Support - Trello Query</a></li>
+            <li><a href="support-trello-all.html">Support - Trello Reconcilliation</a></li>
+          </ul>
+        </li>
+      </ul>
+      
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+          <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="menu-title dropdown-toggle" href="#" id="drop2">
+            Admin
+            <span class="caret"></span>
+          </a>
+          <ul aria-labelledby="drop2" class="dropdown-menu">
+            <li><a href="config.html">Config (Here be dragons!)</a></li>
+            <li><a href="database.html">Database (Here be dragons!)</a></li>
+          </ul>
+        </li>
+      </ul>
+      
+      
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown" id="fat-menu">
+          <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle adjustment" href="#" id="drop3">
+            <!--
+            <image style="height:20px;"  src="https://cdn4.iconfinder.com/data/icons/wirecons-free-vector-icons/32/menu-alt-512.png"/>
+            -->
+            
+            <div class="container" onclick="myFunction(this)" style="height:56px">
+              <div class="bar1"></div>
+              <div class="bar2"></div>
+              <div class="bar3"></div>
+            </div>
+            <span class="caretx"></span>
+            <!-- 
+             -->
+          </a>
+          <ul aria-labelledby="drop3" class="dropdown-menu">
+            <!--
+            <li><a href="#">Settings</a></li>
+            <li class="divider" role="separator"></li>
+            -->
+            <li><a href="api/logout">Log out</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>    
+    
+</head>
+<body onload="refresh();">
+  
+  <div class="navbar-connector"></div>
+  <div class="navbar-title">
+   	<h2><span class="navbar-title-text">Leaderboard</span></h2>
+  </div>
+  
+  <table style="width:70%; margin: 0 auto;">
+	  <tr>
+	  	<td align="center">
+				<script>
+					function leaderboardRefresh(){
+						return refreshGraph0('leaderboard', 'HorizontalBar');
+					}
+				</script>
+				<div id="leaderboard_container" class="graph" style="width:1200px; height:<%=graphHeight%>">
+					<div class="graph_header">
+						<div class="graph_header_main">Ninja Leaderboard - Top 10</div>
+					</div>
+					<canvas id="leaderboard" width="1200" height="800"></canvas>
+				</div>
+				
+	  	</td>
+	  </tr>
+	</table>
+
+<script>
+
+
+function resetCanvas(chartElementName){
+  $('#'+chartElementName).remove(); // this is my <canvas> element
+  $('#'+chartElementName+'_container').append('<canvas id="'+chartElementName+'"><canvas>');
+  var canvas = document.querySelector('#'+chartElementName);
+  var ctx = canvas.getContext('2d');
+  ctx.canvas.width = $('#'+chartElementName+'_container').width();
+  ctx.canvas.height = $('#'+chartElementName+'_container').height()+100;
+}
+
+function buildChart(uri, chartElementName, type){
+  var xhr = new XMLHttpRequest();
+  var ctx = "${pageContext.request.contextPath}";
+  xhr.open("GET", ctx+uri, true);
+  xhr.send();
+  xhr.onloadend = function () {
+    var json=JSON.parse(xhr.responseText);
+    var income = document.getElementById(chartElementName).getContext("2d");
+	  if (type=="HorizontalBar"){
+	    
+	    resetCanvas(chartElementName);
+	    income = document.getElementById(chartElementName).getContext("2d");
+	    
+	    new Chart(income, {
+                type: 'horizontalBar', 
+                data: json,
+                options: {"scales":{"xAxes":[{"ticks":{"beginAtZero":true}}]},legend: {display:false}}
+            });
+    }
+  }
+}
+
+var graphs={
+  "leaderboard":"/api/leaderboard/10",
+};
+
+function refreshGraph0(graphName, type){
+  buildChart(graphs[graphName], graphName, type);
+}
+
+function refresh(){
+	leaderboardRefresh();
+}
+		
+</script>
+
+</body>
+</html>
+
+
+
