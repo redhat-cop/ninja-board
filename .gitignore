@@ -32,3 +32,10 @@ galaxy
 .idea
 *.iml
 *.env
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Snowpack dependency directory (https://snowpack.dev/)
+web_modules/
