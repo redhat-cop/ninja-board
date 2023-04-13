@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "ninja-board-be-helm.fullname" . }}-test-connection"
+  labels:
+    {{- include "ninja-board-be-helm.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "ninja-board-be-helm.fullname" . }}:{{ .Values.service.port }}']
+  restartPolicy: Never
