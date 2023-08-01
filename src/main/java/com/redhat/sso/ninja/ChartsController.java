@@ -22,6 +22,7 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.gdata.util.common.base.Pair;
 import com.redhat.sso.ninja.chart.ChartJson;
@@ -128,9 +129,12 @@ public class ChartsController{
           .put("GREY",  new Pair<String, String>("rgba(130,130,130,0.7)", "rgba(130,130,130,0.8)"))
           .put("RED",   new Pair<String, String>("rgba(163,0,0,0.7)",     "rgba(163,0,0,0.8)"))
           .put("BLACK", new Pair<String, String>("rgba(20,20,20,0.7)",    "rgba(20,20,20,0.8)"))
+          .put("GREEN",  new Pair<String, String>("rgb(65, 168, 95,0.7)", "rgba(rgb(65, 168, 95,0.8)"))
+          .put("GOLD",  new Pair<String, String>("rgba(250, 197, 28,0.7)", "rgba(250, 197, 28,0.8)"))
           .put("ZERO",  new Pair<String, String>("rgba(255,255,255,0.7)", "rgba(255,255,255,0.8)"))
-          // ZERO???
           .build();
+      
+      Preconditions.checkArgument(colors.containsKey(userInfo.get("level").toUpperCase()), "Color ["+userInfo.get("level")+"] does not exist in our color mapping for charts - user = "+Json.newObjectMapper(false).writeValueAsString(userInfo));
       c.getDatasets().get(0).getBackgroundColor().add(colors.get(userInfo.get("level").toUpperCase()).getFirst());
       c.getDatasets().get(0).getBorderColor().add(colors.get(userInfo.get("level").toUpperCase()).getSecond());
       
