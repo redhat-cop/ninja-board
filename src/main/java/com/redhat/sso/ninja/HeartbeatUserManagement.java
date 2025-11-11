@@ -1,6 +1,5 @@
 package com.redhat.sso.ninja;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -12,9 +11,9 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 import com.google.common.collect.Lists;
+import com.redhat.services.portfolio.ReadGoogleSheet;
 import com.redhat.sso.ninja.ChatNotification.ChatEvent;
 import com.redhat.sso.ninja.user.UserService;
 import com.redhat.sso.ninja.user.UserService.User;
@@ -23,15 +22,10 @@ import com.redhat.sso.ninja.utils.LevelsUtil;
 public class HeartbeatUserManagement{
 	private static final Logger log = Logger.getLogger(HeartbeatUserManagement.class);
 	
-  public static Map<String, Map<String, String>> getUsersFromRegistrationSheet(Config config) throws IOException, InterruptedException{
+  public static Map<String, Map<String, String>> getUsersFromRegistrationSheet(Config cfg) throws IOException, InterruptedException{
     Map<String, Map<String, String>> result=new HashMap<String, Map<String,String>>();
     
-    GoogleDrive3 drive=new GoogleDrive3(3000);
-    File file=drive.downloadFile(config.getOptions().get("googlesheets.registration.id"));
-    List<Map<String, String>> rows=drive.parseExcelDocument(file, new GoogleDrive3.HeaderRowFinder(){
-      public int getHeaderRow(XSSFSheet s){
-        return 0;
-      }}, new SimpleDateFormat("dd-MM-yyyy"));
+    List<Map<String,String>> rows=new ReadGoogleSheet().readSheet(cfg.getOptions().get("googlesheets.registration.id"));
     for(Map<String,String> r:rows){
       Map<String, String> userInfo=new HashMap<String, String>();
       for(Entry<String, String> c:r.entrySet()){
@@ -62,12 +56,7 @@ public class HeartbeatUserManagement{
     boolean userServiceDown=false;
     try{
     	
-    	GoogleDrive3 drive=new GoogleDrive3();
-    	File file=drive.downloadFile(cfg.getOptions().get("googlesheets.registration.id"));
-    	List<Map<String, String>> rows=drive.parseExcelDocument(file, new GoogleDrive3.HeaderRowFinder(){
-          public int getHeaderRow(XSSFSheet s){
-            return 0;
-          }}, new SimpleDateFormat("yyyy/MM/dd"));
+      List<Map<String,String>> rows=new ReadGoogleSheet().readSheet(cfg.getOptions().get("googlesheets.registration.id"));
       for(Map<String,String> r:rows){
         Map<String, String> userInfo=new HashMap<String, String>();
         for(Entry<String, String> c:r.entrySet()){

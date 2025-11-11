@@ -26,7 +26,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.mortbay.log.Log;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -146,7 +145,7 @@ public class Heartbeat2 {
 	    System.out.println("  StartTime: "+dateTimeToStart +" (in "+msToSensibleString(msToStartTime)+" time)");
 	    System.out.println("  Interval:  "+interval +"ms ("+msToSensibleString(interval)+")");
 	    
-	    Log.info("InitServlet fired - initializing database...");
+	    log.info("InitServlet fired - initializing database...");
 	    Database2.get();
     
     	Heartbeat2.start(msToStartTime, interval);
