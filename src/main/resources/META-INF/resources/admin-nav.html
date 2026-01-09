@@ -1,0 +1,86 @@
+
+<div class="header left">
+	<div id="hamburger" class="header section" onclick="hamburgerOnClick()">
+		<div class="bar bar1"></div>
+		<div class="bar bar2"></div>
+		<div class="bar bar3"></div>
+	</div>
+	<svg class="header section redhat-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 145" width="50px"><defs><style>.cls-1{fill:#e00;}</style></defs>
+	  <path d="M157.77,62.61a14,14,0,0,1,.31,3.42c0,14.88-18.1,17.46-30.61,17.46C78.83,83.49,42.53,53.26,42.53,44a6.43,6.43,0,0,1,.22-1.94l-3.66,9.06a18.45,18.45,0,0,0-1.51,7.33c0,18.11,41,45.48,87.74,45.48,20.69,0,36.43-7.76,36.43-21.77,0-1.08,0-1.94-1.73-10.13Z"/>
+	  <path class="cls-1" d="M127.47,83.49c12.51,0,30.61-2.58,30.61-17.46a14,14,0,0,0-.31-3.42l-7.45-32.36c-1.72-7.12-3.23-10.35-15.73-16.6C124.89,8.69,103.76.5,97.51.5,91.69.5,90,8,83.06,8c-6.68,0-11.64-5.6-17.89-5.6-6,0-9.91,4.09-12.93,12.5,0,0-8.41,23.72-9.49,27.16A6.43,6.43,0,0,0,42.53,44c0,9.22,36.3,39.45,84.94,39.45M160,72.07c1.73,8.19,1.73,9.05,1.73,10.13,0,14-15.74,21.77-36.43,21.77C78.54,104,37.58,76.6,37.58,58.49a18.45,18.45,0,0,1,1.51-7.33C22.27,52,.5,55,.5,74.22c0,31.48,74.59,70.28,133.65,70.28,45.28,0,56.7-20.48,56.7-36.65,0-12.72-11-27.16-30.83-35.78"/>
+	</svg>
+	<div class="header section teamname">
+		<span class="header-url" xhref="/admin"><span class="bold">Community of Practice</span></span>
+	</div>
+	<div class="header section application">
+		<span class="header-url" xhref="/admin">Giveback</span>
+	</div>
+	<div class="header section page"></div>
+	<div style="flex:1;"><div data-include="devInfo"></div></div>
+	<!--div id="header-help">
+		<a href="#help"><i class="fas fa-question-circle"></i></a>
+	</div-->
+	<!--
+	GOT THE GOOGLE LOGIN CODE FROM HERE:
+	https://developers.google.com/identity/sign-in/web/sign-in
+	-->
+	<div id="signin">
+		<script nonce="$NONCE">
+			var user,email;
+			$(document).ready(function() {
+					// use access_token, if exists and is valid then display logout, else display login
+					var accessToken=Cookie.get("rh_services_portfolio_access_token");
+					// accessToken should always be valid and present since this page needs auth to get to
+					if (""!=accessToken){
+						Http.httpGetObject("/auth/userInfo?token="+accessToken, function(status,data){
+							if (status==200){
+								$("#avatar").html("<img referrerpolicy='no-referrer' title='"+data["email"]+"' src='"+data["picture"]+"' style='border: 1px solid black; /*height: 58px;border-radius: 28px;*/'/>");
+								$("#avatar").show();
+								email=data["email"];
+				//				$("#btnSignIn").hide();
+								//$("#btnSignOut").show();
+							}else{
+								showLogin();
+							}
+						});
+					}else{
+						showLogin();
+					}
+			});
+		</script>
+	</div>
+	
+	<div id="google_signin">
+		<div id="sign-in-wrapper" style="display: inline-flex" class="grid-vertical-center">
+			<div id="avatar"></div>
+			<div id="btnSignIn" class="g-signin2 signin" style="display: none;" data-onsuccess="onSignInSuccess" data-onfailure="onSignInFailure"></div>
+			<div id="avatar" style="display:inline-block;"></div>
+			<div id="btnSignOut" style="display: none;"><a href="#" style="color:white;font-size: 10pt;" onclick="signOut();">Sign out</a></div>
+			<style nonce="$NONCE">
+			#avatar img{width:50px; height: 50px; border-radius:50%; margin-right: 10px; /*width:50px !important; height:50% !important;*/}
+			#btnSignOut{display:inline-block;}
+			.signin{padding:11px;}
+			.grid-vertical-center{display: flex;align-items: center;}
+			</style>
+		</div>
+	</div> <!-- / google_signin -->
+</div> <!-- header -->
+
+
+<div id="sidenav" class="sidenav">
+	<a href="/">Home</a>
+	<a href="/auth">User mgmnt</a>
+	<a href="/admin/scorecards">Scorecards</a>
+	<a href="/admin/leaderboard">Leaderboard</a>
+	<a href="/admin/events">Events</a>
+	<a href="/admin/tasks">Tasks (unused)</a>
+	<hr/>
+	<a href="/admin/database">Database</a>
+	<a href="/config">Config</a>
+	<a href="/signin.html">Force sign-in/out</a>
+	<hr/>
+	<a href="https://docs.google.com/a/redhat.com/forms/d/e/1FAIpQLSdWGcCks2zKKnVoZFQz3CieLQDc1lsSex_Knwh_-eyRm0ZQTg/viewform">Registration Form</a>
+	<a href="https://docs.google.com/spreadsheets/d/1E91hT_ZpySyvhnANxqZ7hcBSM2EEd9TqfQF-cavB8hQ">Responses Spreadsheet</a>
+	<a href="/admin/support-trello-card">Support - Trello Query (obsolete)</a>
+	<a href="/admin/support-trello-all">Support - Trello Reconcilliation (obsolete)</a>
+</div>

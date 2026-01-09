@@ -1,0 +1,145 @@
+<html>
+<head>
+  <!--HEADER_TEMPLATE-->
+</head>
+<body>
+	<div id="topbar"><!--NAV_TEMPLATE--></div>
+	<script>$(".header.section.page").html(`User Management > Cache: `+getPage());</script>
+	<div id="main">
+		<div id="inner">
+			<div id="content">
+				<ul>
+					<div>
+						<span id="buttons">
+							<!--input type="button" onclick="clearItems();" value="Clear item(s)"/-->
+							<input type="button" onclick="deleteItems();" value="Delete item(s)"/>
+						</span>
+						<table id="items">
+							<thead>
+								<tr>
+									<th></th>
+									<th>Username</th>
+									<th>Roles</th>
+									<th>Timeout</th>
+									<th>Remaining</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</ul>
+			</div>
+		</div>
+	</div>
+<script>
+var cacheName;
+$(document).ready(function() {
+	//var cacheName=Utils.getParameterByName("cache");
+	cacheName=window.location.href.match("([^\/]+$)")[0];
+	$("#cache-name").html("Cache: "+cacheName+" <small>(<a target='_blank' href='/auth/cache/"+cacheName+"'>view raw</a>)</small>");
+	display();
+});
+
+function deleteItems(){
+	var items=Array
+		.from(document.getElementsByClassName("item-id"))
+		.filter(e => e.checked)
+		.map(e => e.value);
+	
+	console.log("delete:: items -> "+items);
+	Http.httpPost("/auth/cache/"+cacheName+"/delete", items, function(response, status){
+		display();
+	}, function(error){ alert("Error: response code was "+error); });
+}
+function display(){
+	Http.httpGetObject("/auth/cache/"+cacheName, function(status, response){
+		var users=[];
+		for(key in response["cache"]){
+			//console.log(key);
+			users.push({"username":key, "roles":response["cache"][key], "timeout":response["expiry"][key]});
+		}
+		displayItems(users);
+	}, function(error){ alert("Error: response code was "+error); });
+}
+
+
+var table;
+function displayItems(data){
+	//console.log(data);
+	var elemSelector="#items";
+	if (undefined!=table){
+		$(elemSelector).DataTable().clear();
+		$(elemSelector).DataTable().destroy();
+	}
+	table=$(elemSelector).DataTable({
+		"data": data,
+		"scrollCollapse": true,
+		"searchHighlight": true,
+		"order": [[ 1, "asc" ]],
+		"paging": false,
+		"lengthMenu": [[10, 25, 50, 100, 200, -1], [10, 25, 50, 100, 200, "All"]], // page entry options
+		"pageLength" : 5, // default page entries
+		"info" : true,
+		"buttons":['copy','csv','excel','pdf'],
+		"language":{
+			"zeroRecords": "No matching items found",
+		},
+		initComplete: function(){
+			$(".dt-search").append($("#buttons").html());
+			$("#buttons").hide();
+		},
+		"columns": [
+			{ "data": "username",	"className": "userColumn" },
+			{ "data": "roles",		"className": "rolesColumn" },
+			{ "data": "timeout",	"className": "timeoutColumn" },
+			{ "data": "time-to-timeout",	"className": "timeoutColumn" }
+			
+		],
+		"createdRow": function(row, data, dataIndex){ // add a class to the whole row (tr)
+			//$(row).attr("data-report_data_issue", data['account_id']);
+			
+		},
+		"rowCallback": function(row, data){ // add a class to just the td cell for that data
+			//if (data["pillar"]) $('td.pillarColumn', row).addClass('pillar_'+Utils.toSafeString(data["pillar"]));
+		}
+		,"columnDefs":[
+			{ "targets": 0, "visible": true, "orderable": true, "render": function (data,type,row){
+				// this is a hidden column that houses specific filter values
+				return `<input type='checkbox' class='item-id' value='`+row["username"]+`'>`;
+			}},
+			{ "targets": 1, "visible": true, "orderable": true, "render": function (data,type,row){
+				// this is a hidden column that houses specific filter values
+				return row["username"];
+			}},
+			{ "targets": 2, "visible": true, "orderable": true, "render": function (data,type,row){
+				//return	`<a href="https://redhat.my.salesforce.com/`+row["account_id"]+`">`+data+`</a>`;
+				//return row["account_name"]; // or data
+				return row["roles"].map(String).join(','); //array to comma delimited string
+			}},
+			{ "targets": 3, "visible": true, "orderable": true, "render": function (data,type,row){
+				//return msToTime(row["timeout"]-Date.now());
+				//return msToTime(row["timeout"]-Date.now());
+				return new Date(row["timeout"]);
+			}},
+			{ "targets": 4, "visible": true, "orderable": true, "render": function (data,type,row){
+				return msToTime(row["timeout"]-Date.now());
+			}}
+		]
+	});
+}
+
+function msToTime(s) {
+	if (s<0) return "Expired";
+  // Pad to 2 or 3 digits, default is 2
+  function pad(n, z) {
+    z = z || 2;
+    return ('00'+n).slice(-z);
+  }
+  var ms = s % 1000; s = (s - ms) / 1000;
+  var secs = s % 60; s = (s - secs) / 60;
+  var mins = s % 60;
+  var hrs = (s - mins) / 60;
+  return pad(hrs)+'hrs '+pad(mins)+'mins '+pad(secs)+'secs '+pad(ms,3)+"ms";
+}
+</script>
+
+</body>

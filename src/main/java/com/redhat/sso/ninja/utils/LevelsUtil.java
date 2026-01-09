@@ -3,7 +3,7 @@ package com.redhat.sso.ninja.utils;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.redhat.sso.ninja.Config;
+import com.redhat.cop.giveback.legacy.Config;
 
 public class LevelsUtil{
   static LevelsUtil instance;

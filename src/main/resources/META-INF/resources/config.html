@@ -1,0 +1,59 @@
+<html>
+<head>
+  <!--HEADER_TEMPLATE-->
+	<script>
+	$(document).ready(function() {
+	  Http.httpGet("/_/config", function(response, status){
+	    var json=JSON.parse(response);
+	    var cfg=JSON.stringify(json, null, "\t");
+	    document.getElementById("config").value=cfg;
+	  });
+	});
+	
+	function save(){
+		var newConfig=document.getElementById("config").value;
+		try{
+			newConfig=JSON.parse(newConfig);
+			Http.send("PUT", "/_/config", newConfig, function(xhr, status){
+				var response=xhr.responseText;
+				if (200==status){
+					showFeedback("success", "<strong>Success</strong>: Config saved");
+				}else
+					showFeedback("danger", "<strong>Failure</strong>: Response code was: "+status);
+			});
+		}catch(error){
+			showFeedback("danger", "<strong>Failure</strong>: Invalid config - "+error);
+		}
+	}
+	
+	function showFeedback(type, msg){
+		var template=`<div class="alert alert-TYPE" id="TYPE-alert"><button type="button" class="close" data-dismiss="alert">x</button>MESSAGE</div>`;
+		$("#feedback").html(template.replace(/TYPE/g,type).replace(/MESSAGE/g,msg));
+		$("#feedback").fadeTo(2000, 500).slideUp(500, function(){
+			//$("#feedback").slideUp(500);
+		});
+	}
+	</script>
+	<style>
+		textarea {
+		  width: 100%;
+		  height: 85%;
+		}
+		.alert{
+	    padding: 5px 15px;
+		}
+		#config{font-family: monospace;}
+	</style>
+</head>
+<body>
+	<div id="topbar"><!--NAV_TEMPLATE--></div>
+	<script>$(".header.section.page").html(`Config`);</script>
+	
+	<div id="feedback" style="position:absolute;width:100%;"></div>
+	<!--div><h3 style="margin-top:0px;margin-bottom:7px;">Config</h3></div-->
+  <div id="main">
+  	<textarea id="config"></textarea>
+  	<button onclick="save();">Save</button>
+  </div>
+
+</div>
