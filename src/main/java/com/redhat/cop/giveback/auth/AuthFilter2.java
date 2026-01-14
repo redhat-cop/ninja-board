@@ -46,6 +46,7 @@ public class AuthFilter2 implements ContainerRequestFilter{
 	
 	private static final Map<String, List<String>> defaultAuthenticatedPaths=new MapBuilder<String, List<String>>()
 			.put("/admin/.+", Lists.newArrayList("ADMIN")) // needs admin ROLE
+//			.put("/config.*", Lists.newArrayList("ADMIN")) // needs admin ROLE
 			// else unauthenticated is ok
 			.build();
 	private static final Map<String, List<String>> defaultUserRoleMapping=new MapBuilder<String, List<String>>()
@@ -180,7 +181,7 @@ public class AuthFilter2 implements ContainerRequestFilter{
 				if (null!=accessTokenCookie){
 					String accessToken=accessTokenCookie.getValue();
 					Map<String,String> tokenInfo=oauth.getTokenInfoAsMap(accessToken);
-//					log.info(String.format("%s:: tokenInfo for [%s] is %s", path, shorten(accessToken), Json.toJson(shorten(tokenInfo))));
+					log.info(String.format("XXXXX %s:: tokenInfo for [%s] is %s", path, shorten(accessToken), Json.toJson(shorten(tokenInfo))));
 					
 					boolean tokenValid=!tokenInfo.containsKey("error");
 					accessToken=accessToken.startsWith("X")?accessToken.substring(1):accessToken; // this is for testing invalid accessTokens and forcing a refresh

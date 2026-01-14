@@ -120,6 +120,8 @@ public class Config extends com.redhat.cop.giveback.legacy.Config{
       return System.getenv(name.replaceAll("\\.", "_"));
 //    }else if (appPropertiesHas(name)){ // suspected bug in quarkus that doesnt read application.properties when running in Eclipse IDE, making it hard to code!
 //      return getPropertyFromAppPropertiesWhenDeveloping(name);
+    }else if (microprofileConfig.getOptionalValue(name.replaceAll("_",".").toLowerCase(), String.class).isPresent()){
+      return microprofileConfig.getValue(name.replaceAll("_",".").toLowerCase(), String.class);
     }else if (microprofileConfig.getOptionalValue(name, String.class).isPresent()){
       /* note/warning: this microprofile class does some weird stuff, such as if <param>name</param> is "test.one", and there is an ENV variable "TEST_ONE", it WILL read it when you dont want it to!? hence reading the app.properties ourselves on the lines above */
       return microprofileConfig.getValue(name, String.class);

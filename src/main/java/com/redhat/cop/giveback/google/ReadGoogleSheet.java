@@ -43,7 +43,7 @@ public class ReadGoogleSheet {
     private static final String TOKENS_DIRECTORY_PATH = new File(Config.get().getStorageRoot(), "tokens").getPath(); // Directory to store user authorization tokens
 
 //    private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
-    private static final String CREDENTIALS_SYSTEM_PROPERTY = "GOOGLE_GIVEBACK_OAUTH_CREDS";
+    private static final String CREDENTIALS_SYSTEM_PROPERTY = "GIVEBACK_GOOGLE_OAUTH_CREDS";
     
     /**
      * Handles the OAuth 2.0 authorization flow.
