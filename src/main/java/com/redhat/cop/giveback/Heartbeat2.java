@@ -208,7 +208,7 @@ public class Heartbeat2 {
       final Config config=Config.get();
       final Database2 db=Database2.get();
       
-      boolean successfullyAccessedRegistrationSheet=HeartbeatUserManagement.addOrUpdateRegisteredUsers(db, config);
+      boolean successfullyAccessedRegistrationSheet=HeartbeatUserManagement.addOrUpdateRegisteredUsers(db, com.redhat.cop.giveback.Config.get());
       if (!successfullyAccessedRegistrationSheet) return;
       HeartbeatUserManagement.updateUsersDetailsUsingLDAPInfo(db);
       

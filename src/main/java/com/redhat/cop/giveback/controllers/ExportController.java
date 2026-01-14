@@ -19,6 +19,7 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellType;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.base.Joiner;
@@ -181,7 +182,7 @@ public class ExportController{
         
         HSSFRow row=s.createRow(0);
         for(int i=0;i<headers.size();i++){
-          row.createCell(i, HSSFCell.CELL_TYPE_STRING).setCellValue(headers.get(i));
+          row.createCell(i, CellType.STRING).setCellValue(headers.get(i));
         }
         
         int rowCount=1;
@@ -190,7 +191,7 @@ public class ExportController{
           for(int i=0;i<headers.size();i++){
             String header=headers.get(i);
             String headerName=dataHeaderMapping.containsKey(header)?dataHeaderMapping.get(header):header;
-            row.createCell(i, HSSFCell.CELL_TYPE_STRING).setCellValue(e.containsKey(headerName)?e.get(headerName):"");
+            row.createCell(i, CellType.STRING).setCellValue(e.containsKey(headerName)?e.get(headerName):"");
           }
           rowCount=rowCount+1;
         }

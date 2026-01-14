@@ -20,8 +20,8 @@ import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.redhat.cop.giveback.legacy.Config;
+import com.redhat.services.portfolio.utils.IOUtils2;
 import com.redhat.services.portfolio.utils.Json;
-import com.redhat.sso.ninja.utils.IOUtils2;
 
 public class Database2{
   private static final Logger log=Logger.getLogger(Database2.class);

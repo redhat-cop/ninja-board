@@ -19,6 +19,7 @@ public class Initialization {
   private static Logger log=LoggerFactory.getLogger(Initialization.class);
   public static final String DATE_FORMAT="yyyy-MM-dd'T'HH:mm:ss";
   public static final SimpleDateFormat sdf=new SimpleDateFormat(DATE_FORMAT);
+  public static final String applicationName="Giveback";
   
   public void onStartup(@Observes StartupEvent ev) {
     if (log.isInfoEnabled()) log.info("Starting up...");

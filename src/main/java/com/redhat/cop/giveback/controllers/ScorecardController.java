@@ -19,11 +19,11 @@ import com.redhat.cop.giveback.Database2;
 import com.redhat.cop.giveback.chart.ChartJson;
 import com.redhat.cop.giveback.chart.DataSet;
 import com.redhat.services.portfolio.utils.ChatNotification_v2;
+import com.redhat.services.portfolio.utils.IOUtils2;
 import com.redhat.services.portfolio.utils.ChatNotification_v2.ChatEvent;
 import com.redhat.services.portfolio.utils.Json;
 import com.redhat.services.portfolio.utils.MapBuilder;
 import com.redhat.sso.ninja.utils.Http;
-import com.redhat.sso.ninja.utils.IOUtils2;
 import com.redhat.sso.ninja.utils.LevelsUtil;
 
 import jakarta.ws.rs.Consumes;

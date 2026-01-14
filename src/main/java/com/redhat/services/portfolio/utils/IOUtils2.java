@@ -1,4 +1,4 @@
-package com.redhat.sso.ninja.utils;
+package com.redhat.services.portfolio.utils;
 
 import java.io.File;
 import java.io.FileInputStream;

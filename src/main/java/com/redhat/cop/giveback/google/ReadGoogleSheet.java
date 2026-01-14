@@ -1,50 +1,49 @@
-package com.redhat.cop.giveback;
-
-import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
-import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.gson.GsonFactory;
-import com.google.api.client.util.Lists;
-import com.google.api.client.util.Maps;
-import com.google.api.client.util.store.FileDataStoreFactory;
-import com.google.api.services.sheets.v4.Sheets;
-import com.google.api.services.sheets.v4.SheetsScopes;
-import com.google.api.services.sheets.v4.model.ValueRange;
+package com.redhat.cop.giveback.google;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
+import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
+import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
+import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets.Details;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestInitializer;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.client.util.Lists;
+import com.google.api.client.util.Maps;
+import com.google.api.client.util.store.FileDataStoreFactory;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.DriveScopes;
+import com.google.api.services.sheets.v4.Sheets;
+import com.google.api.services.sheets.v4.SheetsScopes;
+import com.google.api.services.sheets.v4.model.ValueRange;
+import com.google.auth.http.HttpCredentialsAdapter;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.auth.oauth2.ServiceAccountCredentials;
+import com.google.common.base.Preconditions;
+import com.redhat.cop.giveback.Config;
+import com.redhat.cop.giveback.Initialization;
+
 public class ReadGoogleSheet {
-
-    // Application name (can be anything)
-    private static final String APPLICATION_NAME = "Google Sheets API Java Reader";
-
-    // JSON Factory
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
+    private static final List<String> SCOPES=Collections.singletonList(SheetsScopes.SPREADSHEETS_READONLY);
+    private static final String TOKENS_DIRECTORY_PATH = new File(Config.get().getStorageRoot(), "tokens").getPath(); // Directory to store user authorization tokens
 
-    // Directory to store user authorization tokens
-    private static final String TOKENS_DIRECTORY_PATH = "tokens";
-
-    // Scopes: We only need read-only access for this example.
-    private static final List<String> SCOPES =
-            Collections.singletonList(SheetsScopes.SPREADSHEETS_READONLY);
-
-    // Path to the credentials.json file (must be in src/main/resources)
-    private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
-    private static final String CREDENTIALS_SYSTEM_PROPERTY = "GOOGLE_SERVICE_ACCOUNT_CREDS";
-    
+//    private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
+    private static final String CREDENTIALS_SYSTEM_PROPERTY = "GOOGLE_GIVEBACK_OAUTH_CREDS";
     
     /**
      * Handles the OAuth 2.0 authorization flow.
@@ -56,8 +55,13 @@ public class ReadGoogleSheet {
     private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
         // Load client secrets from the credentials.json file
       
-      String GOOGLE_SERVICE_ACCOUNT_CREDS=System.getProperty(CREDENTIALS_SYSTEM_PROPERTY);
-      GoogleClientSecrets clientSecrets=GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(new ByteArrayInputStream(GOOGLE_SERVICE_ACCOUNT_CREDS.getBytes())));
+      String credentials=Config.get().getProperty(CREDENTIALS_SYSTEM_PROPERTY);
+      Preconditions.checkArgument(credentials!=null, "Credentials cannot be null");
+      GoogleClientSecrets clientSecrets=GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(new ByteArrayInputStream(credentials.getBytes())));
+      try {
+        Details deets=clientSecrets.getDetails();
+      }catch(IllegalArgumentException e) {System.err.println("If this says something about 'web' or 'installed' must be set, then you're not using an oauth credential. goto console.cloud.google.com->CopNinja(Project)->Credentials and download the 'Oauth 2.0 Client ID's' creds file");}
+      Preconditions.checkArgument(clientSecrets!=null, "clientSecrets cannot be null");
       
 //        InputStream in = ReadGoogleSheet.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
 //        if (in == null) {
@@ -66,10 +70,15 @@ public class ReadGoogleSheet {
 //        GoogleClientSecrets clientSecrets =
 //                GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
+      java.io.File dirPath=new java.io.File(TOKENS_DIRECTORY_PATH);
+//      if (!dirPath.exists()) dirPath.createNewFile();
+      Preconditions.checkArgument(dirPath!=null, "dirPath cannot be null");
+      Preconditions.checkArgument(HTTP_TRANSPORT!=null, "HTTP_TRANSPORT cannot be null");
+      
         // Build the flow and trigger the user authorization request
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
                 HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
+                .setDataStoreFactory(new FileDataStoreFactory(dirPath))
                 .setAccessType("offline")
                 .build();
 
@@ -81,18 +90,13 @@ public class ReadGoogleSheet {
     }
 
 
-    public List<Map<String,String>> readSheet(String spreadsheetId) throws FileNotFoundException,IOException{
+    public List<Map<String,String>> readSheet(String spreadsheetId, String sheetName) throws FileNotFoundException,IOException{
         try {
-            // ---!!! IMPORTANT: CHANGE THESE VALUES !!!---
-            // The ID of the spreadsheet to read.
-            // You can find this in the URL: https://docs.google.com/spreadsheets/d/THIS_IS_THE_ID/edit
-//            final String spreadsheetId = "1E91hT_ZpySyvhnANxqZ7hcBSM2EEd9TqfQF-cavB8hQ";
 
             // The range to read, in A1 notation.
             // e.g., "Sheet1!A1:D10"
-            final String range = "Form Responses 1!A1:D";
+            final String range = sheetName+"!A1:D";
             // ---------------------------------------------
-
 
             // Build a new authorized API client service.
             final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
@@ -102,7 +106,7 @@ public class ReadGoogleSheet {
 
             // Build the Sheets service
             Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
-                    .setApplicationName(APPLICATION_NAME)
+                    .setApplicationName(Initialization.applicationName)
                     .build();
 
             // Make the API call to get the values
@@ -115,9 +119,9 @@ public class ReadGoogleSheet {
 
             List<Map<String,String>> result=Lists.newArrayList();
             if (values == null || values.isEmpty()) {
-              System.out.println("No data found.");
+              System.err.println("WARN: No data found");
             } else {
-              System.out.println("Data found in " + spreadsheetId + " range " + range + ":");
+//              System.out.println("Data found in " + spreadsheetId + " range " + range + ":");
               
               int iRow=0;
               Map<Integer,String> headerNames=Maps.newHashMap(); 
