@@ -157,6 +157,8 @@ public class AuthController extends CommonController{
 			return Response.status(500).entity(error).build();
 		}
 		
+		if (null==state) state="/"; // default state to home page if null
+		
 		OAuth oauth=OAuth.get(uri);
 		String getTokenResponseJson=oauth.getToken(code);
 		log.debug("/auth/callback getToken response - "+getTokenResponseJson);

@@ -47,6 +47,8 @@ or in application.properties:
 	
  */
 public class ChatNotification_v2{
+  
+  
 	private static final Logger log=LoggerFactory.getLogger(ChatNotification_v2.class);
 	public enum ChatEvent{onHttpFailure,onError,onWarning,onBeltPromotion,onBeltDemotion,onScriptError,onRegistration}
 	private boolean enabled;
