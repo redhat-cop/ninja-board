@@ -196,7 +196,7 @@ public class GoogleSheetReader3{
 					String header=readCellAsString(s.getRow(headerRow).getCell(iColumn));
 					
 					
-					String header=s.getRow(headerRow).getCell(iColumn).getStringCellValue();
+//					String header=s.getRow(headerRow).getCell(iColumn).getStringCellValue();
 					if (headerIgnoreList.contains(header)) continue; // EFFICIENCY - ignore any columns that we know don't make it to the UI
 					XSSFRow r=s.getRow(iRow);
 					if (Objects.isNull(r)) break; // next line/row
