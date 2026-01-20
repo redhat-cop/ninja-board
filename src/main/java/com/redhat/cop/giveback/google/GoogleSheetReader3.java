@@ -37,6 +37,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.redhat.cop.giveback.Config;
+import com.redhat.cop.giveback.Initialization;
 import com.redhat.services.portfolio.utils.Cache;
 import com.redhat.services.portfolio.utils.Json;
 import com.redhat.services.portfolio.utils.MapBuilder;
@@ -132,7 +133,16 @@ public class GoogleSheetReader3{
 		return cache.get(cacheKey);
 	}
 	
-	
+	private String readCellAsString(XSSFCell cell) {
+	  CellType type=cell.getCellType();
+	  if (type==CellType.BLANK) return "";
+	  if (type==CellType.STRING) return cell.getStringCellValue();
+	  if (type==CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) return Initialization.sdf.format(cell.getDateCellValue());
+	  if (type==CellType.NUMERIC) return String.valueOf(cell.getNumericCellValue());
+	  if (type==CellType.BOOLEAN) return String.valueOf(cell.getBooleanCellValue());
+	  if (type==CellType.FORMULA) return String.valueOf(cell.getCellFormula());
+    return String.format("unknown - type was %s, value was %s, col=%s, row=%s", cell.getCellType(), cell.getRawValue(), cell.getColumnIndex(), cell.getRowIndex());
+	}
 	
 	public List<Map<String,Object>> parseExcelDocument(File file, String sheetName, ParserConfig c) throws FileNotFoundException, IOException{
 		return parseExcelDocument(file, sheetName, c.buildFinder(), c.formatter, c.columns);
@@ -182,6 +192,10 @@ public class GoogleSheetReader3{
 				boolean allRowCellsEmpty=true;
 				for(int iColumn=0;iColumn<=maxColumns;iColumn++){
 					if (s.getRow(headerRow).getCell(iColumn)==null) continue;
+					
+					String header=readCellAsString(s.getRow(headerRow).getCell(iColumn));
+					
+					
 					String header=s.getRow(headerRow).getCell(iColumn).getStringCellValue();
 					if (headerIgnoreList.contains(header)) continue; // EFFICIENCY - ignore any columns that we know don't make it to the UI
 					XSSFRow r=s.getRow(iRow);
