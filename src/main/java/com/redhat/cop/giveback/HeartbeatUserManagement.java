@@ -17,6 +17,9 @@ import org.apache.log4j.Logger;
 
 import com.google.api.client.util.Maps;
 import com.google.common.collect.Lists;
+import com.redhat.cop.giveback.google.GoogleDrive42;
+import com.redhat.cop.giveback.google.GoogleSheetReader3;
+import com.redhat.cop.giveback.google.GoogleSheetReader3.ParserConfig;
 //import com.redhat.cop.giveback.google.GoogleDrive42;
 //import com.redhat.cop.giveback.google.GoogleSheetReader3;
 //import com.redhat.cop.giveback.google.GoogleSheetReader3.ParserConfig;
@@ -69,9 +72,9 @@ public static void main(String[] asd) {
       
 }
 
-  public static volatile Cache<String, List<Map<String, Object>>> cache=Cache.newCache("portfolio-cache", sensibleStringToMs(Config.get().getProperty("CACHE_EXPIRY_PORTFOLIO", "CACHE_EXPIRY", "1d")), false);
+  public static volatile Cache<String, List<Map<String, Object>>> cache=Cache.newCache(Initialization.applicationName.toLowerCase()+"-cache", sensibleStringToMs(Config.get().getProperty("CACHE_EXPIRY_PORTFOLIO", "CACHE_EXPIRY", "1d")), false);
   private enum Auth{OAUTH2,SERVICE_ACCOUNT}
-  private static Auth authentication=Auth.OAUTH2;
+  private static Auth authentication=Auth.SERVICE_ACCOUNT;
   public static boolean addOrUpdateRegisteredUsers(Database2 db, Config cfg){
     Map<String, Map<String, String>> dbUsers=db.getUsers();
     LdapService userService=new LdapService();
@@ -85,21 +88,20 @@ public static void main(String[] asd) {
         rows=new ReadGoogleSheet().readSheet(sheetId, sheetName);
       }else if (authentication==Auth.SERVICE_ACCOUNT) {
       // DONT DELETE THIS COMMENTED CODE - IF WE HAVE TO SWITCH TO A SERVICE ACCOUNT, THIS IS THE CODE TO REUSE THE PORTFOLIO HUBS SERVICE ACCOUNT FEATURE
-//        String tokenNotRequired=null;
-//        UriInfo uriNotRequired=null;
-//        GoogleDrive42 drive=new GoogleDrive42.Builder().credsFromConfig()/* .noCache(true) */.build();
-//        int maxColumns=10;
-//        
-//        List<Map<String,Object>> rowsNonString=new GoogleSheetReader3(drive, cache).read(sheetId, sheetName, null, tokenNotRequired, uriNotRequired, new ParserConfig()
-//            .headerRow(String.valueOf(1)).filters(null).formatter(null).columns(maxColumns));
-//        
-//        // convert map from String/Object to String/String
-//        rows=rowsNonString.stream().map(m->
-//            m.entrySet()
-//            .stream()
-//            .collect(Collectors.toMap(e->e.getKey(), e->String.valueOf(e.getValue())))
-//            ).collect(Collectors.toList());
-      
+        String tokenNotRequired=null;
+        UriInfo uriNotRequired=null;
+        GoogleDrive42 drive=new GoogleDrive42.Builder().credsFromConfig()/* .noCache(true) */.build();
+        int maxColumns=10;
+        
+        List<Map<String,Object>> rowsNonString=new GoogleSheetReader3(drive, cache).read(sheetId, sheetName, null, tokenNotRequired, uriNotRequired, new ParserConfig()
+            .headerRow(String.valueOf(1)).filters(null).formatter(null).columns(maxColumns));
+        
+        // convert map from String/Object to String/String
+        rows=rowsNonString.stream().map(m->
+            m.entrySet()
+            .stream()
+            .collect(Collectors.toMap(e->e.getKey(), e->String.valueOf(e.getValue())))
+            ).collect(Collectors.toList());
       }
       
       for(Map<String,String> r:rows){
