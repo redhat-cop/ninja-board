@@ -74,7 +74,7 @@ public static void main(String[] asd) {
 
   public static volatile Cache<String, List<Map<String, Object>>> cache=Cache.newCache(Initialization.applicationName.toLowerCase()+"-cache", sensibleStringToMs(Config.get().getProperty("CACHE_EXPIRY_PORTFOLIO", "CACHE_EXPIRY", "1d")), false);
   private enum Auth{OAUTH2,SERVICE_ACCOUNT}
-  private static Auth authentication=Auth.SERVICE_ACCOUNT;
+//  private static Auth authentication=Auth.SERVICE_ACCOUNT;
   public static boolean addOrUpdateRegisteredUsers(Database2 db, Config cfg){
     Map<String, Map<String, String>> dbUsers=db.getUsers();
     LdapService userService=new LdapService();
@@ -82,6 +82,8 @@ public static void main(String[] asd) {
     try{
       
       String sheetId=cfg.getOptions().get("googlesheets.registration.id");
+      String oauthType=Config.get().getProperty("google.oauth.type", "SERVICE_ACCOUNT");
+      Auth authentication=Auth.valueOf(oauthType.toUpperCase());
       String sheetName="Form Responses 1";
       List<Map<String,String>> rows=Lists.newArrayList();
       if (authentication==Auth.OAUTH2) {
