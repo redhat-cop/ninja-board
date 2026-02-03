@@ -20,6 +20,7 @@ import javax.naming.NamingException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.google.api.client.util.Maps;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.redhat.cop.giveback.Database2;
@@ -45,36 +46,31 @@ import jakarta.ws.rs.core.UriInfo;
 @Path("/")
 public class EventsController{
   private static final Logger log=Logger.getLogger(EventsController.class);
+  private static final List<String> VALID_FILTER_PARAMS=Lists.newArrayList("user","events","daysOld","asCSV","manager","eol");
   
-  private Map<String,String> buildFilters(HttpServletRequest request){
-  	return new MapBuilder<String, String>(true)
-		.put("user", request.getParameter("user"))
-		.put("events", request.getParameter("events"))
-		.put("daysOld", request.getParameter("daysOld"))
-		.put("asCSV", request.getParameter("asCSV"))
-		.put("manager", request.getParameter("manager"))
-		.put("eol", request.getParameter("eol"))
-		.build();
-  }
+//  private Map<String,String> buildFilters(HttpServletRequest request){
+//  	return new MapBuilder<String, String>(true)
+//		.put("user", request.getParameter("user"))
+//		.put("events", request.getParameter("events"))
+//		.put("daysOld", request.getParameter("daysOld"))
+//		.put("asCSV", request.getParameter("asCSV"))
+//		.put("manager", request.getParameter("manager"))
+//		.put("eol", request.getParameter("eol"))
+//		.build();
+//  }
+  
   private Map<String,String> buildFilters(MultivaluedMap<String,String> params){
-    Map<String,String> result=params.entrySet().stream().map(e -> updateE(e)).collect(Collectors.toMap(Map.Entry::getKey,Map.Entry::getValue));
-    
-    return new MapBuilder<String, String>(true)
-    .put("user", result.get("user"))
-    .put("events", result.get("events"))
-    .put("daysOld", result.get("daysOld"))
-    .put("asCSV", result.get("asCSV"))
-    .put("manager", result.get("manager"))
-    .put("eol", result.get("eol"))
-    .build();
+    Map<String,String> result=params.entrySet().stream().map(e -> updateE(e)).filter(e->VALID_FILTER_PARAMS.contains(e.getKey())).collect(Collectors.toMap(Map.Entry::getKey,Map.Entry::getValue));
+    return result;
   }
   private static Map.Entry<String,String> updateE(Map.Entry<String, List<String>> e) {
     return Map.entry(e.getKey(), (e.getValue()!=null && e.getValue().size()==1)?e.getValue().get(0):null);
   }
   @GET
   @Path("/api/v2/events/export/{format}")
-  public Response getEventsV2Export(HttpServletRequest request, @PathParam("format") String format) throws IOException{
-  	Map<String, String> filters=buildFilters(request);
+  public Response getEventsV2Export(@Context UriInfo uriInfo, HttpServletRequest request, @PathParam("format") String format) throws IOException{
+//  	Map<String, String> filters=buildFilters(request);
+  	Map<String, String> filters=buildFilters(uriInfo.getQueryParameters(true));
   	List<Map<String,String>> data=getFilteredEvents2(filters);
   	
     Set<String> headerset=new HashSet<String>();
@@ -234,25 +230,34 @@ public class EventsController{
 //    return NewResponse.status(200).entity(Json.newObjectMapper(true).writeValueAsString(getFilteredEvents2(filters))).build();
 //  }
   public List<Map<String, String>> getAllEvents() throws  IOException{
-    return getFilteredEvents2(new MapBuilder<String,String>().build());
+    return getFilteredEvents2(Maps.newHashMap());
   }
   private List<Map<String, String>> getFilteredEvents2(Map<String,String> filters) throws IOException{
     Database2 db=Database2.get();
     List<Map<String, String>> result=new ArrayList<Map<String,String>>();
     
+    
+    System.out.println("DEBUG filters.size = "+filters.size());
+    System.out.println("DEBUG filters.keys = "+filters.keySet());
+    
     if (filters.size()<=0){
       result=db.getEvents();
     }else{
+    	System.out.println("DEBUG filters = "+Json.toJson(filters));
+    	boolean hasDaysOld=filters.containsKey("daysOld") && filters.get("daysOld")!=null && "\\d+".matches(filters.get("daysOld"));
+//    	System.out.println("DEBUG hasDaysOld = "+hasDaysOld);
     	
     	Date filterDate=null;
-    	if (filters.containsKey("daysOld")){
+    	if (hasDaysOld){
+    	  String daysOld=filters.get("daysOld");
+    	  System.out.println("daysOld = "+daysOld);
     		FluentCalendar date=FluentCalendar.now();
     		date.add(Calendar.DAY_OF_MONTH, -1*Integer.parseInt(filters.get("daysOld")));
     		filterDate=date.build().getTime();
     	}
     	
       for(Map<String, String> e:db.getEvents()){
-      	boolean include=!filters.containsKey("daysOld");
+      	boolean include=!hasDaysOld;
       	try{
 					Date date=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").parse(e.get(EVENT_FIELDS.TIMESTAMP.v));
 					if (null!=filterDate && date.after(filterDate)) include=true;

@@ -46,6 +46,10 @@ Utils = {
 		return el;
 	},
 	
+	isNotBlank: function(value){
+		return value!=undefined && value.length>0;
+	},
+	
 	/* array object sort by field name 
 	 * 
 	 * var people=[{Name:"Fred",Surname:"Bloggs"}, {Name:"Adam",Surname:"Carter"}]
