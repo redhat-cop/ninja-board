@@ -68,7 +68,7 @@ public class Http2{
 //			log.info("Http call responded with code: "+response.responseCode);
 			
 			
-			log.info("Http call '"+method+"' to '"+url+"'"+(null!=data?" (with data length of "+data.length()+" characters)":"")+" - ResponseCode: "+response.responseCode);
+			log.debug("Http call '"+method+"' to '"+url+"'"+(null!=data?" (with data length of "+data.length()+" characters)":"")+" - ResponseCode: "+response.responseCode);
 			
 			cnn.disconnect();
 			return response;
