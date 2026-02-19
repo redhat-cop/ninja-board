@@ -13,8 +13,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.api.client.util.Preconditions;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.redhat.cop.giveback.Database2;
@@ -25,6 +27,7 @@ import com.redhat.services.portfolio.utils.Json;
 import com.redhat.services.portfolio.utils.MapBuilder;
 import com.redhat.sso.ninja.utils.LevelsUtil;
 
+import io.quarkus.logging.Log;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -35,6 +38,7 @@ import jakarta.ws.rs.core.Response;
  */
 @Path("/")
 public class ChartsController{
+  private static final Logger log=Logger.getLogger(ChartsController.class);
 	
 	// Mojo UI: https://mojo.redhat.com/community/communities-at-red-hat/communities-of-practice-operations/giveback-ninja-program/ninja-wall/overview
   @GET
@@ -124,6 +128,7 @@ public class ChartsController{
       c.getDatasets().get(0).getData().add(e.getValue());
       c.getDatasets().get(0).setBorderWidth(1);
       
+      
       // TODO: set this to the color of the belt. should be on the ui side, not server
       Map<String,Pair<String,String>> colors=new MapBuilder<String,Pair<String,String>>()
           .put("BLUE",  Pair.of("rgba(0,0,163,0.7)",     "rgba(0,0,163,0.8)"))
@@ -131,10 +136,20 @@ public class ChartsController{
           .put("RED",   Pair.of("rgba(163,0,0,0.7)",     "rgba(163,0,0,0.8)"))
           .put("BLACK", Pair.of("rgba(20,20,20,0.7)",    "rgba(20,20,20,0.8)"))
           .put("ZERO",  Pair.of("rgba(255,255,255,0.7)", "rgba(255,255,255,0.8)"))
+          
+          .put("GREEN", Pair.of("rgba(138,194,153,0.7)","rgba(138,194,153,0.8)")) //rgba(138,194,153,1)  //#82c299
+          .put("GOLD",  Pair.of("rgba(250,170,79,0.7)","rgba(250,170,79,0.8)")) //rgba(250,170,79,1)  //#faaa4f
+          .put("GREY",  Pair.of("rgba(77,77,77,0.7)","rgba(77,77,77,0.8)")) //rgba(77,77,77,1)  //#4d4d4d
+          .put("BLUE",  Pair.of("rgba(84,172,210,0.7)","rgba(84,172,210,0.8)")) //rgba(84,172,210,1) //#54acd2
+          
           // ZERO???
           .build();
-      c.getDatasets().get(0).getBackgroundColor().add(colors.get(userInfo.get("level").toUpperCase()).getLeft());
-      c.getDatasets().get(0).getBorderColor().add(colors.get(userInfo.get("level").toUpperCase()).getRight());
+      
+      Pair<String,String> color=colors.get(userInfo.get("level").toUpperCase());
+      if (null==color) log.error(String.format("color %s is not allowed", color));
+      
+      c.getDatasets().get(0).getBackgroundColor().add(color.getLeft());
+      c.getDatasets().get(0).getBorderColor().add(color.getRight());
       
       count=count+1;
       if (null!=max && count>=max) break; // hard maximum supplied as param

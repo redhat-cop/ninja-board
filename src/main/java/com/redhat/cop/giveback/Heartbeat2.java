@@ -247,7 +247,7 @@ public class Heartbeat2 {
 	      	try{
 		        final Map<String, String> poolToUserIdMapper=getUsersByPool(db, ((String)script.get("name")).split("\\.")[0].toLowerCase()+"Id");
 		        
-		        if (Lists.newArrayList("sh","bash","python","script","perl").contains(((String)script.get("type")).toLowerCase())){
+		        if (Lists.newArrayList("sh","bash","python","python3","script","perl").contains(((String)script.get("type")).toLowerCase())){
 		          String version=RegExHelper.extract(command, "/(v.+?)/");
 		          File scriptFolder=new File(scripts, name+"/"+version);
 		          scriptFolder.mkdirs(); // ensure the parent folders exist if they dont already
